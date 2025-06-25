@@ -23,7 +23,7 @@ export default function DatePicker({
   onChange,
   placeholder = "Select a date",
   required = false,
-  name = "date",
+  // name = "date",
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
 
