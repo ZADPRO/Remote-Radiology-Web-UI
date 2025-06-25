@@ -1,0 +1,45 @@
+#RFS-LabelContainer{
+  font-size: 0.7rem;
+  color: black!important;
+}
+
+#RFS-Connector{
+  border-color: black!important;
+}
+
+#RFS-StepButton{
+  background-color: white;
+}
+
+#RFS-StepButton > span{
+  color: black!important;
+}
+
+#RFS-StepButton.active{
+  background-color: #277EBE;
+}
+
+#RFS-StepButton.active > span{
+  color: white!important;
+}
+
+
+.addReceptionist-form-steper #RFS-LabelContainer{
+    color: white!important;
+}
+
+.addReceptionist-form-steper #RFS-StepButton.active{
+  background-color: #125AA3;
+}
+
+@media (min-width: 1024px) {
+  /*------------------Form Stepper Custom CSS (Large Screens Only)--------------------------*/ 
+  #RFS-LabelContainer{
+  font-size: 1rem;
+  color: black!important;
+  font-weight: 500!important;
+}
+.addReceptionist-form-steper #RFS-LabelContainer{
+    color: black!important;
+}
+}
