@@ -25,7 +25,7 @@ const VerifyOTP: React.FC = () => {
     email: string;
   };
 
-  const { setRole } = useAuth();
+  const { setRole, refreshToken } = useAuth();
   const [otp, setOtp] = useState("");
   const [timerFinished, setTimerFinished] = useState<boolean>(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -128,6 +128,7 @@ const VerifyOTP: React.FC = () => {
           return;
         }
 
+        refreshToken();
         // Else, route based on role
         setShowSuccess(true);
         setTimeout(() => {
@@ -165,7 +166,10 @@ const VerifyOTP: React.FC = () => {
           className="hidden w-[40%] h-[20%] mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 lg:w-[70%]">
-          <form className="flex flex-col gap-6">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            handleVerify();
+          }} className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2 text-center">
               {/* <div className="items-center justify-around gap-10% pb-3 hidden lg:flex">
                 <img src={logo} alt="logo" className="w-[20%] h-[20%]" />
@@ -268,8 +272,6 @@ const VerifyOTP: React.FC = () => {
             </div>
 
             <Button
-              type="button"
-              onClick={handleVerify}
               disabled={isVerifying}
               className="w-[80%] lg:w-full mx-auto my-0 p-4 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
             >
