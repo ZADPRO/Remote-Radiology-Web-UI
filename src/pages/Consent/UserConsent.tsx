@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/pages/Routes/AuthContext';
+import { Checkbox2 } from '@/components/ui/CustomComponents/checkbox2';
 
 interface UserConsentProps {
     setEditingDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -184,7 +184,7 @@ const userRole = userRoleType ? RoleDisplayNameMap[userRoleType] : "Guest";
       </div>
 
       <div className="flex items-center space-x-2 mt-4">
-        <Checkbox
+        <Checkbox2
         className='bg-pink-300'
           checked={isUniversalChecked}
           onCheckedChange={(val) => setUniversalChecked(!!val)}
@@ -208,7 +208,7 @@ const userRole = userRoleType ? RoleDisplayNameMap[userRoleType] : "Guest";
           </div>
 
           <div className="flex items-center space-x-2 mt-4">
-            <Checkbox
+            <Checkbox2
             className='bg-pink-300'
               checked={isRoleChecked}
               onCheckedChange={(val) => setRoleChecked(!!val)}
