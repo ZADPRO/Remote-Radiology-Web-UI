@@ -91,6 +91,17 @@ input:-webkit-autofill:active {
   transform: translate(-50%, -50%);
 }
 
+.bg-radial-greeting {
+  background: radial-gradient(
+    45.59% 147.97% at 32.27% 30.59%,
+    #F9F4EC 7.28%,
+    #EED8D6 100%
+  );
+}
+
+.bg-radial-greeting-02 {
+    background: radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+}
 
 
 }

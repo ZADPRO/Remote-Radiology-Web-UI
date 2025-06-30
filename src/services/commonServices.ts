@@ -47,7 +47,7 @@ interface UploadImagePayload {
   formImg: FormData;
 }
 
-interface UploadFilePayload {
+export interface UploadFilePayload {
   formFile: FormData;
 }
 

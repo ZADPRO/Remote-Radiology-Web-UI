@@ -1,3 +1,5 @@
+// Do not overide this datepicker from shadcn since there are some customizations done here
+
 "use client"
 
 import { useState } from "react"
@@ -15,6 +17,7 @@ interface DatePickerProps {
   placeholder?: string
   required?: boolean
   name?: string
+  disabled?: boolean
 }
 
 export default function DatePicker({
@@ -23,6 +26,7 @@ export default function DatePicker({
   onChange,
   placeholder = "Select a date",
   required = false,
+  disabled = false
   // name = "date",
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
@@ -48,6 +52,7 @@ export default function DatePicker({
                 !value && "text-muted-foreground",
                 className
               )}
+              disabled={disabled}
             />
             <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
