@@ -73,7 +73,8 @@ export interface TechnicianPatientQueue {
   refCategoryId: number;
   refAppointmentDate: string; // or Date, if you're parsing it
   refAppointmentComplete: string; // optionally narrow to "fillform" | "complete" | etc.
-  refUserFirstName: string
+  refUserFirstName: string;
+  refUserId: number;
 }
 
 
