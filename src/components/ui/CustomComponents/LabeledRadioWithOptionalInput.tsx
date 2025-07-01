@@ -68,8 +68,8 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
 
       <div
         className={cn(
-          `ml-4 flex flex-wrap gap-x-6 gap-y-1 ${
-            className ? className : "h-[auto] gap-4 sm:gap-4 sm:h-[35px]"
+          `ml-4 flex lg:flex-row lg:flex-wrap flex-nowrap flex-col gap-x-6 gap-y-1 ${
+            className ? className : "h-[auto] gap-4 sm:gap-4"
           } lg:gap-y-3 mt-3`,
           className
         )}
@@ -97,7 +97,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
               <Label htmlFor={id}>{label}</Label>
 
               {isShowInput && (
-                <>
+                <div className="flex">
                   {optionalInputQuestionId && (
                     <Input
                       className={cn("ml-2", inputWidth)}
@@ -126,7 +126,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                       required
                     />
                   )}
-                </>
+                </div>
               )}
             </div>
           );
