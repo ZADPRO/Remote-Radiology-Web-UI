@@ -539,7 +539,7 @@ const ManageScribe: React.FC = () => {
           {/* Add Radiologist Button */}
           <Button
             className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5"
-            onClick={() => navigate("/admin/addScribe")}
+            onClick={() => navigate("../addScribe")}
           >
             <Plus /> Add Scribe
           </Button>
@@ -606,7 +606,7 @@ const ManageScribe: React.FC = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-gray-500"
+                    className="h-24 text-start lg:text-center text-gray-500"
                   >
                     No Results Found.
                   </TableCell>

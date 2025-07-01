@@ -588,7 +588,7 @@ const ManageWellthGreenAdmin: React.FC = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-gray-500"
+                    className="h-24 text-start lg:text-center text-gray-500"
                   >
                     No Results Found.
                   </TableCell>

@@ -167,7 +167,7 @@ const AddScanCenterAdmin: React.FC = () => {
       if (res.status) {
         toast.success(res.message);
         setTimeout(() => {
-          navigate("/admin/manageScanCenter");
+          navigate("../manageScanCenter");
         }, 1500);
       } else {
         setError(res.message);
