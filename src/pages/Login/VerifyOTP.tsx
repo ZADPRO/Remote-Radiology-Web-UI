@@ -78,7 +78,6 @@ const VerifyOTP: React.FC = () => {
       if (response.data.data.status) {
         const { token, RoleType, PasswordStatus } = response.data.data;
         console.log(response);
-        localStorage.setItem("token", token);
         setIsVerifying(false);
 
         // Set role
@@ -123,16 +122,18 @@ const VerifyOTP: React.FC = () => {
         if (PasswordStatus) {
           setShowSuccess(true);
           setTimeout(() => {
-            navigate("/resetPass", { state: { email: email } });
+            navigate("/resetPass", { state: { email: email, token: token } });
           }, 2000);
           return;
+        } else {
+          localStorage.setItem("token", token);
         }
 
         refreshToken();
         // Else, route based on role
         setShowSuccess(true);
         setTimeout(() => {
-          navigate(`/${String(role?.type)}/administration`);
+          navigate(`/${String(role?.type)}`);
         }, 2000);
       } else {
         setIsVerifying(false);

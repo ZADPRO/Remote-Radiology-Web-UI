@@ -7,7 +7,6 @@ import {
   ClipboardPlus,
   HelpCircleIcon,
   LayoutDashboard,
-  Settings,
   Settings2,
   User,
 } from "lucide-react";
@@ -83,7 +82,7 @@ const MasterAdmin: React.FC = () => {
       },
       {
         label: "Patient Queue",
-        path: "/admin/patient-queue",
+        path: "/admin/",
         icon: <User className="w-4 h-4" />,
       },
     ],
@@ -95,7 +94,7 @@ const MasterAdmin: React.FC = () => {
       },
       {
         label: "Administration",
-        path: "/scadmin/administration",
+        path: `/scadmin/administration/${user?.refSCId}`,
         icon: <Settings2 className="w-4 h-4" />,
       },
     ],
@@ -156,17 +155,23 @@ const menus = role?.type ? roleMenus[role.type] || [] : [];
     <div className={`flex h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]`}>
       {/* Bottom - Mobile view */}
       <div className="lg:hidden fixed bottom-0 left-0 w-full h-[8vh] bg-white rounded-t-2xl shadow-md flex items-center justify-between px-10 z-50">
-        <LayoutDashboard
-          className="w-6 h-6 text-gray-700 cursor-pointer"
-          onClick={() => navigate(`/${role?.type}/dashboard`)}
-        />
-        <Settings2
-          className="w-6 h-6 text-gray-700 cursor-pointer"
-          onClick={() => navigate(`/${role?.type}/administration`)}
-        />
-        <Settings className="w-6 h-6 text-gray-700 cursor-pointer" />
-        <User className="w-6 h-6 text-gray-700 cursor-pointer" />
+  {menus.map((menu) => (
+    <div
+      key={menu.path}
+      className="flex flex-col items-center justify-center gap-[2px] cursor-pointer"
+      onClick={() => navigate(menu.path)}
+    >
+      <div className="bg-[#f8f3eb] p-2 rounded-full hover:bg-black hover:text-white transition">
+        {React.cloneElement(menu.icon, {
+          className: "w-5 h-5 text-gray-700",
+        })}
       </div>
+      {/* Optional: Add this span if you want text below icons */}
+      {/* <span className="text-[10px] text-gray-700 font-medium">{menu.label}</span> */}
+    </div>
+  ))}
+</div>
+
 
       {/* Main Area */}
       <div className="flex flex-col flex-1">

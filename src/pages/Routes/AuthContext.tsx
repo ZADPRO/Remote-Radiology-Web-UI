@@ -50,11 +50,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   const setRole = (newRole: Role) => {
-    if (newRole) {
-      localStorage.setItem('role', newRole.id.toString());
-    } else {
-      localStorage.removeItem('role');
-    }
     setRoleState(newRole);
   };
 
@@ -98,9 +93,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const storedRoleID = localStorage.getItem('role');
-    const storedRole = RoleList.find((item) => item.id === Number(storedRoleID)) || null;
-    setRole(storedRole);
     refreshToken(); // This will override storedRole with actual API response
   }, []);
 
