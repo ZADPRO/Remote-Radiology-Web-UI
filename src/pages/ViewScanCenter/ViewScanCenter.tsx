@@ -108,7 +108,7 @@ const ViewScanCenter: React.FC = () => {
       const res = await scancenterService.updateScanCenter(payload);
       console.log(res);
       if(res.status) {
-        navigate("/admin/manageScanCenter");
+        navigate(-1);
       } else {
         setError(res.message);
       }
@@ -263,9 +263,11 @@ const ViewScanCenter: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-col lg:flex-row justify-between items-center mt-6 w-full gap-4">
               <div className="flex flex-wrap gap-4">
+                {user?.refRTId != 3 &&
                 <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../manageScanCenterAdmin", {state: formData.refSCId})}>
                   Manage Admin
                 </Button>
+}
                 
                 <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../manageTechnician", {state: formData.refSCId})}>
                   Manage Technician
