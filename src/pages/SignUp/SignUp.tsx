@@ -4,19 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import logoNew from "../../assets/LogoNew.png";
-import userSignUpImg from "../../assets/Login/signup.png";
-import logo from "../../assets/Logo.png";
-import { authenticationService, signupService } from "@/services/authenticationService";
-import { toast } from "sonner";
+// import userSignUpImg from "../../assets/Login/signup.png";
+// import logo from "../../assets/Logo.png";
+import { signupService } from "@/services/authenticationService";
+// import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import loginImg from "../../assets/Login/Login.png";
 import loginTexture from "../../assets/Login/Login-Texture.png"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
 import Timer from "@/components/Timer/Timer";
-import { set } from "date-fns";
-import Lottie from "lottie-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "../Routes/AuthContext";
 
 const SignUp: React.FC = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -52,6 +51,8 @@ const SignUp: React.FC = () => {
 });
 
   const navigate = useNavigate();
+
+  const { refreshToken } = useAuth();
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const toggleConfirmPasswordVisibility = () =>
@@ -189,6 +190,7 @@ const SignUp: React.FC = () => {
       console.log(res);
       if(res.data.status) {
         setSuccess(true);
+        refreshToken();
         setTimeout(() => {
           navigate('/login');
         }, 1500);

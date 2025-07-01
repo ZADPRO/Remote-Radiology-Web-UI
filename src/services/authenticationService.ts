@@ -1,8 +1,6 @@
 import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
 
-const token = localStorage.getItem("token");
-
 export const authenticationService = {
   loginAuth: async (formdata: any) => {
     const res = await axios.post(
@@ -22,7 +20,7 @@ export const authenticationService = {
     return res;
   },
 
-  resetPassword: async (formdata: any) => {
+  resetPassword: async (formdata: any, token: string) => {
     const payload = encrypt(formdata, token);
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_AUTH}/authentication/changepassword`,

@@ -16,6 +16,7 @@ import { useAuth } from "../Routes/AuthContext";
 const ResetPassword: React.FC = () => {
   const location = useLocation();
   const email = (location.state as { email?: string })?.email || "";
+  const token = (location.state as { token?: string })?.token || "";
 
   const [passwordRules, setPasswordRules] = useState({
     minLength: false,
@@ -85,8 +86,8 @@ const ResetPassword: React.FC = () => {
     try {
       setErrorMessage("");
       const response = await authenticationService.resetPassword({
-        password: formData.newPassword,
-      });
+        password: formData.newPassword, 
+      }, token);
       console.log(response);
       if (response.status) {
         setSuccess(true);

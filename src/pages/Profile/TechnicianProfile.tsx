@@ -283,22 +283,8 @@ const TechnicianProfile: React.FC = () => {
             className="bg-white"
           />
         </div>
+        
         <div>
-          <Label>Digital Signature</Label>
-          {formData.refTDDigitalSignature &&
-          formData.digitalSignatureFile?.base64Data ? (
-            <div className="mt-1 p-2 border rounded-md bg-gray-50 inline-block">
-              <img
-                src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
-                alt="Digital Signature"
-                className="h-20 w-auto rounded object-contain"
-              />
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500 mt-1">Not available</p>
-          )}
-        </div>
-        <div className="md:col-span-2">
           <Label>License Files</Label>
           {formData.licenseFiles && formData.licenseFiles.length > 0 ? (
             <div className="mt-1 flex flex-col gap-2">
@@ -337,6 +323,22 @@ const TechnicianProfile: React.FC = () => {
             <p className="text-sm text-gray-500 mt-1">
               No license files available.
             </p>
+          )}
+        </div>
+
+        <div>
+          <Label>Digital Signature</Label>
+          {formData.refTDDigitalSignature &&
+          formData.digitalSignatureFile?.base64Data ? (
+            <div className="mt-1 p-2 border rounded-md bg-gray-50 inline-block">
+              <img
+                src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
+                alt="Digital Signature"
+                className="h-20 w-auto rounded object-contain"
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 mt-1">Not available</p>
           )}
         </div>
       </div>
