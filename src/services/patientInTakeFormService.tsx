@@ -1,6 +1,10 @@
 import { decrypt, encrypt } from "@/Helper";
-import { IntakeOption } from "@/pages/PatientInTakeForm/MainInTakeForm";
 import axios from "axios";
+
+export interface IntakeOption {
+  questionId: number;
+  answer: string; // "true" or "false"
+}
 
 export interface FinalFormData {
   categoryId: number | null;
@@ -56,7 +60,7 @@ export interface AppointmentAdd {
 }
 
 export interface AppointmentDetails {
-  refAppointmentComplete: "fillform" | string; 
+  refAppointmentComplete: "fillform" | "technologistformfill" | "doctorreview" | string; 
   refAppointmentDate: string; 
   refAppointmentId: number;
   refCategoryId: number;
@@ -101,5 +105,24 @@ export const appointmentService = {
     localStorage.setItem("token", res.data.token);
     console.log(decryptedData);
     return decryptedData;
-  }
+  },
+
+  addTechnicianInTakeForm: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/technicianintakeform/add`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+},
 }

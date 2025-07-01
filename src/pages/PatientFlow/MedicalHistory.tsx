@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -7,8 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from '@/components/ui/button';
-import { ChevronsLeft, ChevronsRight, Filter, ArrowUp, ArrowDown, Upload } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+  ChevronsLeft,
+  ChevronsRight,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+  Upload,
+} from "lucide-react";
 
 import {
   Popover,
@@ -45,14 +52,20 @@ import {
   ColumnFiltersState,
   VisibilityState,
   getPaginationRowModel,
-} from '@tanstack/react-table';
-import LoadingOverlay from '@/components/ui/CustomComponents/loadingOverlay';
-import { AppointmentDetails, appointmentService } from '@/services/patientInTakeFormService';
-import { useNavigate } from 'react-router-dom';
+} from "@tanstack/react-table";
+import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import {
+  AppointmentDetails,
+  appointmentService,
+} from "@/services/patientInTakeFormService";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Routes/AuthContext";
 
 const MedicalHistory: React.FC = () => {
-  const [medicalHistory, setMedicalHistory] = useState<AppointmentDetails[]>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>('');
+  const [medicalHistory, setMedicalHistory] = useState<AppointmentDetails[]>(
+    []
+  );
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -60,20 +73,22 @@ const MedicalHistory: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const { user } = useAuth();
+
   // Helper function to map refCategoryId to Patient Form names
   const getPatientFormName = (categoryId: number): string => {
-    console.log(categoryId)
+    console.log(categoryId);
     switch (categoryId) {
       case 1:
-        return 'S Form';
+        return "S-Screening form";
       case 2:
-        return 'Da Form';
+        return "Da-Breast QT Diagnostic Evaluation Form";
       case 3:
-        return 'Db Form';
+        return "Db-Breast QT Diagnostic Evaluation Form";
       case 4:
-        return 'Dc Form';
+        return "Dc-Breast QT Diagnostic Evaluation Form";
       default:
-        return 'Not yet started';
+        return "Not yet started";
     }
   };
 
@@ -82,7 +97,7 @@ const MedicalHistory: React.FC = () => {
     try {
       const res = await appointmentService.listPatientMedicalHistory();
       console.log("Fetching medical history...", res);
-     
+
       setMedicalHistory(res.data);
     } catch (error) {
       console.error("Failed to fetch medical history:", error);
@@ -99,8 +114,8 @@ const MedicalHistory: React.FC = () => {
   const columns = useMemo<ColumnDef<AppointmentDetails>[]>(
     () => [
       {
-        accessorKey: 'refAppointmentDate',
-        id: 'dateOfAppointment',
+        accessorKey: "refAppointmentDate",
+        id: "dateOfAppointment",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -114,16 +129,16 @@ const MedicalHistory: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -132,14 +147,18 @@ const MedicalHistory: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Date...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -153,8 +172,8 @@ const MedicalHistory: React.FC = () => {
         enableColumnFilter: true,
       },
       {
-        accessorKey: 'refSCId',
-        id: 'scanCentre',
+        accessorKey: "refSCId",
+        id: "scanCentre",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -168,16 +187,16 @@ const MedicalHistory: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -186,14 +205,18 @@ const MedicalHistory: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Scan Centre ID...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -204,17 +227,12 @@ const MedicalHistory: React.FC = () => {
             )}
           </div>
         ),
-        cell: ({ row }) => (
-          <span>{`${row.original.refSCCustId}`}</span>
-        ),
+        cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
         enableColumnFilter: true,
-        size: 130,
-        minSize: 100,
-        maxSize: 160,
       },
       {
-        accessorKey: 'refCategoryId',
-        id: 'patientForm',
+        accessorKey: "refCategoryId",
+        id: "patientForm",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -228,16 +246,16 @@ const MedicalHistory: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -246,77 +264,108 @@ const MedicalHistory: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Select
-  value={(column.getFilterValue() ?? 'all') as string}
-  onValueChange={(value) => column.setFilterValue(value || undefined)}
-
->
-  <SelectTrigger className="w-full">
-    <SelectValue placeholder="All" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="all">All</SelectItem>
-    <SelectItem value="S Form">S Form</SelectItem>
-    <SelectItem value="Da Form">Da Form</SelectItem>
-    <SelectItem value="Db Form">Db Form</SelectItem>
-    <SelectItem value="Dc Form">Dc Form</SelectItem>
-  </SelectContent>
-</Select>
-
+                    value={(column.getFilterValue() ?? "all") as string}
+                    onValueChange={(value) =>
+                      column.setFilterValue(value || undefined)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="S Form">S-Screening form</SelectItem>
+                      <SelectItem value="Da Form">
+                        Da-Breast QT Diagnostic Evaluation Form
+                      </SelectItem>
+                      <SelectItem value="Db Form">
+                        Db-Breast QT Diagnostic Evaluation Form
+                      </SelectItem>
+                      <SelectItem value="Dc Form">
+                        Dc-Breast QT Diagnostic Evaluation Form
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </PopoverContent>
               </Popover>
             )}
           </div>
         ),
         cell: ({ row }) => {
-  const formName = getPatientFormName(row.original.refCategoryId);
-  const isFillForm = row.original.refAppointmentComplete === 'fillform';
-  const actionText = isFillForm ? 'Start' : 'View';
+          const formName = getPatientFormName(row.original.refCategoryId);
+          const isFillForm = row.original.refAppointmentComplete === "fillform";
+          const actionText = isFillForm ? "Start" : "View";
 
-  return (
-    <div className="flex justify-between items-center w-full">
-      <span className={isFillForm ? 'italic' : ''}>
-        {formName}
-      </span>
-      <span
-        className="text-blue-600 hover:underline cursor-pointer font-medium ml-4"
-        onClick={() => {
-          if (isFillForm) {
-            console.log(`Start Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`);
-            navigate("/patientInTakeForm-01", { state: { appointmentId: row.original.refAppointmentId } })
-          } else {
-            console.log(`View Completed Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`);
-            // Implement logic to view the completed form
-          }
-        }}
-      >
-        {actionText}
-      </span>
-    </div>
-  );
-},
+          return (
+            <div className="flex justify-between items-center w-full">
+              <span className={isFillForm ? "italic" : ""}>{formName}</span>
+              <span
+                className="text-blue-600 hover:underline cursor-pointer font-medium ml-4"
+                onClick={() => {
+                  if (isFillForm) {
+                    console.log(
+                      `Start Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`
+                    );
+                    navigate("/patientInTakeForm-01", {
+                      state: {
+                        fetchFormData: false,
+                        apiInfo: {
+                          userId: user?.refUserId,
+                          appointmentId: row.original.refAppointmentId,
+                        },
+                      },
+                    });
+                  } else {
+                    console.log(
+                      `View Completed Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`
+                    );
+                    navigate("/patientInTakeForm-01", {
+                      state: {
+                        fetchFormData: true,
+                        apiInfo: {
+                          userId: user?.refUserId,
+                          appointmentId: row.original.refAppointmentId,
+                        },
+                      },
+                    });
+                  }
+                }}
+              >
+                {actionText}
+              </span>
+            </div>
+          );
+        },
 
         enableColumnFilter: true,
         filterFn: (row, filterValue) => {
-            const formName = getPatientFormName(row.original.refCategoryId);
-            return formName.toLowerCase().includes(String(filterValue).toLowerCase());
+          const formName = getPatientFormName(row.original.refCategoryId);
+          return formName
+            .toLowerCase()
+            .includes(String(filterValue).toLowerCase());
         },
-        size: 400,
+        size: 350,
       },
       {
-        id: 'reportView',
-        header: () => (
-          <div className='text-white'>Report</div>
-        ),
+        id: "reportView",
+        header: () => <div className="text-white">Report</div>,
         cell: ({ row }) => (
           <u
             onClick={() => {
-              console.log('View Report for Appointment ID:', row.original.refAppointmentId);
+              console.log(
+                "View Report for Appointment ID:",
+                row.original.refAppointmentId
+              );
             }}
           >
             View
@@ -330,14 +379,18 @@ const MedicalHistory: React.FC = () => {
         maxSize: 90,
       },
       {
-        id: 'upload',
-        header: () => (
-          <div className='text-white'>Upload</div>
-        ),
+        id: "upload",
+        header: () => <div className="text-white">Upload</div>,
         cell: ({ row }) => (
-          <Upload className='cursor-pointer hover:text-blue-600' onClick={() => {
-              console.log('Upload for Appointment ID:', row.original.refAppointmentId);
-            }}/>
+          <Upload
+            className="cursor-pointer hover:text-blue-600"
+            onClick={() => {
+              console.log(
+                "Upload for Appointment ID:",
+                row.original.refAppointmentId
+              );
+            }}
+          />
         ),
         enableSorting: false,
         enableColumnFilter: false,
@@ -370,15 +423,14 @@ const MedicalHistory: React.FC = () => {
     initialState: {
       pagination: {
         pageSize: 5,
-      }
-    }
+      },
+    },
   });
 
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
       <div className="w-11/12 h-[80vh] bg-radial-greeting-02 mx-auto my-5 space-y-3 p-6 rounded-lg">
-
         {/* Table Container */}
         <div
           className="grid w-full border rounded-lg overflow-auto"
@@ -401,11 +453,15 @@ const MedicalHistory: React.FC = () => {
                       style={{
                         width: header.getSize(),
                         minWidth:
-                          (header.column.columnDef as ColumnDef<AppointmentDetails>)
-                            .minSize || "auto",
+                          (
+                            header.column
+                              .columnDef as ColumnDef<AppointmentDetails>
+                          ).minSize || "auto",
                         maxWidth:
-                          (header.column.columnDef as ColumnDef<AppointmentDetails>)
-                            .maxSize || "auto",
+                          (
+                            header.column
+                              .columnDef as ColumnDef<AppointmentDetails>
+                          ).maxSize || "auto",
                       }}
                     >
                       {header.isPlaceholder
@@ -440,7 +496,7 @@ const MedicalHistory: React.FC = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-gray-500"
+                    className="h-24 text-start lg:text-center text-gray-500"
                   >
                     No Medical History Found.
                   </TableCell>
