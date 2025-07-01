@@ -106,7 +106,7 @@ const ManageScanCenter: React.FC = () => {
       <div className="flex justify-end px-20 pt-6">
         <button
           className="bg-[#A3B1A1] text-white flex items-center gap-2 p-2 cursor-pointer rounded-full hover:bg-[#91a191]"
-          onClick={() => navigate("/admin/addScanCenter")}
+          onClick={() => navigate("../addScanCenter")}
         >
           <Plus size={40} />
         </button>
@@ -158,7 +158,7 @@ const ManageScanCenter: React.FC = () => {
                     variant="link"
                     className="p-0 text-sm"
                     onClick={() =>
-                      navigate(`/admin/viewScanCenter/${center.refSCId}`)
+                      navigate(`../viewScanCenter/${center.refSCId}`)
                     }
                   >
                     VIEW
