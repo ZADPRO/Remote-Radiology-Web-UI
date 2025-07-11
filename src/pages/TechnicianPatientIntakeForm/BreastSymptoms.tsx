@@ -12,13 +12,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { ResponsePatientForm } from "./TechnicianPatientIntakeForm";
+import { ResponseAudit, ResponsePatientForm } from "./TechnicianPatientIntakeForm";
 import { Textarea } from "@/components/ui/textarea";
 
 interface IntakeOption {
   questionId: number;
   answer: string;
-  
 }
 
 interface QuestionIds {
@@ -46,6 +45,8 @@ interface Props {
   questionIds: QuestionIds;
   setTechnicianFormData: any;
   setPatientFormData: any;
+  auditData?: ResponseAudit[];
+  readOnly?: boolean
 }
 
 const BreastSymptoms: React.FC<Props> = ({
@@ -55,8 +56,13 @@ const BreastSymptoms: React.FC<Props> = ({
   questionIds,
   setTechnicianFormData,
   setPatientFormData,
+  auditData,
+  readOnly
 }) => {
   const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
+  const [initialAnswers, setInitialAnswers] = useState<
+    Record<string, { label: string; value: string }[]>
+  >({});
 
   const handlePatientDataChange = (questionId: number, value: string) => {
     setPatientFormData((prev: ResponsePatientForm[]) =>
@@ -66,26 +72,16 @@ const BreastSymptoms: React.FC<Props> = ({
     );
   };
 
-  const handleEditClick = (symptomKey: string, questionIdsToCopy: number[]) => {
-    // Atomically update the technician form data to prevent race conditions
-    // and handle cases where the questionId might not exist yet.
-    setTechnicianFormData((prevData: IntakeOption[]) => {
-      const newData = [...prevData];
-      questionIdsToCopy.forEach((qId) => {
-        const patientAnswer = getPatientFormAnswer(qId);
-        const index = newData.findIndex((item) => item.questionId === qId);
-        if (index !== -1) {
-          newData[index] = { ...newData[index], answer: patientAnswer };
-        } else {
-          newData.push({ questionId: qId, answer: patientAnswer });
-        }
-      });
-      return newData;
-    });
-    setEditStatuses((prev) => ({ ...prev, [symptomKey]: true }));
-  };
+  const getPatientFormAnswer = (id: number) =>
+    patientFormData?.find((q) => q.questionId === id)?.answer || "";
 
-  const handleVerifyChange = (symptomMainQuestionId: number, checked: boolean) => {
+  const getAnswer = (id: number) =>
+    technicianFormData.find((q) => q.questionId === id)?.answer || "";
+
+  const handleVerifyChange = (
+    symptomMainQuestionId: number,
+    checked: boolean
+  ) => {
     setPatientFormData((prev: ResponsePatientForm[]) =>
       prev.map((item) =>
         item.questionId === symptomMainQuestionId
@@ -94,67 +90,127 @@ const BreastSymptoms: React.FC<Props> = ({
       )
     );
   };
-  const getAnswer = (id: number) =>
-    technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
-  const getPatientFormAnswer = (id: number) =>
-    patientFormData?.find((q) => q.questionId === id)?.answer || "";
-
-  console.log(patientFormData);
   const renderCheckbox = (
     name: string,
-    symptomMainQuestionId: number, // This will be the main QID of the symptom, e.g., 88 for lump
+    symptomMainQuestionId: number,
     className: string = ""
   ) => (
-    <div className={cn(`flex flex-col items-center w-25 gap-2`, className)}>
-      <div className="text-xs sm:text-xs font-medium">{name}</div>
+    <div className={cn(`flex flex-col items-center w-25 gap-1`, className)}>
+      {/* <div className="text-xs font-medium">{name}</div> */}
       <Checkbox2
+      name={name}
         className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
-        checked={patientFormData.find(q => q.questionId === symptomMainQuestionId)?.verifyTechnician || false}
-        onClick={() =>
-          handleVerifyChange(symptomMainQuestionId, !(patientFormData.find(q => q.questionId === symptomMainQuestionId)?.verifyTechnician || false))
+        checked={
+          patientFormData.find((q) => q.questionId === symptomMainQuestionId)
+            ?.verifyTechnician || false
         }
+        onClick={() =>
+          handleVerifyChange(
+            symptomMainQuestionId,
+            !(
+              patientFormData.find(
+                (q) => q.questionId === symptomMainQuestionId
+              )?.verifyTechnician || false
+            )
+          )
+        }
+        required
       />
     </div>
   );
+  
+const handleEditClick = (
+  symptomKey: string,
+  questionIdsToCopy: number[],
+  labels: string[]
+) => {
+  const answers: { label: string; value: string }[] = [];
 
-  console.log(patientFormData.find(q => q.questionId === 88))
+  questionIdsToCopy.forEach((id, index) => {
+    // Parse refTHData if needed
+    const matchingAudit = auditData?.find((entry) => {
+      let parsedData = [];
+
+      try {
+        const parsed = JSON.parse(entry.refTHData);
+        if (Array.isArray(parsed)) {
+          parsedData = parsed.map((d) => ({
+            ...d,
+            label: Number(d.label), // 🔁 Ensure label is a number
+          }));
+        }
+      } catch {
+        parsedData = [];
+      }
+
+      // @ts-ignore - temporarily assign parsedTHData if not already present
+      entry.parsedTHData = parsedData;
+
+      return parsedData.some((data) => data.label === id);
+    });
+
+    const parsed = matchingAudit?.parsedTHData?.find(
+      (data) => data.label === id
+    );
+
+    if (parsed) {
+      answers.push({ label: labels[index], value: parsed.newValue });
+    }
+  });
+
+  setInitialAnswers((prev) => ({
+    ...prev,
+    [symptomKey]: answers,
+  }));
+
+  setEditStatuses((prev) => ({
+    ...prev,
+    [symptomKey]: true,
+  }));
+};
+
+
 
   const renderSymptomWithVerification = (
     symptomKey: string,
-    symptomMainQuestionId: number, // This is the main QID for the symptom, e.g., 88 for lump
+    symptomMainQuestionId: number,
     patientQuestionIds: number[],
     patientAnswerLabels: string[],
     children: React.ReactNode
   ) => {
     const isEditing = editStatuses[symptomKey] || false;
-    const patientAnswers = patientQuestionIds.map((id, index) => ({
-      label: patientAnswerLabels[index],
-      value: getPatientFormAnswer(id),
-    }));
 
     return (
-      <div className="flex flex-col lg:flex-row w-full items-start py-4">
+      <div className="flex flex-col lg:flex-row w-full items-center
+       ">
         <div className="w-full lg:w-[80%] relative">
           {children}
           {!isEditing && (
             <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
           )}
         </div>
-        <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pt-2 pl-4">
+        <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
           <div className="flex gap-3">
             {renderCheckbox("Check to Confirm", symptomMainQuestionId)}
-            {!isEditing ? (
-              <div className="flex w-20 flex-col gap-2 items-center">
-                <div className="text-xs sm:text-xs font-medium">Edit</div>
+            {!readOnly && (
+            !isEditing ? (
+              <div className="flex w-20 flex-col gap-1 items-center">
+                {/* <div className="text-xs font-medium">Edit</div> */}
                 <Edit
-                  onClick={() => handleEditClick(symptomKey, patientQuestionIds)}
+                  onClick={() =>
+                    handleEditClick(
+                      symptomKey,
+                      patientQuestionIds,
+                      patientAnswerLabels
+                    )
+                  }
                   className="w-4 h-4 cursor-pointer"
                 />
               </div>
             ) : (
-              <div className="flex w-20 flex-col gap-2 items-center">
-                <div className="text-xs sm:text-xs font-medium">Info</div>
+              <div className="flex w-20 flex-col gap-1 items-center">
+                {/* <div className="text-xs font-medium">Info</div> */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
@@ -162,9 +218,9 @@ const BreastSymptoms: React.FC<Props> = ({
                   <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                     <div className="space-y-2 text-sm text-gray-700">
                       <div className="font-medium text-gray-900 border-b pb-2 mb-2">
-                        Patient Response
+                        Initial Patient Response
                       </div>
-                      {patientAnswers.map(
+                      {(initialAnswers[symptomKey] || []).map(
                         (pa) =>
                           pa.value && (
                             <div
@@ -184,7 +240,8 @@ const BreastSymptoms: React.FC<Props> = ({
                   </PopoverContent>
                 </Popover>
               </div>
-            )}
+            )
+          )}
           </div>
         </div>
       </div>
@@ -193,7 +250,7 @@ const BreastSymptoms: React.FC<Props> = ({
 
   return (
     <div className="flex h-full flex-col gap-6 p-4 sm:p-2 overflow-y-auto relative">
-      {/* Priority */}
+      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
       {renderSymptomWithVerification(
         "clinicalExam",
         87,
@@ -202,16 +259,8 @@ const BreastSymptoms: React.FC<Props> = ({
         <MultiOptionRadioGroup
           label="a. Clinical Exam notes"
           questionId={87}
-          formData={
-            editStatuses["clinicalExam"]
-              ? technicianFormData
-              : patientFormData
-          }
-          handleInputChange={
-            editStatuses["clinicalExam"]
-              ? handleInputChange
-              : handlePatientDataChange
-          }
+          formData={patientFormData}
+          handleInputChange={handlePatientDataChange}
           options={[
             { label: "Asymptomatic", value: "No" },
             { label: "Symptoms", value: "Yes" },
@@ -220,34 +269,32 @@ const BreastSymptoms: React.FC<Props> = ({
         />
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-2">
         {getPatientFormAnswer(87) === "Yes" && (
           <>
-            {/* Deformity - Technician Only */}
-            <BreastInputWithout
-              technician={true}
-              label="Deformity / Asymmetry"
-              checkStatusQId={questionIds.deformity}
-              biggerSide={questionIds.deformityBig}
-              RQID={questionIds.deformityRight}
-              LQID={questionIds.deformityLeft}
-              SDate={questionIds.deformityDuration}
-              data={technicianFormData}
-              setData={setTechnicianFormData}
-            />
-
-            {/* Fields with patient data verification */}
-            {renderSymptomWithVerification("lump", 88, [88, 89, 90, 91, 92, 93], ["Checked", "R", "L", "Duration", "Size", "Details"],
+            {/* Use renderSymptomWithVerification for other symptoms */}
+            {renderSymptomWithVerification(
+              "lump",
+              88,
+              [88, 89, 90, 91, 92],
+              ["Checked", "R", "L", "Duration", "Size"],
               <BreastInput
-                technician={true}
+                technician
                 label="Lump or thickening"
-                checkStatusQId={88} RQID={89} LQID={90} SDate={91} Size={92} OtherInputQId={93}
-                data={patientFormData} setData={setPatientFormData}
-                patientData={patientFormData} setPatientData={setPatientFormData}
+                checkStatusQId={88}
+                RQID={89}
+                LQID={90}
+                SDate={91}
+                Size={92}
+                OtherInputQId={93}
+                data={patientFormData}
+                setData={setPatientFormData}
+                patientData={patientFormData}
+                setPatientData={setPatientFormData}
                 editStatus={!editStatuses["lump"]}
               />
             )}
-            {renderSymptomWithVerification("skin", 94, [94, 95, 96, 97, 98], ["Checked", "R", "L", "Duration", "Details"],
+            {renderSymptomWithVerification("skin", 94, [94, 95, 96, 97], ["Checked", "R", "L", "Duration"],
               <BreastInput
                 technician={true}
                 label="Skin changes"
@@ -257,7 +304,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 editStatus={!editStatuses["skin"]}
               />
             )}
-            {renderSymptomWithVerification("nippleDischarge", 99, [99, 100, 101, 102, 103], ["Checked", "R", "L", "Duration", "Details"],
+            {renderSymptomWithVerification("nippleDischarge", 99, [99, 100, 101, 102], ["Checked", "R", "L", "Duration"],
               <BreastInputWithout
                 technician={true}
                 label="Nipple discharge"
@@ -267,7 +314,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 editStatus={!editStatuses["nippleDischarge"]}
               />
             )}
-            {renderSymptomWithVerification("pain", 106, [106, 107, 108, 109, 110], ["Checked", "R", "L", "Duration", "Details"],
+            {renderSymptomWithVerification("pain", 106, [106, 107, 108, 109], ["Checked", "R", "L", "Duration"],
               <BreastInput
                 technician={true}
                 label="Pain On Palpation" //Breast Pain
@@ -277,7 +324,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 editStatus={!editStatuses["pain"]}
               />
             )}
-            {renderSymptomWithVerification("nippleRetraction", 111, [111, 112, 113, 114, 115, 104, 105], ["Checked", "R", "L", "Duration", "Details", "Position", "Position Details"],
+            {renderSymptomWithVerification("nippleRetraction", 111, [111, 112, 113, 114, 104, 105], ["Checked", "R", "L", "Duration", "Position", "Position Details"],
               <BreastInputWithout
                 technician={true}
                 label="Nipple Retraction" //Nipple Changes
@@ -312,7 +359,7 @@ const BreastSymptoms: React.FC<Props> = ({
             />
 
             {/* Lymph Node Swelling - with verification */}
-            {renderSymptomWithVerification("lymph", 116, [116, 117, 118, 119, 120, 121], ["Checked", "R", "L", "Duration", "Location", "Details"],
+            {renderSymptomWithVerification("lymph", 116, [116, 117, 118, 119, 120], ["Checked", "R", "L", "Duration", "Location"],
               <BreastInputLocation
                 label="Lymph node swelling"
                 technician={true}
@@ -326,19 +373,20 @@ const BreastSymptoms: React.FC<Props> = ({
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2">
-          <Label className="font-semibold text-base flex flex-wrap gap-1">
-            b. Others / Additional Comments
-          </Label>
-          <Textarea
-            className=""
-            value={getAnswer(questionIds.additionalComments)}
-            onChange={(e) =>
-              handleInputChange(questionIds.additionalComments, e.target.value)
-            }
-            placeholder="Enter Details"
-          />
-        </div>
+      <div className="flex flex-col sm:flex-row gap-2 mt-5">
+        <Label className="font-semibold text-base flex flex-wrap gap-1">
+          b. Others / Additional Comments
+        </Label>
+        <Textarea
+          className=""
+          value={getAnswer(questionIds.additionalComments)}
+          onChange={(e) =>
+            handleInputChange(questionIds.additionalComments, e.target.value)
+          }
+          placeholder="Enter Details"
+        />
+      </div>
+      </div>
     </div>
   );
 };

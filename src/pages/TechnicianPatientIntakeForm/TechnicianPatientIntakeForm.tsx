@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { IntakeOption } from "../PatientInTakeForm/MainInTakeForm";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew2.png";
 import navbar_bg from "../../assets/navbar_bg.png";
@@ -8,11 +7,16 @@ import AllergiesMedications from "./AllergiesMedications";
 import BreastBiopsy from "./BreastBiopsy";
 import AddintionalNotes from "./AddintionalNotes";
 import BreastSymptoms from "./BreastSymptoms";
-import { appointmentService, patientInTakeService } from "@/services/patientInTakeFormService";
+import {
+  appointmentService,
+  patientInTakeService,
+} from "@/services/patientInTakeFormService";
 import PriorImaging from "./PriorImaging";
 import { FileData } from "@/services/commonServices";
-import UploadDicoms from "./UploadDicoms";
-import { PatientInTakeFormNavigationState } from "../PatientInTakeForm/PatientInTakeFormS/PatientInTakeForm01";
+import { IntakeOption } from "../PatientInTakeForm/PatientInTakeForm";
+import { technicianService } from "@/services/technicianServices";
+import { Button } from "@/components/ui/button";
+import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 
 export interface ResponsePatientForm {
   refITFId: number;
@@ -22,16 +26,36 @@ export interface ResponsePatientForm {
   file?: FileData;
 }
 
-interface ResponseAudit {
+export interface ResponseAudit {
   refTHActionBy: number;
   refTHData: string;
   refTHTime: string;
   refUserId: number;
   transTypeId: number;
+  parsedTHData: {
+    oldValue: string;
+    newValue: string;
+    label: number;
+  }[];
 }
 
-const TechnicianPatientIntakeForm: React.FC = () => {
+export interface TechnicianIntakeFormNavigationState {
+  fetchFormData?: boolean;
+  fetchTechnicianForm?: boolean;
+  appointmentId: number;
+  userId: number;
+  readOnly?: boolean;
+}
+
+interface TechnicianPatientIntakeFormProps
+  extends Partial<TechnicianIntakeFormNavigationState> {}
+
+const TechnicianPatientIntakeForm: React.FC<
+  TechnicianPatientIntakeFormProps
+> = (props) => {
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
 
   const options = [
     "Allergies & Medications",
@@ -39,7 +63,7 @@ const TechnicianPatientIntakeForm: React.FC = () => {
     "Prior Imaging",
     "Breast Biopsy",
     "Additional Notes",
-    "Upload Dicom",
+    // "Upload Dicom",
   ];
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
@@ -59,24 +83,80 @@ const TechnicianPatientIntakeForm: React.FC = () => {
     }))
   );
 
-  const [dicomFiles, setDicomFiles] = useState<
-    { file_name: string; old_file_name: string }[]
-  >([]);
+  const [auditData, setAuditData] = useState<ResponseAudit[]>([]);
 
-  console.log(dicomFiles);
+  const location = useLocation();
+  const locationState =
+    location.state as TechnicianIntakeFormNavigationState | null;
 
-  const [auditData, setAuditData] = useState<ResponseAudit[]>();
+  const controlData: TechnicianIntakeFormNavigationState = {
+    fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,
+    fetchTechnicianForm:
+      props.fetchTechnicianForm ?? locationState?.fetchTechnicianForm ?? false,
+    appointmentId: props.appointmentId ?? locationState?.appointmentId ?? 0,
+    userId: props.userId ?? locationState?.userId ?? 0,
+    readOnly: props.readOnly ?? locationState?.readOnly ?? false,
+  };
 
-  console.log(auditData);
+  console.log(controlData);
 
-  const fetchFormData: PatientInTakeFormNavigationState = useLocation().state;
+  console.log(patientFormData);
 
   useEffect(() => {
-    if (fetchFormData.fetchFormData) {
-      console.log(fetchFormData)
-      handleFetchPatientForm(fetchFormData.apiInfo.userId, fetchFormData.apiInfo.appointmentId);
+    const stored = localStorage.getItem("formSession");
+    setLoading(true);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+
+        console.log(parsed);
+
+        // Check appointment match
+        if (parsed.appointmentId == controlData.appointmentId) {
+          // Load the saved session data
+          if (parsed.patientFormData && parsed.technicianFormData) {
+            setPatientFormData(parsed.patientFormData);
+            setTechnicianFormData(parsed.technicianFormData);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse stored session", e);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, []);
+  }, []); // Runs only once on mount
+
+  // This effect will store changes to localStorage
+  useEffect(() => {
+    if (!controlData?.appointmentId) return;
+
+    const dataToStore = {
+      appointmentId: controlData.appointmentId,
+      patientFormData,
+      technicianFormData,
+    };
+
+    localStorage.setItem("formSession", JSON.stringify(dataToStore));
+  }, [patientFormData, technicianFormData]);
+
+  useEffect(() => {
+    if (
+      controlData.fetchFormData == true &&
+      controlData.userId != undefined &&
+      controlData.appointmentId != undefined
+    ) {
+      handleFetchPatientForm(controlData.userId, controlData.appointmentId);
+    }
+
+    if (
+      controlData.fetchTechnicianForm == true &&
+      controlData.userId != undefined &&
+      controlData.appointmentId != undefined
+    ) {
+      handleFetchTechnicianForm(controlData.userId, controlData.appointmentId);
+    }
+  }, [useLocation().state]);
 
   const handleFetchPatientForm = async (
     userID: number,
@@ -90,9 +170,55 @@ const TechnicianPatientIntakeForm: React.FC = () => {
       console.log(res);
 
       if (res.status) {
+        console.log(res.data.find((item: any) => item.questionId == 134));
+
         setPatientFormData(res.data);
-        setAuditData(res.auditdata);
-        console.log(res.data);
+
+        const parsedAuditData = res.auditdata.map((item: any) => {
+          let parsedTHData = [];
+
+          try {
+            const parsed = JSON.parse(item.refTHData);
+
+            if (Array.isArray(parsed)) {
+              parsedTHData = parsed.map((entry: any) => ({
+                ...entry,
+                label: Number(entry.label), // 🔁 convert label to number
+              }));
+            }
+          } catch (e) {
+            parsedTHData = [];
+          }
+
+          return {
+            ...item,
+            parsedTHData,
+          };
+        });
+
+        setAuditData(parsedAuditData);
+
+        setAuditData(parsedAuditData); // ✅ update state properly
+        console.log("auditData", parsedAuditData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFetchTechnicianForm = async (
+    userID: number,
+    appointmentId: number
+  ) => {
+    try {
+      const res = await technicianService.listTechnicianForm(
+        userID,
+        appointmentId
+      );
+      console.log("res", res);
+
+      if (res.TechIntakeData) {
+        setTechnicianFormData(res.TechIntakeData);
       }
     } catch (error) {
       console.log(error);
@@ -100,50 +226,38 @@ const TechnicianPatientIntakeForm: React.FC = () => {
   };
 
   const handleShift = (categoryId: number) => {
-    navigate("/mainInTakeForm", {
+    navigate("/patientInTakeForm", {
       state: {
         categoryId: categoryId,
         fetchFormData: true,
-        apiInfo: {
-          userId: fetchFormData.apiInfo.userId,
-          appointmentId: fetchFormData.apiInfo.appointmentId,
-        },
+        apiUpdate: true,
+        appointmentId: controlData.appointmentId,
+        userId: controlData.userId,
       },
     });
   };
 
-  const categoryMap: Record<number, number> = {
-  167: 1,
-  168: 2,
-  169: 3,
-  170: 4,
-};
-
-const selectedCategoryId =
-  categoryMap[
-    patientFormData.find(
-      (q: any) => [167, 168, 169, 170].includes(q.questionId) && q.answer === "true"
-    )?.questionId || 0
-  ] || 0;
-
-
   const handleAddTechnicianForm = async () => {
     try {
-      const payload = {
-        patientId: fetchFormData.apiInfo.userId,
-        categoryId: selectedCategoryId,
-        appointmentId: fetchFormData.apiInfo.appointmentId,
-        updatedAnswers: patientFormData,
-        technicianAnswers: technicianFormData,
-        dicom_files: dicomFiles,
-      }
-      console.log(payload);
-      const res = await appointmentService.addTechnicianInTakeForm(payload);
+      const categoryId = patientFormData.find((item) => item.questionId == 170);
 
-      console.log(res);
+      if (categoryId) {
+        const payload = {
+          patientId: controlData.userId,
+          categoryId: parseInt(categoryId.answer),
+          appointmentId: controlData.appointmentId,
+          updatedAnswers: patientFormData,
+          technicianAnswers: technicianFormData,
+        };
+        console.log(payload);
+        const res = await appointmentService.addTechnicianInTakeForm(payload);
 
-      if(res.status) {
-        navigate(-1);
+        console.log(res);
+
+        if (res.status) {
+          localStorage.removeItem("formSession");
+          navigate(-1);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -189,15 +303,6 @@ const selectedCategoryId =
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  useEffect(() => {
-    if (optionRefs.current[selectedSection]) {
-      optionRefs.current[selectedSection]!.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, [selectedSection]);
-
   const renderSectionComponent = () => {
     switch (selectedSection) {
       case "Allergies & Medications":
@@ -224,6 +329,7 @@ const selectedCategoryId =
               MedicationOthers: 16,
               MedicationOtherSpecify: 17,
             }}
+            readOnly={controlData.readOnly ? true : false}
           />
         );
 
@@ -252,6 +358,8 @@ const selectedCategoryId =
               soreDuration: 31,
               additionalComments: 32,
             }}
+            auditData={auditData}
+            readOnly={controlData.readOnly ? true : false}
           />
         );
 
@@ -259,7 +367,11 @@ const selectedCategoryId =
         return (
           <BreastBiopsy
             technicianFormData={technicianFormData}
+            patientFormData={patientFormData}
+            auditData={auditData}
             handleInputChange={handleInputChange}
+            handlePatientInputChange={handlePatientInputChange}
+            setPatientFormData={setPatientFormData}
             questionIds={{
               breastBiopsy: 33,
               left: 34,
@@ -268,6 +380,7 @@ const selectedCategoryId =
               malignant: 37,
               reportsAttached: 38,
             }}
+            readOnly={controlData.readOnly ? true : false}
           />
         );
 
@@ -284,8 +397,9 @@ const selectedCategoryId =
               artifactsstaus: 40,
               artifactsother: 41,
               reprocessing: 42,
-              confirmation: 43
+              confirmation: 43,
             }}
+            readOnly={controlData.readOnly ? true : false}
           />
         );
 
@@ -297,6 +411,7 @@ const selectedCategoryId =
             handleInputChange={handleInputChange}
             handleInputChangePatient={handlePatientInputChange}
             setPatientFormData={setPatientFormData}
+            auditData={auditData}
             questionIds={{
               //patientFormQuestions
               thermogramYesNo: 124,
@@ -343,32 +458,22 @@ const selectedCategoryId =
 
               additionalComments: 159,
             }}
-          />
-        );
-      case "Upload Dicom":
-        return (
-          <UploadDicoms
-            technicianFormData={technicianFormData}
-            handleInputChange={handleInputChange}
-            questionIds={{
-              confirmation: 44,
-            }}
-            setDicomFiles={setDicomFiles}
+            readOnly={controlData.readOnly ? true : false}
           />
         );
       default:
         return null;
     }
   };
-  
 
   return (
     <form
+      noValidate={controlData.readOnly}
       onSubmit={(e) => {
         e.preventDefault();
         const currentIndex = options.indexOf(selectedSection);
         const isLastSection = currentIndex === options.length - 1;
-         if (isLastSection) {
+        if (isLastSection) {
           handleAddTechnicianForm();
         } else {
           setSelectedSection(options[currentIndex + 1]);
@@ -377,6 +482,7 @@ const selectedCategoryId =
       className="flex flex-col realtive h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]"
     >
       {/* Sidebar */}
+      {loading && <LoadingOverlay />}
       <div
         className="flex w-full h-[10vh] px-5 sm:px-10 bg-[#abb4a5] items-center"
         style={{
@@ -393,7 +499,18 @@ const selectedCategoryId =
           Technologist Form
         </div>
       </div>
-      <div className="px-3 w-full lg:px-15 h-[80vh] mt-[3vh]">
+
+      <Button
+        type="button"
+        variant="link"
+        className="self-start flex text-foreground font-semibold items-center gap-2"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft />
+        <span className="text-lg font-semibold">Back</span>
+      </Button>
+
+      <div className="px-3 w-full py-2 lg:px-15 h-[80vh]">
         <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar">
           {options.map((option, index) => (
             <div
@@ -417,7 +534,12 @@ const selectedCategoryId =
           ))}
         </div>
         <div className="mt-[1vh] h-[71vh] bg-[#f9f4ed] rounded-b-2xl">
-          <div className="h-[65vh] px-5 lg:p-5">{renderSectionComponent()}</div>
+          <div
+            className={`h-[65vh] px-5 lg:p-5
+              `}
+          >
+            {renderSectionComponent()}
+          </div>
           <div className="h-[6vh] w-full">
             {/* Navigation Buttons */}
             <div className="h-[5vh] shrink-0 flex items-center justify-between py-4 mt-2 lg:mt-0">
@@ -434,20 +556,25 @@ const selectedCategoryId =
                   }
                 }}
               >
-                <ArrowLeft className="mr-2 h-3 w-3" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </button>
 
-              <button
-                          type="submit" // Changed to type="submit" to trigger form onSubmit
-                          className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-                          // disabled={isNextButtonDisabled}
-                        >
-                          {options.indexOf(selectedSection) === options.length - 1
-                            ? "Submit"
-                            : "Next"}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </button>
+              {!(
+                options.indexOf(selectedSection) === options.length - 1 &&
+                controlData.readOnly
+              ) && (
+                <button
+                  type="submit"
+                  className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+                  // disabled={isNextButtonDisabled}
+                >
+                  {options.indexOf(selectedSection) === options.length - 1
+                    ? "Submit"
+                    : "Next"}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>
