@@ -14,7 +14,6 @@ import {
   Filter,
   ArrowUp,
   ArrowDown,
-  Upload,
 } from "lucide-react";
 
 import {
@@ -106,6 +105,28 @@ const MedicalHistory: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const getFormStatus = (status: string): any => {
+    switch (status) {
+      case "fillform":
+        return {
+          text: "Yet to Start",
+          color: "text-blue-600"
+        
+      };
+      case "technologistformfill":
+        return {
+          text: "Completed",
+          color: "text-green-600"
+        };
+      default:
+        return {
+          text: "Completed",
+          color: "text-green-600"
+        };
+
+    }
+  }
 
   useEffect(() => {
     handleFetchMedicalHistory();
@@ -310,32 +331,28 @@ const MedicalHistory: React.FC = () => {
             <div className="flex justify-between items-center w-full">
               <span className={isFillForm ? "italic" : ""}>{formName}</span>
               <span
-                className="text-blue-600 hover:underline cursor-pointer font-medium ml-4"
+                className={`${actionText == "View" ? "text-green-600" : "text-blue-600 "} hover:underline cursor-pointer font-medium ml-4`}
                 onClick={() => {
                   if (isFillForm) {
                     console.log(
                       `Start Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`
                     );
-                    navigate("/patientInTakeForm-01", {
+                    navigate("/patientInTakeForm", {
                       state: {
                         fetchFormData: false,
-                        apiInfo: {
-                          userId: user?.refUserId,
-                          appointmentId: row.original.refAppointmentId,
-                        },
+                        appointmentId: row.original.refAppointmentId,
                       },
                     });
                   } else {
                     console.log(
                       `View Completed Form for ${formName} (Appointment ID: ${row.original.refAppointmentId})`
                     );
-                    navigate("/patientInTakeForm-01", {
+                    navigate("/patientInTakeForm", {
                       state: {
                         fetchFormData: true,
-                        apiInfo: {
-                          userId: user?.refUserId,
-                          appointmentId: row.original.refAppointmentId,
-                        },
+                        appointmentId: row.original.refAppointmentId,
+                        userId: user?.refUserId,
+                        readOnly: true,
                       },
                     });
                   }
@@ -356,49 +373,64 @@ const MedicalHistory: React.FC = () => {
         },
         size: 350,
       },
+      // {
+      //   id: "reportView",
+      //   header: () => <div className="text-white">Report</div>,
+      //   cell: ({ row }) => (
+      //     <u
+      //       onClick={() => {
+      //         console.log(
+      //           "View Report for Appointment ID:",
+      //           row.original.refAppointmentId
+      //         );
+      //       }}
+      //     >
+      //       View
+      //     </u>
+      //   ),
+      //   enableSorting: false,
+      //   enableColumnFilter: false,
+      //   enableHiding: false,
+      //   size: 80,
+      //   minSize: 70,
+      //   maxSize: 90,
+      // },
       {
-        id: "reportView",
-        header: () => <div className="text-white">Report</div>,
-        cell: ({ row }) => (
-          <u
-            onClick={() => {
-              console.log(
-                "View Report for Appointment ID:",
-                row.original.refAppointmentId
-              );
-            }}
-          >
-            View
-          </u>
-        ),
-        enableSorting: false,
-        enableColumnFilter: false,
-        enableHiding: false,
-        size: 80,
-        minSize: 70,
-        maxSize: 90,
-      },
-      {
-        id: "upload",
-        header: () => <div className="text-white">Upload</div>,
-        cell: ({ row }) => (
-          <Upload
-            className="cursor-pointer hover:text-blue-600"
-            onClick={() => {
-              console.log(
-                "Upload for Appointment ID:",
-                row.original.refAppointmentId
-              );
-            }}
-          />
-        ),
-        enableSorting: false,
-        enableColumnFilter: false,
-        enableHiding: false,
-        size: 90,
-        minSize: 80,
-        maxSize: 100,
-      },
+  id: "status",
+  header: () => <div className="text-white">Status</div>,
+  cell: ({ row }) => {
+    const statusData = getFormStatus(row.original.refAppointmentComplete);
+    if (!statusData) return null;
+
+    return (
+      <span className={`font-medium ${statusData.color}`}>
+        {statusData.text}
+      </span>
+    );
+  }
+}
+
+      // {
+      //   id: "upload",
+      //   header: () => <div className="text-white">Upload</div>,
+      //   cell: ({ row }) => (
+      //     <Upload
+      //       className="cursor-pointer hover:text-blue-600"
+      //       onClick={() => {
+      //         console.log(
+      //           "Upload for Appointment ID:",
+      //           row.original.refAppointmentId
+      //         );
+      //       }}
+      //     />
+      //   ),
+      //   enableSorting: false,
+      //   enableColumnFilter: false,
+      //   enableHiding: false,
+      //   size: 90,
+      //   minSize: 80,
+      //   maxSize: 100,
+      // },
     ],
     []
   );

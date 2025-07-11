@@ -1,24 +1,40 @@
 import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
 
-export interface IntakeOption {
-  questionId: number;
-  answer: string; // "true" or "false"
+export interface AppointmentStatus {
+  refAppointmentAccessId: number;
+  refAppointmentAccessStatus: boolean;
+  refAppointmentAssignedUserId: number;
+  refAppointmentComplete: string;
+  refAppointmentDate: string;
+  refAppointmentId: number;
+  refAppointmentPriority: string;
+  refAppointmentRemarks: string;
+  refCategoryId: number;
+  refSCCustId: string;
+  refSCId: number;
+  refSCName: string;
+  refUserId: number;
 }
 
-export interface FinalFormData {
-  categoryId: number | null;
-  overriderequest: boolean;
-  appointmentId: number;
-  answers: IntakeOption[];
+export interface ReportHistoryData {
+  HandleUserName: string;
+  refRHHandleEndTime: string;
+  refRHHandleStartTime: string;
+  refRHHandledUserId: number;
+  refRHId: number;
+  refRHHandleContentText: string;
+  refRHHandleStatus: string;
 }
 
-export const patientInTakeService = {
-    addPatientInTakeForm: async ( formData: any ) => {
+export const reportService = {
+  checkAccess: async (appointmentId: number) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt(formData, token);
+    const payload = encrypt({ appointmentId: appointmentId }, token);
+
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/add`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/checkaccess`,
       { encryptedData: payload },
       {
         headers: {
@@ -33,12 +49,13 @@ export const patientInTakeService = {
     return decryptedData;
   },
 
-  fetchPatientInTakeForm: async (userId: number, AppointmentId: number) => {
+  getTemplate: async (id: number) => {
     const token = localStorage.getItem("token");
+    const payload = encrypt({ id: id }, token);
 
-    const payload = encrypt({ userId, AppointmentId }, token);
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/view`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/getReportFormate`,
       { encryptedData: payload },
       {
         headers: {
@@ -52,11 +69,17 @@ export const patientInTakeService = {
     console.log(decryptedData);
     return decryptedData;
   },
-  updatePatientInTakeForm: async ( formData: any ) => {
+
+  uploadTemplate: async (fileName: string, fileData: string) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt(formData, token);
+    const payload = encrypt(
+      { name: fileName, formateTemplate: fileData },
+      token
+    );
+
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/update`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/uploadReportFormate`,
       { encryptedData: payload },
       {
         headers: {
@@ -65,82 +88,86 @@ export const patientInTakeService = {
         },
       }
     );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  assignReport: async (
+    appointmentId: number,
+    patientId: number,
+    readOnly: boolean
+  ) => {
+    const token = localStorage.getItem("token");
+    console.log(appointmentId, patientId, readOnly)
+    const payload = encrypt(
+      {
+        appointmentId: appointmentId,
+        patientId: patientId,
+        readOnly: readOnly,
+      },
+      token
+    );
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/assignreport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  submitReport: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/submitReport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  listDicoms: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/technicianintakeform/viewDicom`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     const decryptedData = decrypt(res.data.data, res.data.token);
     localStorage.setItem("token", res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
 };
-
-export interface AppointmentAdd {
-  refSCId: string;
-  refAppointmentDate: string;
-}
-
-export interface AppointmentDetails {
-  refAppointmentComplete: string; 
-  refAppointmentDate: string; 
-  refAppointmentId: number;
-  refCategoryId: number;
-  refSCCustId: string;
-  refSCId: number;
-}
-
-export const appointmentService = {
-  addAppointment: async (formData: AppointmentAdd) => {
-    const token = localStorage.getItem("token");
-
-     const payload = encrypt(formData, token);
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/add`,
-      { encryptedData: payload },
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
-    console.log(decryptedData);
-    return decryptedData;
-  },
-
-  listPatientMedicalHistory: async() => {
-    const token = localStorage.getItem("token");
-
-    const res = await axios.get(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/viewpatienthistory`,
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
-    console.log(decryptedData);
-    return decryptedData;
-  },
-
-  addTechnicianInTakeForm: async (formData: any) => {
-    const token = localStorage.getItem("token");
-    const payload = encrypt(formData, token);
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/technicianintakeform/add`,
-      { encryptedData: payload },
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
-    console.log(decryptedData);
-    return decryptedData;
-},
-}
