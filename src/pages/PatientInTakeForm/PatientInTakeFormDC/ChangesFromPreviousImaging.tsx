@@ -5,7 +5,7 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { useEffect } from "react";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   changesFindings: number;

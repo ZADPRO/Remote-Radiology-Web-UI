@@ -6,9 +6,7 @@ import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/Labe
 import { useState } from "react";
 import { uploadService } from "@/services/commonServices";
 import DatePicker from "@/components/date-picker";
-import { IntakeOption } from "../MainInTakeForm";
-
-
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   previousBiopsy: number;
@@ -24,12 +22,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const Biopsy: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -61,9 +61,9 @@ const Biopsy: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Biopsy" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto p-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <div className="flex flex-col flex-wrap gap-x-4 gap-y-2">
           <Label className="text-base font-semibold block mb-2">
@@ -186,7 +186,7 @@ const Biopsy: React.FC<Props> = ({
                     type="file"
                     className="sr-only"
                     onChange={handleFileChange}
-                    required={getAnswer(questionIds.reportAvailablity) === "Available"}
+                    required={getAnswer(questionIds.reportAvailablity) === "Available" && !(selectedFileName || uploadedFileName)}
                   />
                   Upload File
                 </label>
@@ -213,6 +213,7 @@ const Biopsy: React.FC<Props> = ({
             placeholder="Enter Details"
           />
         </div>
+      </div>
       </div>
     </div>
   );

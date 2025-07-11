@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   receptorStatus: number;

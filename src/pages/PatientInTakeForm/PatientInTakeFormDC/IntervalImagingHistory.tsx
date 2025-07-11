@@ -5,7 +5,7 @@ import FormHeader from "../FormHeader";
 import DatePicker from "@/components/date-picker";
 import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   noneCheckbox: number;

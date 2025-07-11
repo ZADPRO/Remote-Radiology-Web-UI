@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
 import DatePicker from "@/components/date-picker";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   performed: number;
@@ -139,7 +139,7 @@ const BiopsyInformation: React.FC<Props> = ({
                 ].map((option) => (
                   <div
                     key={option}
-                    className="ml-4 flex flex-col lg:flex-row h-[auto] lg:h-[20px]"
+                    className="ml-4 flex items-center flex-col lg:flex-row h-[auto] lg:h-[20px]"
                   >
                     <div className="flex space-x-2 ">
                       <input

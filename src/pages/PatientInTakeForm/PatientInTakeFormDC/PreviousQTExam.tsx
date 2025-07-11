@@ -4,7 +4,7 @@ import DatePicker from "@/components/date-picker";
 import { Input } from "@/components/ui/input";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   previousQTImaging: number;

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { IntakeOption } from "../MainInTakeForm"; // Adjust path if needed
 import checkedImg from "../../../assets/checked.png";
 import PersonalInformation from "./PersonalInformation"; // Path may vary
 import PreviousImaging from "./PreviousImaging";
@@ -13,51 +12,20 @@ import PersonalMedicalHistory from "./PersonalMedicalHistory";
 import sidebar_bg from "../../../assets/Mask_group.png";
 import Biopsy from "./Biopsy";
 import logo from "../../../assets/LogoNew.png";
-import { patientInTakeService } from "@/services/patientInTakeFormService";
-import { SubmitDialog } from "../SubmitDialog";
 import RiskStratification from "./RiskStratification";
+import { IntakeOption } from "../PatientInTakeForm";
+import { Button } from "@/components/ui/button";
 
-export interface PatientInTakeFormNavigationState {
-  categoryId?: number;
-  fetchFormData: boolean;
-  apiInfo: {
-    userId: number;
-    appointmentId: number;
-  };
+interface Props{
+  formData: IntakeOption[];
+  setFormData: React.Dispatch<React.SetStateAction<IntakeOption[]>>;
+  handleFormSwitch: (formNumber: number) => void;
+  openSubmitDialog: () => void;
+  readOnly: boolean;
 }
 
-const PatientInTakeForm01: React.FC = () => {
+const PatientInTakeForm01: React.FC<Props> = ({formData, setFormData, handleFormSwitch, openSubmitDialog, readOnly}) => {
   const navigate = useNavigate();
-
-  const fetchFormData: PatientInTakeFormNavigationState = useLocation().state;
-
-  useEffect(() => {
-    if (fetchFormData) {
-      if (fetchFormData.fetchFormData) handleFetchPatientForm(fetchFormData.apiInfo.userId, fetchFormData.apiInfo.appointmentId);
-    }
-  }, [fetchFormData]);
-
-  console.log(fetchFormData);
-
-  const handleFetchPatientForm = async (
-    userID: number,
-    appointmentId: number
-  ) => {
-    try {
-      const res = await patientInTakeService.fetchPatientInTakeForm(
-        userID,
-        appointmentId
-      );
-      console.log(res);
-
-      if (res.status) {
-        setFormData(res.data);
-        console.log(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const options = [
     "Personal Information",
@@ -73,11 +41,11 @@ const PatientInTakeForm01: React.FC = () => {
 
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  useEffect(() => {
+  // const isMobile = useIsMobile();
+
+useEffect(() => {
     if (optionRefs.current[selectedSection]) {
       optionRefs.current[selectedSection]!.scrollIntoView({
         behavior: "smooth",
@@ -85,20 +53,6 @@ const PatientInTakeForm01: React.FC = () => {
       });
     }
   }, [selectedSection]);
-
-  const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 500 }, (_, index) => ({
-      questionId: 1 + index,
-      answer: "",
-    }))
-  );
-
-  // const [finalFormData, setFinalFormData] = useState<FinalFormData>({
-  //   categoryId: null,
-  //   overriderequest: false,
-  //   appointmentId: 1,
-  //   answers: formData,
-  // });
 
   const handleInputChange = (questionId: number, value: string) => {
     setFormData((prev) =>
@@ -126,6 +80,7 @@ const PatientInTakeForm01: React.FC = () => {
           <PersonalInformation
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               fullName: 1,
               dob: 2,
@@ -147,6 +102,7 @@ const PatientInTakeForm01: React.FC = () => {
           <RiskStratification
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               ibisScore: 14,
               auriaStatus: 15,
@@ -166,6 +122,7 @@ const PatientInTakeForm01: React.FC = () => {
           <MenstrualAndReproductive
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               ageFirstMenstrualPeriod: 24,
               ageLiveBirth: 25,
@@ -192,6 +149,7 @@ const PatientInTakeForm01: React.FC = () => {
           <FamilyHistory
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               relatives: 41,
               relativesDiagnoses: 42,
@@ -218,6 +176,7 @@ const PatientInTakeForm01: React.FC = () => {
           <LifeStyleFactors
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               alcoholConsumption: 56,
               alcoholDrinks: 57,
@@ -237,6 +196,7 @@ const PatientInTakeForm01: React.FC = () => {
           <PersonalMedicalHistory
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               previousSurgiries: 66,
               mastectomy: 67,
@@ -267,6 +227,7 @@ const PatientInTakeForm01: React.FC = () => {
           <CurrentBreastSymptoms
             data={formData}
             setData={setFormData}
+            readOnly={readOnly}
             questionIds={{
               breastCancerSymptoms: 87,
               lumpOrThick: 88,
@@ -313,6 +274,7 @@ const PatientInTakeForm01: React.FC = () => {
           <PreviousImaging
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               thermogramYesNo: 124,
               thermogramDate: 125,
@@ -366,6 +328,7 @@ const PatientInTakeForm01: React.FC = () => {
           <Biopsy
             formData={formData}
             handleInputChange={handleInputChange}
+            readOnly={readOnly}
             questionIds={{
               previousBiopsy: 160,
               previousBiopsyDate: 161,
@@ -410,13 +373,9 @@ const PatientInTakeForm01: React.FC = () => {
 
     if (buttonText === "Submit" && selectedSection === "Personal Information") {
       console.log("Submitting formData:", formData);
-      setDialogOpen(true);
+      openSubmitDialog();
     } else if (isLastSection) {
-      console.log("Submitting formData:", fetchFormData);
-      navigate("/mainInTakeForm", { state: {
-        formData: formData,
-        appointmentId: fetchFormData.apiInfo.appointmentId
-      } });
+        handleFormSwitch(5);   //switch to mainIntakeForm
     } else {
       setSelectedSection(options[currentIndex + 1]);
     }
@@ -431,7 +390,16 @@ const PatientInTakeForm01: React.FC = () => {
       className="flex flex-col lg:flex-row h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]"
     >
       {/* Sidebar */}
-      <div className="flex lg:hidden h-[10vh] items-center">
+      <div className="flex lg:hidden h-[10vh] items-center justify-between">
+        <Button
+          type="button"
+          variant="link"
+          className="flex text-foreground font-semibold items-center gap-2"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+          <span className="text-lg font-semibold">Back</span>
+        </Button>
         <img src={logo} className="h-[6vh] px-5" alt="logo" />
       </div>
       <div
@@ -445,6 +413,15 @@ const PatientInTakeForm01: React.FC = () => {
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
+        <Button
+          type="button"
+          variant="link"
+          className="pb-4 text-foreground hidden lg:flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+          <span className="text-lg">Back</span>
+        </Button>
         {options.map((option) => (
           <div
             ref={(el) => {
@@ -515,14 +492,14 @@ const PatientInTakeForm01: React.FC = () => {
         </div>
       </div>
 
-      {dialogOpen && (
+      {/* {dialogOpen && (
         <SubmitDialog
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
           formData={formData}
           appointmentId={fetchFormData.apiInfo.appointmentId}
         />
-      )}
+      )} */}
     </form>
   );
 };

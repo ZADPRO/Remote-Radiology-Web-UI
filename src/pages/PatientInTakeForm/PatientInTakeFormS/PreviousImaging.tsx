@@ -4,8 +4,8 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
 import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
-import { IntakeOption } from "../MainInTakeForm";
-
+import { IntakeOption } from "../PatientInTakeForm";
+import { downloadDocumentFile } from "@/lib/commonUtlis";
 
 interface QuestionIds {
   thermogramYesNo: number;
@@ -57,6 +57,7 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 interface ImagingSectionProps {
@@ -87,8 +88,11 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
   const [selectedFileName, setSelectedFileName] = useState("");
 
   const showDetails = getAnswer(yesNoId) === "Yes";
-  const showUpload = showDetails && getAnswer(reportAvailableId) === "Available";
+  const showUpload =
+    showDetails && getAnswer(reportAvailableId) === "Available";
   const uploadedFileName = getAnswer(reportDetailsId);
+
+  const getFile = formData.find((q) => q.questionId === reportDetailsId)?.file;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -217,12 +221,22 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                 type="file"
                 className="sr-only"
                 onChange={handleFileChange}
-                required={showUpload}
+                required={!(selectedFileName || uploadedFileName)}
               />
               Upload File
             </label>
             {(selectedFileName || uploadedFileName) && (
-              <span className="text-sm">
+              <span
+                className="text-sm"
+                onClick={() => {
+                  getFile &&
+                    downloadDocumentFile(
+                      getFile?.base64Data,
+                      getFile?.contentType,
+                      "Report"
+                    );
+                }}
+              >
                 {selectedFileName || uploadedFileName}
               </span>
             )}
@@ -237,36 +251,110 @@ const PreviousImaging: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
 
   const imagingSections = [
-    { label: "A. Thermogram", idPrefix: "thermogram", yesNoId: questionIds.thermogramYesNo, dateId: questionIds.thermogramDate, resultId: questionIds.thermogramResult, reportAvailableId: questionIds.thermogramReportAvailable, reportDetailsId: questionIds.thermogramReportDetails },
-    { label: "B. Mammogram", idPrefix: "mammogram", yesNoId: questionIds.mammogramYesNo, dateId: questionIds.mammogramDate, resultId: questionIds.mammogramResult, reportAvailableId: questionIds.mammogramReportAvailable, reportDetailsId: questionIds.mammogramReportDetails },
-    { label: "C. Breast Ultrasound / HERscan", idPrefix: "ultrasound", yesNoId: questionIds.breastUltrasoundYesNo, dateId: questionIds.breastUltrasoundDate, resultId: questionIds.breastUltrasoundResult, reportAvailableId: questionIds.breastUltrasoundReportAvailable, reportDetailsId: questionIds.breastUltrasoundReportDetails },
-    { label: "D. Breast MRI", idPrefix: "mri", yesNoId: questionIds.breastMRIYesNo, dateId: questionIds.breastMRIDate, resultId: questionIds.breastMRIResult, reportAvailableId: questionIds.breastMRIReportAvailable, reportDetailsId: questionIds.breastMRIReportDetails },
-    { label: "E. PET/CT Scan", idPrefix: "petct", yesNoId: questionIds.petctYesNo, dateId: questionIds.petctDate, resultId: questionIds.petctResult, reportAvailableId: questionIds.petctReportAvailable, reportDetailsId: questionIds.petctReportDetails },
-    { label: "F. QT Imaging", idPrefix: "qt", yesNoId: questionIds.qtImagingYesNo, dateId: questionIds.qtimageDate, resultId: questionIds.qtimageResult, reportAvailableId: questionIds.qtimageReportAvailable, reportDetailsId: questionIds.qtimageReportDetails },
-    { label: "G. Other Imaging or Scans ( Like Bone scans, Scintimammography, etc)", idPrefix: "otherscan", yesNoId: questionIds.otherImagingYesNo, dateId: questionIds.otherImagingDate, resultId: questionIds.otherImagingResult, reportAvailableId: questionIds.otherImagingReportAvailable, reportDetailsId: questionIds.otherImagingReportDetails },
+    {
+      label: "A. Thermogram",
+      idPrefix: "thermogram",
+      yesNoId: questionIds.thermogramYesNo,
+      dateId: questionIds.thermogramDate,
+      resultId: questionIds.thermogramResult,
+      reportAvailableId: questionIds.thermogramReportAvailable,
+      reportDetailsId: questionIds.thermogramReportDetails,
+    },
+    {
+      label: "B. Mammogram",
+      idPrefix: "mammogram",
+      yesNoId: questionIds.mammogramYesNo,
+      dateId: questionIds.mammogramDate,
+      resultId: questionIds.mammogramResult,
+      reportAvailableId: questionIds.mammogramReportAvailable,
+      reportDetailsId: questionIds.mammogramReportDetails,
+    },
+    {
+      label: "C. Breast Ultrasound / HERscan",
+      idPrefix: "ultrasound",
+      yesNoId: questionIds.breastUltrasoundYesNo,
+      dateId: questionIds.breastUltrasoundDate,
+      resultId: questionIds.breastUltrasoundResult,
+      reportAvailableId: questionIds.breastUltrasoundReportAvailable,
+      reportDetailsId: questionIds.breastUltrasoundReportDetails,
+    },
+    {
+      label: "D. Breast MRI",
+      idPrefix: "mri",
+      yesNoId: questionIds.breastMRIYesNo,
+      dateId: questionIds.breastMRIDate,
+      resultId: questionIds.breastMRIResult,
+      reportAvailableId: questionIds.breastMRIReportAvailable,
+      reportDetailsId: questionIds.breastMRIReportDetails,
+    },
+    {
+      label: "E. PET/CT Scan",
+      idPrefix: "petct",
+      yesNoId: questionIds.petctYesNo,
+      dateId: questionIds.petctDate,
+      resultId: questionIds.petctResult,
+      reportAvailableId: questionIds.petctReportAvailable,
+      reportDetailsId: questionIds.petctReportDetails,
+    },
+    {
+      label: "F. QT Imaging",
+      idPrefix: "qt",
+      yesNoId: questionIds.qtImagingYesNo,
+      dateId: questionIds.qtimageDate,
+      resultId: questionIds.qtimageResult,
+      reportAvailableId: questionIds.qtimageReportAvailable,
+      reportDetailsId: questionIds.qtimageReportDetails,
+    },
+    {
+      label:
+        "G. Other Imaging or Scans ( Like Bone scans, Scintimammography, etc)",
+      idPrefix: "otherscan",
+      yesNoId: questionIds.otherImagingYesNo,
+      dateId: questionIds.otherImagingDate,
+      resultId: questionIds.otherImagingResult,
+      reportAvailableId: questionIds.otherImagingReportAvailable,
+      reportDetailsId: questionIds.otherImagingReportDetails,
+    },
   ];
 
   return (
-    <div className="flex flex-col h-full">
-      <FormHeader FormTitle="Previous Imaging in past 3 years" className="uppercase" />
-      <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
-        {imagingSections.map((sectionProps) => (
-          <ImagingSection
-            key={sectionProps.idPrefix}
-            {...sectionProps}
-            formData={formData}
-            handleInputChange={handleInputChange}
-          />
-        ))}
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Label className="font-semibold text-base flex flex-wrap gap-1">H. Others / Additional Comments</Label>
-          <Textarea className="w-full lg:w-64" value={getAnswer(questionIds.additionalComments)} onChange={(e) => handleInputChange(questionIds.additionalComments, e.target.value)} 
-            placeholder="Enter Details"/>
+    <div className="flex flex-col h-full relative">
+      <FormHeader
+        FormTitle="Previous Imaging in past 3 years"
+        className="uppercase"
+      />
+      <div className={readOnly ? "pointer-events-none" : ""}>
+        <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
+          {imagingSections.map((sectionProps) => (
+            <ImagingSection
+              key={sectionProps.idPrefix}
+              {...sectionProps}
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+          ))}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Label className="font-semibold text-base flex flex-wrap gap-1">
+              H. Others / Additional Comments
+            </Label>
+            <Textarea
+              className="w-full lg:w-64"
+              value={getAnswer(questionIds.additionalComments)}
+              onChange={(e) =>
+                handleInputChange(
+                  questionIds.additionalComments,
+                  e.target.value
+                )
+              }
+              placeholder="Enter Details"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   ageFirstMenstrualPeriod: number;
@@ -30,12 +30,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const MenstrualAndReproductive: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -64,12 +66,12 @@ const MenstrualAndReproductive: React.FC<Props> = ({
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader
         FormTitle="Menstrual and Reproductive History"
         className="uppercase"
       />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10 relative">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0">
           <Label className="text-bold text-base w-[290px]">
@@ -304,6 +306,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
             placeholder="Enter Details"
           />
         </div>
+      </div>
       </div>
     </div>
   );

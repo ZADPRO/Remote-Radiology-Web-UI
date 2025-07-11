@@ -291,7 +291,7 @@ const BreastInput: React.FC<Props> = (Props) => {
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
-              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full mt-2">
+              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full ">
                 {/* R Clock Label Input */}
                 <div
                   onClick={() =>

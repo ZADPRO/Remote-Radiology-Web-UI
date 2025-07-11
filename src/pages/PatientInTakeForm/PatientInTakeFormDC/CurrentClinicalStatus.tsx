@@ -1,7 +1,7 @@
 import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
     newTreatment: number;

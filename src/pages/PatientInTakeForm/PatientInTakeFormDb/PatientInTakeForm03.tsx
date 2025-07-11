@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { IntakeOption } from "../MainInTakeForm"; // Adjust path if needed
 import checkedImg from "../../../assets/checked.png";
 import BiopsyorCancer from "./BiopsyorCancer";
 import ReceptorStatus from "./ReceptorStatus";
@@ -9,16 +8,24 @@ import Treatment from "./Treatment";
 import FutureMonitoring from "./FutureMonitoring";
 import sidebar_bg from "../../../assets/Mask_group.png";
 import logo from "../../../assets/LogoNew.png";
-import { SubmitDialog } from "../SubmitDialog";
+import { IntakeOption } from "../PatientInTakeForm";
+import { Button } from "@/components/ui/button";
 
-const PatientInTakeForm03: React.FC = () => {
-  const previousFormData = useLocation().state?.formData || [];
+interface Props {
+  formData: IntakeOption[];
+  setFormData: React.Dispatch<React.SetStateAction<IntakeOption[]>>;
+  handleFormSwitch: (formNumber: number) => void;
+  openSubmitDialog: () => void;
+  readOnly: boolean;
+}
 
-  const previoousMainFormData = useLocation().state?.mainFormData || [];
-
-  const [mainFormData, setMainFormData] = useState(previoousMainFormData);
-
-  console.log(setMainFormData);
+const PatientInTakeForm03: React.FC<Props> = ({
+  formData,
+  setFormData,
+  handleFormSwitch,
+  openSubmitDialog,
+  readOnly,
+}) => {
   const navigate = useNavigate();
 
   const options = [
@@ -41,9 +48,6 @@ const PatientInTakeForm03: React.FC = () => {
     }
   }, [selectedSection]);
 
-  const [formData, setFormData] = useState<IntakeOption[]>(previousFormData);
-  console.log("previousFormData", formData);
-
   const handleInputChange = (questionId: number, value: string) => {
     setFormData((prev) =>
       prev.map((item) =>
@@ -51,6 +55,8 @@ const PatientInTakeForm03: React.FC = () => {
       )
     );
   };
+
+  console.log(readOnly);
 
   useEffect(() => {
     // if (formData.find(item => item.questionId === 176)?.answer == "") {
@@ -175,15 +181,12 @@ const PatientInTakeForm03: React.FC = () => {
     }
   };
 
-  // const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-
   const handleNext = () => {
     const currentIndex = options.indexOf(selectedSection);
 
     if (options.indexOf(selectedSection) === options.length - 1) {
       console.log("Submitting formData:", formData);
-      setDialogOpen(true);
+      openSubmitDialog();
     } else {
       setSelectedSection(options[currentIndex + 1]);
     }
@@ -198,7 +201,16 @@ const PatientInTakeForm03: React.FC = () => {
       className="flex flex-col lg:flex-row h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]"
     >
       {/* Sidebar */}
-      <div className="flex lg:hidden h-[10vh] items-center">
+      <div className="flex lg:hidden h-[10vh] items-center justify-between">
+        <Button
+          type="button"
+          variant="link"
+          className="flex text-foreground font-semibold items-center gap-2"
+          onClick={() => handleFormSwitch(5)}
+        >
+          <ArrowLeft />
+          <span className="text-lg font-semibold">Back</span>
+        </Button>
         <img src={logo} className="h-[6vh] px-5" alt="logo" />
       </div>
       <div
@@ -212,6 +224,15 @@ const PatientInTakeForm03: React.FC = () => {
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
+        <Button
+          type="button"
+          variant="link"
+          className="pb-4 text-foreground hidden lg:flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
+          onClick={() => handleFormSwitch(5)}
+        >
+          <ArrowLeft />
+          <span className="text-lg">Back</span>
+        </Button>
         {options.map((option) => (
           <div
             ref={(el) => {
@@ -284,13 +305,13 @@ const PatientInTakeForm03: React.FC = () => {
         </div>
       </div>
 
-      <SubmitDialog
+      {/* <SubmitDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         formData={formData}
         mainFormData={mainFormData}
         appointmentId={mainFormData.appointmentId}
-      />
+      /> */}
     </form>
   );
 };
