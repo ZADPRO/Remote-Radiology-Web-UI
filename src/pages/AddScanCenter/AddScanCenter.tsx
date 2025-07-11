@@ -409,7 +409,7 @@ const CenterDetailsForm: React.FC<CenterDetailsFormProps> = ({
           <Input
             id="centercode"
             type="text"
-            placeholder="Enter centercode"
+            placeholder="Enter Center Code"
             className="bg-white"
             value={formData.cust_id}
             onChange={(e) =>
