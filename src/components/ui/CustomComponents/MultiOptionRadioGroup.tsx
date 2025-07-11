@@ -36,21 +36,27 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
   return (
     <div className="flex flex-col">
       {label && (
-  <Label className="font-semibold text-base flex flex-wrap items-center">
-    <span>
-      {label}
-      {required && <span className="text-red-500 ml-1">*</span>}
-    </span>
-    {description && (
-      <span className="ml-2 text-xs text-muted-foreground font-normal">
-        ({description})
-      </span>
-    )}
-  </Label>
-)}
+        <Label className="font-semibold text-base flex flex-wrap items-center">
+          <span>
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </span>
+          {description && (
+            <span className="ml-2 text-xs text-muted-foreground font-normal">
+              ({description})
+            </span>
+          )}
+        </Label>
+      )}
 
-
-      <div className={cn(`ml-4 flex flex-wrap gap-x-6 gap-y-1 ${className ? className : "h-[auto] gap-4 sm:gap-4 sm:h-[35px]"} lg:gap-y-3 mt-3`, className)}>
+      <div
+        className={cn(
+          `ml-4 flex flex-wrap gap-x-6 gap-y-1 ${
+            className ? className : "h-[auto] gap-4 sm:gap-4 sm:h-[35px]"
+          } lg:gap-y-3 mt-3`,
+          className
+        )}
+      >
         {options.map(({ label: optLabel, value }) => {
           const id = `opt-${questionId}-${value}`;
           return (
@@ -61,9 +67,7 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
                 name={name}
                 value={value}
                 checked={getAnswer(questionId) === value}
-                onChange={(e) =>
-                  handleInputChange(questionId, e.target.value)
-                }
+                onChange={(e) => handleInputChange(questionId, e.target.value)}
                 required={required}
                 className="custom-radio"
               />
