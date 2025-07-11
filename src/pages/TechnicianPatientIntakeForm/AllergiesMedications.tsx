@@ -33,12 +33,14 @@ interface Props {
     technicianFormData: IntakeOption[];
     handleInputChange: (questionId: number, value: string) => void;
     questionIds: QuestionIds;
+    readOnly: boolean
 }
 
 const AllergiesMedications: React.FC<Props> = ({
     technicianFormData,
     handleInputChange,
     questionIds,
+    readOnly
 }) => {
     const getAnswer = (id: number) =>
         technicianFormData.find((q) => q.questionId === id)?.answer || "";
@@ -80,7 +82,7 @@ const AllergiesMedications: React.FC<Props> = ({
     );
 
     return (
-        <div className="flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto">
+        <div className={`flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto ${readOnly ? "pointer-events-none" : ""}`}>
             {/* Priority */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <Label className="w-full sm:w-1/3 text-base font-semibold">

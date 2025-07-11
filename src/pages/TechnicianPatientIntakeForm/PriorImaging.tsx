@@ -3,8 +3,7 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
 import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
-import { IntakeOption } from "../PatientInTakeForm/MainInTakeForm";
-import { ResponsePatientForm } from "./TechnicianPatientIntakeForm";
+import { ResponseAudit, ResponsePatientForm } from "./TechnicianPatientIntakeForm";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
 import { Edit, Info } from "lucide-react";
 import {
@@ -13,8 +12,11 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { cn } from "@/lib/utils";
 
+interface IntakeOption {
+  questionId: number;
+  answer: string;
+}
 
 interface patientQuestionIds {
   thermogramYesNo: number;
@@ -69,6 +71,8 @@ interface Props {
   handleInputChangePatient: (questionId: number, value: string) => void;
   setPatientFormData: React.Dispatch<React.SetStateAction<ResponsePatientForm[]>>;
   questionIds: patientQuestionIds;
+  auditData: ResponseAudit[];
+  readOnly?: boolean;
 }
 
 interface ImagingSectionProps {
@@ -85,7 +89,124 @@ interface ImagingSectionProps {
   editStatus: boolean;
 }
 
-const ImagingSection: React.FC<ImagingSectionProps> = ({
+const PriorImaging: React.FC<Props> = ({
+  formData,
+  handleInputChange,
+  handleInputChangePatient,
+  patientFormData,
+  setPatientFormData,
+  questionIds,
+  auditData,
+  readOnly
+}) => {
+  console.log(auditData);
+  const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
+  const [patientSnapshot, setPatientSnapshot] = useState<Record<string, { label: string; value: string }[]>>({});
+
+  const getPatientFormAnswer = (id: number) =>
+    patientFormData?.find((q) => q.questionId === id)?.answer || "";
+
+  const handleEditClick = (imagingKey: string, questionIdsToCopy: number[], patientAnswerLabels: string[]) => {
+    const snapshot = questionIdsToCopy.map((qId, index) => ({
+      label: patientAnswerLabels[index],
+      value: getPatientFormAnswer(qId),
+    }));
+    setPatientSnapshot((prev) => ({ ...prev, [imagingKey]: snapshot }));
+    questionIdsToCopy.forEach((qId) => {
+      handleInputChange(qId, getPatientFormAnswer(qId));
+    });
+    setEditStatuses((prev) => ({ ...prev, [imagingKey]: true }));
+  };
+
+  const handleVerifyChange = (mainQId: number, checked: boolean) => {
+    setPatientFormData((prev) =>
+      prev.map((item) =>
+        item.questionId === mainQId ? { ...item, verifyTechnician: checked } : item
+      )
+    );
+  };
+
+  const renderCheckbox = (label: string, mainQId: number) => (
+    <div className="flex flex-col items-center w-25 gap-1">
+      <div className="text-xs font-medium">{label}</div>
+      <Checkbox2
+        className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
+        checked={!!patientFormData.find((q) => q.questionId === mainQId)?.verifyTechnician}
+        onClick={() =>
+          handleVerifyChange(
+            mainQId,
+            !patientFormData.find((q) => q.questionId === mainQId)?.verifyTechnician
+          )
+        }
+      />
+    </div>
+  );
+
+  const renderImagingSectionWithVerification = (
+    imagingKey: string,
+    symptomMainQuestionId: number,
+    patientQuestionIds: number[],
+    patientAnswerLabels: string[],
+    children: React.ReactNode
+  ) => {
+    const isEditing = editStatuses[imagingKey] || false;
+    const snapshot = patientSnapshot[imagingKey] || [];
+
+    return (
+      <div className="flex w-full items-start border-b border-gray-200 py-4">
+        <div className="w-[80%] relative">
+          {children}
+          {!isEditing && <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed" />}
+        </div>
+        <div className="w-[20%] flex justify-center items-start pl-4">
+          <div className="flex items-center gap-3">
+            {renderCheckbox("Check to Confirm", symptomMainQuestionId)}
+            {!isEditing ? (
+              <div className="flex flex-col items-center w-20">
+                <span className="text-xs font-medium">Edit</span>
+                <Edit
+                  className="w-4 h-4 cursor-pointer"
+                  onClick={() =>
+                    handleEditClick(imagingKey, patientQuestionIds, patientAnswerLabels)
+                  }
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center w-20">
+                <span className="text-xs font-medium">Info</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                    <div className="space-y-2 text-sm text-gray-700">
+                      <div className="font-medium text-gray-900 border-b pb-2 mb-2">
+                        Patient Response
+                      </div>
+                      {snapshot.map(
+                        (pa) =>
+                          pa.value && (
+                            <div
+                              key={pa.label}
+                              className="flex justify-between items-center"
+                            >
+                              <span className="font-medium text-gray-800">{pa.label}:</span>
+                              <span className="text-gray-600 text-right">{pa.value}</span>
+                            </div>
+                          )
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const ImagingSection: React.FC<ImagingSectionProps> = ({
   label,
   idPrefix,
   yesNoId,
@@ -270,142 +391,9 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
   );
 };
 
-const PriorImaging: React.FC<Props> = ({
-  formData,
-  handleInputChange,
-  handleInputChangePatient,
-  patientFormData,
-  setPatientFormData,
-  questionIds,
-}) => {
-  const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
-
-  const getPatientFormAnswer = (id: number) =>
-    patientFormData?.find((q) => q.questionId === id)?.answer || "";
-
-  const handleEditClick = (imagingKey: string, questionIdsToCopy: number[]) => {
-    questionIdsToCopy.forEach((qId) => {
-      const patientAnswer = getPatientFormAnswer(qId);
-      // Pre-fill technician form with patient's answer
-      handleInputChange(qId, patientAnswer);
-    });
-    // Enable editing for this imaging section
-    setEditStatuses((prev) => ({ ...prev, [imagingKey]: true }));
-  };
-
-  const handleVerifyChange = (
-    symptomMainQuestionId: number,
-    checked: boolean
-  ) => {
-    setPatientFormData((prev: ResponsePatientForm[]) =>
-      prev.map((item) =>
-        item.questionId === symptomMainQuestionId
-          ? { ...item, verifyTechnician: checked }
-          : item
-      )
-    );
-  };
-
-  const renderCheckbox = (
-    name: string,
-    symptomMainQuestionId: number,
-    className: string = ""
-  ) => (
-    <div className={cn(`flex flex-col items-center w-25 gap-2`, className)}>
-      <div className="text-xs sm:text-xs font-medium">{name}</div>
-      <Checkbox2
-        className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
-        checked={
-          patientFormData.find((q) => q.questionId === symptomMainQuestionId)
-            ?.verifyTechnician || false
-        }
-        onClick={() =>
-          handleVerifyChange(
-            symptomMainQuestionId,
-            !(
-              patientFormData.find((q) => q.questionId === symptomMainQuestionId)
-                ?.verifyTechnician || false
-            )
-          )
-        }
-        required
-      />
-    </div>
-  );
-
-  const renderImagingSectionWithVerification = (
-    imagingKey: string,
-    symptomMainQuestionId: number,
-    patientQuestionIds: number[],
-    patientAnswerLabels: string[],
-    children: React.ReactNode
-  ) => {
-    const isEditing = editStatuses[imagingKey] || false;
-    const patientAnswers = patientQuestionIds.map((id, index) => ({
-      label: patientAnswerLabels[index],
-      value: getPatientFormAnswer(id),
-    }));
-
-    return (
-      <div className="flex w-full items-start border-b border-gray-200 py-4">
-        <div className="w-[80%] relative">
-          {children}
-          {!isEditing && (
-            <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
-          )}
-        </div>
-        <div className="w-[20%] flex justify-center items-start pl-4">
-          <div className="flex items-center gap-3">
-            {renderCheckbox("Check to Confirm", symptomMainQuestionId)}
-            {!isEditing ? (
-              <div className="flex w-20 flex-col gap-2 items-center">
-                <div className="text-xs sm:text-xs font-medium">Edit</div>
-                <Edit
-                  onClick={() => handleEditClick(imagingKey, patientQuestionIds)}
-                  className="w-4 h-4 cursor-pointer"
-                />
-              </div>
-            ) : (
-              <div className="flex w-20 flex-col gap-2 items-center">
-                <div className="text-xs sm:text-xs font-medium">Info</div>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="space-y-2 text-sm text-gray-700">
-                      <div className="font-medium text-gray-900 border-b pb-2 mb-2">
-                        Patient Response
-                      </div>
-                      {patientAnswers.map(
-                        (pa) =>
-                          pa.value && (
-                            <div
-                              key={pa.label}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="font-medium text-gray-800">
-                                {pa.label}:
-                              </span>
-                              <span className="text-gray-600 text-right">
-                                {pa.value}
-                              </span>
-                            </div>
-                          )
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const getAnswer = (id: number) =>
-    formData.find((q) => q.questionId === id)?.answer || "";
+  console.log(patientFormData.find(item => item.questionId == 134))
+  // const getAnswer = (id: number) =>
+  //   formData.find((q) => q.questionId === id)?.answer || "";
 
   const imagingSections = [
     {
@@ -475,8 +463,8 @@ const PriorImaging: React.FC<Props> = ({
   ];
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
+    <div className="flex flex-col h-full overflow-y-auto">
+      <div className={`flex-grow p-4 lg:pt-0 space-y-8 pb-10 relative ${readOnly ? "pointer-events-none" : ""}`}>
         {imagingSections.map((sectionProps) => {
           const patientQIds = [
             sectionProps.yesNoId,
@@ -495,13 +483,28 @@ const PriorImaging: React.FC<Props> = ({
             sectionProps.yesNoId,
             patientQIds,
             patientLabels,
-            <ImagingSection key={sectionProps.idPrefix} {...sectionProps} formData={formData} handleInputChange={handleInputChangePatient} patientFormData={patientFormData} editStatus={!editStatuses[sectionProps.idPrefix]} />
+            <ImagingSection
+              key={sectionProps.idPrefix}
+              {...sectionProps}
+              formData={formData}
+              handleInputChange={handleInputChangePatient}
+              patientFormData={patientFormData}
+              editStatus={!editStatuses[sectionProps.idPrefix]}
+            />
           );
         })}
         <div className="flex flex-col sm:flex-row gap-2">
-          <Label className="font-semibold text-base flex flex-wrap gap-1">H. Others / Additional Comments</Label>
-          <Textarea className="w-64" value={getAnswer(questionIds.additionalComments)} onChange={(e) => handleInputChange(questionIds.additionalComments, e.target.value)} 
-            placeholder="Enter Details"/>
+          <Label className="font-semibold text-base flex flex-wrap gap-1">
+            H. Others / Additional Comments
+          </Label>
+          <Textarea
+            className="w-full"
+            value={getPatientFormAnswer(questionIds.additionalComments)}
+            onChange={(e) =>
+              handleInputChangePatient(questionIds.additionalComments, e.target.value)
+            }
+            placeholder="Enter Details"
+          />
         </div>
       </div>
     </div>
