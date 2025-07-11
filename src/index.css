@@ -64,46 +64,6 @@ input:-webkit-autofill:active {
   color: black !important;                       /* fallback */
   transition: background-color 9999s ease-in-out 0s;
 }
-
-.custom-radio {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #A4B2A1; /* Outer green ring */
-  border-radius: 50%;
-  background-color: transparent;
-  position: relative;
-  cursor: pointer;
-  display: inline-block;
-  transition: all 0.2s ease-in-out;
-}
-
-.custom-radio:checked::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px; /* smaller inner circle */
-  height: 10px;
-  background-color: #A4B2A1;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.bg-radial-greeting {
-  background: radial-gradient(
-    45.59% 147.97% at 32.27% 30.59%,
-    #F9F4EC 7.28%,
-    #EED8D6 100%
-  );
-}
-
-.bg-radial-greeting-02 {
-    background: radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
-}
-
-
 }
 
 @theme inline {
@@ -271,7 +231,7 @@ input[type=number]::-webkit-outer-spin-button {
   border-radius: 50%;
   display: block;
   stroke-width: 2;
-  stroke: green;
+  stroke: #6a8c66;
   stroke-miterlimit: 10;
   box-shadow: inset 0px 0px 0px #7ac142;
   animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
@@ -310,6 +270,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .verified-text {
+  color:#6b9167;
   opacity: 0;
   transform: translateY(10px);
   animation: fadeSlideIn 0.3s ease-out 0.5s forwards; /* Delay matches end of check animation */
@@ -320,4 +281,45 @@ input[type=number]::-webkit-outer-spin-button {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+
+
+.custom-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #A4B2A1; /* Outer green ring */
+  border-radius: 50%;
+  background-color: transparent;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-radio:checked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px; /* smaller inner circle */
+  height: 10px;
+  background-color: #A4B2A1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bg-radial-greeting {
+  background: radial-gradient(
+    45.59% 147.97% at 32.27% 30.59%,
+    #F9F4EC 7.28%,
+    #EED8D6 100%
+  );
+}
+
+.bg-radial-greeting-02 {
+    background: radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
 }

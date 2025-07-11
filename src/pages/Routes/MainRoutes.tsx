@@ -22,11 +22,8 @@ import Administration from "../Administration/Administration";
 import MyCare from "../PatientFlow/MyCare";
 
 // Patient Intake Forms
-import MainInTakeForm from "../PatientInTakeForm/MainInTakeForm";
-import PatientInTakeForm01 from "../PatientInTakeForm/PatientInTakeFormS/PatientInTakeForm01";
-import PatientInTakeForm02 from "../PatientInTakeForm/PatientInTakeFormDa/PatientInTakeForm02";
-import PatientInTakeForm03 from "../PatientInTakeForm/PatientInTakeFormDb/PatientInTakeForm03";
-import PatientInTakeForm04 from "../PatientInTakeForm/PatientInTakeFormDC/PatientInTakeForm04";
+import PatientInTakeForm from "../PatientInTakeForm/PatientInTakeForm";
+
 import TechnicianPatientIntakeForm from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 
 // User Management Components
@@ -48,7 +45,10 @@ import ManagePerformingProvider from "../ManagePerformingProvider/ManagePerformi
 import AddCoReportingDoctor from "../AddCoReportingDoctor/AddCoReportingDoctor";
 import ManageCoReportingDoctor from "../ManageCoReportingDoctor/ManageCoReportingDoctor";
 import MedicalHistory from "../PatientFlow/MedicalHistory";
-import PatientQueue from "../TechnicianFlow/PatientQueue";
+import Report from "../Report/Report";
+import PatientQueue from "../PatientQueue/PatientQueue";
+import UploadDicomFiles from "../PatientQueue/UploadDicomFiles";
+import Analytics from "../Analytics/Analytics";
 
 // Define a type for route configurations to improve readability and type safety
 interface AppRoute {
@@ -66,6 +66,7 @@ const MainRoutes: React.FC = () => {
     { index: true, element: <Navigate to="administration" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "administration", element: <Administration /> },
+    { path: "analytics", element: <Analytics /> },
     { path: "addScanCenter", element: <AddScanCenter /> },
     { path: "viewScanCenter/:id", element: <ViewScanCenter /> },
     { path: "addRadiologist", element: <AddRadiologist /> },
@@ -83,10 +84,11 @@ const MainRoutes: React.FC = () => {
     { path: "manageWellthGreenManager", element: <ManageWellthGreenAdmin /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
+    { path: "patientQueue", element: <PatientQueue />},
   ];
 
   const scAdminRoutes: AppRoute[] = [
-    { index: true, element: <Navigate to="administration" replace /> },
+    { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "administration/:id", element: <ViewScanCenter /> },
     { path: "manageTechnician", element: <ManageTechnician /> },
@@ -95,32 +97,39 @@ const MainRoutes: React.FC = () => {
     { path: "addTechnician", element: <AddTechnician /> },
     { path: "addPerformingProvider", element: <AddPerformingProvider /> },
     { path: "addCoReportingDoctor", element: <AddCoReportingDoctor /> },
+    { path: "patientQueue", element: <PatientQueue />}
   ];
 
   const technicianRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
-    { path: "patientQueue", element: <PatientQueue />}
+    { path: "patientQueue", element: <PatientQueue />},
+    { path: "uploadDicoms", element: <UploadDicomFiles /> }
   ];
 
   const doctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
+    { path: "patientQueue", element: <PatientQueue />},
   ]
 
   const radiologistRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
+    { path: "patientQueue", element: <PatientQueue />},
   ]
 
   const scribeRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
+    { path: "patientQueue", element: <PatientQueue />},
+    { path: "report", element: <Report />}
   ]
 
   const coDoctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
+    { path: "patientQueue", element: <PatientQueue />},
   ]
 
   const managerRoutes: AppRoute[] = [
@@ -132,6 +141,7 @@ const MainRoutes: React.FC = () => {
     { path: "addScribe", element: <AddScribe /> },
     { path: "manageScribe", element: <ManageScribe /> },
     { path: "viewScanCenter", element: <ViewScanCenter /> },
+    { path: "patientQueue", element: <PatientQueue />},
   ];
 
   const patientRoutes: AppRoute[] = [
@@ -183,14 +193,18 @@ const MainRoutes: React.FC = () => {
           <Route path="/verifyOtp" element={<VerifyOTP />} />
           <Route path="/forgotPassword" element={<ForgotPasword />} />
           <Route path="/registerUser" element={<SignUp />} />
+          
+          <Route path="/report" element={<Report />} />
 
+
+          <Route path="/patientInTakeForm" element={<PatientInTakeForm />} />
           {/* Patient Intake Forms (Accessible without specific roles, or role handling is internal to the forms) */}
-          <Route path="mainInTakeForm" element={<MainInTakeForm />} />
-          <Route
+          {/* <Route path="mainInTakeForm" element={<MainInTakeForm />} /> */}
+          {/* <Route
             path="patientInTakeForm-01"
             element={<PatientInTakeForm01 />}
-          />
-          <Route
+          /> */}
+          {/* <Route
             path="patientInTakeForm-02"
             element={<PatientInTakeForm02 />}
           />
@@ -201,7 +215,7 @@ const MainRoutes: React.FC = () => {
           <Route
             path="patientInTakeForm-04"
             element={<PatientInTakeForm04 />}
-          />
+          /> */}
           <Route
             path="technicianpatientintakeform"
             element={<TechnicianPatientIntakeForm />}

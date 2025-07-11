@@ -3,7 +3,6 @@ import { ArrowLeft, Camera, Pencil } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   ListSpecificScanCenter,
   scancenterService,
@@ -11,6 +10,7 @@ import {
 import { uploadService } from "@/services/commonServices";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { useAuth } from "../Routes/AuthContext";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 
 interface files {
   profile_img: File | null;
@@ -137,7 +137,7 @@ const ViewScanCenter: React.FC = () => {
 
       {/* Content */}
       <div className="h-[70vh] flex justify-center items-center">
-        <div className="bg-[#F9F4EC] overflow-scroll rounded-2xl shadow-md w-[95%] lg:w-[90%] h-full p-4 lg:p-10 flex flex-col lg:flex-row gap-10 items-center justify-between">
+       <div className="bg-[#F9F4EC] overflow-scroll rounded-2xl shadow-md w-[95%] lg:w-[90%] max-w-screen-xl h-full p-4 lg:p-10 flex flex-col lg:flex-row gap-10 items-center justify-between">
           {/* Profile Image */}
           <div className="flex justify-center items-center lg:w-1/4">
             {formData.refSCProfile.length === 0 ? (
@@ -197,7 +197,7 @@ const ViewScanCenter: React.FC = () => {
             {/* Appointment */}
             <h1 className="text-2xl font-bold">SCAN CENTER DETAILS</h1>
             <div className="flex justify-start lg:justify-end items-center gap-2 mb-4">
-              <Checkbox
+              <Checkbox2
                 id="appointment"
                 checked={formData.refSCAppointments}
                 onCheckedChange={(checked) =>
@@ -242,7 +242,7 @@ const ViewScanCenter: React.FC = () => {
                   key: "refSCCustId",
                 },
               ].map(({ label, value, key }, index) => (
-                <div key={index} className="flex items-center gap-4">
+                <div key={index} className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
                   <label className="font-semibold text-sm w-28">{label} :</label>
                   <Input
                     value={value}
@@ -264,19 +264,19 @@ const ViewScanCenter: React.FC = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mt-6 w-full gap-4">
               <div className="flex flex-wrap gap-4">
                 {user?.refRTId != 3 &&
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../manageScanCenterAdmin", {state: formData.refSCId})}>
-                  Manage Admin
+                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageScanCenterAdmin", {state: formData.refSCId})}>
+                  Manage Manager
                 </Button>
 }
                 
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../manageTechnician", {state: formData.refSCId})}>
+                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageTechnician", {state: formData.refSCId})}>
                   Manage Technician
                 </Button>
                 
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../managePerformingProvider", {state: formData.refSCId})}>
+                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../managePerformingProvider", {state: formData.refSCId})}>
                   Manage Performing Provider
                 </Button>
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191]" onClick={() => navigate("../manageCoReportingDoctor", {state: formData.refSCId})}>
+                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageCoReportingDoctor", {state: formData.refSCId})}>
                   Manage Co-Reporting Doctor
                 </Button>
               </div>

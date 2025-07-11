@@ -3,7 +3,7 @@
 import React, { JSX, useState } from "react";
 import {
   BellIcon,
-  BookUser,
+  ChartPie,
   ClipboardPlus,
   HelpCircleIcon,
   LayoutDashboard,
@@ -82,9 +82,14 @@ const MasterAdmin: React.FC = () => {
       },
       {
         label: "Patient Queue",
-        path: "/admin/",
+        path: "/admin/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/admin/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     scadmin: [
       {
@@ -97,6 +102,11 @@ const MasterAdmin: React.FC = () => {
         path: `/scadmin/administration/${user?.refSCId}`,
         icon: <Settings2 className="w-4 h-4" />,
       },
+      {
+        label: "Patient Queue",
+        path: "/scadmin/patientQueue",
+        icon: <User className="w-4 h-4" />,
+      },
     ],
     technician: [
       {
@@ -107,8 +117,8 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/technician/patientQueue",
-        icon: <User className="w-4 h-4" />
-      }
+        icon: <User className="w-4 h-4" />,
+      },
     ],
     radiologist: [
       {
@@ -118,7 +128,19 @@ const MasterAdmin: React.FC = () => {
       },
       {
         label: "Patient Queue",
-        path: "/radiologist/patient-queue",
+        path: "/radiologist/patientQueue",
+        icon: <User className="w-4 h-4" />,
+      },
+    ],
+    scribe: [
+      {
+        label: "Dashboard",
+        path: "/scribe/dashboard",
+        icon: <LayoutDashboard className="w-4 h-4" />,
+      },
+      {
+        label: "Patient Queue",
+        path: "/scribe/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
     ],
@@ -133,45 +155,72 @@ const MasterAdmin: React.FC = () => {
         path: "/patient/medicalHistory",
         icon: <ClipboardPlus className="w-4 h-4" />,
       },
-      {
-        label: "Patient Brochure",
-        path: "/patient/myCare",
-        icon: <BookUser className="w-4 h-4" />,
-      }
+      // {
+      //   label: "Patient Brochure",
+      //   path: "/patient/myCare",
+      //   icon: <BookUser className="w-4 h-4" />,
+      // },
     ],
     manager: [
-       {
+      {
         label: "Administration",
         path: "/manager/administration",
         icon: <Settings2 className="w-4 h-4" />,
       },
-    ]
-    // ... Add entries for other roles
+      {
+        label: "Patient Queue",
+        path: "/manager/patientQueue",
+        icon: <User className="w-4 h-4" />,
+      },
+    ],
+    doctor: [
+      {
+        label: "Dashboard",
+        path: "/doctor/dashboard",
+        icon: <LayoutDashboard className="w-4 h-4" />,
+      },
+      {
+        label: "Patient Queue",
+        path: "/doctor/patientQueue",
+        icon: <User className="w-4 h-4" />,
+      },
+    ],
+    codoctor: [
+      {
+        label: "Dashboard",
+        path: "/codoctor/dashboard",
+        icon: <LayoutDashboard className="w-4 h-4" />,
+      },
+      {
+        label: "Patient Queue",
+        path: "/codoctor/patientQueue",
+        icon: <User className="w-4 h-4" />,
+      },
+    ],
   };
 
-const menus = role?.type ? roleMenus[role.type] || [] : [];
+  const menus = role?.type ? roleMenus[role.type] || [] : [];
 
   return (
     <div className={`flex h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]`}>
       {/* Bottom - Mobile view */}
       <div className="lg:hidden fixed bottom-0 left-0 w-full h-[8vh] bg-white rounded-t-2xl shadow-md flex items-center justify-between px-10 z-50">
-  {menus.map((menu) => (
-    <div
-      key={menu.path}
-      className="flex flex-col items-center justify-center gap-[2px] cursor-pointer"
-      onClick={() => navigate(menu.path)}
-    >
-      <div className="bg-[#f8f3eb] p-2 rounded-full hover:bg-black hover:text-white transition">
-        {React.cloneElement(menu.icon, {
-          className: "w-5 h-5 text-gray-700",
-        })}
+        {menus.map((menu) => (
+          <div
+            key={menu.path}
+            className="flex flex-col items-center justify-center gap-[2px] cursor-pointer"
+            onClick={() => navigate(menu.path)}
+          >
+            <div className="bg-[#f8f3eb] p-2 rounded-full hover:bg-black hover:text-white transition">
+              {React.cloneElement(menu.icon, {
+                className: "w-5 h-5 text-gray-700",
+              })}
+            </div>
+            {/* Optional: Add this span if you want text below icons */}
+            {/* <span className="text-[10px] text-gray-700 font-medium">{menu.label}</span> */}
+          </div>
+        ))}
       </div>
-      {/* Optional: Add this span if you want text below icons */}
-      {/* <span className="text-[10px] text-gray-700 font-medium">{menu.label}</span> */}
-    </div>
-  ))}
-</div>
-
 
       {/* Main Area */}
       <div className="flex flex-col flex-1">
@@ -188,20 +237,19 @@ const menus = role?.type ? roleMenus[role.type] || [] : [];
 
           {/* Right Section */}
           <div className="hidden lg:flex items-center gap-3">
-  {menus.map((menu) => (
-    <div
-      key={menu.path}
-      className="flex items-center justify-center gap-2 bg-[#f8f3eb] py-1.5 px-3 rounded-3xl cursor-pointer hover:bg-black hover:text-white transition"
-      onClick={() => navigate(menu.path)}
-    >
-      {menu.icon}
-      <span className="text-sm font-semibold mt-[1.5px]">
-        {menu.label}
-      </span>
-    </div>
-  ))}
-</div>
-
+            {menus.map((menu) => (
+              <div
+                key={menu.path}
+                className="flex items-center justify-center gap-2 bg-[#f8f3eb] py-1.5 px-3 rounded-3xl cursor-pointer hover:bg-black hover:text-white transition"
+                onClick={() => navigate(menu.path)}
+              >
+                {menu.icon}
+                <span className="text-sm font-semibold mt-[1.5px]">
+                  {menu.label}
+                </span>
+              </div>
+            ))}
+          </div>
 
           <div className="flex items-center gap-3">
             <Button

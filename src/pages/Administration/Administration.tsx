@@ -24,14 +24,16 @@ const AdminCard: React.FC<AdminCardProps> = ({
   return (
     <Card
       className={cn(
-        "w-50 h-50 rounded-4xl shadow-xl border-2 border-white cursor-pointer hover:shadow-2xl",
+        "w-48 h-48 2xl:w-64 2xl:h-64 rounded-[2rem] shadow-xl border border-white cursor-pointer hover:shadow-2xl hover:scale-105 transition-transform duration-200 ease-in-out",
         bgColor || "bg-[#E3E9E5]"
       )}
       onClick={onClick}
     >
-      <CardContent className="flex flex-col justify-center items-center text-center h-full space-y-2">
-        <div className="w-20 h-20">{icon}</div>
-        <div className="text-base font-bold">{title}</div>
+      <CardContent className="flex flex-col justify-center items-center text-center h-full space-y-3 p-4">
+        <div className="w-16 h-16 xl:w-20 xl:h-20">{icon}</div>
+        <div className="text-sm xl:text-base font-semibold text-[#3f3f3f] leading-tight">
+          {title}
+        </div>
       </CardContent>
     </Card>
   );
@@ -52,7 +54,7 @@ const Administration: React.FC = () => {
           }}
           className="rounded-xl shadow-lg p-2 lg:p-6 w-full lg:w-1/2"
         >
-          <h2 className="text-xl font-extrabold mb-4 text-center">
+          <h2 className="text-xl 2xl:text-2xl font-extrabold mb-4 text-center">
             WELLTHGREEN ADMINISTRATION
           </h2>
           <div className="flex flex-wrap gap-4 justify-center">
@@ -105,7 +107,7 @@ const Administration: React.FC = () => {
           }}
           className="rounded-xl shadow-lg p-2 lg:p-6 w-full lg:w-1/2"
         >
-          <h2 className="text-xl font-extrabold mb-4 text-center">
+          <h2 className="text-xl 2xl:text-2xl font-extrabold mb-4 text-center">
             SCAN CENTRE ADMINISTRATION
           </h2>
           <div className="flex justify-center">

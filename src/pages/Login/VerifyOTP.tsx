@@ -42,6 +42,7 @@ const VerifyOTP: React.FC = () => {
   };
 
   const handleResendOTP = () => {
+    setOtp("");
     handleReLogin();
   };
 
@@ -265,7 +266,7 @@ const VerifyOTP: React.FC = () => {
                     />
                   </svg>
 
-                  <span className="text-sm font-semibold text-green-600 verified-text">
+                  <span className="text-sm font-semibold verified-text">
                     Passcode Verified
                   </span>
                 </div>

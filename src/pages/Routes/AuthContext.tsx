@@ -8,14 +8,16 @@ export const RoleList = [
   { type: 'technician', id: 2 },
   { type: 'scadmin', id: 3 },
   { type: 'patient', id: 4 },
-  { type: 'doctor', id: 5 },
+  { type: 'doctor', id: 5 },   // performing provider
   { type: 'radiologist', id: 6 },
   { type: 'scribe', id: 7 },
   { type: 'codoctor', id: 8 },
-  { type: 'manager', id: 9 },
+  { type: 'manager', id: 9 },  // Weelth Green Manager
 ] as const;
 
 export type Role = (typeof RoleList)[number] | null;
+
+export type UserRole = (typeof RoleList)[number]['type'];
 
 // ✅ API Response interface
 export interface UserProfile {

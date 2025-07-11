@@ -251,7 +251,7 @@ const ResetPassword: React.FC = () => {
                     />
                   </svg>
 
-                  <span className="text-sm font-semibold text-green-600 verified-text">
+                  <span className="text-sm font-semibold verified-text">
                     Password Reset Successful
                   </span>
                 </div>

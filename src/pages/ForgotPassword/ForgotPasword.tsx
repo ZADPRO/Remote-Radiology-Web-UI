@@ -406,7 +406,7 @@ const [successMessage, setSuccessMessage] = useState("");
                     />
                   </svg>
 
-                  <span className="text-sm font-semibold text-green-600 verified-text">
+                  <span className="text-sm font-semibold verified-text">
                     {successMessage}
                   </span>
                 </div>
