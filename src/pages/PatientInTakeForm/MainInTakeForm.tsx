@@ -3,20 +3,18 @@ import { CustomRadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/LogoNew.png";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { useLocation, useNavigate } from "react-router-dom";
-import { SubmitDialog } from "./SubmitDialog";
-import { patientInTakeService } from "@/services/patientInTakeFormService";
-import { PatientInTakeFormNavigationState } from "./PatientInTakeFormS/PatientInTakeForm01";
+import { IntakeOption, PatientInTakeFormNavigationState } from "./PatientInTakeForm";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export interface IntakeOption {
-  questionId: number;
-  answer: string; // "true" or "false"
+interface Props{
+  formData: IntakeOption[];
+  setFormData: React.Dispatch<React.SetStateAction<IntakeOption[]>>;
+  handleFormSwitch: (formNumber: number) => void;
+  controlData: PatientInTakeFormNavigationState;
+   openSubmitDialog: () => void;
+   readOnly: boolean;
 }
-
-// interface NavigateState {
-//   formData: IntakeOption[];
-//   appointmentId: number;
-// }
 
 const checkboxData: Record<string, { label: string; id: string }[]> = {
   "1": [
@@ -100,7 +98,7 @@ const checkboxData: Record<string, { label: string; id: string }[]> = {
 const intakeOptions = [
   {
     id: "1",
-    questionId: 167, // New ID
+    questionId: 170, // New ID
     radioLabel:
       "I'm here for a routine breast screening (first-time or annual checkup).",
     formTitle: "S. Breast QT Screening Form (No Abnormal Findings)",
@@ -110,7 +108,7 @@ const intakeOptions = [
   },
   {
     id: "2",
-    questionId: 168, // New ID
+    questionId: 170, // New ID
     radioLabel:
       "I'm following up after an abnormal symptom or result from a previous scan.",
     formTitle: "F. Follow-up Evaluation Form (Abnormal Symptoms or Results)",
@@ -120,7 +118,7 @@ const intakeOptions = [
   },
   {
     id: "3",
-    questionId: 169, // New ID
+    questionId: 170, // New ID
     radioLabel:
       "I've been diagnosed with breast cancer or DCIS and need imaging.",
     formTitle: "D. Breast Cancer/ DCIS Assessment Form",
@@ -139,162 +137,99 @@ const intakeOptions = [
   },
 ];
 
-const MainInTakeForm: React.FC = () => {
+const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitch, controlData, openSubmitDialog, readOnly}) => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [formData, setFormData] = useState<IntakeOption[]>([]);
-
-  const [mainFormData, setMainFormData] = useState({
-    categoryId: 0,
-    overriderequest: false,
-    appointmentId: 0,
-  });
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const location = useLocation();
-
-  const fetchFormData: PatientInTakeFormNavigationState = useLocation().state;
-
-  useEffect(() => {
-      if (fetchFormData.fetchFormData) {
-        handleFetchPatientForm(fetchFormData.apiInfo.userId, fetchFormData.apiInfo.appointmentId);
-        
-      }
-    }, []);
   
-    console.log(fetchFormData);
-  
-
-  const handleFetchPatientForm = async (
-      userID: number,
-      appointmentId: number
-    ) => {
-      try {
-        const res = await patientInTakeService.fetchPatientInTakeForm(
-          userID,
-          appointmentId
-        );
-        console.log(res);
-  
-        if (res.status) {
-          setFormData(res.data);
-          console.log(res.data);
-          if (fetchFormData.categoryId) {
-            const selected = intakeOptions.find(
-              (opt) => opt.questionId === fetchFormData.categoryId
-            );
-            if (selected) {
-              setSelectedOption(selected.id);
-            }
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  
-  const previousFormData: IntakeOption[] = location.state.formData || [];
-  const navigate = useNavigate();
-
   const [suggestedOption, setSuggestedOption] = useState("");
 
   useEffect(() => {
-    console.log("eeeeeeeeeeee")
-    let initialFormData: IntakeOption[] = location.state.formData || [];
-
-    // Ensure main radio options are present in formData
-    intakeOptions.forEach(option => {
-        if (!initialFormData.some(item => item.questionId === option.questionId)) {
-            initialFormData.push({ questionId: option.questionId, answer: "false" });
-        }
-    });
-
-    // Ensure all checkboxes are present in formData with correct categoryId
-    Object.keys(checkboxData).forEach(mainOptionId => {
-        const mainOptionQId = intakeOptions.find(opt => opt.id === mainOptionId)?.questionId;
-        if (mainOptionQId === undefined) return; // Should not happen
-
-        checkboxData[mainOptionId].forEach(cb => {
-            const qId = parseInt(cb.id);
-            if (!initialFormData.some(item => item.questionId === qId)) {
-                initialFormData.push({ questionId: qId, answer: "false"});
-            }
-        });
-    });
-
-    setFormData(initialFormData); // Set the initial formData
-
-    setMainFormData((prev) => ({
-      ...prev,
-      appointmentId: location.state.appointmentId, // replace with your actual value
-    }));
-
-
-    // Suggestion logic
+    if (controlData.apiUpdate || readOnly) {
+      controlData.categoryId
+        ? setSelectedOption(controlData.categoryId.toString())
+        : setSelectedOption(
+            formData.find((item) => item.questionId === 170)?.answer || ""
+          );
+    } else {
+      // Suggestion logic
       let suggestion = "";
 
-      if (previousFormData.find(item => item.questionId === 87)?.answer.toString() === "Yes") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 126)?.answer.toString() === "Abnormal") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 131)?.answer.toString() === "Abnormal") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 136)?.answer.toString() === "Abnormal") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 141)?.answer.toString() === "Abnormal") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 146)?.answer.toString() === "Abnormal") {
-        suggestion = "2"
-      } else if (previousFormData.find(item => item.questionId === 151)?.answer.toString() === "Abnormal") {
-        suggestion = "4"
-      } else if (previousFormData.find(item => item.questionId === 162)?.answer.toString() === "Yes") {
-        suggestion = "3"
+      if (
+        formData.find((item) => item.questionId === 87)?.answer.toString() ===
+        "Yes"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 126)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 131)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 136)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 141)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 146)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "2";
+      } else if (
+        formData.find((item) => item.questionId === 151)?.answer.toString() ===
+        "Abnormal"
+      ) {
+        suggestion = "4";
+      } else if (
+        formData.find((item) => item.questionId === 162)?.answer.toString() ===
+        "Yes"
+      ) {
+        suggestion = "3";
       }
-      setSuggestedOption(suggestion)
+      setSuggestedOption(suggestion);
       setSelectedOption(suggestion);
-  }, [location.state]);
+    }
+  }, []);
 
   // Step 2: When selectedOption changes, add mapped values safely
-  useEffect(() => {
-    if (!selectedOption) return;
+ useEffect(() => {
+  if (!selectedOption || readOnly) return;
 
-    // Update categoryId in mainFormData based on selectedOption
-    setMainFormData(prev => ({
-      ...prev,
-      categoryId: parseInt(selectedOption, 10) // Convert selectedOption to number
-    }));
+  setFormData((prevFormData) => {
+    const updatedFormData = [...prevFormData];
 
-    setFormData(prevFormData => {
-        const updatedFormData = [...prevFormData]; // Create a mutable copy
+    // ✅ Set questionId: 170 with selectedOption ID
+    const qId = 170;
+    const index = updatedFormData.findIndex((item) => item.questionId === qId);
+    if (index !== -1) {
+      updatedFormData[index] = { ...updatedFormData[index], answer: selectedOption };
+    } else {
+      updatedFormData.push({ questionId: qId, answer: selectedOption });
+    }
 
-        // Update the answer for the selected main option and clear others
-        intakeOptions.forEach(option => {
-            const qId = option.questionId;
-            const isSelected = option.id === selectedOption;
-            const entryIndex = updatedFormData.findIndex(item => item.questionId === qId);
-            if (entryIndex !== -1) {
-                updatedFormData[entryIndex] = { ...updatedFormData[entryIndex], answer: isSelected ? "true" : "false" };
-            } else {
-                updatedFormData.push({ questionId: qId, answer: isSelected ? "true" : "false" });
-            }
-        });
-
-        // Reset answers for ALL checkboxes in checkboxData to false
-        Object.values(checkboxData).flat().forEach(cb => {
-            const qId = parseInt(cb.id);
-            const entryIndex = updatedFormData.findIndex(item => item.questionId === qId);
-            if (entryIndex !== -1) {
-                updatedFormData[entryIndex] = { ...updatedFormData[entryIndex], answer: "false" };
-            } else {
-                // This case should ideally not happen if formData is pre-filled correctly
-                // Assign a default categoryId, e.g., 0 or the questionId of the main option it belongs to.
-                updatedFormData.push({ questionId: qId, answer: "false" });
-            }
-        });
-
-        return updatedFormData;
+    // ✅ Reset all checkboxes to false
+    Object.values(checkboxData).flat().forEach((cb) => {
+      const cbId = parseInt(cb.id);
+      const idx = updatedFormData.findIndex((item) => item.questionId === cbId);
+      if (idx !== -1) {
+        updatedFormData[idx] = { ...updatedFormData[idx], answer: "false" };
+      } else {
+        updatedFormData.push({ questionId: cbId, answer: "false" });
+      }
     });
-  }, [selectedOption]); // Depend only on selectedOption
+
+    return updatedFormData;
+  });
+}, [selectedOption]);
+
 
   const handleCheckboxChange = (id: string, checked: boolean) => {
     const questionId = parseInt(id);
@@ -306,41 +241,44 @@ const MainInTakeForm: React.FC = () => {
       )
     );
   };
-  const formRoutes: Record<string, string> = {
-    "1": "/patientInTakeForm-01",
-    "2": "/patientInTakeForm-02",
-    "3": "/patientInTakeForm-03",
-    "4": "/patientInTakeForm-04",
-  };
 
   console.log(formData); // Debugging
 
   return (
+    //  <div className={readOnly ? "pointer-events-none" : ""}>
     <div className="flex flex-col gap-3 h-dvh lg:flex-row w-full p-5 lg:p-0 bg-gradient-to-b from-[#EED2CF] to-[#FEEEED] overflow-y-auto">
       {/* Left Panel */}
       <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:p-6 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col justify-center lg:items-center gap-2">
+         <Button
+          type="button"
+          variant="link"
+          className="self-start flex text-foreground font-semibold items-center gap-2"
+          onClick={() => handleFormSwitch(1)}
+        >
+          <ArrowLeft />
+          <span className="text-lg font-semibold">Back</span>
+        </Button>
         <h1 className="text-3xl lg:text-3xl font-semibold lg:mb-6 text-start lg:text-center">
           Please confirm the reason why you are having this QT scan
         </h1>
 
         <RadioGroup
-          className="flex flex-col gap-2 lg:gap-5"
+          className={`flex flex-col gap-2 lg:gap-5 ${
+            readOnly ? "pointer-events-none" : ""
+          }`}
           value={selectedOption}
           onValueChange={setSelectedOption}
         >
           {intakeOptions.map(({ id, radioLabel }) => (
-            <>
-              {id == suggestedOption && (
+            <React.Fragment key={id}>
+              {id === suggestedOption && (
                 <span className="text-muted-foreground italic">
                   (Please Proceed with the Current Selected Form)
                 </span>
               )}
-              <div
-                key={id}
-                className="flex items-start lg:items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md"
-              >
+              <div className="flex items-start lg:items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md">
                 <CustomRadioGroupItem
-                  className="text-black bg-white  data-[state=checked]:ring-2"
+                  className="text-black bg-white data-[state=checked]:ring-2"
                   value={id}
                   id={`r${id}`}
                 />
@@ -351,7 +289,7 @@ const MainInTakeForm: React.FC = () => {
                   {radioLabel}
                 </Label>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </RadioGroup>
       </div>
@@ -376,7 +314,7 @@ const MainInTakeForm: React.FC = () => {
                   ?.subHeaderTitle
               }
             </p>
-            <div className="space-y-4 p-4 lg:pl-10">
+            <div className={`space-y-4 p-4 lg:pl-10 ${readOnly ? "pointer-events-none" : ""}`}>
               {(checkboxData[selectedOption] || []).map((cb) => {
                 const isChecked =
                   formData.find((f) => f.questionId === parseInt(cb.id))
@@ -407,42 +345,22 @@ const MainInTakeForm: React.FC = () => {
             ) && (
               <div className="hidden lg:inline">
                 <div className="w-2/3 flex flex-col align-items justify-center mt-4 mx-auto gap-4">
-                  {/* <h1 className="text-2xl text-center font-semibold">
-                    {
-                      intakeOptions.find((opt) => opt.id === selectedOption)
-                        ?.formTitle
-                    }
-                  </h1> */}
-
                   {selectedOption === "1" ? (
                     <button
                       className="w-1/2 mx-auto bg-[#a4b2a1] text-white font-bold p-3 uppercase border-2 border-white rounded-lg cursor-pointer hover:bg-[#91a48d]"
-                      onClick={() => setDialogOpen(true)}
+                      onClick={openSubmitDialog}
                     >
                       Submit
                     </button>
                   ) : (
                     <button
-                      className="w-1/2 mx-auto bg-[#a4b2a1] text-white font-bold p-3 uppercase border-2 border-white rounded-lg cursor-pointer hover:bg-[#91a48d]"
-                      onClick={() =>
-                        navigate(formRoutes[selectedOption], {
-                          state: { formData, mainFormData },
-                        })
-                      }
+                      className="w-1/2 mx-auto bg-[#a4b2a1] text-white font-bold p-3 uppercase border-2 border-white rounded-lg cursor-pointer hover:bg-[#91a48d] pointer-events-auto"
+                      onClick={() => handleFormSwitch(parseInt(selectedOption))}
                     >
                       Proceed Form
                     </button>
                   )}
                 </div>
-
-                {/* <div className="w-full text-center mt-2 font-semibold">
-                  <span>
-                    {
-                      intakeOptions.find((opt) => opt.id === selectedOption)
-                        ?.footerLabel
-                    }
-                  </span>
-                </div> */}
               </div>
             )}
           </div>
@@ -456,51 +374,26 @@ const MainInTakeForm: React.FC = () => {
       ) && (
         <div className="inline lg:hidden mt-4">
           <div className="flex flex-col gap-2 items-center ">
-            {/* <h1 className="text-base text-center font-bold">
-              {
-                intakeOptions.find((opt) => opt.id === selectedOption)
-                  ?.formTitle
-              }
-            </h1> */}
             {selectedOption === "1" ? (
               <button
                 className="w- mx-auto bg-[#a4b2a1] rounded-2xl text-white p-3"
-                onClick={() => setDialogOpen(true)}
+                onClick={openSubmitDialog}
               >
                 SUBMIT
               </button>
             ) : (
               <button
-                className="w- mx-auto bg-[#a4b2a1] rounded-2xl text-white p-3"
-                onClick={() =>
-                  navigate(formRoutes[selectedOption], {
-                    state: { formData, mainFormData },
-                  })
-                }
+                className="w- mx-auto bg-[#a4b2a1] rounded-2xl text-white p-3 pointer-events-auto"
+                onClick={() => handleFormSwitch(parseInt(selectedOption))}
               >
                 PROCEED TO FORM
               </button>
             )}
-
-            {/* <div className="w-full text-sm text-center font-semibold">
-              <span>
-                {
-                  intakeOptions.find((opt) => opt.id === selectedOption)
-                    ?.footerLabel
-                }
-              </span>
-            </div> */}
           </div>
         </div>
       )}
-      <SubmitDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        formData={formData}
-        mainFormData={mainFormData}
-        appointmentId={mainFormData.appointmentId}
-      />
     </div>
+    // </div>
   );
 };
 

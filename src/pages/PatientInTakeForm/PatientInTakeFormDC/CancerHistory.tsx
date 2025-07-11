@@ -3,7 +3,7 @@ import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
 import { Input } from "@/components/ui/input";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   cancerHistory: number;

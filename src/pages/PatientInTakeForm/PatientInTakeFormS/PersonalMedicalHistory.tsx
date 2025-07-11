@@ -6,7 +6,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import DatePicker from "@/components/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -36,20 +36,22 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const PersonalMedicalHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="PERSONAL MEDICAL HISTORY" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <MultiOptionRadioGroup
           label="A. Previous breast surgeries?"
@@ -352,6 +354,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
             placeholder="Enter Details"
           />
         </div>
+      </div>
       </div>
     </div>
   );

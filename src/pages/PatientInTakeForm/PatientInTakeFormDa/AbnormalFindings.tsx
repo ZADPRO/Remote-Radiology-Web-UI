@@ -7,7 +7,7 @@ import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadio
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import DatePicker from "@/components/date-picker";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   abnormality: number;

@@ -6,7 +6,7 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import { Textarea } from "@/components/ui/textarea";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   alcoholConsumption: number;
@@ -25,19 +25,22 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const LifeStyleFactors: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Lifestyle Factors" className="uppercase" />
 
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
         {/* A. Alcohol consumption */}
 
@@ -174,6 +177,7 @@ const LifeStyleFactors: React.FC<Props> = ({
             placeholder="Enter Details"
           />
         </div>
+      </div>
       </div>
     </div>
   );

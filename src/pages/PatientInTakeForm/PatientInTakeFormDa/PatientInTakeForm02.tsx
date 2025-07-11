@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import checkedImg from "../../../assets/checked.png";
 import PatientConcerns from "./PatientConcerns";
@@ -8,12 +8,18 @@ import BiopsyInformation from "./BiopsyInformation";
 import MonitoringFollow from "./MonitoringFollow";
 import sidebar_bg from "../../../assets/Mask_group.png";
 import logo from "../../../assets/LogoNew.png";
-import { IntakeOption } from "../MainInTakeForm";
-import { SubmitDialog } from "../SubmitDialog";
+import { IntakeOption } from "../PatientInTakeForm";
+import { Button } from "@/components/ui/button";
 
-const PatientInTakeForm02: React.FC = () => {
-  const previousFormData = useLocation().state?.formData || [];
-  const previoousMainFormData = useLocation().state?.mainFormData || [];
+interface Props{
+  formData: IntakeOption[];
+  setFormData: React.Dispatch<React.SetStateAction<IntakeOption[]>>;
+  handleFormSwitch: (formNumber: number) => void;
+  openSubmitDialog: () => void;
+  readOnly: boolean;
+}
+
+const PatientInTakeForm02: React.FC<Props> = ({formData, setFormData, handleFormSwitch, openSubmitDialog, readOnly}) => {
 
   const navigate = useNavigate();
 
@@ -26,13 +32,6 @@ const PatientInTakeForm02: React.FC = () => {
 
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
-  // Initialize formData directly with previousFormData
-  const [formData, setFormData] = useState<IntakeOption[]>(previousFormData);
-
-  const [mainFormData, setMainFormData] = useState(previoousMainFormData);
-
-  console.log("previousFormData", setMainFormData);
-
   const handleInputChange = (questionId: number, value: string) => {
     setFormData((prev) =>
       prev.map((item) =>
@@ -40,6 +39,8 @@ const PatientInTakeForm02: React.FC = () => {
       )
     );
   };
+
+  console.log(readOnly);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -151,15 +152,13 @@ const PatientInTakeForm02: React.FC = () => {
     }
   };
 
-  // const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleNext = () => {
     const currentIndex = options.indexOf(selectedSection);
 
     if (options.indexOf(selectedSection) === options.length - 1) {
       console.log("Submitting formData:", formData);
-      setDialogOpen(true);
+      openSubmitDialog();
     } else {
       setSelectedSection(options[currentIndex + 1]);
     }
@@ -174,7 +173,16 @@ const PatientInTakeForm02: React.FC = () => {
       className="flex flex-col lg:flex-row h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]"
     >
       {/* Sidebar */}
-      <div className="flex lg:hidden h-[10vh] items-center">
+      <div className="flex lg:hidden h-[10vh] items-center justify-between">
+       <Button
+                 type="button"
+                 variant="link"
+                 className="flex text-foreground font-semibold items-center gap-2"
+                 onClick={() => handleFormSwitch(5)}
+               >
+                 <ArrowLeft />
+                 <span className="text-lg font-semibold">Back</span>
+               </Button>
         <img src={logo} className="h-[6vh] px-5" alt="logo" />
       </div>
       <div
@@ -188,6 +196,15 @@ const PatientInTakeForm02: React.FC = () => {
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
+        <Button
+                  type="button"
+                  variant="link"
+                  className="pb-4 text-foreground hidden lg:flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
+                  onClick={() => handleFormSwitch(5)}
+                >
+                  <ArrowLeft />
+                  <span className="text-lg">Back</span>
+                </Button>
         {options.map((option) => (
           <div
             ref={(el) => {
@@ -259,13 +276,13 @@ const PatientInTakeForm02: React.FC = () => {
           {/* )} */}
         </div>
       </div>
-      <SubmitDialog
+      {/* <SubmitDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         formData={formData}
         mainFormData={mainFormData}
         appointmentId={mainFormData.appointmentId}
-      />
+      /> */}
     </form>
   );
 };

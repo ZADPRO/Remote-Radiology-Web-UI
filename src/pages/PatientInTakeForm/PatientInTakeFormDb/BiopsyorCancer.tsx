@@ -7,7 +7,7 @@ import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadio
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   datediagnosis: number;

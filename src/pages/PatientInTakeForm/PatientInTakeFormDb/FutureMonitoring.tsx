@@ -4,7 +4,7 @@ import FormHeader from "../FormHeader";
 import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
   Current: number;
@@ -60,8 +60,6 @@ const FutureMonitoring: React.FC<Props> = ({
             ]}
             showInputWhenValue="Other"
             inputPlaceholder="Specify"
-            className="flex-col items-start sm:h-auto"
-            inputWidth="w-[auto] sm:w-100"
           />
         </div>
 

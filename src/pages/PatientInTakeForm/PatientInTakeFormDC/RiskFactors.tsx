@@ -5,7 +5,7 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { useEffect } from "react";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
-import { IntakeOption } from "../MainInTakeForm";
+import { IntakeOption } from "../PatientInTakeForm";
 
 interface QuestionIds {
     weightDiff: number;
