@@ -97,39 +97,45 @@ const MainRoutes: React.FC = () => {
     { path: "addTechnician", element: <AddTechnician /> },
     { path: "addPerformingProvider", element: <AddPerformingProvider /> },
     { path: "addCoReportingDoctor", element: <AddCoReportingDoctor /> },
-    { path: "patientQueue", element: <PatientQueue />}
+    { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
   ];
 
   const technicianRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
-    { path: "uploadDicoms", element: <UploadDicomFiles /> }
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
+    { path: "analytics", element: <Analytics /> },
   ];
 
   const doctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
   ]
 
   const radiologistRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
   ]
 
   const scribeRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
-    { path: "report", element: <Report />}
+    { path: "report", element: <Report />},
+    { path: "analytics", element: <Analytics /> },
   ]
 
   const coDoctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <AdminDashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
   ]
 
   const managerRoutes: AppRoute[] = [
@@ -142,6 +148,7 @@ const MainRoutes: React.FC = () => {
     { path: "manageScribe", element: <ManageScribe /> },
     { path: "viewScanCenter", element: <ViewScanCenter /> },
     { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
   ];
 
   const patientRoutes: AppRoute[] = [

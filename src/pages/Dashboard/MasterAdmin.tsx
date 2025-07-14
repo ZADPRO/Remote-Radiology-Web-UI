@@ -1,6 +1,6 @@
 // src/Dashboard/MasterAdmin.tsx
 
-import React, { JSX, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import {
   BellIcon,
   ChartPie,
@@ -10,7 +10,7 @@ import {
   Settings2,
   User,
 } from "lucide-react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import WellthGreenAdminProfile from "../Profile/WellthGreenAdminProfile";
 
 const MasterAdmin: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, role, setRole } = useAuth();
 
   const renderProfileComponent = () => {
@@ -107,6 +108,11 @@ const MasterAdmin: React.FC = () => {
         path: "/scadmin/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/scadmin/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     technician: [
       {
@@ -119,6 +125,11 @@ const MasterAdmin: React.FC = () => {
         path: "/technician/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/technician/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     radiologist: [
       {
@@ -131,6 +142,11 @@ const MasterAdmin: React.FC = () => {
         path: "/radiologist/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/radiologist/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     scribe: [
       {
@@ -143,6 +159,11 @@ const MasterAdmin: React.FC = () => {
         path: "/scribe/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/scribe/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     patient: [
       {
@@ -172,6 +193,11 @@ const MasterAdmin: React.FC = () => {
         path: "/manager/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/manager/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     doctor: [
       {
@@ -184,6 +210,11 @@ const MasterAdmin: React.FC = () => {
         path: "/doctor/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/doctor/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
     codoctor: [
       {
@@ -196,10 +227,29 @@ const MasterAdmin: React.FC = () => {
         path: "/codoctor/patientQueue",
         icon: <User className="w-4 h-4" />,
       },
+      {
+        label: "Analytics",
+        path: "/codoctor/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      }
     ],
   };
 
   const menus = role?.type ? roleMenus[role.type] || [] : [];
+
+  const [selectedMenu, setSelectedMenu] = useState<string>("");
+
+  useEffect(() => {
+  const currentPath = location.pathname;
+
+  const activeMenu = role?.type
+    ? roleMenus[role.type]?.find((menu) => currentPath.startsWith(menu.path))
+    : null;
+
+  if (activeMenu) {
+    setSelectedMenu(activeMenu.label);
+  }
+}, [location.pathname, role?.type]);
 
   return (
     <div className={`flex h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]`}>
@@ -240,8 +290,8 @@ const MasterAdmin: React.FC = () => {
             {menus.map((menu) => (
               <div
                 key={menu.path}
-                className="flex items-center justify-center gap-2 bg-[#f8f3eb] py-1.5 px-3 rounded-3xl cursor-pointer hover:bg-black hover:text-white transition"
-                onClick={() => navigate(menu.path)}
+                className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-3xl cursor-pointer hover:text-white transition ${selectedMenu === menu.label ? "bg-[#B1B8AA]" : "bg-[#f8f3eb]"}`}
+                onClick={() => {navigate(menu.path); setSelectedMenu(menu.label)}}
               >
                 {menu.icon}
                 <span className="text-sm font-semibold mt-[1.5px]">
