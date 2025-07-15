@@ -268,8 +268,8 @@ const Report: React.FC = () => {
 
   const [selectedImpressionId, setSelectedImpressionId] = useState<string>("");
   const [selectedRecommendationId, setSelectedRecommendationId] = useState<string>("");
-  const [impressionText, setImpressionText] = useState("");
-  const [recommendationText, setRecommendationText] = useState("");
+  // const [impressionText, setImpressionText] = useState("");
+  // const [recommendationText, setRecommendationText] = useState("");
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -297,8 +297,10 @@ const Report: React.FC = () => {
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [] ,
         });
-        setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression);
-        setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation);
+        // setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression ?  response.appointmentStatus[0].refAppointmentImpression: "");
+        // setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation ?  response.appointmentStatus[0].refAppointmentRecommendation: "");
+        setSelectedImpressionId("");
+        setSelectedRecommendationId("");
         setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportIntakeFormData) {
@@ -1114,14 +1116,14 @@ const Report: React.FC = () => {
                         value: LymphNodesLeft,
                         onChange: setLymphNodesLeft,
                       },
-                      ImpressionText: {
-                        value: impressionText,
-                        onChange: setImpressionText,
-                      },
-                      RecommendationText: {
-                        value: recommendationText,
-                        onChange: setRecommendationText,
-                      },
+                      // ImpressionText: {
+                      //   value: impressionText,
+                      //   onChange: setImpressionText,
+                      // },
+                      // RecommendationText: {
+                      //   value: recommendationText,
+                      //   onChange: setRecommendationText,
+                      // },
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
