@@ -37,7 +37,7 @@ import { useAuth, UserRole } from "../Routes/AuthContext";
 import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import Impression from "./ImpressionRecommendation";
+// import Impression from "./ImpressionRecommendation";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -1146,15 +1146,18 @@ const Report: React.FC = () => {
                     patientDetails={patientDetails}
                     readOnly={location.readOnly ? true : false}
                   />
-                ) : (subTab === 5 && (
-                  <Impression 
+                ) : 
+                (subTab === 5 && (
+                  <>
+                  {/* <Impression 
                     selectedImpressionId={selectedImpressionId}
                     setSelectedImpressionId={setSelectedImpressionId}
                     selectedRecommendationId={selectedRecommendationId}
                     setSelectedRecommendationId={setSelectedRecommendationId}
                     setRecommendationText={setRecommendationText}
                     setImpressionText={setImpressionText}
-                    />
+                    /> */}
+                  </>
                 ))
               )}
             </>
