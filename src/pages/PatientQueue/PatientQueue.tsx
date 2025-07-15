@@ -901,7 +901,7 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
   if (hasEditAccess) {
     const { status, accessId } = await handleCheckAccess(row.original.refAppointmentId);
 
-    if (status && accessId === currentUserId) {
+    if (status && (accessId === currentUserId || accessId === 0)) {
       // Direct edit access
       navigate("/report", {
         state: {
