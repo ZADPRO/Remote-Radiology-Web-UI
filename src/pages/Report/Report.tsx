@@ -37,6 +37,7 @@ import { useAuth, UserRole } from "../Routes/AuthContext";
 import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import Impression from "./ImpressionRecommendation";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -174,6 +175,7 @@ const Report: React.FC = () => {
     "Addendum",
   ];
 
+
   const [userDetails, setUserDetails]: any = useState([]);
 
   // const [dicomFiles, setDicomFiles] = useState<DicomFileList[]>([]);
@@ -264,6 +266,11 @@ const Report: React.FC = () => {
     ResponsePatientForm[]
   >([]);
 
+  const [selectedImpressionId, setSelectedImpressionId] = useState<string>("");
+  const [selectedRecommendationId, setSelectedRecommendationId] = useState<string>("");
+  const [impressionText, setImpressionText] = useState("");
+  const [recommendationText, setRecommendationText] = useState("");
+
   const handleAssignUser = async () => {
     setLoading(true);
     try {
@@ -288,9 +295,11 @@ const Report: React.FC = () => {
       if (response.status) {
         setAssignData({
           appointmentStatus: response.appointmentStatus,
-          reportHistoryData: response.reportHistoryData,
+          reportHistoryData: response.reportHistoryData || [] ,
         });
-        setTemplates(response.reportFormateList);
+        setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression);
+        setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation);
+        setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportIntakeFormData) {
           setReportFormData(response.reportIntakeFormData);
@@ -457,6 +466,9 @@ const Report: React.FC = () => {
         movedStatus: movedStatus,
         currentStatus: assignData?.appointmentStatus[0]?.refAppointmentComplete,
         syncStatus: syncStatus.Notes,
+        impression: selectedImpressionId,
+        recommendation: selectedRecommendationId,
+        editStatus: selected === "edit" ? true : false,
       };
       console.log(payload);
 
@@ -520,6 +532,7 @@ const Report: React.FC = () => {
               { label: "General", value: 1 },
               { label: "Right", value: 2 },
               { label: "Left", value: 3 },
+              // { label: "Impression", value: 5},
               { label: "Report", value: 4 },
             ].map(({ label, value }) => (
               <div
@@ -712,13 +725,15 @@ const Report: React.FC = () => {
             </table>
           </div>
 
-          <div className={`flex border-2 border-[#a3b1a0] rounded overflow-hidden mb-2 w-full `}>
+          {
+            (role?.id === 1 || role?.id === 5) && (
+              <div className={`flex border-2 border-[#a3b1a0] rounded overflow-hidden mb-2 w-full `}>
             <button
               onClick={() => setSelected("correct")}
               className={`px-4 py-1 font-medium w-1/2 transition text-xs cursor-pointer ${
                 selected === "correct"
-                  ? "bg-[#a3b1a0] text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#a3b1a0] text-white m-0.5"
+                  : "bg-gray-200 text-gray-600 hover:bg-gray-100"
               }`}
             >
               Correct
@@ -727,13 +742,15 @@ const Report: React.FC = () => {
               onClick={() => setSelected("edit")}
               className={`px-4 py-1 w-1/2 font-medium transition text-xs cursor-pointer ${
                 selected === "edit"
-                  ? "bg-[#a3b1a0] text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
+                  ? "bg-[#a3b1a0] text-white m-0.5"
+                  : "bg-gray-200 text-gray-600 hover:bg-gray-100"
               }`}
             >
               Edit
             </button>
           </div>
+            )
+          }
 
           {/* Buttons */}
           {role?.type && (
@@ -1041,7 +1058,7 @@ const Report: React.FC = () => {
                   readOnly={location.readOnly ? true : false}
                 />
               ) : (
-                subTab === 4 && (
+                subTab === 4 ? (
                   <NotesReport
                     reportFormData={reportFormData}
                     textEditor={{
@@ -1097,6 +1114,14 @@ const Report: React.FC = () => {
                         value: LymphNodesLeft,
                         onChange: setLymphNodesLeft,
                       },
+                      ImpressionText: {
+                        value: impressionText,
+                        onChange: setImpressionText,
+                      },
+                      RecommendationText: {
+                        value: recommendationText,
+                        onChange: setRecommendationText,
+                      },
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
@@ -1121,7 +1146,16 @@ const Report: React.FC = () => {
                     patientDetails={patientDetails}
                     readOnly={location.readOnly ? true : false}
                   />
-                )
+                ) : (subTab === 5 && (
+                  <Impression 
+                    selectedImpressionId={selectedImpressionId}
+                    setSelectedImpressionId={setSelectedImpressionId}
+                    selectedRecommendationId={selectedRecommendationId}
+                    setSelectedRecommendationId={setSelectedRecommendationId}
+                    setRecommendationText={setRecommendationText}
+                    setImpressionText={setImpressionText}
+                    />
+                ))
               )}
             </>
           )}
