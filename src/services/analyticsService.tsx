@@ -1,0 +1,113 @@
+import { decrypt, encrypt } from "@/Helper";
+import axios from "axios";
+import { ListScanCenter } from "./scancenterService";
+
+export interface UserList {
+  refUserCustId: string;
+  refUserId: number;
+  refRTId: number;
+}
+
+export interface AppointmentCases {
+  month: string;
+  month_name: string;
+  total_appointments: number;
+}
+
+export interface ListScanAppointmentCount {
+  refSCId: string;
+  refSCName: string;
+  total_appointments: number;
+}
+
+export interface IntakeFormAnalytics {
+  DaForm: number;
+  DbForm: number;
+  DcForm: number;
+  SForm: number;
+  total_appointments: number;
+}
+
+export interface UserAccessTiming {
+  total_hours: number;
+  total_minutes: number;
+}
+
+export interface ImpressionModel {
+  impression: string;
+  count: number
+}
+
+export interface TotalCorrectEdit {
+  totalCorrect: number;
+  totalEdit: number;
+}
+
+export interface TATStats {
+  gt_10_days: number;
+  le_1_day: number;
+  le_3_days: number;
+  le_7_days: number;
+  le_10_days: number;
+}
+
+export const analyticsService = {
+  overallScanCenter: async (SCId: number, monthnyear: string) => {
+    const token = localStorage.getItem("token");
+    console.log({ SCId, monthnyear })
+    const payload = encrypt({ SCId, monthnyear }, token);
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/analaytics/admin/overallonescancenter`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      status: boolean;
+      AdminOverallAnalaytics: AppointmentCases[];
+      AdminOverallScanIndicatesAnalaytics: IntakeFormAnalytics[];
+      UserListIds: UserList[];
+      AllScaCenter: ListScanCenter[];
+      ImpressionModel: ImpressionModel[];
+    } = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    return decryptedData;
+  },
+
+  analyticsPerUser: async (userId: number, roleId: number, monthnyear: string) => {
+    const token = localStorage.getItem("token");
+
+    const payload = encrypt({ userId, roleId, monthnyear }, token); 
+
+     const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/analaytics/oneuser`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      status: boolean;
+      AdminOverallAnalaytics: AppointmentCases[];
+      AdminOverallScanIndicatesAnalaytics: IntakeFormAnalytics[];
+      ListScanAppointmentCount: ListScanAppointmentCount[];
+      UserAccessTiming: UserAccessTiming[];
+      DurationBucketModel: TATStats[];
+      ImpressionModel: ImpressionModel[];
+      TotalCorrectEdit: TotalCorrectEdit[];
+    } = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    return decryptedData;
+  }
+};

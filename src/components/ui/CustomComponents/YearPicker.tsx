@@ -8,7 +8,7 @@ interface YearPickerProps {
   onChange: (year: number) => void;
   startYear?: number;
   endYear?: number;
-  className?: string; // ✅ Use directly
+  className?: string;
 }
 
 export function YearPicker({
@@ -25,14 +25,13 @@ export function YearPicker({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn("justify-between", className)}
-        >
+        <Button variant="outline" className={cn("justify-between", className)}>
           {value ?? "Select year"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] max-h-[250px] overflow-y-auto">
+      <PopoverContent
+        className="max-h-[250px] overflow-y-auto w-[--radix-popover-trigger-width]" // 👈 Matches trigger width
+      >
         <div className="grid grid-cols-3 gap-2">
           {years.map((year) => (
             <Button
