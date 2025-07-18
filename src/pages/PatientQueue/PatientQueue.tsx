@@ -76,14 +76,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { reportService } from "@/services/reportService";
 import { useAuth, UserRole } from "../Routes/AuthContext";
-import { downloadAllDicom } from "@/lib/commonUtlis";
+import { downloadAllDicom, handleAllDownloadDicom } from "@/lib/commonUtlis";
 
 interface staffData {
   refUserCustId: string;
   refUserFirstName: string;
   refUserId: number;
 }
-
 
 interface StatusInfo {
   text: string;
@@ -92,7 +91,6 @@ interface StatusInfo {
   editAccess: UserRole[];
   readOnlyAccess: UserRole[];
 }
-
 
 const PatientQueue: React.FC = () => {
   const [patientQueue, setPatientQueue] = useState<TechnicianPatientQueue[]>(
@@ -104,6 +102,7 @@ const PatientQueue: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
+  const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
 
   const currentUserRole = useAuth().role?.type;
   const currentUser = useAuth().user?.refUserId;
@@ -147,92 +146,113 @@ const PatientQueue: React.FC = () => {
     }
   };
 
-const getStatus = (appointmentStatus: string): StatusInfo => {
-  const status = appointmentStatus?.toLowerCase();
+  const getStatus = (appointmentStatus: string): StatusInfo => {
+    const status = appointmentStatus?.toLowerCase();
 
-  const role: UserRole | undefined = currentUserRole;
+    const role: UserRole | undefined = currentUserRole;
 
-  if (role) {
-    if (status === "fillform" || status === "technologistformfill") {
-      return {
-        text: "-",
-        report: false,
-        color: "grey",
-        editAccess: [],
-        readOnlyAccess: [],
-      };
+    if (role) {
+      if (status === "fillform" || status === "technologistformfill") {
+        return {
+          text: "-",
+          report: false,
+          color: "grey",
+          editAccess: [],
+          readOnlyAccess: [],
+        };
+      }
+
+      if (status === "reportformfill") {
+        return {
+          text: "Yet to Report",
+          report: true,
+          color: "grey",
+          editAccess: ["scribe", "admin", "doctor"],
+          readOnlyAccess: [],
+        };
+      }
+
+      if (status === "predraft") {
+        return {
+          text: "Predraft",
+          report: true,
+          color: "#8e7cc3",
+          editAccess: ["radiologist", "admin", "doctor", "scribe"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "doctor"],
+        };
+      }
+
+      if (status === "draft") {
+        return {
+          text: "Draft",
+          report: true,
+          color: "#3c78d8",
+          editAccess: ["admin", "scribe", "doctor"],
+          readOnlyAccess: [
+            "scribe",
+            "radiologist",
+            "admin",
+            "doctor",
+            "scadmin",
+          ],
+        };
+      }
+
+      if (status === "reviewed 1") {
+        return {
+          text: "Reviewed 1",
+          report: true,
+          color: "#e69138",
+          editAccess: ["scribe", "admin", "codoctor"],
+          readOnlyAccess: ["scribe", "admin", "doctor", "scadmin"],
+        };
+      }
+
+      if (status === "reviewed 2") {
+        return {
+          text: "Reviewed 2",
+          report: true,
+          color: "#bf9000",
+          editAccess: ["scribe", "admin", "doctor"],
+          readOnlyAccess: [
+            "scribe",
+            "admin",
+            "doctor",
+            "scadmin",
+            "technician",
+            "codoctor",
+          ],
+        };
+      }
+
+      if (status === "signed off") {
+        return {
+          text: "Signed Off",
+          report: true,
+          color: "#38761d",
+          editAccess: [],
+          readOnlyAccess: [
+            "scribe",
+            "admin",
+            "doctor",
+            "scadmin",
+            "technician",
+            "codoctor",
+            "radiologist",
+          ],
+        };
+      }
     }
 
-    if (status === "reportformfill") {
-      return {
-        text: "Yet to Report",
-        report: true,
-        color: "grey",
-        editAccess: ["scribe", "admin", "doctor"],
-        readOnlyAccess: [],
-      };
-    }
-
-    if (status === "predraft") {
-      return {
-        text: "Predraft",
-        report: true,
-        color: "#8e7cc3",
-        editAccess: ["radiologist", "admin", "doctor", "scribe"],
-        readOnlyAccess: ["scribe", "radiologist", "admin", "doctor"],
-      };
-    }
-
-    if (status === "draft") {
-      return {
-        text: "Draft",
-        report: true,
-        color: "#3c78d8",
-        editAccess: ["admin", "scribe", "doctor"],
-        readOnlyAccess: ["scribe", "radiologist", "admin", "doctor", "scadmin"],
-      };
-    }
-
-    if (status === "reviewed 1") {
-      return {
-        text: "Reviewed 1",
-        report: true,
-        color: "#e69138",
-        editAccess: ["scribe", "admin", "codoctor"],
-        readOnlyAccess: ["scribe", "admin", "doctor", "scadmin"],
-      };
-    }
-
-    if (status === "reviewed 2") {
-      return {
-        text: "Reviewed 2",
-        report: true,
-        color: "#bf9000",
-        editAccess: ["scribe", "admin", "doctor"],
-        readOnlyAccess: ["scribe", "admin", "doctor", "scadmin", "technician", "codoctor"],
-      };
-    }
-
-    if (status === "signed off") {
-      return {
-        text: "Signed Off",
-        report: true,
-        color: "#38761d",
-        editAccess: [],
-        readOnlyAccess: ["scribe", "admin", "doctor", "scadmin", "technician", "codoctor", "radiologist"],
-      };
-    }
-  }
-
-  // ✅ Default fallback for when role is undefined or status is unknown
-  return {
-    text: "-",
-    report: false,
-    color: "grey",
-    editAccess: [],
-    readOnlyAccess: [],
+    // ✅ Default fallback for when role is undefined or status is unknown
+    return {
+      text: "-",
+      report: false,
+      color: "grey",
+      editAccess: [],
+      readOnlyAccess: [],
+    };
   };
-};
 
   const fetchPatientQueue = async () => {
     setLoading(true);
@@ -320,26 +340,94 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
   }, []);
 
   const handleCheckAccess = async (appointmentId: number) => {
-  setLoading(true);
-  try {
-    const response = await reportService.checkAccess(appointmentId);
+    setLoading(true);
+    try {
+      const response = await reportService.checkAccess(appointmentId);
 
-    // Assuming response = { status: true, accessId: 74 }
-    return {
-      status: response.status,
-      accessId: response.accessId,
-    };
-  } catch (error) {
-    console.log(error);
-    return { status: false, accessId: null };
-  } finally {
-    setLoading(false);
-  }
-};
-
+      // Assuming response = { status: true, accessId: 74 }
+      return {
+        status: response.status,
+        accessId: response.accessId,
+      };
+    } catch (error) {
+      console.log(error);
+      return { status: false, accessId: null };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = useMemo<ColumnDef<TechnicianPatientQueue>[]>(
     () => [
+      {
+        accessorKey: "select",
+        id: "select",
+        enableHiding: true,
+        header: ({ table }) => {
+          return (
+            <>
+              <div className="w-full flex justify-center items-center">
+                <Checkbox2
+                  className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
+                  checked={
+                    table.getRowModel().rows.length > 0 &&
+                    table
+                      .getRowModel()
+                      .rows.every((row) =>
+                        selectedRowIds.includes(row.original.refAppointmentId)
+                      )
+                  }
+                  onCheckedChange={(e) => {
+                    if (e) {
+                      console.log(
+                        table
+                          .getRowModel()
+                          .rows.map((row) => row.original.refAppointmentId)
+                      );
+                      // Select all - add all appointment IDs
+                      setSelectedRowIds(
+                        table
+                          .getRowModel()
+                          .rows.map((row) => row.original.refAppointmentId)
+                      );
+                    } else {
+                      // Deselect all - clear the array
+                      setSelectedRowIds([]);
+                    }
+                  }}
+                />
+              </div>
+            </>
+          );
+        },
+        cell: ({ row }) => {
+          return (
+            <>
+              <Checkbox2
+                checked={
+                  selectedRowIds.includes(row.original.refAppointmentId) == true
+                    ? true
+                    : false
+                }
+                onCheckedChange={(e) => {
+                  const appointmentId = row.original.refAppointmentId;
+                  if (e === true) {
+                    setSelectedRowIds((prev) =>
+                      prev.includes(appointmentId)
+                        ? prev
+                        : [...prev, appointmentId]
+                    );
+                  } else {
+                    setSelectedRowIds((prev) =>
+                      prev.filter((id) => id !== appointmentId)
+                    );
+                  }
+                }}
+              />
+            </>
+          );
+        },
+      },
       {
         accessorKey: "refAppointmentDate",
         id: "dateOfAppointment",
@@ -455,7 +543,7 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       {
         // Changed from refSCId to refUserCustId for PatientQueue
         accessorKey: "refUserCustId",
-        id: "patientId", // Renamed ID to reflect content
+        id: "refUserCustId", // Renamed ID to reflect content
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
             <span
@@ -591,6 +679,52 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
         },
       },
       {
+        accessorKey: "refSCCustId",
+        id: "refSCCustId",
+        header: ({ column }) => (
+          <div className="flex items-center">
+            <span
+              className="cursor-pointer text-grey font-semibold"
+              onClick={column.getToggleSortingHandler()}
+            >
+              Scan Centre
+            </span>
+            {column.getCanFilter() && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="!p-0 hover:bg-transparent hover:text-gray-200"
+                  >
+                    <Filter />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2">
+                  <Input
+                    placeholder={`Filter Scan Centre ID...`}
+                    value={(column.getFilterValue() ?? "") as string}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      column.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                  />
+                  <Button
+                    variant="ghost"
+                    onClick={() => column.setFilterValue(undefined)}
+                    className="p-0 mt-2 text-red-500 hover:text-red-700"
+                    title="Clear filter"
+                  >
+                    <XCircle className="h-4 w-4" /> <span>Clear</span>
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        ),
+        // cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
+        enableColumnFilter: true,
+      },
+      {
         id: "patientForm",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
@@ -717,6 +851,7 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
         cell: ({ row }) => {
           const tempStatus = getFormStatus(row.original.refAppointmentComplete);
           const formStatus = tempStatus?.technicianForm;
+          const appointmentComplete = row.original.refAppointmentComplete;
 
           if (formStatus) {
             // Form is already filled — show 'View' for all
@@ -740,6 +875,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
                 </button>
               </span>
             );
+          } else if (
+            currentUserRole === "technician" &&
+            appointmentComplete === "fillform"
+          ) {
+            // Form not started but technician has access and status is 'fillform'
+            return <div className="text-muted-foreground">Not yet started</div>;
           } else if (currentUserRole === "technician") {
             // Not filled yet and technician has access
             return (
@@ -797,7 +938,66 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
 
           const hasDicom = leftDicom || rightDicom;
 
-          if (isTechnician && !hasDicom) {
+          if (hasDicom) {
+            return (
+              <div className="flex justify-center gap-4 items-center text-sm text-center">
+                {/* Left DICOM */}
+                {leftDicom ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Download Left DICOM"
+                    onClick={() =>
+                      downloadAllDicom(
+                        userId,
+                        appointmentId,
+                        "Left",
+                        leftDicom.refDFFilename
+                          .split("_")
+                          .slice(0, -2)
+                          .join("_") + "_L.zip"
+                      )
+                    }
+                  >
+                    <Download />
+                    <span className="sr-only">Left DICOM</span>
+                  </Button>
+                ) : (
+                  <span className="w-10 text-muted-foreground">-</span>
+                )}
+
+                {/* Right DICOM */}
+                {rightDicom ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Download Right DICOM"
+                    onClick={() =>
+                      downloadAllDicom(
+                        userId,
+                        appointmentId,
+                        "Right",
+                        rightDicom.refDFFilename
+                          .split("_")
+                          .slice(0, -2)
+                          .join("_") + "_R.zip"
+                      )
+                    }
+                  >
+                    <Download />
+                    <span className="sr-only">Right DICOM</span>
+                  </Button>
+                ) : (
+                  <span className="w-10 text-muted-foreground">-</span>
+                )}
+              </div>
+            );
+          }
+          if (
+            isTechnician &&
+            !hasDicom &&
+            row.original.refAppointmentComplete === "reportformfill"
+          ) {
             return (
               <div className="text-center w-full">
                 <button
@@ -822,215 +1022,168 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
             );
           }
 
+          return <div className="text-center w-full">-</div>;
+        },
+      },
+      {
+        id: "report",
+        header: () => <div className="text-center w-full">Report</div>,
+        cell: ({ row }) => {
+          const [dialogOpen, setDialogOpen] = useState(false);
+          const [selectedRow, setSelectedRow] = useState<any>(null);
+          const [accessModeDialog, setAccessModeDialog] = useState(false);
+          const navigate = useNavigate();
+
+          const status = getStatus(row.original.refAppointmentComplete);
+          const role = currentUserRole as UserRole;
+          const hasEditAccess = status?.editAccess?.includes(role);
+          const hasReadOnlyAccess = status?.readOnlyAccess?.includes(role);
+
+          if (!status?.report || (!hasEditAccess && !hasReadOnlyAccess)) {
+            return <div className="text-center text-gray-400">-</div>;
+          }
+
+          const handleViewClick = async () => {
+            const currentUserId = currentUser;
+
+            if (hasEditAccess) {
+              const { status, accessId } = await handleCheckAccess(
+                row.original.refAppointmentId
+              );
+
+              if (status && (accessId === currentUserId || accessId === 0)) {
+                // Direct edit access
+                navigate("/report", {
+                  state: {
+                    appointmentId: row.original.refAppointmentId,
+                    userId: row.original.refUserId,
+                    readOnly: false,
+                  },
+                });
+              } else if (status) {
+                // Someone else editing — show read-only prompt
+                setSelectedRow(row.original);
+                setDialogOpen(true);
+              } else {
+                // Fallback: no access
+                setSelectedRow(row.original);
+                setDialogOpen(true);
+              }
+            } else if (hasReadOnlyAccess) {
+              navigate("/report", {
+                state: {
+                  appointmentId: row.original.refAppointmentId,
+                  userId: row.original.refUserId,
+                  readOnly: true,
+                },
+              });
+            }
+          };
+
           return (
-            <div className="flex justify-center gap-4 items-center text-sm text-center">
-              {/* Left DICOM */}
-              {leftDicom ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Download Left DICOM"
-                  onClick={() =>
-                    downloadAllDicom(
-                      userId,
-                      appointmentId,
-                      "Left",
-                      leftDicom.refDFFilename
-                        .split("_")
-                        .slice(0, -2)
-                        .join("_") + "_L.zip"
-                    )
-                  }
-                >
-                  <Download />
-                  <span className="sr-only">Left DICOM</span>
-                </Button>
+            <div className="text-center w-full">
+              {row.original.dicomFiles === null ? (
+                <span>-</span>
               ) : (
-                <span className="w-10 text-muted-foreground">-</span>
+                <span
+                  onClick={handleViewClick}
+                  className="hover:underline cursor-pointer font-bold"
+                >
+                  View
+                </span>
               )}
 
-              {/* Right DICOM */}
-              {rightDicom ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Download Right DICOM"
-                  onClick={() =>
-                    downloadAllDicom(
-                      userId,
-                      appointmentId,
-                      "Right",
-                      rightDicom.refDFFilename
-                        .split("_")
-                        .slice(0, -2)
-                        .join("_") + "_R.zip"
-                    )
-                  }
-                >
-                  <Download />
-                  <span className="sr-only">Right DICOM</span>
-                </Button>
-              ) : (
-                <span className="w-10 text-muted-foreground">-</span>
-              )}
+              {/* ❌ Someone else editing dialog */}
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle>Someone is accessing this report</DialogTitle>
+                  </DialogHeader>
+                  <div className="text-sm text-muted-foreground">
+                    This report is currently being accessed by someone else.
+                    <br />
+                    You can only continue in <strong>read-only</strong> mode.
+                  </div>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button
+                      variant="greenTheme"
+                      onClick={() => {
+                        if (selectedRow) {
+                          navigate("/report", {
+                            state: {
+                              appointmentId: selectedRow.refAppointmentId,
+                              userId: selectedRow.refUserId,
+                              readOnly: true,
+                            },
+                          });
+                          setDialogOpen(false);
+                        }
+                      }}
+                    >
+                      Continue
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* ✅ Choose Access Mode Dialog */}
+              <Dialog
+                open={accessModeDialog}
+                onOpenChange={setAccessModeDialog}
+              >
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle>Select Access Mode</DialogTitle>
+                  </DialogHeader>
+                  <div className="text-sm text-muted-foreground">
+                    You have edit access for this report. How would you like to
+                    proceed?
+                  </div>
+                  <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        if (selectedRow) {
+                          navigate("/report", {
+                            state: {
+                              appointmentId: selectedRow.refAppointmentId,
+                              userId: selectedRow.refUserId,
+                              readOnly: true,
+                            },
+                          });
+                          setAccessModeDialog(false);
+                        }
+                      }}
+                    >
+                      Read-Only
+                    </Button>
+                    <Button
+                      variant="greenTheme"
+                      onClick={() => {
+                        if (selectedRow) {
+                          navigate("/report", {
+                            state: {
+                              appointmentId: selectedRow.refAppointmentId,
+                              userId: selectedRow.refUserId,
+                              readOnly: false,
+                            },
+                          });
+                          setAccessModeDialog(false);
+                        }
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           );
         },
       },
-      {
-  id: "report",
-  header: () => <div className="text-center w-full">Report</div>,
-  cell: ({ row }) => {
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedRow, setSelectedRow] = useState<any>(null);
-    const [accessModeDialog, setAccessModeDialog] = useState(false);
-    const navigate = useNavigate();
-
-    const status = getStatus(row.original.refAppointmentComplete);
-    const role = currentUserRole as UserRole;
-    const hasEditAccess = status?.editAccess?.includes(role);
-    const hasReadOnlyAccess = status?.readOnlyAccess?.includes(role);
-
-    if (!status?.report || (!hasEditAccess && !hasReadOnlyAccess)) {
-      return <div className="text-center text-gray-400">-</div>;
-    }
-
-    const handleViewClick = async () => {
-  const currentUserId = currentUser;
-
-  if (hasEditAccess) {
-    const { status, accessId } = await handleCheckAccess(row.original.refAppointmentId);
-
-    if (status && (accessId === currentUserId || accessId === 0)) {
-      // Direct edit access
-      navigate("/report", {
-        state: {
-          appointmentId: row.original.refAppointmentId,
-          userId: row.original.refUserId,
-          readOnly: false,
-        },
-      });
-    } else if (status) {
-      // Someone else editing — show read-only prompt
-      setSelectedRow(row.original);
-      setDialogOpen(true);
-    } else {
-      // Fallback: no access
-      setSelectedRow(row.original);
-      setDialogOpen(true);
-    }
-  } else if (hasReadOnlyAccess) {
-    navigate("/report", {
-      state: {
-        appointmentId: row.original.refAppointmentId,
-        userId: row.original.refUserId,
-        readOnly: true,
-      },
-    });
-  }
-};
-
-
-    return (
-      <div className="text-center w-full">
-        {row.original.dicomFiles === null ? (
-          <span>-</span>
-        ) : (
-          <span
-            onClick={handleViewClick}
-            className="hover:underline cursor-pointer font-bold"
-          >
-            View
-          </span>
-        )}
-
-        {/* ❌ Someone else editing dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>Someone is accessing this report</DialogTitle>
-            </DialogHeader>
-            <div className="text-sm text-muted-foreground">
-              This report is currently being accessed by someone else.
-              <br />
-              You can only continue in <strong>read-only</strong> mode.
-            </div>
-            <DialogFooter className="mt-4">
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button
-                variant="greenTheme"
-                onClick={() => {
-                  if (selectedRow) {
-                    navigate("/report", {
-                      state: {
-                        appointmentId: selectedRow.refAppointmentId,
-                        userId: selectedRow.refUserId,
-                        readOnly: true,
-                      },
-                    });
-                    setDialogOpen(false);
-                  }
-                }}
-              >
-                Continue
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* ✅ Choose Access Mode Dialog */}
-        <Dialog open={accessModeDialog} onOpenChange={setAccessModeDialog}>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>Select Access Mode</DialogTitle>
-            </DialogHeader>
-            <div className="text-sm text-muted-foreground">
-              You have edit access for this report. How would you like to proceed?
-            </div>
-            <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (selectedRow) {
-                    navigate("/report", {
-                      state: {
-                        appointmentId: selectedRow.refAppointmentId,
-                        userId: selectedRow.refUserId,
-                        readOnly: true,
-                      },
-                    });
-                    setAccessModeDialog(false);
-                  }
-                }}
-              >
-                Read-Only
-              </Button>
-              <Button
-                variant="greenTheme"
-                onClick={() => {
-                  if (selectedRow) {
-                    navigate("/report", {
-                      state: {
-                        appointmentId: selectedRow.refAppointmentId,
-                        userId: selectedRow.refUserId,
-                        readOnly: false,
-                      },
-                    });
-                    setAccessModeDialog(false);
-                  }
-                }}
-              >
-                Edit
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  },
-},
 
       {
         id: "refAppointmentComplete",
@@ -1172,15 +1325,17 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
         },
       },
     ],
-    [navigate, staffData] // Add navigate to useMemo dependencies
+    [navigate, staffData, selectedRowIds] // Add navigate to useMemo dependencies
   );
 
   const permissionsMap: Record<UserRole, string[]> = {
     admin: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm",
       "dicom",
@@ -1191,10 +1346,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "pendingRemarks",
     ],
     technician: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // Start/View logic handled in cell
       "dicom",
@@ -1202,10 +1359,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "refAppointmentComplete",
     ],
     scribe: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1216,10 +1375,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "pendingRemarks",
     ],
     scadmin: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1231,10 +1392,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
     ],
     patient: [], // Dummy
     doctor: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1245,10 +1408,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "pendingRemarks",
     ],
     radiologist: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1259,10 +1424,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "pendingRemarks",
     ],
     codoctor: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1273,10 +1440,12 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
       "pendingRemarks",
     ],
     manager: [
+      "select",
       "dateOfAppointment",
       "refUserFirstName",
       "patientId",
       "patientFormName",
+      "refSCCustId",
       "patientForm",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1346,6 +1515,18 @@ const getStatus = (appointmentStatus: string): StatusInfo => {
             className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600"
           >
             <XCircle className="h-4 w-4" /> Clear All Filters
+          </Button>
+          <Button
+            onClick={async () => {
+              setLoading(true);
+              await handleAllDownloadDicom(selectedRowIds);
+              setLoading(false);
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa]"
+            disabled={selectedRowIds.length === 0}
+          >
+            <Download className="h-4 w-4" />
+            Download Dicom
           </Button>
         </div>
 

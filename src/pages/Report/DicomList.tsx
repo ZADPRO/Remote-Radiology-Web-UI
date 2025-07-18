@@ -43,7 +43,7 @@ const DicomList: React.FC<Props> = ({ appointmentId, userId }) => {
   };
 
   return (
-    <div className="flex justify-center items-start gap-10 py-6 px-12 w-full h-full overflow-y-auto">
+    <div className="flex justify-center items-start gap-10 py-6 px-12 w-full h-[90vh] space-y-10 overflow-y-scroll">
       {dicomFiles !== null ? (
         <>
         <div className="w-1/2">
