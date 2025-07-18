@@ -15,6 +15,8 @@ export interface AppointmentStatus {
   refSCId: number;
   refSCName: string;
   refUserId: number;
+  refAppointmentImpression: string;
+  refAppointmentRecommendation: string;
 }
 
 export interface ReportHistoryData {

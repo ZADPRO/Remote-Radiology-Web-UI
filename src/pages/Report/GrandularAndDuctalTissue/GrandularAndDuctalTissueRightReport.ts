@@ -55,11 +55,11 @@ export function generateGrandularAndDuctalTissueReport(
   // 1. Benign Findings
   const benignFindings: string[] = [];
   if (benignMicroCysts === "Present")
-    benignFindings.push("present benign microcysts");
+    benignFindings.push("benign microcysts");
   if (benignCapsular === "Present")
-    benignFindings.push("present benign capsular microcalcification");
+    benignFindings.push("benign capsular microcalcification");
   if (benignFibronodular === "Present")
-    benignFindings.push("present benign fibronodular density");
+    benignFindings.push("benign fibronodular density");
 
   const benignText =
     benignFindings.length > 0
@@ -103,7 +103,7 @@ export function generateGrandularAndDuctalTissueReport(
 
   return `
     <p><b>Benign Findings</b></p>
-    <p>${benignText.toLocaleLowerCase()}</p>
+    <p>${benignText}</p>
     <p><b>Calcifications</b></p>
     ${macroText}
 ${microText}

@@ -55,6 +55,14 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  ImpressionText: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  RecommendationText: {
+    value: string;
+    onChange: (value: string) => void;
+  };
 }
 
 interface ReportQuestion {
@@ -168,6 +176,9 @@ const NotesReport: React.FC<Props> = ({
             <p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
             ${textEditor.ComparisonPriorLeft.value}<br/>
             <p><b>IMPRESSION:</b></p><br/>
+            ${textEditor.ImpressionText.value}<br/><br />
+            <p><b>RECOMMENDATION:</b></p><br/>
+            ${textEditor.RecommendationText.value}<br/>
             `);
     }
   }, [reportFormData, syncStatus]);

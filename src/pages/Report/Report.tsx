@@ -37,7 +37,7 @@ import { useAuth, UserRole } from "../Routes/AuthContext";
 import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-// import Impression from "./ImpressionRecommendation";
+import Impression from "./ImpressionRecommendation";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -238,6 +238,8 @@ const Report: React.FC = () => {
     useState("");
   const [LymphNodesLeft, setLymphNodesLeft] = useState("");
 
+  const [sForm, setSForm] = useState("");
+
   const [Notes, setNotes] = useState("");
 
   const [syncStatus, setsyncStatus] = useState({
@@ -255,6 +257,8 @@ const Report: React.FC = () => {
     grandularAndDuctalTissueLeft: true,
     LymphNodesLeft: true,
     Notes: true,
+
+    sForm: true,
   });
 
   const location: { appointmentId: number; userId: number; readOnly: boolean } =
@@ -268,8 +272,8 @@ const Report: React.FC = () => {
 
   const [selectedImpressionId, setSelectedImpressionId] = useState<string>("");
   const [selectedRecommendationId, setSelectedRecommendationId] = useState<string>("");
-  // const [impressionText, setImpressionText] = useState("");
-  // const [recommendationText, setRecommendationText] = useState("");
+  const [impressionText, setImpressionText] = useState("");
+  const [recommendationText, setRecommendationText] = useState("");
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -297,10 +301,8 @@ const Report: React.FC = () => {
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [] ,
         });
-        // setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression ?  response.appointmentStatus[0].refAppointmentImpression: "");
-        // setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation ?  response.appointmentStatus[0].refAppointmentRecommendation: "");
-        setSelectedImpressionId("");
-        setSelectedRecommendationId("");
+        setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression);
+        setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation);
         setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportIntakeFormData) {
@@ -323,6 +325,8 @@ const Report: React.FC = () => {
             grandularAndDuctalTissueLeft: true,
             LymphNodesLeft: true,
             Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
+
+            sForm: true,
           });
         }
 
@@ -534,7 +538,7 @@ const Report: React.FC = () => {
               { label: "General", value: 1 },
               { label: "Right", value: 2 },
               { label: "Left", value: 3 },
-              // { label: "Impression", value: 5},
+              { label: "Impression", value: 5},
               { label: "Report", value: 4 },
             ].map(({ label, value }) => (
               <div
@@ -984,6 +988,10 @@ const Report: React.FC = () => {
                       value: breastImplantRight,
                       onChange: setBreastImplantRight,
                     },
+                    sForm: {
+                      value: sForm,
+                      onChange: setSForm,
+                    }
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1116,14 +1124,14 @@ const Report: React.FC = () => {
                         value: LymphNodesLeft,
                         onChange: setLymphNodesLeft,
                       },
-                      // ImpressionText: {
-                      //   value: impressionText,
-                      //   onChange: setImpressionText,
-                      // },
-                      // RecommendationText: {
-                      //   value: recommendationText,
-                      //   onChange: setRecommendationText,
-                      // },
+                      ImpressionText: {
+                        value: impressionText,
+                        onChange: setImpressionText,
+                      },
+                      RecommendationText: {
+                        value: recommendationText,
+                        onChange: setRecommendationText,
+                      },
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
@@ -1148,18 +1156,15 @@ const Report: React.FC = () => {
                     patientDetails={patientDetails}
                     readOnly={location.readOnly ? true : false}
                   />
-                ) : 
-                (subTab === 5 && (
-                  <>
-                  {/* <Impression 
+                ) : (subTab === 5 && (
+                  <Impression 
                     selectedImpressionId={selectedImpressionId}
                     setSelectedImpressionId={setSelectedImpressionId}
                     selectedRecommendationId={selectedRecommendationId}
                     setSelectedRecommendationId={setSelectedRecommendationId}
                     setRecommendationText={setRecommendationText}
                     setImpressionText={setImpressionText}
-                    /> */}
-                  </>
+                    />
                 ))
               )}
             </>

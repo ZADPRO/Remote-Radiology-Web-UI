@@ -6,6 +6,7 @@ import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastI
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
+import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
 
 interface ReportQuestion {
   questionId: number;
@@ -17,6 +18,10 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  sForm: {
+    value: string;
+    onChange: (value: string) => void;
+  }
 }
 
 interface RightReportProps {
@@ -27,6 +32,7 @@ interface RightReportProps {
   textEditor: TextEditorProps;
   syncStatus: {
     breastImplantRight: boolean;
+    sForm: boolean;
   };
   setsyncStatus: any;
   readOnly: boolean;
@@ -69,6 +75,14 @@ const GeneralReport: React.FC<RightReportProps> = ({
         )
       );
     }
+
+    if(syncStatus.sForm) {
+      textEditor.sForm.onChange(
+        SFormGeneration(
+          patientFormData
+        )
+      );
+    }
   }, [reportFormData, syncStatus]);
 
   const syncHandleReportChange = (questionId: number, value: string) => {
@@ -86,6 +100,18 @@ const GeneralReport: React.FC<RightReportProps> = ({
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
+        {/* <TextEditor
+            value={textEditor.sForm.value}
+            onChange={textEditor.sForm.onChange}
+            onManualEdit={() => {
+              if (syncStatus.sForm) {
+                setsyncStatus({
+                  ...syncStatus,
+                  sForm: false,
+                });
+              }
+            }}
+          /> */}
         <BreastImplantDetails
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
