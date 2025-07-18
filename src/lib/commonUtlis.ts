@@ -29,8 +29,12 @@ export function downloadDocumentFile(
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-
-export const downloadAllDicom = async (userId: number, appointmentId: number, side: string, filename: string) => {
+export const downloadAllDicom = async (
+  userId: number,
+  appointmentId: number,
+  side: string,
+  filename: string
+) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -38,26 +42,30 @@ export const downloadAllDicom = async (userId: number, appointmentId: number, si
     return;
   }
 
-  const payload = encrypt({ userId: userId, appointmentId: appointmentId, side: side }, token);
+  const payload = encrypt(
+    { userId: userId, appointmentId: appointmentId, side: side },
+    token
+  );
 
   const response = await axios.post(
-    `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/alldownloaddicom`,
+    `${
+      import.meta.env.VITE_API_URL_PROFILESERVICE
+    }/technicianintakeform/alldownloaddicom`,
     { encryptedData: payload },
     {
       headers: {
-        Authorization: `Bearer ${token}`,  // <-- Add 'Bearer ' prefix
+        Authorization: `Bearer ${token}`, // <-- Add 'Bearer ' prefix
         "Content-Type": "application/json",
       },
-      responseType: 'blob',  // <-- Important for binary data
+      responseType: "blob", // <-- Important for binary data
     }
   );
 
   const blob = response.data;
 
-
   // Create a URL for the blob and trigger download
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
@@ -79,7 +87,9 @@ export const downloadDicom = async (fileId: number, filename: string) => {
 
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/downloaddicom`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/downloaddicom`,
       { encryptedData: payload },
       {
         headers: {
@@ -111,3 +121,64 @@ export const downloadDicom = async (fileId: number, filename: string) => {
   }
 };
 
+export const handleAllDownloadDicom = async (selectedRowIds: number[]) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    console.error("No token found in localStorage");
+    return;
+  }
+
+  console.log({ refAppointmentId: selectedRowIds });
+
+  // Fix: The payload structure should match what the backend expects
+  const payload = encrypt({ refAppointmentId: selectedRowIds }, token);
+
+  try {
+    const response = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/overalldownloaddicom`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+      }
+    );
+
+    const blob = response.data;
+
+    // Get filename from response headers if available
+    const contentDisposition = response.headers["content-disposition"];
+    let filename = "DicomFiles.zip";
+
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename=(.+)/);
+      if (filenameMatch) {
+        filename = filenameMatch[1].replace(/"/g, "");
+      }
+    }
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (error: any) {
+    console.error("Download failed:", error);
+    // Handle error appropriately
+    if (error.response?.status === 404) {
+      alert("No DICOM files found for the selected appointments.");
+    } else {
+      alert("Failed to download DICOM files. Please try again.");
+    }
+  }
+};

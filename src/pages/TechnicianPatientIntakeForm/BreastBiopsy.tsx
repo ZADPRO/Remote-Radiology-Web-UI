@@ -1,271 +1,329 @@
-import { Checkbox2 } from '@/components/ui/CustomComponents/checkbox2';
-import { Label } from '@/components/ui/label';
-import React, { useState } from 'react';
-import { ResponseAudit, ResponsePatientForm } from './TechnicianPatientIntakeForm';
-import { Edit, Info } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
-import { cn } from '@/lib/utils';
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+import {
+  ResponseAudit,
+  ResponsePatientForm,
+} from "./TechnicianPatientIntakeForm";
+import { Edit, Info } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
+import { cn } from "@/lib/utils";
+import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 
 interface IntakeOption {
-    questionId: number;
-    answer: string;
+  questionId: number;
+  answer: string;
 }
 
 interface QuestionIds {
-    breastBiopsy: number;
-    left: number;
-    right: number;
-    benign: number;
-    malignant: number;
-    reportsAttached: number;
+  breastBiopsy: number;
+  left: number;
+  right: number;
+  benign: number;
+  malignant: number;
+  reportsAttached: number;
 }
 
 interface Props {
-    technicianFormData: IntakeOption[];
-    patientFormData: ResponsePatientForm[];
-    auditData: ResponseAudit[];
-    handleInputChange: (questionId: number, value: string) => void;
-    handlePatientInputChange: (questionId: number, value: string) => void;
-    setPatientFormData: any;
-    questionIds: QuestionIds;
-    readOnly?: boolean
+  technicianFormData: IntakeOption[];
+  patientFormData: ResponsePatientForm[];
+  auditData: ResponseAudit[];
+  handleInputChange: (questionId: number, value: string) => void;
+  handlePatientInputChange: (questionId: number, value: string) => void;
+  setPatientFormData: any;
+  questionIds: QuestionIds;
+  readOnly?: boolean;
 }
 
 const BreastBiopsy: React.FC<Props> = ({
-    technicianFormData,
-    patientFormData,
-    auditData,
-    handleInputChange,
-    handlePatientInputChange,
-    setPatientFormData,
-    questionIds, // We still use this for other dynamic parts if needed, but for biopsy specifics, we'll hardcode as requested
-    readOnly
+  technicianFormData,
+  patientFormData,
+  auditData,
+  handleInputChange,
+  handlePatientInputChange,
+  setPatientFormData,
+  readOnly,
 }) => {
-    const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
+  const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
 
-    console.log(technicianFormData, handleInputChange)
-    // const getTechnicianAnswer = (id: number) => technicianFormData.find((q) => q.questionId === id)?.answer || "";
-    const getPatientAnswer = (id: number) => patientFormData.find((q) => q.questionId === id)?.answer || "";
+  console.log(technicianFormData, handleInputChange);
+  // const getTechnicianAnswer = (id: number) => technicianFormData.find((q) => q.questionId === id)?.answer || "";
+  const getPatientAnswer = (id: number) =>
+    patientFormData.find((q) => q.questionId === id)?.answer || "";
 
-    const handleVerifyChange = (mainQuestionId: number, checked: boolean) => {
-        setPatientFormData((prev: ResponsePatientForm[]) =>
-            prev.map((item) =>
-                item.questionId === mainQuestionId
-                    ? { ...item, verifyTechnician: checked }
-                    : item
-            )
-        );
-    };
-
-    const handleEditClick = (sectionKey: string) => {
-        setEditStatuses((prev) => ({ ...prev, [sectionKey]: true }));
-    };
-
-    const renderPatientRadioGroup = (
-        name: string,
-        questionId: number,
-        options: string[],
-        isEditable: boolean
-    ) => (
-        <div className="flex flex-wrap gap-4">
-            {options.map((value) => (
-                <div key={value} className="flex items-center space-x-2">
-                    <input
-                        type="radio"
-                        id={`${name}-${value.toLowerCase()}`}
-                        name={name}
-                        value={value}
-                        checked={getPatientAnswer(questionId) === value}
-                        onChange={(e) => isEditable && handlePatientInputChange(questionId, e.target.value)}
-                        className="custom-radio"
-                        disabled={!isEditable}
-                    />
-                    <Label htmlFor={`${name}-${value.toLowerCase()}`}>{value}</Label>
-                </div>
-            ))}
-        </div>
+  const handleVerifyChange = (mainQuestionId: number, checked: boolean) => {
+    setPatientFormData((prev: ResponsePatientForm[]) =>
+      prev.map((item) =>
+        item.questionId === mainQuestionId
+          ? { ...item, verifyTechnician: checked }
+          : item
+      )
     );
+  };
 
-    const renderCheckbox = (label: string, id: number, isEditable: boolean) => (
-        <div className="flex items-center gap-2">
-            <Checkbox2
-                className="bg-white data-[state=checked]:text-[#f9f4ed]"
-                checked={getPatientAnswer(id) === "true"}
-                onClick={() =>
-                    isEditable && handlePatientInputChange(id, getPatientAnswer(id) === "true" ? "" : "true")
-                }
-                disabled={!isEditable}
-            />
-            <div className="text-sm sm:text-base font-medium">{label}</div>
+  const handleEditClick = (sectionKey: string) => {
+    setEditStatuses((prev) => ({ ...prev, [sectionKey]: true }));
+  };
+
+  const renderPatientRadioGroup = (
+    name: string,
+    questionId: number,
+    options: string[],
+    isEditable: boolean
+  ) => (
+    <div className="flex flex-wrap gap-4">
+      {options.map((value) => (
+        <div key={value} className="flex items-center space-x-2">
+          <input
+            type="radio"
+            id={`${name}-${value.toLowerCase()}`}
+            name={name}
+            value={value}
+            checked={getPatientAnswer(questionId) === value}
+            onChange={(e) =>
+              isEditable && handlePatientInputChange(questionId, e.target.value)
+            }
+            className="custom-radio"
+            disabled={!isEditable}
+          />
+          <Label htmlFor={`${name}-${value.toLowerCase()}`}>{value}</Label>
         </div>
-    );
+      ))}
+    </div>
+  );
 
-    const renderSectionWithVerification = (
-        sectionKey: string,
-        mainQuestionId: number, // This will be 160 for Breast Biopsy
-        patientQuestionIds: number[],
-        patientAnswerLabels: string[],
-        children: React.ReactNode
-    ) => {
-        const isEditing = editStatuses[sectionKey] || false;
-        const patientAnswers = patientQuestionIds.map((id, index) => {
-  let parsedEntry = null;
+  const renderCheckbox = (label: string, id: number, isEditable: boolean) => (
+    <div className="flex items-center gap-2">
+      <Checkbox2
+        className="bg-white data-[state=checked]:text-[#f9f4ed]"
+        checked={getPatientAnswer(id) === "true"}
+        onClick={() =>
+          isEditable &&
+          handlePatientInputChange(
+            id,
+            getPatientAnswer(id) === "true" ? "" : "true"
+          )
+        }
+        disabled={!isEditable}
+      />
+      <div className="text-sm sm:text-base font-medium">{label}</div>
+    </div>
+  );
 
-  // Loop through auditData to find matching label after parsing refTHData
-  for (const entry of auditData || []) {
-    try {
-      const parsed = JSON.parse(entry.refTHData);
-      if (Array.isArray(parsed)) {
-        const found = parsed.find((d) => Number(d.label) === id);
-        if (found) {
-          parsedEntry = found;
-          break;
+  const renderSectionWithVerification = (
+    sectionKey: string,
+    mainQuestionId: number, // This will be 160 for Breast Biopsy
+    patientQuestionIds: number[],
+    patientAnswerLabels: string[],
+    children: React.ReactNode
+  ) => {
+    const isEditing = editStatuses[sectionKey] || false;
+    const patientAnswers = patientQuestionIds.map((id, index) => {
+      let parsedEntry = null;
+
+      // Loop through auditData to find matching label after parsing refTHData
+      for (const entry of auditData || []) {
+        try {
+          const parsed = JSON.parse(entry.refTHData);
+          if (Array.isArray(parsed)) {
+            const found = parsed.find((d) => Number(d.label) === id);
+            if (found) {
+              parsedEntry = found;
+              break;
+            }
+          }
+        } catch {
+          continue;
         }
       }
-    } catch {
-      continue;
-    }
-  }
 
-  return {
-    label: patientAnswerLabels[index],
-    value: parsedEntry?.newValue || "",
-  };
-});
-
-
-        return (
-            <div className="flex flex-col lg:flex-row w-full items-start py-4">
-                <div className="w-full lg:w-[80%] relative">
-                    {children}
-                    {!isEditing && (
-                        <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
-                    )}
-                </div>
-                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
-                    <div className="flex gap-3">
-                        {/* Check to Confirm Checkbox */}
-                        <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
-                            <div className="text-xs sm:text-xs font-medium">Check to Confirm</div>
-                            <Checkbox2
-                                className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
-                                checked={patientFormData.find(q => q.questionId === mainQuestionId)?.verifyTechnician || false}
-                                onClick={() =>
-                                    handleVerifyChange(mainQuestionId, !(patientFormData.find(q => q.questionId === mainQuestionId)?.verifyTechnician || false))
-                                }
-                            />
-                        </div>
-
-                        {/* Edit / Info Icons */}
-                        {!isEditing ? (
-                            <div className="flex w-20 flex-col gap-1 items-center">
-                                <div className="text-xs sm:text-xs font-medium">Edit</div>
-                                <Edit
-                                    onClick={() => handleEditClick(sectionKey)}
-                                    className="w-4 h-4 cursor-pointer"
-                                />
-                            </div>
-                        ) : (
-                            <div className="flex w-20 flex-col gap-1 items-center">
-                                <div className="text-xs sm:text-xs font-medium">Info</div>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                                        <div className="space-y-2 text-sm text-gray-700">
-                                            <div className="font-medium text-gray-900 border-b pb-2 mb-2">
-                                                Patient Response
-                                            </div>
-                                            {patientAnswers.map(
-                                                (pa) =>
-                                                    pa.value && (
-                                                        <div
-                                                            key={pa.label}
-                                                            className="flex justify-between items-center"
-                                                        >
-                                                            <span className="font-medium text-gray-800">
-                                                                {pa.label}:
-                                                            </span>
-                                                            <span className="text-gray-600 text-right">
-                                                                {pa.value}
-                                                            </span>
-                                                        </div>
-                                                    )
-                                            )}
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    };
+      return {
+        label: patientAnswerLabels[index],
+        value: parsedEntry?.newValue || "",
+      };
+    });
 
     return (
-        <div className="flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto relative">
-            <div className={`${readOnly ? "pointer-events-none" : ""}`}>
-            {/* Breast Biopsy Section with Verification */}
-            {renderSectionWithVerification(
-                "breastBiopsy",
-                160, // Hardcoded main QID for Breast Biopsy for verification and patient data lookup
-                [
-                    160,
-                    164, // Reports Attached
-                ],
-                [
-                    "Had Biopsy",
-                    "Reports Available",
-                ],
-                <div className="flex flex-col gap-10">
-                    {/* Title */}
-                    <Label className="text-base font-semibold">
-                        Breast Biopsy
-                    </Label>
-
-                    {/* Main Biopsy Question - hardcoded 160 */}
-                    {renderPatientRadioGroup(
-                        "breastbiopsy",
-                        160,
-                        ["No", "Yes", "Unknown"],
-                        editStatuses["breastBiopsy"]
-                    )}
-
-                    {getPatientAnswer(160) === "Yes" && ( // Check against hardcoded 160
-                        <>
-                            {/* Checkboxes for L/R */}
-                            <div className="flex flex-wrap gap-4">
-                                {renderCheckbox("L", questionIds.left, editStatuses["breastBiopsy"])}
-                                {renderCheckbox("R", questionIds.right, editStatuses["breastBiopsy"])}
-                            </div>
-
-                            {/* Checkboxes for Benign/Malignant */}
-                            <div className="flex flex-wrap gap-4">
-                                {renderCheckbox("Benign", questionIds.benign, editStatuses["breastBiopsy"])}
-                                {renderCheckbox("Malignant", questionIds.malignant, editStatuses["breastBiopsy"])}
-                            </div>
-                        </>
-                    )}
-
-                    {/* Reports attached - hardcoded 164 */}
-                    <div className="flex flex-col lg:flex-row gap-2">
-                        <Label className="text-base font-semibold">
-                            Reports available:
-                        </Label>
-                        {renderPatientRadioGroup(
-                            "reportsattached",
-                            164,
-                            ["Not Available", "Available"],
-                            editStatuses["breastBiopsy"]
-                        )}
-                    </div>
-                </div>
-            )}
-            </div>
+      <div className="flex flex-col lg:flex-row w-full items-start py-4">
+        <div className="w-full lg:w-[80%] relative">
+          {children}
+          {!isEditing && (
+            <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
+          )}
         </div>
+        <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
+          <div className="flex gap-3">
+            {/* Check to Confirm Checkbox */}
+            <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
+              <div className="text-xs sm:text-xs font-medium">
+                Check to Confirm
+              </div>
+              <Checkbox2
+                className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
+                checked={
+                  patientFormData.find((q) => q.questionId === mainQuestionId)
+                    ?.verifyTechnician || false
+                }
+                onClick={() =>
+                  handleVerifyChange(
+                    mainQuestionId,
+                    !(
+                      patientFormData.find(
+                        (q) => q.questionId === mainQuestionId
+                      )?.verifyTechnician || false
+                    )
+                  )
+                }
+              />
+            </div>
+
+            {/* Edit / Info Icons */}
+            {!isEditing ? (
+              <div className="flex w-20 flex-col gap-1 items-center">
+                <div className="text-xs sm:text-xs font-medium">Edit</div>
+                <Edit
+                  onClick={() => handleEditClick(sectionKey)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+              </div>
+            ) : (
+              <div className="flex w-20 flex-col gap-1 items-center">
+                <div className="text-xs sm:text-xs font-medium">Info</div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                    <div className="space-y-2 text-sm text-gray-700">
+                      <div className="font-medium text-gray-900 border-b pb-2 mb-2">
+                        Patient Response
+                      </div>
+                      {patientAnswers.map(
+                        (pa) =>
+                          pa.value && (
+                            <div
+                              key={pa.label}
+                              className="flex justify-between items-center"
+                            >
+                              <span className="font-medium text-gray-800">
+                                {pa.label}:
+                              </span>
+                              <span className="text-gray-600 text-right">
+                                {pa.value}
+                              </span>
+                            </div>
+                          )
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     );
+  };
+
+  return (
+    <div className="flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto relative">
+      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
+        {/* Breast Biopsy Section with Verification */}
+        {renderSectionWithVerification(
+          "breastBiopsy",
+          160, // Hardcoded main QID for Breast Biopsy for verification and patient data lookup
+          [
+            160,
+            164, // Reports Attached
+          ],
+          ["Had Biopsy", "Reports Available"],
+          <div className="flex flex-col gap-5">
+            {/* Title */}
+            <Label className="text-base font-semibold">Breast Biopsy</Label>
+
+            {/* Main Biopsy Question - hardcoded 160 */}
+            {renderPatientRadioGroup(
+              "breastbiopsy",
+              160,
+              ["No", "Yes", "Unknown"],
+              editStatuses["breastBiopsy"]
+            )}
+
+            {getPatientAnswer(160) === "Yes" && ( // Check against hardcoded 160
+              <>
+                {/* Checkboxes for L/R */}
+                <div className="flex gap-4">
+                  {renderCheckbox(
+                    "L",
+                    434,
+                    editStatuses["breastBiopsy"]
+                  )}
+
+                  {getPatientAnswer(434) === "true" && (
+                        <MultiRadioOptionalInputInline
+                    questionId={436}
+                    formData={patientFormData}
+                    handleInputChange={handlePatientInputChange}
+                    options={[
+                      { label: "Benign", value: "Benign" },
+                      {
+                        label: "Malignant",
+                        value: "Malignant",
+                      },
+                    ]}
+                  />
+                  )
+                    }
+                  
+                </div>
+
+                {/* Checkboxes for Benign/Malignant */}
+                <div className="flex gap-4">
+                  {renderCheckbox(
+                    "R",
+                    435,
+                    editStatuses["breastBiopsy"]
+                  )}
+                  {getPatientAnswer(435) === "true" && (
+                    <MultiRadioOptionalInputInline
+                    questionId={437}
+                    formData={patientFormData}
+                    handleInputChange={handlePatientInputChange}
+                    options={[
+                      { label: "Benign", value: "Benign" },
+                      {
+                        label: "Malignant",
+                        value: "Malignant",
+                      },
+                    ]}
+                  />
+                  )}
+                  
+                </div>
+              </>
+            )}
+
+            {/* Reports attached - hardcoded 164 */}
+            <div className="flex flex-col lg:flex-row gap-2">
+              <Label className="text-base font-semibold">
+                Reports available:
+              </Label>
+              {renderPatientRadioGroup(
+                "reportsattached",
+                164,
+                ["Not Available", "Available"],
+                editStatuses["breastBiopsy"]
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BreastBiopsy;

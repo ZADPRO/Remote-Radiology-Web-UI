@@ -78,7 +78,7 @@ export interface DicomFiles {
   refUserId: number;
   refDFFilename: string;
   refDFCreatedAt: string;
-  refDFSide: "Left" | "Right"
+  refDFSide: "Left" | "Right";
 }
 
 export interface DicomFileList {
@@ -186,7 +186,7 @@ export const technicianService = {
         },
         token
       );
-      
+
       const response = await axios.post(
         `${
           import.meta.env.VITE_API_URL_PROFILESERVICE
@@ -314,6 +314,30 @@ export const technicianService = {
     return decryptedData;
   },
 
+  assignTechnicianForm: async (patientId: number, appointmentId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      { patientId: patientId, appointmentId: appointmentId },
+      token
+    );
+    console.log({ patientId: patientId, appointmentId: appointmentId });
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/assignTechnician`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    return decryptedData;
+  },
+
   uploadDicom: async (
     { formFile }: UploadFilePayload,
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
@@ -345,7 +369,9 @@ export const technicianService = {
     const payload = encrypt(formData, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/savedicom`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/savedicom`,
       { encryptedData: payload },
       {
         headers: {
@@ -361,17 +387,19 @@ export const technicianService = {
   },
   downLoadDicom: async (fileId: number) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({fileId: fileId}, token);
+    const payload = encrypt({ fileId: fileId }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/downloaddicom`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/downloaddicom`,
       {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      },
+      }
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
@@ -379,19 +407,28 @@ export const technicianService = {
     return decryptedData;
   },
 
-  downloadAllDicom: async (UserId: number, AppointmentId: number, Side: string) => {
+  downloadAllDicom: async (
+    UserId: number,
+    AppointmentId: number,
+    Side: string
+  ) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({UserId: UserId, AppointmentId: AppointmentId, Side: Side}, token);
+    const payload = encrypt(
+      { UserId: UserId, AppointmentId: AppointmentId, Side: Side },
+      token
+    );
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/alldownloaddicom`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/alldownloaddicom`,
       {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      },
+      }
     );
     console.log(res);
     return res;
@@ -399,7 +436,10 @@ export const technicianService = {
 
   listDicom: async (appointmentId: number, patientId: number) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({ patientId: patientId, appointmentId: appointmentId }, token);
+    const payload = encrypt(
+      { patientId: patientId, appointmentId: appointmentId },
+      token
+    );
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_PROFILESERVICE
@@ -415,5 +455,5 @@ export const technicianService = {
     const decryptedData = decrypt(res.data.data, res.data.token);
     localStorage.setItem("token", res.data.token);
     return decryptedData;
-  }
+  },
 };
