@@ -79,7 +79,7 @@ const Login: React.FC = () => {
       <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
-          className="hidden w-[40%] h-[20%] mx-auto lg:inline"
+          className="hidden h-[15%] mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 pb-0 rounded-lg shadow-lg lg:w-[70%] lg:shadow-none">
           <form onSubmit={(e: any) => login(e)} className="flex flex-col gap-6">
@@ -183,7 +183,7 @@ const Login: React.FC = () => {
             <div className="text-sm mx-auto text-[#525252]">
               Don't have an account?{" "}
               <span
-                className="text-blue-600 hover:underline cursor-pointer"
+                className="text-[#91c3ce] font-bold hover:underline cursor-pointer"
                 onClick={() => navigate("/registerUser")}
               >
                 Sign Up

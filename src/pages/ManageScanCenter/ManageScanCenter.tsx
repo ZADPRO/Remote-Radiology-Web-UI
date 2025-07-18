@@ -14,6 +14,7 @@ import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
 import { ListScanCenter, scancenterService } from "@/services/scancenterService";
 import { Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // // 🧪 Sample data (18 mock scan centers)
@@ -91,12 +92,13 @@ const ManageScanCenter: React.FC = () => {
 
       {/* Header */}
       <div
-        className="p-4 bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
+        className="p-4 flex gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
         style={{
           backgroundImage:
             window.innerWidth >= 1024 ? `url(${addRadiologist_Bg})` : undefined,
         }}
       >
+        <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <h1 className="text-[#3F3F3D] uppercase font-[900] text-xl lg:text-2xl text-center lg:text-left tracking-widest">
           Manage Scan Centre
         </h1>

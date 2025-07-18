@@ -30,7 +30,7 @@ const ResetPassword: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const { role } = useAuth();
+  const { role, refreshToken } = useAuth();
   const navigate = useNavigate();
 
   // const [loading, setLoading] = useState(false);
@@ -90,6 +90,7 @@ const ResetPassword: React.FC = () => {
       }, token);
       console.log(response);
       if (response.status) {
+        refreshToken();
         setSuccess(true);
         setTimeout(() => navigate(`/${role?.type}/dashboard`), 2000);
       } else {
