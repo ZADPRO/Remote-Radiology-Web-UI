@@ -63,7 +63,7 @@ const LifeStyleFactors: React.FC<Props> = ({
         {/* B. Smoking status */}
         <LabeledRadioWithOptionalInput
           name="family-genetic-condition"
-          label="B. Which family members had breast cancer?"
+          label="B. Smoking status"
           options={[
             { label: "Never", value: "Never" },
             { label: "Former", value: "Former" },

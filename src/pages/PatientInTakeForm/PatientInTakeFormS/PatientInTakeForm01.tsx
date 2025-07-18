@@ -214,11 +214,18 @@ useEffect(() => {
               implants: 79,
               implantsSpecify: 80,
               implantsOthersSpecify: 81,
-              implantDate: 82,
               explants: 83,
               explantsDate: 84,
               denseBreasts: 85,
               additionalComments: 86,
+              implantLeft: 423,
+              implantDateLeft: 82,
+              implantRight: 167,
+              implantDateRight: 424,
+              implantsRightSpecify: 168,
+              implantsRightOthersSpecify: 169,
+              explantsRight: 294,
+              explantsDateRight: 295,
             }}
           />
         );
@@ -235,33 +242,46 @@ useEffect(() => {
               lumpRight: 90,
               lumpDate: 91,
               lumpSize: 92,
+              lumpDateRight: 425,
+              lumpSizeRight: 426,
               lumpDetails: 93,
               skinChanges: 94,
               skinRight: 95,
               skinLeft: 96,
               skinDate: 97,
+              skinDateRight: 427,
               skinDetails: 98,
+              skinDetailsRight: 488,
+              skinChangesType: 486,
+              skinChangesTypeRight: 487,
               nippleDischarge: 99,
               nippleRight: 100,
               nippleLeft: 101,
               nippleDate: 102,
+              nippleDateRight: 429,
               nippleDetails: 103,
               breastPain: 106,
               breastPainRight: 107,
               breastPainLeft: 108,
               breastPainDate: 109,
+              breastPainDateRight: 428,
               breastPainDetails: 110,
               nipplePain: 111,
               nipplePainRight: 112,
               nipplePainLeft: 113,
               nipplePainDate: 114,
+              nipplePainDateRight: 430,
               nipplePainDetails: 115,
               nipplePosition: 104,
               nipplePositionDetails: 105,
+              nipplePositionRight: 431,
+              nipplePositionRightDetails: 117,
               lymphNodes: 116,
               lymphNodesRight: 117,
               lymphNodesLeft: 118,
               lymphNodesDate: 119,
+              lymphNodesDateRight: 432,
+              lymphNodesLocationRight: 433,
               lymphNodesLocation: 120,
               lymphNodesDetails: 121,
               others: 122,
@@ -337,6 +357,10 @@ useEffect(() => {
               reportAvailablity: 164,
               reportDetails: 165,
               additionalComments: 166,
+              biopsyLeft: 434,
+              biopsyRight: 435,
+  biopsyRightType: 436,
+  biopsyLeftType: 437,
             }}
           />
         );
@@ -428,8 +452,8 @@ useEffect(() => {
               optionRefs.current[option] = el;
             }}
             key={option}
-            onClick={() => setSelectedSection(option)}
-            className="flex gap-2 items-center cursor-pointer"
+            // onClick={() => setSelectedSection(option)}
+            className="flex gap-2 items-center"
           >
             {options.indexOf(option) < options.indexOf(selectedSection) && (
               <div className="inline w-6 lg:w-6 text-white font-bold">

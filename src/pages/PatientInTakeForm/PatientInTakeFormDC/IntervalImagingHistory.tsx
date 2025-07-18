@@ -6,6 +6,7 @@ import DatePicker from "@/components/date-picker";
 import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionIds {
   noneCheckbox: number;
@@ -91,7 +92,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
 
           <div className="flex flex-col gap-4 pl-4">
             {/* None */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 min-h-10">
               <div className="flex items-center w-full lg:w-64 gap-2">
                 <Checkbox2
                   checked={isNoneSelected}
@@ -104,7 +105,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
             </div>
 
             {/* Mammogram */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start">
+            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
               <div className="flex items-center w-full lg:w-64 gap-2">
                 <Checkbox2
                   disabled={isNoneSelected}
@@ -151,7 +152,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
             </div>
 
             {/* Ultrasound */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start">
+            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
               <div className="flex items-center w-full lg:w-64 gap-2">
                 <Checkbox2
                   disabled={isNoneSelected}
@@ -198,7 +199,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
             </div>
 
             {/* MRI */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start">
+            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
               <div className="flex items-center w-full lg:w-64 gap-2">
                 <Checkbox2
                   disabled={isNoneSelected}
@@ -239,7 +240,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
             </div>
 
             {/* Other */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start">
+            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
               <div className="flex items-center w-full lg:w-64 gap-2">
                 <Checkbox2
                   disabled={isNoneSelected}
@@ -309,9 +310,9 @@ const IntervalImagingHistory: React.FC<Props> = ({
   <div className="pl-4 space-y-4">
     <Label>If yes,</Label>
 
-    <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start">
+    <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
       <div className="w-full lg:w-64">
-        <Input
+        <Textarea
           placeholder="Type"
           value={getAnswer(questionIds.intervalBiopsyType)}
           onChange={(e) =>
@@ -339,7 +340,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
         />
       </div>
 
-      <Input
+      <Textarea
         placeholder="Results"
         value={getAnswer(questionIds.intervalBiopsyResult)}
         onChange={(e) =>

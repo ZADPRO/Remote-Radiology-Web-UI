@@ -3,7 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import DatePicker from "@/components/date-picker";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
@@ -25,6 +24,7 @@ interface QuestionIds {
   typeabnormalitother: number;
   typeabnormalitotherspe: number;
   breast: number;
+  breastRight: number;
   upperOuterQuadrant: number;
   upperInnerQuadrant: number;
   lowerOuterQuadrant: number;
@@ -40,6 +40,23 @@ interface QuestionIds {
   sizeunit: number;
   biradsCat: number;
   biradsCatOther: number;
+
+  upperOuterQuadrantRight: number;
+  upperInnerQuadrantRight: number;
+  lowerOuterQuadrantRight: number;
+  lowerInnerQuadrantRight: number;
+  centralNippleOuterQuadrantRight: number;
+  unknownQuadrantRight: number;
+  clockpositionstatusRight: number;
+  clockpositionRight: number;
+  distancenippleStatusRight: number;
+  distancenippleRight: number;
+  sizeStatusRight: number;
+  sizeRight: number;
+  sizeunitRight: number;
+  biradsCatRight: number;
+  biradsCatOtherRight: number;
+
   marker: number;
   markerother: number;
   magneticimplants: number;
@@ -61,10 +78,244 @@ const AbnormalFindings: React.FC<Props> = ({
     formData.find((q) => q.questionId === id)?.answer || "";
 
   useEffect(() => {
-    if(getAnswer(questionIds.sizeunit)  == "") {
-      handleInputChange(questionIds.sizeunit, 'mm');
+    if (getAnswer(questionIds.sizeunit) == "") {
+      handleInputChange(questionIds.sizeunit, "mm");
     }
-  }, [])
+  }, []);
+
+  const renderQuadrantSection = (
+  prefix: string,
+  questionIds: {
+    upperOuter: number;
+    upperInner: number;
+    lowerOuter: number;
+    lowerInner: number;
+    centralNipple: number;
+    unknown: number;
+  }
+) => {
+  return (
+    <div>
+      <Label className="font-semibold text-base">{prefix} - Quadrant</Label>
+      <div className="flex flex-wrap gap-5 mt-2">
+        {[
+          ["Upper Outer", questionIds.upperOuter],
+          ["Upper Inner", questionIds.upperInner],
+          ["Lower Outer", questionIds.lowerOuter],
+          ["Lower Inner", questionIds.lowerInner],
+          ["Central/Nipple Outer", questionIds.centralNipple],
+          ["Unknown", questionIds.unknown],
+        ].map(([label, id]) => (
+          <div className="flex items-center gap-3" key={label}>
+            <Checkbox2
+              checked={getAnswer(id as number) === "true"}
+              onCheckedChange={(checked) =>
+                handleInputChange(id as number, checked ? "true" : "")
+              }
+            />
+            <Label>{label}</Label>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+  const renderClockPositionSection = (
+  prefix: string,
+  statusId: number,
+  valueId: number
+) => {
+  const isKnown = getAnswer(statusId) === "known";
+
+  return (
+    <div>
+      <Label className="font-semibold text-base">
+        {prefix} - Clock Position
+      </Label>
+      <div className="flex gap-4 items-center mt-2">
+        {["Unknown", "known"].map((val) => (
+          <div className="flex items-center gap-2" key={val}>
+            <input
+              type="radio"
+              name={`clock-${prefix}`}
+              checked={getAnswer(statusId) === val}
+              onChange={() => handleInputChange(statusId, val)}
+              className="custom-radio"
+            />
+            <Label className="text-sm font-semibold">{val}</Label>
+          </div>
+        ))}
+
+        {isKnown && (
+          <ValidatedSelect
+            label=""
+            questionId={valueId}
+            formData={formData}
+            className="w-30"
+            handleInputChange={handleInputChange}
+            options={Array.from({ length: 12 }, (_, i) => ({
+              label: `${i + 1}'o Clock`,
+              value: `${i + 1}`,
+            }))}
+            required
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+  const renderDistanceFromNippleSection = (
+  prefix: string,
+  statusId: number,
+  valueId: number
+) => {
+  const isKnown = getAnswer(statusId) === "known";
+
+  return (
+    <div>
+      <Label className="font-semibold text-base">
+        {prefix} - Distance from Nipple
+      </Label>
+      <div className="flex gap-4 items-center mt-2">
+        {["Unknown", "known"].map((val) => (
+          <div className="flex items-center gap-2" key={val}>
+            <input
+              type="radio"
+              name={`distance-${prefix}`}
+              checked={getAnswer(statusId) === val}
+              onChange={() => handleInputChange(statusId, val)}
+              className="custom-radio"
+            />
+            <Label className="text-sm font-semibold">{val}</Label>
+          </div>
+        ))}
+
+        {isKnown && (
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              className="w-30"
+              value={getAnswer(valueId)}
+              onChange={(e) => handleInputChange(valueId, e.target.value)}
+              required
+            />
+            <Label className="text-sm font-semibold">cm</Label>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+ const renderSizeOfAbnormalitySection = (
+  prefix: string,
+  statusId: number,
+  valueId: number,
+  unitId: number
+) => {
+  const isKnown = getAnswer(statusId) === "known";
+
+  return (
+    <div className="flex flex-col gap-1 mt-4">
+      <Label className="font-bold text-base">
+        {prefix} - Size of abnormality
+      </Label>
+      <div className="flex flex-col lg:flex-row mt-2 gap-4">
+        <div className="ml-4 flex gap-5 items-center">
+          {["Unknown", "known"].map((val) => (
+            <div className="flex gap-2 items-center" key={val}>
+              <input
+                type="radio"
+                name={`sizeofab-${prefix}`}
+                checked={getAnswer(statusId) === val}
+                onChange={() => handleInputChange(statusId, val)}
+                className="custom-radio"
+              />
+              <Label className="font-semibold text-sm">{val}</Label>
+            </div>
+          ))}
+        </div>
+
+        {isKnown && (
+          <div className="flex gap-2 items-center ml-4 lg:ml-0">
+            <Input
+              type="number"
+              className="w-20"
+              value={getAnswer(valueId)}
+              onChange={(e) => handleInputChange(valueId, e.target.value)}
+              required
+            />
+            <ValidatedSelect
+              label=""
+              questionId={unitId}
+              formData={formData}
+              className="w-20 -mt-1"
+              handleInputChange={handleInputChange}
+              options={[
+                { label: "mm", value: "mm" },
+                { label: "cm", value: "cm" },
+              ]}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const renderBiRadsSection = (
+  prefix: string,
+  categoryId: number,
+  otherId: number
+) => {
+  const selected = getAnswer(categoryId);
+
+  return (
+    <div className="flex flex-col gap-1 mt-4">
+      <Label className="font-bold text-base">
+        {prefix} - BI-RADS category assigned
+      </Label>
+      <div className="ml-4 mt-3 flex flex-row gap-3 flex-wrap">
+        {["0", "3", "4a", "4b", "4c", "5", "Unknown", "Other"].map((option) => (
+          <div key={option} className="flex items-center space-x-2 h-[20px]">
+            <input
+              type="radio"
+              name={`birads-${prefix}`}
+              value={option}
+              checked={selected === option}
+              onChange={() => handleInputChange(categoryId, option)}
+              className="custom-radio"
+              id={`${prefix}-${option}`}
+            />
+            <Label htmlFor={`${prefix}-${option}`} className="w-22">
+              {option}
+            </Label>
+          </div>
+        ))}
+      </div>
+
+      {selected === "Other" && (
+        <div className="mt-3 pl-4">
+          <Input
+            type="text"
+            value={getAnswer(otherId)}
+            onChange={(e) => handleInputChange(otherId, e.target.value)}
+            required
+            className="w-64 text-sm"
+            placeholder="If Other, Specify"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 
   return (
     <div className="flex flex-col h-full">
@@ -100,11 +351,10 @@ const AbnormalFindings: React.FC<Props> = ({
           </div>
         </div>
 
-        {/*B. Method of detection*/}
+        {/* B. Method of detection */}
         <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-bold text-base">
-            B. Method of detection
-          </Label>
+          <Label className="font-bold text-base">B. Method of detection</Label>
+
           <div className="flex flex-col gap-3 lg:gap-0">
             {[
               "Self-examination",
@@ -114,32 +364,48 @@ const AbnormalFindings: React.FC<Props> = ({
               "MRI",
               "Other",
               "None",
-            ].map((option) => (
-              <div
-                key={option}
-                className="ml-4 flex flex-col lg:flex-row space-x-2 h-[auto] lg:h-[40px]"
-              >
-                <div className="flex space-x-2 items-center">
-                  <input
-                    type="radio"
-                    name="support"
-                    value={option}
-                    checked={getAnswer(questionIds.support) === option}
-                    onChange={() =>
-                      handleInputChange(questionIds.support, option)
-                    }
-                    className="custom-radio"
-                    id={option === "Other" ? "SupportOther" : option}
-                  />
-                  <Label
-                    htmlFor={option === "Other" ? "SupportOther" : option}
-                    className="w-[160px]"
-                  >
-                    {option}
-                  </Label>
-                </div>
-                {option === "Other" &&
-                  getAnswer(questionIds.support) === "Other" && (
+            ].map((option) => {
+              const selectedOptions = JSON.parse(
+                getAnswer(questionIds.support) || "[]"
+              ) as string[];
+              const isChecked = selectedOptions.includes(option);
+
+              const handleCheckboxChange = (checked: boolean) => {
+                let updatedOptions = [...selectedOptions];
+                if (checked) {
+                  updatedOptions.push(option);
+                } else {
+                  updatedOptions = updatedOptions.filter(
+                    (item) => item !== option
+                  );
+                }
+                handleInputChange(
+                  questionIds.support,
+                  JSON.stringify(updatedOptions)
+                );
+              };
+
+              return (
+                <div
+                  key={option}
+                  className="ml-4 flex flex-col lg:flex-row space-x-2 h-auto lg:h-[40px]"
+                >
+                  <div className="flex space-x-2 items-center">
+                    <Checkbox2
+                      id={option === "Other" ? "SupportOther" : option}
+                      checked={isChecked}
+                      onCheckedChange={handleCheckboxChange}
+                    />
+                    <Label
+                      htmlFor={option === "Other" ? "SupportOther" : option}
+                      className="w-[160px]"
+                    >
+                      {option}
+                    </Label>
+                  </div>
+
+                  {/* Show text input when 'Other' is selected */}
+                  {option === "Other" && isChecked && (
                     <Input
                       type="text"
                       value={getAnswer(questionIds.supportother)}
@@ -154,8 +420,9 @@ const AbnormalFindings: React.FC<Props> = ({
                       placeholder="Specify"
                     />
                   )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -338,380 +605,135 @@ const AbnormalFindings: React.FC<Props> = ({
           <Label className="font-bold text-base">
             D. Location of abnormality
           </Label>
-          {/* a. Breast */}
-          <div className="ml-4">
-            <TwoOptionRadioGroup
-              label="a. Breast"
-              questionId={questionIds.breast}
-              formData={formData}
-              handleInputChange={handleInputChange}
-              options={[
-                { label: "Right", value: "Right" },
-                { label: "Left", value: "Left" },
-                { label: "Both", value: "Both" },
-              ]}
-            />
-          </div>
-          {/* b. Quadrant */}
-          <div className="ml-4">
-            <Label className="font-semibold text-base mb-2">b. Quadrant</Label>
-            <div className="flex flex-col gap-3 mt-2 relative">
-          
-              {/* Upper Outer */}
-              <div className="flex items-center space-x-3">
-                <Checkbox2
-                  id="upperOuter"
-                  checked={getAnswer(questionIds.upperOuterQuadrant) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.upperOuterQuadrant, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="upperOuter">Upper Outer</Label>
-              </div>
-          
-              {/* Upper Inner */}
-              <div className="flex items-center space-x-3">
-                <Checkbox2
-                  id="upperInner"
-                  checked={getAnswer(questionIds.upperInnerQuadrant) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.upperInnerQuadrant, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="upperInner">Upper Inner</Label>
-              </div>
-          
-              {/* Lower Outer */}
-              <div className="flex items-center space-x-3">
-                <Checkbox2
-                  id="lowerOuter"
-                  checked={getAnswer(questionIds.lowerOuterQuadrant) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.lowerOuterQuadrant, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="lowerOuter">Lower Outer</Label>
-              </div>
-          
-              {/* Lower Inner */}
-              <div className="flex items-center space-x-3">
-                <Checkbox2
-                  id="lowerInner"
-                  checked={getAnswer(questionIds.lowerInnerQuadrant) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.lowerInnerQuadrant, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="lowerInner">Lower Inner</Label>
-              </div>
-          
-              {/* Central/Nipple Outer */}
-              <div className="flex items-center space-x-3">
-                <Checkbox2
-                  id="centralNippleOuter"
-                  checked={getAnswer(questionIds.centralNippleOuterQuadrant) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.centralNippleOuterQuadrant, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="centralNippleOuter">Central/Nipple Outer</Label>
-              </div>
 
-              <div className="flex items-center space-x-3">
+          {/* a. Breast Selection */}
+          <div className="ml-4">
+            <Label className="font-semibold text-base mb-2">a. Breast</Label>
+            <div className="flex flex-col items-start gap-4 relative">
+              <div className="flex items-center gap-2">
                 <Checkbox2
-                  id="unknownQuadrant"
-                  checked={getAnswer(questionIds.unknownQuadrant) === "true"}
+                  name="breastRight"
+                  checked={getAnswer(questionIds.breastRight) === "true"}
                   onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.unknownQuadrant, checked ? "true" : "")
+                    handleInputChange(
+                      questionIds.breastRight,
+                      checked ? "true" : ""
+                    )
                   }
                 />
-                <Label htmlFor="unknownQuadrant">Unknown</Label>
+                <Label htmlFor="breastRight">Right</Label>
               </div>
-            </div>
-          </div>
+              {/* --- RIGHT SIDE DETAILS --- */}
+              {getAnswer(questionIds.breastRight) === "true" && (
+                <div className="ml-6 flex flex-col gap-4 border-b-2 border-gray-200 pb-4">
+                  <Label className="font-semibold text-base">
+                    Right Side Details
+                  </Label>
+                  {/* Quadrant */}
+                  {renderQuadrantSection("Right", {
+                    upperOuter: questionIds.upperOuterQuadrantRight,
+                    upperInner: questionIds.upperInnerQuadrantRight,
+                    lowerOuter: questionIds.lowerOuterQuadrantRight,
+                    lowerInner: questionIds.lowerInnerQuadrantRight,
+                    centralNipple: questionIds.centralNippleOuterQuadrantRight,
+                    unknown: questionIds.unknownQuadrantRight,
+                  })}
 
-          {/* c. Clock position */}
-          <div className="ml-4">
-            <div className="flex-col gap-4 relative">
-              <Label className="font-semibold text-base">
-                c. Clock position
-              </Label>
-              <div className=" ml-4 mt-2 mb-3 lg:mb-0 lg:mt-0 flex flex-col lg:flex-row items-start lg:items-center gap-2 h-[auto] lg:h-[40px]">
-                <div className="flex gap-5">
-                  <div className="flex gap-2">
-                    <input
-                      type="radio"
-                      name="clockpostion"
-                      checked={
-                        getAnswer(questionIds.clockpositionstatus) === "Unknown"
-                      }
-                      onChange={() =>
-                        handleInputChange(
-                          questionIds.clockpositionstatus,
-                          "Unknown"
-                        )
-                      }
-                      className="custom-radio"
-                    />
-                    <Label className="font-semibold text-sm">Unknown</Label>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="radio"
-                      name="clockpostion"
-                      checked={
-                        getAnswer(questionIds.clockpositionstatus) === "known"
-                      }
-                      onChange={() =>
-                        handleInputChange(
-                          questionIds.clockpositionstatus,
-                          "known"
-                        )
-                      }
-                      className="custom-radio"
-                    />
-                    <Label className="font-semibold text-sm">known</Label>
-                  </div>
+                  {/* Clock Position */}
+                 {renderClockPositionSection("Right", questionIds.clockpositionstatusRight, questionIds.clockpositionRight)}
+
+
+                  {/* Distance from Nipple */}
+                  {renderDistanceFromNippleSection("Right", questionIds.distancenippleStatusRight, questionIds.distancenippleRight)}
+
+
+                  {/* E. Size of Abnormality (Right) */}
+                  {renderSizeOfAbnormalitySection("Right", questionIds.sizeStatusRight, questionIds.sizeRight, questionIds.sizeunitRight)}
+
+
+                  {/* F. BI-RADS Category (Right) */}
+                  {renderBiRadsSection("Right", questionIds.biradsCatRight, questionIds.biradsCatOtherRight)}
+
                 </div>
-                {getAnswer(questionIds.clockpositionstatus) === "known" && (
-                  <div className="mt-2 h-[50px]">
-                    <ValidatedSelect
-                      label=""
-                      questionId={questionIds.clockposition}
-                      formData={formData}
-                      className="w-30"
-                      placeholder=""
-                      handleInputChange={handleInputChange}
-                      options={[
-                        { label: "1'o Clock", value: "1" },
-                        { label: "2'o Clock", value: "2" },
-                        { label: "3'o Clock", value: "3" },
-                        { label: "4'o Clock", value: "4" },
-                        { label: "5'o Clock", value: "5" },
-                        { label: "6'o Clock", value: "6" },
-                        { label: "7'o Clock", value: "7" },
-                        { label: "8'o Clock", value: "8" },
-                        { label: "9'o Clock", value: "9" },
-                        { label: "10'o Clock", value: "10" },
-                        { label: "11'o Clock", value: "11" },
-                        { label: "12'o Clock", value: "12" },
-                      ]}
-                      required
-                    // placeholder="Country Code"
-                    />
-                  </div>
-                )}
+              )}
+              <div className="flex items-center gap-2">
+                <Checkbox2
+                  name="breastLeft"
+                  checked={getAnswer(questionIds.breast) === "true"}
+                  onCheckedChange={(checked) =>
+                    handleInputChange(questionIds.breast, checked ? "true" : "")
+                  }
+                />
+                <Label htmlFor="breastLeft">Left</Label>
               </div>
-            </div>
-          </div>
+              {/* --- LEFT SIDE DETAILS --- */}
+              {getAnswer(questionIds.breast) === "true" && (
+                <div className="ml-6 flex flex-col gap-4">
+                  <Label className="font-semibold text-base">
+                    Left Side Details
+                  </Label>
+                  {/* Quadrant */}
+                  {renderQuadrantSection("Left", {
+                    upperOuter: questionIds.upperOuterQuadrant,
+                    upperInner: questionIds.upperInnerQuadrant,
+                    lowerOuter: questionIds.lowerOuterQuadrant,
+                    lowerInner: questionIds.lowerInnerQuadrant,
+                    centralNipple: questionIds.centralNippleOuterQuadrant,
+                    unknown: questionIds.unknownQuadrant,
+                  })}
 
-          {/* d. Distance from nipple */}
-          <div className="ml-4 -mt-2">
-            <div className="flex-col gap-4 relative">
-              <Label className="font-semibold text-base">
-                d. Distance from nipple
-              </Label>
-              <div className=" ml-4 mt-2 mb-3 lg:mb-0 lg:mt-0 flex flex-col lg:flex-row items-start lg:items-center gap-2 h-[auto] lg:h-[40px]">
-                <div className="flex gap-5">
-                  <div className="flex gap-2">
-                    <input
-                      type="radio"
-                      name="distancenipple"
-                      checked={
-                        getAnswer(questionIds.distancenippleStatus) ===
-                        "Unknown"
-                      }
-                      onChange={() =>
-                        handleInputChange(
-                          questionIds.distancenippleStatus,
-                          "Unknown"
-                        )
-                      }
-                      className="custom-radio"
-                    />
-                    <Label className="font-semibold text-sm">Unknown</Label>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="radio"
-                      name="distancenipple"
-                      checked={
-                        getAnswer(questionIds.distancenippleStatus) === "known"
-                      }
-                      onChange={() =>
-                        handleInputChange(
-                          questionIds.distancenippleStatus,
-                          "known"
-                        )
-                      }
-                      className="custom-radio"
-                    />
-                    <Label className="font-semibold text-sm">known</Label>
-                  </div>
+                  {/* Clock Position */}
+                  {renderClockPositionSection("Left", questionIds.clockpositionstatus, questionIds.clockposition)}
+
+
+                  {/* Distance from Nipple */}
+                  {renderDistanceFromNippleSection("Left", questionIds.distancenippleStatus, questionIds.distancenipple)}
+
+
+                  {/* E. Size of Abnormality (Left) */}
+                  {renderSizeOfAbnormalitySection("Left", questionIds.sizeStatus, questionIds.size, questionIds.sizeunit)}
+
+
+                  {/* F. BI-RADS Category (Left) */}
+                  {renderBiRadsSection("Left", questionIds.biradsCat, questionIds.biradsCatOther)}
+
                 </div>
-                {getAnswer(questionIds.distancenippleStatus) === "known" && (
-                  <div className=" mt-2 h-[50px] flex justify-center items-center gap-3">
-                    <Input
-                      type="number"
-                      className="w-30"
-                      value={getAnswer(questionIds.distancenipple)}
-                      onChange={(e) =>
-                        handleInputChange(
-                          questionIds.distancenipple,
-                          e.target.value
-                        )
-                      }
-                      required
-                    />
-                    <Label className="font-semibold text-sm">cm</Label>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
-        </div>
-
-        {/*E. Size of abnormality*/}
-        <div className="flex flex-col gap-1">
-          <Label className="font-bold text-base">E. Size of abnormality</Label>
-          <div className=" flex flex-col lg:flex-row mt-2 h-[auto] lg:h-[40px] gap-4 ">
-            <div className="ml-4 flex gap-5 items-center">
-              <div className="flex gap-2">
-                <input
-                  type="radio"
-                  name="sizeofab"
-                  checked={getAnswer(questionIds.sizeStatus) === "Unknown"}
-                  onChange={() =>
-                    handleInputChange(questionIds.sizeStatus, "Unknown")
-                  }
-                  className="custom-radio"
-                />
-                <Label className="font-semibold text-sm">Unknown</Label>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="radio"
-                  name="sizeofab"
-                  checked={getAnswer(questionIds.sizeStatus) === "known"}
-                  onChange={() =>
-                    handleInputChange(questionIds.sizeStatus, "known")
-                  }
-                  className="custom-radio"
-                />
-                <Label className="font-semibold text-sm">known</Label>
-              </div>
-            </div>
-            {getAnswer(questionIds.sizeStatus) === "known" && (
-              <div className="flex gap-2 h-[40px] ml-4 lg:ml-0 items-center">
-                <Input
-                  type="number"
-                  className="w-20"
-                  value={getAnswer(questionIds.size)}
-                  onChange={(e) =>
-                    handleInputChange(questionIds.size, e.target.value)
-                  }
-                  required
-                />
-                <ValidatedSelect
-                  label=""
-                  questionId={questionIds.sizeunit}
-                  formData={formData}
-                  className="w-20 -mt-1"
-                  handleInputChange={handleInputChange}
-                  options={[
-                    { label: "mm", value: "mm" },
-                    { label: "cm", value: "cm" },
-                  ]}
-                // placeholder="Country Code"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/*F. BI-RADS category assigned (if known)*/}
-        <div className="flex flex-col gap-1 ">
-          <Label className="font-bold text-base">
-            F. BI-RADS category assigned (if known)
-          </Label>
-          <div className="ml-4 mt-3 flex flex-row gap-3 flex-wrap">
-            {["0", "3", "4a", "4b", "4c", "5", "Unknown", "Other"].map((option) => (
-              <div
-                key={option}
-                className="flex items-center space-x-2 h-[20px]"
-              >
-                <input
-                  type="radio"
-                  name="birads"
-                  value={option}
-                  checked={getAnswer(questionIds.biradsCat) === option}
-                  onChange={() =>
-                    handleInputChange(questionIds.biradsCat, option)
-                  }
-                  className="custom-radio"
-                  id={option === "Other" ? "SupportOther" : option}
-                />
-                <Label
-                  htmlFor={option === "Other" ? "SupportOther" : option}
-                  className="w-22"
-                >
-                  {option}
-                </Label>
-              </div>
-              
-            ))}
-          </div>
-
-          <div className="mt-3 pl-4">
-                 { getAnswer(questionIds.biradsCat) === "Other" && (
-                    <Input
-                      type="text"
-                      value={getAnswer(questionIds.biradsCatOther)}
-                      onChange={(e) =>
-                        handleInputChange(
-                          questionIds.biradsCatOther,
-                          e.target.value
-                        )
-                      }
-                      required
-                      className="w-64 text-sm mt-3 lg:mt-0"
-                      placeholder="If Other, Specify"
-                      />
-                  )}
-              </div>
         </div>
 
         {/* G. Marker (Fiducial) / Magnetic implants [pacemaker] */}
         <LabeledRadioWithOptionalInput
-            name="marker"
-            label="G.  Clip / Marker (Fiducial)"
-            questionId={questionIds.marker}
-            optionalInputQuestionId={questionIds.markerother}
-            formData={formData}
-            handleInputChange={handleInputChange}
-            options={[
+          name="marker"
+          label="G.  Clip / Marker (Fiducial)"
+          questionId={questionIds.marker}
+          optionalInputQuestionId={questionIds.markerother}
+          formData={formData}
+          handleInputChange={handleInputChange}
+          options={[
             { label: "No", value: "No" },
             { label: "Yes", value: "Yes" },
           ]}
-            showInputWhenValue="Yes"
-            // inputPlaceholder=""
-          />
+          showInputWhenValue="Yes"
+          // inputPlaceholder=""
+        />
 
         {/* H. Magnetic implants [pacemaker] */}
         <LabeledRadioWithOptionalInput
-            name="magneticimplants"
-            label="H. Magnetic implants (pacemaker)"
-            questionId={questionIds.magneticimplants}
-            optionalInputQuestionId={questionIds.magneticimplantsother}
-            formData={formData}
-            handleInputChange={handleInputChange}
-            options={[
+          name="magneticimplants"
+          label="H. Magnetic implants (pacemaker)"
+          questionId={questionIds.magneticimplants}
+          optionalInputQuestionId={questionIds.magneticimplantsother}
+          formData={formData}
+          handleInputChange={handleInputChange}
+          options={[
             { label: "No", value: "No" },
             { label: "Yes", value: "Yes" },
           ]}
-            showInputWhenValue="Yes"
-            // inputPlaceholder=""
-          />
+          showInputWhenValue="Yes"
+          // inputPlaceholder=""
+        />
       </div>
     </div>
   );

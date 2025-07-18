@@ -139,7 +139,7 @@ const BiopsyInformation: React.FC<Props> = ({
                 ].map((option) => (
                   <div
                     key={option}
-                    className="ml-4 flex items-center flex-col lg:flex-row h-[auto] lg:h-[20px]"
+                    className="ml-4 flex items-start flex-col lg:flex-row h-[auto] lg:h-[20px]"
                   >
                     <div className="flex space-x-2 ">
                       <input

@@ -117,6 +117,7 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
             ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Details"
+            optionalInputType="textarea"
           />
 
           <LabeledRadioWithOptionalInput
@@ -133,6 +134,7 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
             ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Details"
+            optionalInputType="textarea"
           />
         </div>
         )

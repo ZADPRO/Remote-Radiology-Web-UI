@@ -13,6 +13,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import bg from "../../assets/Patient-InTake Form/breastOutline.png";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
  
 type Props = {
   label: string;
@@ -21,9 +22,14 @@ type Props = {
   LQID: number;
   SDate: any;
   Size?: any;
+  SDateRight: any;
+  SizeRight?: any;
   data: any;
   setData: any;
+  skinChangesType?: number;
+  skinChangesTypeRight?: number;
   OtherInputQId?: number;
+  OtherInputQIDRight?: number;
   technician?: boolean;
   editStatus?: boolean;
   patientData?: any;
@@ -291,7 +297,7 @@ const BreastInput: React.FC<Props> = (Props) => {
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
-              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full ">
+              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full">
                 {/* R Clock Label Input */}
                 <div
                   onClick={() =>
@@ -315,7 +321,96 @@ const BreastInput: React.FC<Props> = (Props) => {
                   />
                 </div>
  
-                {/* L Clock Label Input */}
+                {/* Since (Months) */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                  <Label className="">Duration</Label>
+                  <Input
+                    placeholder="Months"
+                    value={getAnswerByQuestionId(Props.SDateRight)}
+                    onChange={(e) => updateAnswer(Props.SDateRight, e.target.value)}
+                    className="w-full lg:w-20"
+                    type="number"
+                    required={getAnswerByQuestionId(Props.SDateRight) === ""}
+                  />
+                </div>
+ 
+                <div className="flex gap-2">
+                  {/* Size (only for "Lump or thickening") */}
+                  {Props.label === "Lump or thickening" && (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                      <Label>Size</Label>
+                      <div className="w-full lg:w-32">
+                        <Select
+                          value={getAnswerByQuestionId(Props.SizeRight) || ""}
+                          onValueChange={(value) =>
+                            updateAnswer(Props.SizeRight, value)
+                          }
+                          required={getAnswerByQuestionId(Props.SizeRight) === ""}
+                        >
+                          <SelectTrigger className="bg-white w-full">
+                            <SelectValue placeholder="Select Size" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Pea">Pea</SelectItem>
+                            <SelectItem value="Grape">Grape</SelectItem>
+                            <SelectItem value="Bigger">Bigger</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+ 
+                <div className="flex gap-2">
+                  {/* Size (only for "Lump or thickening") */}
+                  {(Props.label === "Skin changes") && (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                      {/* <Label>Size</Label> */}
+                      <div className="w-full lg:w-39">
+                        <Select
+                          value={getAnswerByQuestionId(Props.skinChangesTypeRight) || ""}
+                          onValueChange={(value) =>
+                            updateAnswer(Props.skinChangesTypeRight!, value)
+                          }
+                          required={getAnswerByQuestionId(Props.skinChangesTypeRight) === ""}
+                        >
+                          <SelectTrigger className="bg-white w-full">
+                            <SelectValue placeholder="Select Skin Changes" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Thickening">Thickening</SelectItem>
+                            <SelectItem value="Dimpling">Dimpling</SelectItem>
+                            <SelectItem value="Redness">Redness</SelectItem>
+                            <SelectItem value="Peau d'orange">Peau d'orange</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+ 
+                      {
+                        getAnswerByQuestionId(Props.skinChangesTypeRight) === "Other" && (
+                          <>
+                            <div className="flex gap-1 w-full ">
+                              <Input
+                                placeholder="Specify"
+                                value={getAnswerByQuestionId(Props.OtherInputQIDRight)}
+                                onChange={(e) =>
+                                  updateAnswer(Props.OtherInputQIDRight!, e.target.value)
+                                }
+                              />
+                            </div>
+                          </>
+                        )
+                      }
+                    </div>
+                  )}
+                </div>
+ 
+                
+              </div>
+ 
+              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full">
+                  {/* L Clock Label Input */}
                 <div
                   onClick={() =>
                     getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
@@ -337,7 +432,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     }
                   />
                 </div>
- 
+
                 {/* Since (Months) */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
                   <Label className="">Duration</Label>
@@ -377,22 +472,22 @@ const BreastInput: React.FC<Props> = (Props) => {
                     </div>
                   )}
                 </div>
- 
+
                 <div className="flex gap-2">
                   {/* Size (only for "Lump or thickening") */}
-                  {(Props.label === "Skin changes" && Props.technician) && (
+                  {(Props.label === "Skin changes") && (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       {/* <Label>Size</Label> */}
                       <div className="w-full lg:w-39">
                         <Select
-                          value={getAnswerByQuestionId(Props.Size) || ""}
+                          value={getAnswerByQuestionId(Props.skinChangesType) || ""}
                           onValueChange={(value) =>
-                            updateAnswer(Props.Size, value)
+                            updateAnswer(Props.skinChangesType!, value)
                           }
-                          required={getAnswerByQuestionId(Props.Size) === ""}
+                          required={getAnswerByQuestionId(Props.skinChangesType) === ""}
                         >
                           <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Changes" />
+                            <SelectValue placeholder="Select Skin Changes" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Thickening">Thickening</SelectItem>
@@ -405,11 +500,11 @@ const BreastInput: React.FC<Props> = (Props) => {
                       </div>
  
                       {
-                        getAnswerByQuestionId(Props.Size) === "Other" && (
+                        getAnswerByQuestionId(Props.skinChangesType) === "Other" && (
                           <>
                             <div className="flex gap-1 w-full ">
                               <Input
-                                placeholder="Others"
+                                placeholder="Specify"
                                 value={getAnswerByQuestionId(Props.OtherInputQId)}
                                 onChange={(e) =>
                                   updateAnswer(Props.OtherInputQId!, e.target.value)
@@ -422,12 +517,13 @@ const BreastInput: React.FC<Props> = (Props) => {
                     </div>
                   )}
                 </div>
- 
-                <div className="flex gap-2">
+              </div>
+
+              <div className="flex gap-2 mt-4 w-1/2">
                   {/* Other Input */}
                   {(Props.OtherInputQId && !Props.technician) && (
                     <div className="flex gap-1 w-full ">
-                      <Input
+                      <Textarea
                         placeholder="Additional Comments"
                         value={getAnswerByQuestionId(Props.OtherInputQId)}
                         onChange={(e) =>
@@ -437,9 +533,6 @@ const BreastInput: React.FC<Props> = (Props) => {
                     </div>
                   )}
                 </div>
-              </div>
- 
- 
  
             </div>
           )}

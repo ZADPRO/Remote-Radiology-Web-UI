@@ -18,6 +18,7 @@ interface DatePickerProps {
   required?: boolean
   name?: string
   disabled?: boolean
+  disabledDates?: (date: Date) => boolean 
 }
 
 export default function DatePicker({
@@ -26,7 +27,8 @@ export default function DatePicker({
   onChange,
   placeholder = "Select a date",
   required = false,
-  disabled = false
+  disabled = false,
+  disabledDates = () => false,
   // name = "date",
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
@@ -62,6 +64,7 @@ export default function DatePicker({
             mode="single"
             selected={value}
             onSelect={handleSelect}
+            disabled={disabledDates} // ✅ Use the prop here
             autoFocus
           />
         </PopoverContent>

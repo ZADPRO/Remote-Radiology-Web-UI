@@ -6,6 +6,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { IntakeOption, PatientInTakeFormNavigationState } from "./PatientInTakeForm";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Props{
   formData: IntakeOption[];
@@ -205,15 +206,21 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
 
   setFormData((prevFormData) => {
     const updatedFormData = [...prevFormData];
+    
+    const setOrUpdate = (qId: number, value: any) => {
+      const index = updatedFormData.findIndex((item) => item.questionId === qId);
+      if (index !== -1) {
+        updatedFormData[index] = { ...updatedFormData[index], answer: value };
+      } else {
+        updatedFormData.push({ questionId: qId, answer: value });
+      }
+    };
 
-    // ✅ Set questionId: 170 with selectedOption ID
-    const qId = 170;
-    const index = updatedFormData.findIndex((item) => item.questionId === qId);
-    if (index !== -1) {
-      updatedFormData[index] = { ...updatedFormData[index], answer: selectedOption };
-    } else {
-      updatedFormData.push({ questionId: qId, answer: selectedOption });
-    }
+    // ✅ Set questionId: 170 with selectedOption
+    setOrUpdate(170, selectedOption);
+
+    // ✅ Set questionId: 485 with empty string
+    setOrUpdate(485, "");
 
     // ✅ Reset all checkboxes to false
     Object.values(checkboxData).flat().forEach((cb) => {
@@ -249,7 +256,7 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
     <div className="flex flex-col gap-3 h-dvh lg:flex-row w-full p-5 lg:p-0 bg-gradient-to-b from-[#EED2CF] to-[#FEEEED] overflow-y-auto">
       {/* Left Panel */}
       <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:p-6 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col justify-center lg:items-center gap-2">
-         <Button
+        <Button
           type="button"
           variant="link"
           className="self-start flex text-foreground font-semibold items-center gap-2"
@@ -271,12 +278,7 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
         >
           {intakeOptions.map(({ id, radioLabel }) => (
             <React.Fragment key={id}>
-              {id === suggestedOption && (
-                <span className="text-muted-foreground italic">
-                  (Please Proceed with the Current Selected Form)
-                </span>
-              )}
-              <div className="flex items-start lg:items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md">
+              <div className="flex items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md">
                 <CustomRadioGroupItem
                   className="text-black bg-white data-[state=checked]:ring-2"
                   value={id}
@@ -302,6 +304,11 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
 
         {selectedOption && (
           <div className="w-full">
+            {selectedOption === suggestedOption && (
+              <p className="text-muted-foreground text-center italic">
+                (Please Proceed with the Current Selected Form)
+              </p>
+            )}
             <h1 className="text-lg lg:text-2xl p-2 lg:p-0 text-start lg:text-center font-extrabold">
               {
                 intakeOptions.find((opt) => opt.id === selectedOption)
@@ -314,7 +321,11 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
                   ?.subHeaderTitle
               }
             </p>
-            <div className={`space-y-4 p-4 lg:pl-10 ${readOnly ? "pointer-events-none" : ""}`}>
+            <div
+              className={`space-y-4 p-4 lg:pl-10 ${
+                readOnly ? "pointer-events-none" : ""
+              }`}
+            >
               {(checkboxData[selectedOption] || []).map((cb) => {
                 const isChecked =
                   formData.find((f) => f.questionId === parseInt(cb.id))
@@ -335,6 +346,24 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
                   </div>
                 );
               })}
+              <div className="flex items-center gap-3">
+                <Label className="text-lg">Other</Label>
+                <Input
+                  value={
+                    formData.find((item) => item.questionId === 485)?.answer ||
+                    ""
+                  }
+                  onChange={(e) => {
+                    setFormData((prev) =>
+                      prev.map((item) =>
+                        item.questionId === 485
+                          ? { ...item, answer: e.target.value }
+                          : item
+                      )
+                    );
+                  }}
+                />
+              </div>
             </div>
 
             {formData.some(

@@ -79,6 +79,7 @@ const PatientInTakeForm03: React.FC<Props> = ({
               stage: 258,
               tumersize: 259,
               breast: 260,
+              breastRight: 469,
               upperOuterQuadrant: 261,
               upperInnerQuadrant: 262,
               lowerOuterQuadrant: 263,
@@ -89,10 +90,27 @@ const PatientInTakeForm03: React.FC<Props> = ({
               clockpositionstatus: 268,
               distancenippleStatus: 269,
               distancenipple: 270,
+
+              upperOuterQuadrantRight: 470,
+              upperInnerQuadrantRight: 471,
+              lowerOuterQuadrantRight: 472,
+              lowerInnerQuadrantRight: 473,
+              centralNippleOuterQuadrantRight: 474,
+              unknownQuadrantRight: 475,
+              clockpositionstatusRight: 476,
+              clockpositionRight: 477,
+              distancenippleStatusRight: 478,
+              distancenippleRight: 479,
+              
               Lymph: 271,
               positivenode: 272,
               Metastasis: 273,
               location: 274,
+
+              LymphRight: 480,
+              positivenodeRight: 481,
+              MetastasisRight: 483,
+              locationRight: 484,
             }}
           />
         );
@@ -239,8 +257,8 @@ const PatientInTakeForm03: React.FC<Props> = ({
               optionRefs.current[option] = el;
             }}
             key={option}
-            onClick={() => setSelectedSection(option)}
-            className="flex gap-2 items-center cursor-pointer"
+            // onClick={() => setSelectedSection(option)}
+            className="flex gap-2 items-center"
           >
             {options.indexOf(option) < options.indexOf(selectedSection) && (
               <div className="inline w-6 lg:w-6 text-white font-bold">
