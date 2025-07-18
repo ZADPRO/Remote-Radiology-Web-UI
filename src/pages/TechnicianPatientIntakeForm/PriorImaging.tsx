@@ -153,7 +153,7 @@ const PriorImaging: React.FC<Props> = ({
     const snapshot = patientSnapshot[imagingKey] || [];
 
     return (
-      <div className="flex w-full items-start border-b border-gray-200 py-4">
+      <div className="flex w-full items-center border-b my-1 border-gray-200">
         <div className="w-[80%] relative">
           {children}
           {!isEditing && <div className="absolute top-0 left-0 w-full h-full z-10 cursor-not-allowed" />}
@@ -162,7 +162,7 @@ const PriorImaging: React.FC<Props> = ({
           <div className="flex items-center gap-3">
             {renderCheckbox("Check to Confirm", symptomMainQuestionId)}
             {!isEditing ? (
-              <div className="flex flex-col items-center w-20">
+              <div className="flex flex-col items-center gap-1 w-20">
                 <span className="text-xs font-medium">Edit</span>
                 <Edit
                   className="w-4 h-4 cursor-pointer"
@@ -372,7 +372,7 @@ const PriorImaging: React.FC<Props> = ({
             </label>
             {(selectedFileName || uploadedFileName) && (
               <span
-                className="text-sm cursor-pointer"
+                className="text-sm cursor-pointer pointer-events-auto underline hover:underline-offset-2"
                 onClick={() =>
                   downloadDocumentFile(
                     getFile?.base64Data,

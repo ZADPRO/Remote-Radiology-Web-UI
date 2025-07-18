@@ -104,8 +104,9 @@ const TechnicianPatientIntakeForm: React.FC<
 
   useEffect(() => {
     const stored = localStorage.getItem("formSession");
-    setLoading(true);
     if (stored) {
+          setLoading(true);
+
       try {
         const parsed = JSON.parse(stored);
 
@@ -129,7 +130,7 @@ const TechnicianPatientIntakeForm: React.FC<
 
   // This effect will store changes to localStorage
   useEffect(() => {
-    if (!controlData?.appointmentId) return;
+    if (!controlData?.appointmentId || controlData?.readOnly) return;
 
     const dataToStore = {
       appointmentId: controlData.appointmentId,
@@ -141,22 +142,35 @@ const TechnicianPatientIntakeForm: React.FC<
   }, [patientFormData, technicianFormData]);
 
   useEffect(() => {
-    if (
-      controlData.fetchFormData == true &&
-      controlData.userId != undefined &&
-      controlData.appointmentId != undefined
-    ) {
-      handleFetchPatientForm(controlData.userId, controlData.appointmentId);
-    }
+    const fetchData = async () => {
+      if (
+        controlData.userId !== undefined &&
+        controlData.appointmentId !== undefined
+      ) {
+        setLoading(true);
 
-    if (
-      controlData.fetchTechnicianForm == true &&
-      controlData.userId != undefined &&
-      controlData.appointmentId != undefined
-    ) {
-      handleFetchTechnicianForm(controlData.userId, controlData.appointmentId);
-    }
-  }, [useLocation().state]);
+        try {
+          if (controlData.fetchFormData) {
+            await handleFetchPatientForm(controlData.userId, controlData.appointmentId);
+          }
+
+          if (controlData.fetchTechnicianForm) {
+            await handleFetchTechnicianForm(controlData.userId, controlData.appointmentId);
+          }
+        } catch (error) {
+          console.error("Error fetching form data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [location.state]); 
+  
+  useEffect(()=>{
+    handleAssignTechnicianForm(controlData.userId, controlData.appointmentId);
+  },[!controlData.readOnly])
 
   const handleFetchPatientForm = async (
     userID: number,
@@ -225,6 +239,25 @@ const TechnicianPatientIntakeForm: React.FC<
     }
   };
 
+   const handleAssignTechnicianForm = async (
+    userID: number,
+    appointmentId: number
+  ) => {
+    try {
+      const res = await technicianService.assignTechnicianForm(
+        userID,
+        appointmentId
+      );
+      console.log("res", res);
+
+      // if (res.TechIntakeData) {
+      //   // setTechnicianFormData(res.TechIntakeData);
+      // }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleShift = (categoryId: number) => {
     navigate("/patientInTakeForm", {
       state: {
@@ -249,7 +282,7 @@ const TechnicianPatientIntakeForm: React.FC<
           updatedAnswers: patientFormData,
           technicianAnswers: technicianFormData,
         };
-        console.log(payload);
+        console.log("payload", payload);
         const res = await appointmentService.addTechnicianInTakeForm(payload);
 
         console.log(res);
@@ -348,6 +381,7 @@ const TechnicianPatientIntakeForm: React.FC<
               deformityRight: 21,
               deformityLeft: 22,
               deformityDuration: 23,
+              deformityDurationRight: 47,
               scar: 24,
               scarRight: 25,
               scarLeft: 26,
@@ -357,6 +391,8 @@ const TechnicianPatientIntakeForm: React.FC<
               soreLeft: 30,
               soreDuration: 31,
               additionalComments: 32,
+              scarDurationRight: 43,
+              soreDurationRight: 44,
             }}
             auditData={auditData}
             readOnly={controlData.readOnly ? true : false}
