@@ -47,126 +47,132 @@ const FamilyHistory: React.FC<Props> = ({
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Family History" className="uppercase" />
 
-       <div className={readOnly ? "pointer-events-none" : ""}>
-      <div className="flex-grow overflow-y-auto px-5 py-10 lg:py-0 lg:px-20 space-y-8 pb-10">
-        <MultiOptionRadioGroup
-          label="A. Do any first-degree or second-degree relatives have breast cancer?"
-          questionId={questionIds.relatives}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          options={[
-            { label: "No", value: "No" },
-            { label: "Yes", value: "Yes" },
-          ]}
-        />
+      <div className={readOnly ? "pointer-events-none" : ""}>
+        <div className="flex-grow overflow-y-auto px-5 py-10 lg:py-0 lg:px-20 space-y-8 pb-10">
+          <MultiOptionRadioGroup
+            label="A. Do any first-degree or second-degree relatives have breast cancer?"
+            questionId={questionIds.relatives}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+          />
 
-        {getAnswer(questionIds.relatives) === "Yes" && (
-          <div className="flex items-center -mt-4 ml-4 gap-4">
-            <Label className="text-sm font-medium">
-              If yes, age(s) at diagnosis
+          {getAnswer(questionIds.relatives) === "Yes" && (
+            <div className="flex items-center -mt-4 ml-4 gap-4">
+              <Label className="text-sm font-medium">
+                If yes, age(s) at diagnosis
+              </Label>
+              <Input
+                type="text"
+                value={getAnswer(questionIds.relativesDiagnoses)}
+                onChange={(e) =>
+                  handleInputChange(
+                    questionIds.relativesDiagnoses,
+                    e.target.value
+                  )
+                }
+                className="w-24 h-10 border border-gray-300 rounded-md px-2 text-sm"
+                placeholder="Age"
+                required
+              />
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Label className="font-semibold text-base flex flex-wrap gap-1">
+              B. Which family members had breast cancer?
             </Label>
             <Input
-              type="text"
-              value={getAnswer(questionIds.relativesDiagnoses)}
+            value={getAnswer(questionIds.familyHistorySpecify)}
+            onChange={(e) =>
+              handleInputChange(
+                questionIds.familyHistorySpecify,
+                e.target.value
+              )
+            }
+            placeholder="Specify Who"
+            className="w-64"
+          />
+          </div>
+
+          <LabeledRadioWithOptionalInput
+            name="ovarian-cancer"
+            label="C. Family history of ovarian cancer?"
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            questionId={questionIds.historyOvarianCancer}
+            optionalInputQuestionId={questionIds.historyFamilySpecify}
+            secondaryOptionalInputQuestionId={
+              questionIds.historyFamilySpecifyAge
+            }
+            showInputWhenValue="Yes"
+            inputPlaceholder="Specify"
+            secondaryInputPlaceholder="Age"
+            secondaryinputWidth="w-20"
+          />
+
+          <LabeledRadioWithOptionalInput
+            name="relatives-cancer"
+            label="D. Any relatives with both breast and ovarian cancer?"
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            questionId={questionIds.historyRelativesCancer}
+            optionalInputQuestionId={questionIds.historyRelativesSpecify}
+            secondaryOptionalInputQuestionId={
+              questionIds.historyRelativesSpecifyAge
+            }
+            showInputWhenValue="Yes"
+            inputPlaceholder="Specify"
+            secondaryInputPlaceholder="Age"
+            secondaryinputWidth="w-20"
+          />
+
+          <LabeledRadioWithOptionalInput
+            name="family-genetic-condition"
+            label="E. History of other cancers in the family?"
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            questionId={questionIds.otherCancers}
+            optionalInputQuestionId={questionIds.otherCancerSpecify}
+            secondaryOptionalInputQuestionId={questionIds.otherCancerSpecifyAge}
+            showInputWhenValue="Yes"
+            inputPlaceholder="Specify"
+            secondaryInputPlaceholder="Age"
+            secondaryinputWidth="w-20"
+          />
+
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Label className="font-semibold text-base flex flex-wrap gap-1">
+              F. Others / Additional Comments
+            </Label>
+            <Textarea
+              className="w-full lg:w-64"
+              value={getAnswer(questionIds.additionalComments)}
               onChange={(e) =>
                 handleInputChange(
-                  questionIds.relativesDiagnoses,
+                  questionIds.additionalComments,
                   e.target.value
                 )
               }
-              className="w-24 h-10 border border-gray-300 rounded-md px-2 text-sm"
-              placeholder="Age"
-              required
+              placeholder="Enter Details"
             />
           </div>
-        )}
-
-        <LabeledRadioWithOptionalInput
-          name="family-genetic-condition"
-          label="B. Which family members had breast cancer?"
-          options={[
-            { label: "No", value: "No" },
-            { label: "Yes", value: "Yes" },
-          ]}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          optionalInputQuestionId={questionIds.familyHistorySpecify}
-          showInputWhenValue="Yes"
-          inputPlaceholder="Specify"
-          questionId={questionIds.familyHistory}
-          secondaryOptionalInputQuestionId={questionIds.familyHistorySpecifyAge}
-          secondaryInputPlaceholder="Age"
-          secondaryinputWidth="w-20"
-        />
-
-        <LabeledRadioWithOptionalInput
-          name="ovarian-cancer"
-          label="C. Family history of ovarian cancer?"
-          options={[
-            { label: "No", value: "No" },
-            { label: "Yes", value: "Yes" },
-          ]}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          questionId={questionIds.historyOvarianCancer}
-          optionalInputQuestionId={questionIds.historyFamilySpecify}
-          secondaryOptionalInputQuestionId={questionIds.historyFamilySpecifyAge}
-          showInputWhenValue="Yes"
-          inputPlaceholder="Specify"
-          secondaryInputPlaceholder="Age"
-          secondaryinputWidth="w-20"
-        />
-
-        <LabeledRadioWithOptionalInput
-          name="relatives-cancer"
-          label="D. Any relatives with both breast and ovarian cancer?"
-          options={[
-            { label: "No", value: "No" },
-            { label: "Yes", value: "Yes" },
-          ]}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          questionId={questionIds.historyRelativesCancer}
-          optionalInputQuestionId={questionIds.historyRelativesSpecify}
-          secondaryOptionalInputQuestionId={questionIds.historyRelativesSpecifyAge}
-          showInputWhenValue="Yes"
-          inputPlaceholder="Specify"
-          secondaryInputPlaceholder="Age"
-          secondaryinputWidth="w-20"
-        />
-
-        <LabeledRadioWithOptionalInput
-          name="family-genetic-condition"
-          label="E. History of other cancers in the family?"
-          options={[
-            { label: "No", value: "No" },
-            { label: "Yes", value: "Yes" },
-          ]}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          questionId={questionIds.otherCancers}
-          optionalInputQuestionId={questionIds.otherCancerSpecify}
-          secondaryOptionalInputQuestionId={questionIds.otherCancerSpecifyAge}
-          showInputWhenValue="Yes"
-          inputPlaceholder="Specify"
-          secondaryInputPlaceholder="Age"
-          secondaryinputWidth="w-20"
-        />
-
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Label className="font-semibold text-base flex flex-wrap gap-1">
-            F. Others / Additional Comments
-          </Label>
-          <Textarea
-            className="w-full lg:w-64"
-            value={getAnswer(questionIds.additionalComments)}
-            onChange={(e) =>
-              handleInputChange(questionIds.additionalComments, e.target.value)
-            }
-            placeholder="Enter Details"
-          />
         </div>
-      </div>
       </div>
     </div>
   );

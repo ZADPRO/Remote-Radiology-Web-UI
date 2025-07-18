@@ -165,6 +165,7 @@ const PersonalInformation: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={(date) => date > new Date()}
               required
             />
           </div>

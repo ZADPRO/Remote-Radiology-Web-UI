@@ -2,8 +2,8 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
-import { Input } from "@/components/ui/input";
 import { IntakeOption } from "../PatientInTakeForm";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionIds {
   cancerHistory: number;
@@ -57,6 +57,7 @@ const CancerHistory: React.FC<Props> = ({
               options={[
                 { label: "Right", value: "Right" },
                 { label: "Left", value: "Left" },
+                            { label: "Both", value: "Both"}
               ]}
             />
           </div>
@@ -83,27 +84,25 @@ const CancerHistory: React.FC<Props> = ({
 
         <div className="flex items-center gap-4">
           <Label className="text-bold text-base">C. Type</Label>
-          <Input
-            type="text"
+          <Textarea
             value={getAnswer(questionIds.cancerType)}
             onChange={(e) =>
               handleInputChange(questionIds.cancerType, e.target.value)
             }
             placeholder="Specify"
-            className="w-24 text-sm"
+            className="w-78 text-sm"
           />
         </div>
 
         <div className="flex items-center gap-4">
           <Label className="text-bold text-base">D. Treatment received</Label>
-          <Input
-            type="text"
+          <Textarea
             placeholder="Specify"
             value={getAnswer(questionIds.cancerTreatment)}
             onChange={(e) =>
               handleInputChange(questionIds.cancerTreatment, e.target.value)
             }
-            className="w-24 text-sm"
+            className="w-78 text-sm"
           />
         </div>
 
@@ -123,14 +122,13 @@ const CancerHistory: React.FC<Props> = ({
           <Label className="text-bold text-base">
             G. Last Oncology follow-up
           </Label>
-          <Input
-            type="text"
+          <Textarea
             placeholder="Specify"
             value={getAnswer(questionIds.cancerFolowupDate)}
             onChange={(e) =>
               handleInputChange(questionIds.cancerFolowupDate, e.target.value)
             }
-            className="w-24 text-sm"
+            className="w-78 text-sm"
           />
         </div>
       </div>

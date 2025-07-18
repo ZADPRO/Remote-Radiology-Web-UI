@@ -76,33 +76,46 @@ const PatientInTakeForm04: React.FC<Props> = ({formData, setFormData, handleForm
               lumpLeft: 324,
               lumpRight: 325,
               lumpResult: 326,
+              lumpResultRight: 441,
               lumpDate: 327,
+              lumpDateRight: 442,
               lumpSize: 328,
+              lumpSizeRight: 443,
               skinChanges: 329,
               skinRight: 330,
               skinLeft: 331,
               skinDate: 332,
+              skinDateRight: 444,
               skinResult: 333,
+              skinResultRight: 445,
               nippleDischarge: 334,
               nippleRight: 335,
               nippleLeft: 336,
               nippleDate: 337,
+              nippleDateRight: 449,
               nippleResult: 338,
+              nippleResultRight: 450,
               breastPain: 339,
               breastPainRight: 340,
               breastPainLeft: 341,
               breastPainDate: 342,
+              breastPainDateRight: 439,
               breastPainResult: 343,
+              breastPainResultRight: 446,
               nipplePain: 344,
               nipplePainRight: 345,
               nipplePainLeft: 346,
               nipplePainDate: 347,
+              nipplePainDateRight: 451,
               nipplePainResult: 348,
+              nipplePainResultRight: 452,
               lymphNodes: 349,
               lymphNodesRight: 350,
               lymphNodesLeft: 351,
               lymphNodesDate: 352,
+              lymphNodesDateRight: 447,
               lymphNodesResult: 353,
+              lymphNodesResultRight: 448,
               others: 354,
               othersDetails: 355,
             }}
@@ -152,8 +165,10 @@ const PatientInTakeForm04: React.FC<Props> = ({formData, setFormData, handleForm
               facilityQTImaging: 370,
               purposeQTImaging: 371,
               resultQTImaging: 372,
-              positionQTImaging: 373,
-              detailsQTImaging: 374,
+              positionQTImagingRight: 373,
+              positionQTImagingLeft: 438,
+              detailsQTImagingRight: 374,
+              detailsQTImagingLeft: 440,
             }}
           />
         );
@@ -316,8 +331,8 @@ const PatientInTakeForm04: React.FC<Props> = ({formData, setFormData, handleForm
               optionRefs.current[option] = el;
             }}
             key={option}
-            onClick={() => setSelectedSection(option)}
-            className="flex gap-2 items-center cursor-pointer"
+            // onClick={() => setSelectedSection(option)}
+            className="flex gap-2 items-center"
           >
             {options.indexOf(option) < options.indexOf(selectedSection) && (
               <div className="inline w-6 lg:w-6 text-white font-bold">

@@ -3,16 +3,19 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
 import { Input } from "@/components/ui/input";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
-import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionIds {
   previousQTImaging: number;
   facilityQTImaging: number;
   purposeQTImaging: number;
   resultQTImaging: number;
-  positionQTImaging: number;
-  detailsQTImaging: number;
+  positionQTImagingRight: number;
+  positionQTImagingLeft: number;
+  detailsQTImagingRight: number;
+  detailsQTImagingLeft: number;
 }
 
 interface Props {
@@ -103,20 +106,57 @@ className="flex-col gap-2 h-auto"
         {
           getAnswer(questionIds.resultQTImaging) === "Abnormal" && (
 
-            <LabeledRadioWithOptionalInput
-                name="result-postion"
-                questionId={questionIds.positionQTImaging}
-                optionalInputQuestionId={questionIds.detailsQTImaging}
-                formData={formData}
-                handleInputChange={handleInputChange}
-                options={[
-                  { label: "Right", value: "Right" },
-                  { label: "Left", value: "Left" },
-                  { label: "Both", value: "Both" },
-                ]}
-                // showInputWhenValue="YES"
-                inputPlaceholder="Details"
-              />
+            <div className="flex flex-col gap-3 pl-4 relative">
+  {/* Right */}
+  <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2">
+    <div className="flex items-center space-x-2 w-[70px]">
+      <Checkbox2
+        id="qtimaging-right"
+        checked={!!getAnswer(questionIds.positionQTImagingRight)}
+        onCheckedChange={(checked) =>
+          handleInputChange(questionIds.positionQTImagingRight, checked ? "1" : "")
+        }
+      />
+      <Label htmlFor="qtimaging-right">Right</Label>
+    </div>
+
+    {getAnswer(questionIds.positionQTImagingRight) ? (
+      <Textarea
+        className="w-100 mt-2 lg:mt-0"
+        placeholder="Details for Right"
+        value={getAnswer(questionIds.detailsQTImagingRight) || ""}
+        onChange={(e) =>
+          handleInputChange(questionIds.detailsQTImagingRight, e.target.value)
+        }
+      />
+    ) : null}
+  </div>
+
+  {/* Left */}
+  <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2">
+    <div className="flex items-center space-x-2 w-[70px]">
+      <Checkbox2
+        id="qtimaging-left"
+        checked={!!getAnswer(questionIds.positionQTImagingLeft)}
+        onCheckedChange={(checked) =>
+          handleInputChange(questionIds.positionQTImagingLeft, checked ? "1" : "")
+        }
+      />
+      <Label htmlFor="qtimaging-left">Left</Label>
+    </div>
+
+    {getAnswer(questionIds.positionQTImagingLeft) ? (
+      <Textarea
+        className="w-100 mt-2 lg:mt-0"
+        placeholder="Details for Left"
+        value={getAnswer(questionIds.detailsQTImagingLeft) || ""}
+        onChange={(e) =>
+          handleInputChange(questionIds.detailsQTImagingLeft, e.target.value)
+        }
+      />
+    ) : null}
+  </div>
+</div>
           )
         }
 

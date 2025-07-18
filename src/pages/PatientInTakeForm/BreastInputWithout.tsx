@@ -2,6 +2,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   label: string;
@@ -10,11 +11,14 @@ type Props = {
   RQID: number;
   LQID: number;
   SDate: any;
+  SDateRight: any;
   data: any;
   setData: any;
   OtherInputQId?: number;
   nipplePosition?: number;
   nipplePositionDetails?: number;
+  nipplePositionRight?: number;
+  nipplePositionRightDetails?: number;
   technician?: boolean;
   editStatus?: boolean;
   patientData?: any;
@@ -23,35 +27,32 @@ type Props = {
 
 const BreastInputWithout: React.FC<Props> = (Props) => {
   const getAnswerByQuestionId = (questionId: any) => {
-    if(Props.editStatus) {
+    if (Props.editStatus) {
       const result = Props.patientData.find(
-      (item: any) => item.questionId === questionId
-    );
-    return result?.answer ?? ""; // Return empty string if not found
-    }
-    else {
+        (item: any) => item.questionId === questionId
+      );
+      return result?.answer ?? ""; // Return empty string if not found
+    } else {
       const result = Props.data.find(
-      (item: any) => item.questionId === questionId
-    );
-    return result?.answer ?? ""; // Return empty string if not found
+        (item: any) => item.questionId === questionId
+      );
+      return result?.answer ?? ""; // Return empty string if not found
     }
-    
   };
- 
+
   const updateAnswer = (questionId: number, newAnswer: any) => {
-    if(Props.editStatus) {
+    if (Props.editStatus) {
       Props.setPatientData((prevData: any[]) =>
-      prevData.map((item) =>
-        item.questionId === questionId ? { ...item, answer: newAnswer } : item
-      )
-    );
-    }
-    else {
-       Props.setData((prevData: any[]) =>
-      prevData.map((item) =>
-        item.questionId === questionId ? { ...item, answer: newAnswer } : item
-      )
-    );
+        prevData.map((item) =>
+          item.questionId === questionId ? { ...item, answer: newAnswer } : item
+        )
+      );
+    } else {
+      Props.setData((prevData: any[]) =>
+        prevData.map((item) =>
+          item.questionId === questionId ? { ...item, answer: newAnswer } : item
+        )
+      );
     }
   };
 
@@ -84,128 +85,170 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
               <div className="flex items-center flex-wrap gap-x-4 gap-y-2">
-                <div className="flex items-center  space-x-2">
-                  {Props.label == "Deformity / Asymmetry" && (
+                <div className="flex flex-col gap-2 space-x-2">
+                  <div className="flex items-center space-x-2">
                     <div
-                    onClick={() =>
-                      getAnswerByQuestionId(Props.checkStatusQId) === "true"
-                    }
-                    className="flex justify-end items-center space-x-5"
-                  >
-                    <Label>Bigger side</Label>
-
-                    <Checkbox2
-                      checked={getAnswerByQuestionId(Props.biggerSide) === "true"}
-                      onClick={() => {
-                        Props.biggerSide &&
-                        updateAnswer(
-                          Props.biggerSide,
-                          getAnswerByQuestionId(Props.biggerSide) === "true"
-                            ? "false"
-                            : "true"
-                        );
-                      }}
-                      required={
-                        !(
-                          getAnswerByQuestionId(Props.LQID) ||
-                          getAnswerByQuestionId(Props.RQID) ||
-                          getAnswerByQuestionId(Props.biggerSide)
-                        )
+                      onClick={() =>
+                        getAnswerByQuestionId(Props.checkStatusQId) === "true"
                       }
-                    />
-                  </div>
-                  )}
-                  <div
-                    onClick={() =>
-                      getAnswerByQuestionId(Props.checkStatusQId) === "true"
-                    }
-                    className="flex w-[67px]  justify-end items-center space-x-5"
-                  >
-                    <Label>R</Label>
+                      className="flex justify-end items-center space-x-5"
+                    >
+                      {Props.label == "Deformity / Asymmetry" && (
+                        <div className="flex items-center gap-2">
+                        <input 
+                          type="radio"
+                          name="biggerRight"
+                          value="Right"
+                          className="custom-radio"
+                          checked={getAnswerByQuestionId(Props.biggerSide) === "Right"}
+                          onChange={() => Props.biggerSide && updateAnswer(Props.biggerSide, "Right")}
+                          />
+                          <Label>Bigger Side</Label>
+                          </div>
+                      )}
+                      <Label>R</Label>
 
-                    <Checkbox2
-                      checked={getAnswerByQuestionId(Props.RQID) === "true"}
-                      onClick={() => {
-                        updateAnswer(
-                          Props.RQID,
-                          getAnswerByQuestionId(Props.RQID) === "true"
-                            ? "false"
-                            : "true"
-                        );
-                      }}
-                      required={
-                        !(
-                          getAnswerByQuestionId(Props.LQID) ||
-                          getAnswerByQuestionId(Props.RQID)
-                        )
-                      }
-                    />
-                  </div>
-                  <div
-                    onClick={() =>
-                      getAnswerByQuestionId(Props.checkStatusQId) === "true"
-                    }
-                    className="flex w-[67px] justify-end items-end space-x-5"
-                  >
-                    <Label>L</Label>
-
-                    <Checkbox2
-                      checked={getAnswerByQuestionId(Props.LQID) === "true"}
-                      onClick={() => {
-                        updateAnswer(
-                          Props.LQID,
-                          getAnswerByQuestionId(Props.LQID) === "true"
-                            ? "false"
-                            : "true"
-                        );
-                      }}
-                      required={
-                        !(
-                          getAnswerByQuestionId(Props.LQID) ||
-                          getAnswerByQuestionId(Props.RQID)
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center w-48 space-x-2">
-                  <Label htmlFor="date" className="">
-                    Duration
-                  </Label>
-                  <Input
-                    name="date"
-                    type="number"
-                    placeholder="Months"
-                    value={getAnswerByQuestionId(Props.SDate)}
-                    onChange={(e) => {
-                      updateAnswer(Props.SDate, e.target.value);
-                    }}
-                    required={getAnswerByQuestionId(Props.SDate) == ""}
-                  />
-                </div>
-
-                <div className="flex items-center justify-start gap-2">
-                  {Props.label == "Nipple changes" &&
-                    Props.nipplePosition &&
-                    Props.nipplePositionDetails && (
-                      <LabeledRadioWithOptionalInput
-                        name="nipple-position"
-                        questionId={Props.nipplePosition}
-                        optionalInputQuestionId={Props.nipplePositionDetails}
-                        formData={Props.data}
-                        handleInputChange={updateAnswer}
-                        options={[
-                          { label: "Inverted", value: "Inverted" },
-                          { label: "Other", value: "Other" },
-                        ]}
-                        showInputWhenValue="Other"
-                        inputPlaceholder="Specify"
-                        inputWidth="w-32"
-                        className="ml-0 mt-0 flex-row items-center gap-x-4"
+                      <Checkbox2
+                        checked={getAnswerByQuestionId(Props.RQID) === "true"}
+                        onClick={() => {
+                          updateAnswer(
+                            Props.RQID,
+                            getAnswerByQuestionId(Props.RQID) === "true"
+                              ? "false"
+                              : "true"
+                          );
+                        }}
+                        required={
+                          !(
+                            getAnswerByQuestionId(Props.LQID) ||
+                            getAnswerByQuestionId(Props.RQID)
+                          )
+                        }
                       />
-                    )}
-                </div>
+                    </div>
 
+                    <div className="flex items-center w-48 space-x-2">
+                      <Label htmlFor="date" className="">
+                        Duration
+                      </Label>
+                      <Input
+                        name="date"
+                        type="number"
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDateRight)}
+                        onChange={(e) => {
+                          updateAnswer(Props.SDateRight, e.target.value);
+                        }}
+                        required={getAnswerByQuestionId(Props.RQID) == "false"}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-start gap-2">
+                      {Props.label == "Nipple changes" &&
+                        Props.nipplePositionRight &&
+                        Props.nipplePositionRightDetails && (
+                          <LabeledRadioWithOptionalInput
+                            name="nipple-position"
+                            questionId={Props.nipplePositionRight}
+                            optionalInputQuestionId={
+                              Props.nipplePositionRightDetails
+                            }
+                            formData={Props.data}
+                            handleInputChange={updateAnswer}
+                            options={[
+                              { label: "Inverted", value: "Inverted" },
+                              { label: "Other", value: "Other" },
+                            ]}
+                            showInputWhenValue="Other"
+                            inputPlaceholder="Specify"
+                            inputWidth="w-32"
+                            className="ml-0 mt-0 flex-row items-center gap-x-4"
+                          />
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <div
+                      onClick={() =>
+                        getAnswerByQuestionId(Props.checkStatusQId) === "true"
+                      }
+                      className="flex justify-end items-end space-x-5"
+                    >
+                      {Props.label == "Deformity / Asymmetry" && (
+                        <div className="flex items-center gap-2">
+                        <input 
+                          type="radio"
+                          name="biggerLeft"
+                          value="Left"
+                          className="custom-radio"
+                          checked={getAnswerByQuestionId(Props.biggerSide) === "Left"}
+                          onChange={() => Props.biggerSide && updateAnswer(Props.biggerSide, "Left")}
+                          />
+                          <Label>Bigger Side</Label>
+                          </div>
+                      )}
+                      <Label>L</Label>
+
+                      <Checkbox2
+                        checked={getAnswerByQuestionId(Props.LQID) === "true"}
+                        onClick={() => {
+                          updateAnswer(
+                            Props.LQID,
+                            getAnswerByQuestionId(Props.LQID) === "true"
+                              ? "false"
+                              : "true"
+                          );
+                        }}
+                        required={
+                          !(
+                            getAnswerByQuestionId(Props.LQID) ||
+                            getAnswerByQuestionId(Props.RQID)
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center w-48 space-x-2">
+                      <Label htmlFor="date" className="">
+                        Duration
+                      </Label>
+                      <Input
+                        name="date"
+                        type="number"
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDate)}
+                        onChange={(e) => {
+                          updateAnswer(Props.SDate, e.target.value);
+                        }}
+                        required={getAnswerByQuestionId(Props.SDate) == ""}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-start gap-2">
+                      {Props.label == "Nipple changes" &&
+                        Props.nipplePosition &&
+                        Props.nipplePositionDetails && (
+                          <LabeledRadioWithOptionalInput
+                            name="nipple-position"
+                            questionId={Props.nipplePosition}
+                            optionalInputQuestionId={
+                              Props.nipplePositionDetails
+                            }
+                            formData={Props.data}
+                            handleInputChange={updateAnswer}
+                            options={[
+                              { label: "Inverted", value: "Inverted" },
+                              { label: "Other", value: "Other" },
+                            ]}
+                            showInputWhenValue="Other"
+                            inputPlaceholder="Specify"
+                            inputWidth="w-32"
+                            className="ml-0 mt-0 flex-row items-center gap-x-4"
+                          />
+                        )}
+                    </div>
+                  </div>
+                </div>
                 {/* <div className="px-4">
                   {Props.label === "Nipple changes" &&
                     Props.nipplePosition &&
@@ -216,7 +259,8 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         </Label>
 
                         <div className="ml-2 flex flex-row gap-3">
-                          {/* INVERTED */} {/*}
+                          {/* INVERTED */}{" "}
+                {/*}
                           <div className="flex items-center gap-2">
                             <input
                               type="radio"
@@ -236,7 +280,8 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             <Label htmlFor="nipple-inverted">Inverted</Label>
                           </div>
 
-                          {/* OTHER + input */} {/*}
+                          {/* OTHER + input */}{" "}
+                {/*}
                           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2">
                             <div className="flex items-center gap-2">
                               <input
@@ -257,7 +302,8 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               <Label htmlFor="nipple-other">Other</Label>
                             </div>
 
-                            {/* Conditional input if OTHER is selected */} {/*}
+                            {/* Conditional input if OTHER is selected */}{" "}
+                {/*}
                             {getAnswerByQuestionId(Props.nipplePosition)
                               ?.answer === "OTHER" && (
                               <Input
@@ -283,12 +329,12 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                       </div>
                     )}
                 </div> */}
-
-                <div>
+              </div>
+               <div className="w-1/2">
                   {/* Other Input */}
-                  {Props.OtherInputQId && (
+                  {(Props.OtherInputQId && !Props.technician) && (
                     <div className="flex gap-1 w-full ">
-                      <Input
+                      <Textarea
                         placeholder="Additional Comments"
                         value={getAnswerByQuestionId(Props.OtherInputQId)}
                         onChange={(e) =>
@@ -298,8 +344,6 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                     </div>
                   )}
                 </div>
-              </div>
-
             </div>
           )}
         </div>

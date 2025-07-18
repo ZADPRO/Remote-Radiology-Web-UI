@@ -164,10 +164,11 @@ const RiskStratification: React.FC<Props> = ({
           ]}
         />
 
-        {/* D. Mutation Found */}
-        <div>
+        {/* Mutation Found */}
+        {getAnswer(questionIds.geneticTest) === "Yes" && (
+        <div className="pl-4">
           <MultiOptionRadioGroup
-            label="D. Mutation found?"
+            label="Mutation found?"
             questionId={questionIds.mutationFound}
             formData={formData}
             handleInputChange={handleInputChange}
@@ -201,12 +202,13 @@ const RiskStratification: React.FC<Props> = ({
             </div>
           )}
         </div>
+        )}
 
-        {/* E. Family Genetic Conditions */}
+        {/* D. Family Genetic Conditions */}
         <div>
           <LabeledRadioWithOptionalInput
             name="family-genetic-condition"
-            label="E. Known genetic conditions in the family?"
+            label="D. Known genetic conditions in the family?"
             questionId={questionIds.familyGeneticCondition}
             optionalInputQuestionId={questionIds.familyGeneticConditionSpecify}
             formData={formData}
@@ -217,12 +219,13 @@ const RiskStratification: React.FC<Props> = ({
             ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Specify"
+            optionalInputType="textarea"
           />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Label className="font-semibold text-base flex flex-wrap gap-1">
-            F. Others / Additional Comments
+            E. Others / Additional Comments
           </Label>
           <Textarea
             className="w-full lg:w-64"

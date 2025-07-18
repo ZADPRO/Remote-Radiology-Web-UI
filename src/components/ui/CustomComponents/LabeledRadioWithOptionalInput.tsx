@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Textarea } from "../textarea";
 
 interface Option {
   label: string;
@@ -24,6 +25,8 @@ interface Props {
   inputWidth?: string;
   secondaryinputWidth?: string;
   required?: boolean;
+  optionalInputType?: "input" | "textarea";
+  secondaryOptionalInputType?: "input" | "textarea";
 }
 
 const LabeledRadioWithOptionalInput: React.FC<Props> = ({
@@ -39,9 +42,11 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
   inputPlaceholder = "Specify",
   secondaryInputPlaceholder = "Additional details",
   className,
-  inputWidth = "w-fit lg:w-64",
-  secondaryinputWidth = "w-fit lg:w-64",
+  inputWidth = "w-fit w-64",
+  secondaryinputWidth = "w-fit w-64",
   required = false,
+  optionalInputType = "input", // ✅ default to input
+  secondaryOptionalInputType = "input", // ✅ default to input
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -54,7 +59,6 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
     ? getAnswer(secondaryOptionalInputQuestionId)
     : "";
 
-  // Ensure each group of radios is scoped uniquely
   const radioGroupName = `${name}-${questionId}`;
 
   return (
@@ -83,7 +87,15 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
           return (
             <div
               key={value}
-              className="flex items-center h-[auto] sm:h-[35px] flex-wrap gap-2"
+              className={cn(
+                "flex items-center min-h-auto flex-wrap gap-2",
+                isShowInput
+                  ? optionalInputType === "textarea" ||
+                    secondaryOptionalInputType === "textarea"
+                    ? "lg:min-h-20"
+                    : "lg:min-h-10"
+                  : "lg:min-h-10"
+              )}
             >
               <input
                 type="radio"
@@ -97,35 +109,64 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
               <Label htmlFor={id}>{label}</Label>
 
               {isShowInput && (
-                <div className="flex">
-                  {optionalInputQuestionId && (
-                    <Input
-                      className={cn("ml-2", inputWidth)}
-                      placeholder={inputPlaceholder}
-                      value={optionalValue}
-                      onChange={(e) =>
-                        handleInputChange(
-                          optionalInputQuestionId,
-                          e.target.value
-                        )
-                      }
-                      required
-                    />
-                  )}
-                  {secondaryOptionalInputQuestionId && (
-                    <Input
-                      className={cn("ml-2", secondaryinputWidth)}
-                      placeholder={secondaryInputPlaceholder}
-                      value={secondaryOptionalValue}
-                      onChange={(e) =>
-                        handleInputChange(
-                          secondaryOptionalInputQuestionId,
-                          e.target.value
-                        )
-                      }
-                      required
-                    />
-                  )}
+                <div className="flex flex-col sm:flex-row">
+                  {optionalInputQuestionId &&
+                    (optionalInputType === "textarea" ? (
+                      <Textarea
+                        className={cn("ml-2", inputWidth)}
+                        placeholder={inputPlaceholder}
+                        value={optionalValue}
+                        onChange={(e) =>
+                          handleInputChange(
+                            optionalInputQuestionId,
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                    ) : (
+                      <Input
+                        className={cn("ml-2", inputWidth)}
+                        placeholder={inputPlaceholder}
+                        value={optionalValue}
+                        onChange={(e) =>
+                          handleInputChange(
+                            optionalInputQuestionId,
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                    ))}
+
+                  {secondaryOptionalInputQuestionId &&
+                    (secondaryOptionalInputType === "textarea" ? (
+                      <Textarea
+                        className={cn("ml-2", secondaryinputWidth)}
+                        placeholder={secondaryInputPlaceholder}
+                        value={secondaryOptionalValue}
+                        onChange={(e) =>
+                          handleInputChange(
+                            secondaryOptionalInputQuestionId,
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                    ) : (
+                      <Input
+                        className={cn("ml-2", secondaryinputWidth)}
+                        placeholder={secondaryInputPlaceholder}
+                        value={secondaryOptionalValue}
+                        onChange={(e) =>
+                          handleInputChange(
+                            secondaryOptionalInputQuestionId,
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                    ))}
                 </div>
               )}
             </div>

@@ -5,9 +5,9 @@ import BreastInputLocation from "../BreastInputLocation";
 import FormHeader from "../FormHeader";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   data: any;
@@ -23,34 +23,47 @@ interface QuestionIds {
   lumpRight: number;
   lumpDate: number;
   lumpSize: number;
+  lumpDateRight: number;
+  lumpSizeRight: number;
   lumpDetails: number;
   skinChanges: number;
   skinRight: number;
   skinLeft: number;
   skinDate: number;
+  skinDateRight: number;
   skinDetails: number;
+  skinDetailsRight: number;
+  skinChangesType: number;
+  skinChangesTypeRight: number;
   nippleDischarge: number;
   nippleRight: number;
   nippleLeft: number;
   nippleDate: number;
+  nippleDateRight: number;
   nippleDetails: number;
   breastPain: number;
   breastPainRight: number;
   breastPainLeft: number;
   breastPainDate: number;
+  breastPainDateRight: number;
   breastPainDetails: number;
   nipplePain: number;
   nipplePainRight: number;
   nipplePainLeft: number;
   nipplePainDate: number;
+  nipplePainDateRight: number;
   nipplePainDetails: number;
   nipplePosition: number;
-  nipplePositionDetails: number
+  nipplePositionDetails: number;
+  nipplePositionRight: number;
+  nipplePositionRightDetails: number;
   lymphNodes: number;
   lymphNodesRight: number;
   lymphNodesLeft: number;
   lymphNodesDate: number;
+  lymphNodesDateRight: number;
   lymphNodesLocation: number;
+  lymphNodesLocationRight: number;
   lymphNodesDetails: number;
   others: number;
   othersDetails: number;
@@ -113,6 +126,8 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 LQID={Props.questionIds.lumpRight}
                 SDate={Props.questionIds.lumpDate}
                 Size={Props.questionIds.lumpSize}
+                SDateRight={Props.questionIds.lumpDateRight}
+                SizeRight={Props.questionIds.lumpSizeRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.lumpDetails}
@@ -124,9 +139,13 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.skinRight}
                 LQID={Props.questionIds.skinLeft}
                 SDate={Props.questionIds.skinDate}
+                SDateRight={Props.questionIds.skinDateRight}
+                skinChangesType={Props.questionIds.skinChangesType}
+                skinChangesTypeRight={Props.questionIds.skinChangesTypeRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.skinDetails}
+                OtherInputQIDRight={Props.questionIds.skinDetailsRight}
               />
               <Separator className="bg-[#a4b2a1]" />
               <BreastInputWithout
@@ -135,6 +154,7 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.nippleRight}
                 LQID={Props.questionIds.nippleLeft}
                 SDate={Props.questionIds.nippleDate}
+                SDateRight={Props.questionIds.nippleDateRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.nippleDetails}
@@ -146,6 +166,7 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.breastPainRight}
                 LQID={Props.questionIds.breastPainLeft}
                 SDate={Props.questionIds.breastPainDate}
+                SDateRight={Props.questionIds.breastPainDateRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.breastPainDetails}
@@ -157,11 +178,14 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.nipplePainRight}
                 LQID={Props.questionIds.nipplePainLeft}
                 SDate={Props.questionIds.nipplePainDate}
+                SDateRight={Props.questionIds.nipplePainDateRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.nipplePainDetails}
                 nipplePosition={Props.questionIds.nipplePosition}
                 nipplePositionDetails={Props.questionIds.nipplePositionDetails}
+                nipplePositionRight={Props.questionIds.nipplePositionRight}
+                nipplePositionRightDetails={Props.questionIds.nipplePositionRightDetails}
               />
               <Separator className="bg-[#a4b2a1]" />
               <BreastInputLocation
@@ -170,7 +194,9 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.lymphNodesRight}
                 LQID={Props.questionIds.lymphNodesLeft}
                 SDate={Props.questionIds.lymphNodesDate}
+                SDateRight={Props.questionIds.lymphNodesDateRight}
                 Location={Props.questionIds.lymphNodesLocation}
+                LocationRight={Props.questionIds.lymphNodesLocationRight}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.lymphNodesDetails}
@@ -194,8 +220,7 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 
 
                 {getAnswerByQuestionId(Props.questionIds.others) === "true" && (
-                  <Input
-                    type="text"
+                  <Textarea
                     value={getAnswerByQuestionId(Props.questionIds.othersDetails)}
                     onChange={(e) => {
                       handleInputChange(Props.questionIds.othersDetails, e.target.value);

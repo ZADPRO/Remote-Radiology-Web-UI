@@ -47,7 +47,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
     questionId: number,
     options: string[]
   ) => (
-    <div className="flex flex-wrap items-center gap-6">
+    <div className="flex flex-wrap h-5 items-center gap-6 ml-4">
       {options.map((value) => (
         <div key={value} className="flex items-center space-x-2">
           <input
@@ -137,7 +137,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
           <Label className="text-bold text-base w-[290px]">
             D. Breastfeeding history
           </Label>
@@ -162,7 +162,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
           <Label className="text-bold text-base w-[290px]">
             E. Hormonal birth control use
           </Label>
@@ -187,7 +187,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
           <Label className="text-bold text-base w-[290px]">
             F. Hormone replacement therapy (HRT)
           </Label>
@@ -245,7 +245,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
           <Label className="text-bold text-base w-[290px]">
             H. Are you Lactating / Nursing now?
           </Label>
@@ -270,7 +270,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
           <Label className="text-bold text-base w-[290px]">
             I. Are you Pregnant now?
           </Label>
@@ -295,8 +295,8 @@ const MenstrualAndReproductive: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center h-[auto] sm:h-[40px] gap-4 sm:gap-0">
-          <Label className="text-bold text-base w-[290px]">G. Others / Additional Comments</Label>
+        <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
+          <Label className="text-bold text-base w-[290px]">J. Others / Additional Comments</Label>
           <Textarea
             className="w-full lg:w-64"
             value={getAnswer(questionIds.additionalComments)}

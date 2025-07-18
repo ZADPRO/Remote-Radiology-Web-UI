@@ -13,6 +13,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import bg from "../../assets/Patient-InTake Form/breastOutline.png";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 
 type Props = {
@@ -21,9 +22,11 @@ type Props = {
   RQID: number;
   LQID: number;
   SDate: any;
+  SDateRight: any;
   data: any;
   setData: any;
   Location: any;
+  LocationRight: any;
   OtherInputQId?: number;
   // Adding Size to props for consistency, even if not directly used by default in BreastInputLocation
   Size?: any;
@@ -306,7 +309,70 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                   />
                 </div>
 
-                {/* L Clock Label Input */}
+                {/* Since (Months) */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                  <Label className="">Duration</Label>
+                  <Input
+                    placeholder="Months"
+                    value={getAnswerByQuestionId(Props.SDateRight)}
+                    onChange={(e) => updateAnswer(Props.SDateRight, e.target.value)}
+                    className="w-full lg:w-20"
+                    type="number"
+                    required={getAnswerByQuestionId(Props.SDateRight) === ""}
+                  />
+                </div>
+
+                {/* Location Input */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                  <Label>Location</Label>
+                  <Input
+                    disabled={
+                      getAnswerByQuestionId(Props.checkStatusQId) !== "true"
+                    }
+                    value={getAnswerByQuestionId(Props.LocationRight)}
+                    placeholder="Location"
+                    onChange={(e) =>
+                      updateAnswer(Props.LocationRight, e.target.value)
+                    }
+                    type="text"
+                    className="w-full lg:w-32"
+                    // Consider if Location is always required when checked, or only if R/L are empty
+                    // For now, mirroring the R/L required logic for consistency
+                    required={
+                      getAnswerByQuestionId(Props.LocationRight) === "" &&
+                      (getAnswerByQuestionId(Props.RQID) !== "" || getAnswerByQuestionId(Props.LQID) !== "")
+                    }
+                  />
+                </div>
+
+                {/* Size (only if applicable, like in original BreastInput) */}
+                {Props.label === "Lump or thickening" && (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                    <Label>Size</Label>
+                    <div className="w-full lg:w-32">
+                      <Select
+                        value={getAnswerByQuestionId(Props.Size) || ""}
+                        onValueChange={(value) =>
+                          updateAnswer(Props.Size, value)
+                        }
+                        required={getAnswerByQuestionId(Props.Size) === ""}
+                      >
+                        <SelectTrigger className="bg-white w-full">
+                          <SelectValue placeholder="Select Size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pea">Pea</SelectItem>
+                          <SelectItem value="Grape">Grape</SelectItem>
+                          <SelectItem value="Bigger">Bigger</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full mt-2">
+                  {/* L Clock Label Input */}
                 <div
                   onClick={() =>
                     getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
@@ -364,11 +430,12 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                     }
                   />
                 </div>
+              </div>
 
-                {/* Other Input */}
+          {/* Other Input */}
                 {!Props.technician &&Props.OtherInputQId && (
-                  <div className="flex gap-1 ">
-                    <Input
+                  <div className="flex gap-2 mt-4 w-1/2">
+                    <Textarea
                       placeholder="Additional Comments"
                       value={getAnswerByQuestionId(Props.OtherInputQId)}
                       onChange={(e) =>
@@ -379,34 +446,10 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                   </div>
                 )}
 
-                {/* Size (only if applicable, like in original BreastInput) */}
-                {Props.label === "Lump or thickening" && (
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
-                    <Label>Size</Label>
-                    <div className="w-full lg:w-32">
-                      <Select
-                        value={getAnswerByQuestionId(Props.Size) || ""}
-                        onValueChange={(value) =>
-                          updateAnswer(Props.Size, value)
-                        }
-                        required={getAnswerByQuestionId(Props.Size) === ""}
-                      >
-                        <SelectTrigger className="bg-white w-full">
-                          <SelectValue placeholder="Select Size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Pea">Pea</SelectItem>
-                          <SelectItem value="Grape">Grape</SelectItem>
-                          <SelectItem value="Bigger">Bigger</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           )}
         </div>
+        
       </div>
     </>
   );

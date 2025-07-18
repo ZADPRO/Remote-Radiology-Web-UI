@@ -130,6 +130,7 @@ const MonitoringFollow: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={(date) => date > new Date()}
             />
           </div>
         </div>

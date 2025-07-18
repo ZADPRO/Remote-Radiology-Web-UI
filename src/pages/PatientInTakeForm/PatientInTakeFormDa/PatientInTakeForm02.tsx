@@ -89,6 +89,7 @@ const PatientInTakeForm02: React.FC<Props> = ({formData, setFormData, handleForm
               typeabnormalitother: 217,
               typeabnormalitotherspe: 218,
               breast: 219,
+              breastRight: 453,
               upperOuterQuadrant: 220,
               upperInnerQuadrant: 221,
               lowerOuterQuadrant: 222,
@@ -104,6 +105,24 @@ const PatientInTakeForm02: React.FC<Props> = ({formData, setFormData, handleForm
               sizeunit: 232,
               biradsCat: 233,
               biradsCatOther: 234,
+
+              upperOuterQuadrantRight: 454,
+              upperInnerQuadrantRight: 455,
+              lowerOuterQuadrantRight: 456,
+              lowerInnerQuadrantRight: 457,
+              centralNippleOuterQuadrantRight: 458,
+              unknownQuadrantRight: 459,
+              clockpositionstatusRight: 460,
+              clockpositionRight: 461,
+              distancenippleStatusRight: 462,
+              distancenippleRight: 463,
+              sizeStatusRight: 464,
+              sizeRight: 465,
+              sizeunitRight: 466,
+              biradsCatRight: 467,
+              biradsCatOtherRight: 468,
+              
+              
               marker: 235,
               markerother: 236,
               magneticimplants: 237,
@@ -211,8 +230,8 @@ const PatientInTakeForm02: React.FC<Props> = ({formData, setFormData, handleForm
               optionRefs.current[option] = el;
             }}
             key={option}
-            onClick={() => setSelectedSection(option)}
-            className="flex gap-2 items-center cursor-pointer"
+            // onClick={() => setSelectedSection(option)}
+            className="flex gap-2 items-center"
           >
             {options.indexOf(option) < options.indexOf(selectedSection) && (
               <div className="inline w-6 lg:w-6 text-white font-bold">

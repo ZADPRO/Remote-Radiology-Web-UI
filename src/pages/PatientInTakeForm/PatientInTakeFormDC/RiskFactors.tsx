@@ -100,6 +100,7 @@ const RiskFactors: React.FC<Props> = ({
             ]}
             showInputWhenValue="Yes"
           inputPlaceholder="Details"
+          optionalInputType="textarea"
         />
 
         <LabeledRadioWithOptionalInput
@@ -115,6 +116,7 @@ const RiskFactors: React.FC<Props> = ({
             ]}
             showInputWhenValue="Yes"
           inputPlaceholder="Details"
+          optionalInputType="textarea"
         />
       </div>
     </div>

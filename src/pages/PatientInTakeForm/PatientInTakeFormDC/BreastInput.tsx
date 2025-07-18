@@ -21,10 +21,13 @@ type Props = {
   RQID: number;
   LQID: number;
   SDate: any;
+  SDateRight: any;
   SResult: any;
+  SResultRight: any;
   data: any;
   setData: any;
   Size?: any;
+  SizeRight?: any;
 };
 
 const BreastInput: React.FC<Props> = (Props) => {
@@ -205,7 +208,8 @@ const BreastInput: React.FC<Props> = (Props) => {
 
           <div className="w-full h-[320px] overflow-x-auto lg:overflow-x-hidden space-y-5">
             <Label className="text-muted-foreground w-[400px] text-center mx-auto">
-              Select the affected areas by clicking on the corresponding clock positions or the center (nipple) in the diagram below.
+              Select the affected areas by clicking on the corresponding clock
+              positions or the center (nipple) in the diagram below.
             </Label>
             <div
               className="w-[480px] h-[200px] flex justify-center items-center"
@@ -269,30 +273,94 @@ const BreastInput: React.FC<Props> = (Props) => {
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
-              <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full mt-2">
-                {/* R Clock Label Input */}
-                <div
-                  onClick={() =>
-                    getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
-                    setModal(true)
-                  }
-                  className="flex flex-row items-center gap-1 lg:gap-2 w-full lg:w-auto"
-                >
-                  <Label className="min-w-[20px]">R</Label>
-                  <Input
-                    value={formatClockLabels(getAnswerByQuestionId(Props.RQID))}
-                    onChange={(e) => updateAnswer(Props.RQID, e.target.value)}
-                    className="w-full lg:w-32"
-                    disabled={
-                      getAnswerByQuestionId(Props.checkStatusQId) !== "true"
+              <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full mt-2"> 
+                <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full mt-2">
+                  {/* R Clock Label Input */}
+                  <div
+                    onClick={() =>
+                      getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
+                      setModal(true)
                     }
-                    required={
-                      getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === ""
-                    }
+                    className="flex flex-row items-center gap-1 lg:gap-2 w-full lg:w-auto"
+                  >
+                    <Label className="min-w-[20px]">R</Label>
+                    <Input
+                      value={formatClockLabels(
+                        getAnswerByQuestionId(Props.RQID)
+                      )}
+                      onChange={(e) => updateAnswer(Props.RQID, e.target.value)}
+                      className="w-full lg:w-32"
+                      disabled={
+                        getAnswerByQuestionId(Props.checkStatusQId) !== "true"
+                      }
+                      required={
+                        getAnswerByQuestionId(Props.RQID) === "" &&
+                        getAnswerByQuestionId(Props.LQID) === ""
+                      }
+                    />
+                  </div>
+
+                  {/* Result */}
+                <div className="flex items-center gap-2 ml-2">
+                  {/* <Label className="min-w-[50px]">Result</Label> */}
+                  <MultiOptionRadioGroup
+                    questionId={Props.SResultRight}
+                    handleInputChange={updateAnswer}
+                    formData={Props.data}
+                    options={[
+                      { label: "Unchanged", value: "Unchanged" },
+                      { label: "Resolved", value: "Resolved" },
+                      { label: "New", value: "New" },
+                    ]}
+                    className="mt-0 ml-0"
                   />
                 </div>
 
+                {/* Size (only for "Lump or thickening") */}
+                {Props.label === "Lump or thickening" && (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                    <Label>Size</Label>
+                    <div className="w-full lg:w-32">
+                      <Select
+                        value={getAnswerByQuestionId(Props.SizeRight) || ""}
+                        onValueChange={(value) =>
+                          updateAnswer(Props.SizeRight, value)
+                        }
+                        required={getAnswerByQuestionId(Props.SizeRight) === ""}
+                      >
+                        <SelectTrigger className="bg-white w-full">
+                          <SelectValue placeholder="Select Size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pea">Pea</SelectItem>
+                          <SelectItem value="Grape">Grape</SelectItem>
+                          <SelectItem value="Bigger">Bigger</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+                {getAnswerByQuestionId(Props.SResultRight) === "New" && (
+                  <>
+                    {/* Since (Months) */}
+                    <div className="flex flex-row items-center lg:ml-2 gap-2 lg:gap-2 w-full lg:w-auto">
+                      <Label className="min-w-[50px]">Duration</Label>
+                      <Input
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDateRight)}
+                        onChange={(e) =>
+                          updateAnswer(Props.SDateRight, e.target.value)
+                        }
+                        className="w-full lg:w-32"
+                        type="number"
+                        required={getAnswerByQuestionId(Props.SDateRight) === ""}
+                      />
+                    </div>
+                  </>
+                )}
+                </div>
+
+                <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full mt-2">
                 {/* L Clock Label Input */}
                 <div
                   onClick={() =>
@@ -316,8 +384,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                   />
                 </div>
 
-                
-                {/* Result */}
+                     {/* Result */}
                 <div className="flex items-center gap-2 ml-2">
                   {/* <Label className="min-w-[50px]">Result</Label> */}
                   <MultiOptionRadioGroup
@@ -333,52 +400,52 @@ const BreastInput: React.FC<Props> = (Props) => {
                   />
                 </div>
                 {/* Size (only for "Lump or thickening") */}
-                  {Props.label === "Lump or thickening" && (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
-                      <Label>Size</Label>
-                      <div className="w-full lg:w-32">
-                        <Select
-                          value={getAnswerByQuestionId(Props.Size) || ""}
-                          onValueChange={(value) =>
-                            updateAnswer(Props.Size, value)
-                          }
-                          required={getAnswerByQuestionId(Props.Size) === ""}
-                        >
-                          <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Pea">Pea</SelectItem>
-                            <SelectItem value="Grape">Grape</SelectItem>
-                            <SelectItem value="Bigger">Bigger</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                {Props.label === "Lump or thickening" && (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                    <Label>Size</Label>
+                    <div className="w-full lg:w-32">
+                      <Select
+                        value={getAnswerByQuestionId(Props.Size) || ""}
+                        onValueChange={(value) =>
+                          updateAnswer(Props.Size, value)
+                        }
+                        required={getAnswerByQuestionId(Props.Size) === ""}
+                      >
+                        <SelectTrigger className="bg-white w-full">
+                          <SelectValue placeholder="Select Size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pea">Pea</SelectItem>
+                          <SelectItem value="Grape">Grape</SelectItem>
+                          <SelectItem value="Bigger">Bigger</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  )}
-                 {
-                  getAnswerByQuestionId(Props.SResult) === "New" && (
-                    <>
-                      {/* Since (Months) */}
-                      <div className="flex flex-row items-center lg:ml-2 gap-2 lg:gap-2 w-full lg:w-auto">
-                        <Label className="min-w-[50px]">Duration</Label>
-                        <Input
-                          placeholder="Months"
-                          value={getAnswerByQuestionId(Props.SDate)}
-                          onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
-                          className="w-full lg:w-32"
-                          type="number"
-                          required={getAnswerByQuestionId(Props.SDate) === ""}
-                        />
-                      </div>
-                    </>)
-                }
+                  </div>
+                )}
+                {getAnswerByQuestionId(Props.SResult) === "New" && (
+                  <>
+                    {/* Since (Months) */}
+                    <div className="flex flex-row items-center lg:ml-2 gap-2 lg:gap-2 w-full lg:w-auto">
+                      <Label className="min-w-[50px]">Duration</Label>
+                      <Input
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDate)}
+                        onChange={(e) =>
+                          updateAnswer(Props.SDate, e.target.value)
+                        }
+                        className="w-full lg:w-32"
+                        type="number"
+                        required={getAnswerByQuestionId(Props.SDate) === ""}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
-
-                <div className="flex gap-2">
-                  
-                </div>
+              </div>
               
+
+              <div className="flex gap-2"></div>
             </div>
           )}
         </div>

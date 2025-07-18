@@ -51,6 +51,8 @@ const CurrentClinicalStatus: React.FC<Props> = ({
           ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Details"
+            optionalInputType="textarea"
+            inputWidth="w-78"
             required
           />
 
@@ -67,6 +69,8 @@ const CurrentClinicalStatus: React.FC<Props> = ({
           ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Details"
+            optionalInputType="textarea"
+            inputWidth="w-78"
             required
           />
 
@@ -83,6 +87,8 @@ const CurrentClinicalStatus: React.FC<Props> = ({
           ]}
             showInputWhenValue="Yes"
             inputPlaceholder="Details"
+            optionalInputType="textarea"
+            inputWidth="w-78"
             required
           />
         </div>
