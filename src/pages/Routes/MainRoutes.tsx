@@ -17,7 +17,7 @@ import ResetPassword from "../Login/ResetPassword";
 
 // Dashboard and Core Admin Components
 import MasterAdmin from "../Dashboard/MasterAdmin";
-import AdminDashboard from "../Dashboard/AdminDashboard";
+import Dashboard from "../Dashboard/Dashboard";
 import Administration from "../Administration/Administration";
 import MyCare from "../PatientFlow/MyCare";
 
@@ -49,6 +49,7 @@ import Report from "../Report/Report";
 import PatientQueue from "../PatientQueue/PatientQueue";
 import UploadDicomFiles from "../PatientQueue/UploadDicomFiles";
 import Analytics from "../Analytics/Analytics";
+import NewInvoice from "../Invoice/NewInvoice";
 
 // Define a type for route configurations to improve readability and type safety
 interface AppRoute {
@@ -64,7 +65,7 @@ const MainRoutes: React.FC = () => {
 
   const adminRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "administration", element: <Administration /> },
     { path: "analytics", element: <Analytics /> },
     { path: "addScanCenter", element: <AddScanCenter /> },
@@ -89,7 +90,7 @@ const MainRoutes: React.FC = () => {
 
   const scAdminRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "administration/:id", element: <ViewScanCenter /> },
     { path: "manageTechnician", element: <ManageTechnician /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
@@ -103,7 +104,7 @@ const MainRoutes: React.FC = () => {
 
   const technicianRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "uploadDicoms", element: <UploadDicomFiles /> },
     { path: "analytics", element: <Analytics /> },
@@ -111,21 +112,21 @@ const MainRoutes: React.FC = () => {
 
   const doctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "analytics", element: <Analytics /> },
   ]
 
   const radiologistRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "analytics", element: <Analytics /> },
   ]
 
   const scribeRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "report", element: <Report />},
     { path: "analytics", element: <Analytics /> },
@@ -133,14 +134,14 @@ const MainRoutes: React.FC = () => {
 
   const coDoctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "analytics", element: <Analytics /> },
   ]
 
   const managerRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "administration", element: <Administration /> },
     { path: "manageRadiologist", element: <ManageRadiologist /> },
     { path: "addRadiologist", element: <AddRadiologist /> },
@@ -153,7 +154,7 @@ const MainRoutes: React.FC = () => {
 
   const patientRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="myCare" replace /> },
-    { path: "dashboard", element: <AdminDashboard /> },
+    { path: "dashboard", element: <Dashboard /> },
     { path: "myCare", element: <MyCare /> },
     { path: "medicalHistory", element: <MedicalHistory />},
   ];
@@ -227,6 +228,8 @@ const MainRoutes: React.FC = () => {
             path="technicianpatientintakeform"
             element={<TechnicianPatientIntakeForm />}
           />
+
+          <Route path="/invoiceGenerate" element={<NewInvoice />}/>
 
           {/* Protected Routes */}
           <Route

@@ -1,4 +1,6 @@
 // AuthContext.tsx
+import { decrypt } from '@/Helper';
+import { FileData } from '@/services/commonServices';
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,9 +27,11 @@ export interface UserProfile {
   refUserFirstName: string;
   refUserLastName: string;
   refUserCustId: string;
+  refCODOPhoneNo1?: string;
   refRTId: number;
   refSCId: number;
   refCODOEmail: string;
+  profileImgFile: FileData | null
 }
 
 // ✅ Context Type
@@ -77,7 +81,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.clear();
         navigate("/");
       } else {
-        const profile: UserProfile = res.data.data.data;
+        const decryptData = decrypt(res.data.data, res.data.token);
+        console.log(decryptData)
+        const profile: UserProfile = decryptData.data;
         setUser(profile);
         localStorage.setItem("token", res.data.token);
         

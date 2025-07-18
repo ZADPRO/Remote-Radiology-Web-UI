@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from "lucide-react";
 // Import ArrowUp and ArrowDown
 import { Plus, ChevronsLeft, ChevronsRight, Filter, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -460,13 +461,14 @@ const ManageScribe: React.FC = () => {
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
       <div
-        className="p-4 bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
+        className="p-4 flex gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
         style={{
           backgroundColor: "#A3B1A1",
           backgroundImage:
             window.innerWidth >= 1024 ? `url(${addRadiologist_Bg})` : undefined,
         }}
       >
+        <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <h1 className="text-[#3F3F3D] uppercase font-[900] text-xl lg:text-2xl text-center lg:text-left tracking-widest">
           Manage Scribe
         </h1>
