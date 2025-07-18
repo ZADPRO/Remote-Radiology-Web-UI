@@ -2,18 +2,15 @@
 
 import React, { JSX, useEffect, useState } from "react";
 import {
-  BellIcon,
   ChartPie,
   ClipboardPlus,
-  HelpCircleIcon,
   LayoutDashboard,
+  PersonStanding,
   Settings2,
-  User,
 } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,7 +81,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/admin/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -106,7 +103,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/scadmin/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -123,7 +120,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/technician/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -140,7 +137,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/radiologist/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -157,7 +154,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/scribe/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -181,6 +178,11 @@ const MasterAdmin: React.FC = () => {
       //   path: "/patient/myCare",
       //   icon: <BookUser className="w-4 h-4" />,
       // },
+      {
+        label: "Dashboard",
+        path: "/patient/dashboard",
+        icon: <LayoutDashboard className="w-4 h-4" />,
+      },
     ],
     manager: [
       {
@@ -191,7 +193,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/manager/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -208,7 +210,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/doctor/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -225,7 +227,7 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Patient Queue",
         path: "/codoctor/patientQueue",
-        icon: <User className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4" />,
       },
       {
         label: "Analytics",
@@ -302,7 +304,7 @@ const MasterAdmin: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button
+            {/* <Button
               variant="outline"
               className="rounded-3xl bg-[#f8f3eb]"
               size="icon"
@@ -319,8 +321,8 @@ const MasterAdmin: React.FC = () => {
               </Button>
               {/* <span className="absolute top-1 right-1 px-1.5 py-0.5 min-w-4 translate-x-1/2 -translate-y-1/2 origin-center flex items-center justify-center rounded-sm text-xs bg-[#F3C294] text-destructive-foreground">
                 2
-              </span> */}
-            </div>
+              </span> */} {/*}
+            </div> */}
             <DropdownMenu
               open={isDropdownOpen}
               onOpenChange={setIsDropDownOpen}
@@ -355,6 +357,11 @@ const MasterAdmin: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <div className="flex flex-col">
+                  <span className="text-xs font-semibold">{user?.refUserFirstName}</span>
+            <span className="text-sm font-bold">{user?.refUserCustId}</span>
+            </div>
+            
           </div>
 
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

@@ -5,7 +5,8 @@ import { useAuth } from '@/pages/Routes/AuthContext';
 import { Checkbox2 } from '@/components/ui/CustomComponents/checkbox2';
 
 interface UserConsentProps {
-    setEditingDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setEditingDialogOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    viewOnly?: boolean;
 }
 
 type RoleType =
@@ -147,7 +148,7 @@ const consentByRole: Record<RoleType, RoleConsent> = {
   },
 };
 
-const UserConsent: React.FC<UserConsentProps> = ({ setEditingDialogOpen }) => {
+const UserConsent: React.FC<UserConsentProps> = ({ setEditingDialogOpen, viewOnly }) => {
   const { role } = useAuth();
 
   const userRoleType = role?.type as RoleType;
@@ -163,12 +164,18 @@ const userRole = userRoleType ? RoleDisplayNameMap[userRoleType] : "Guest";
   const [isRoleChecked, setRoleChecked] = useState(false);
 
   const handleSubmit = () => {
-    setEditingDialogOpen(false);
+    setEditingDialogOpen && setEditingDialogOpen(false);
     console.log('Consent submitted for role:', userRole);
   };
 
   return (
-    <form onSubmit={(e) => {e.preventDefault(); handleSubmit()}} className="p-5 lg:p-10 mx-5 lg:mx-10 mb-2 border-2 border-gray-300 rounded-2xl shadow-2xl">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className="p-5 lg:p-10 mx-5 lg:mx-10 mb-2 border-2 border-gray-300 rounded-2xl shadow-2xl"
+    >
       {/* Universal Consent */}
       <div className="text-sm leading-relaxed space-y-6">
         {universalConsentPoints.map((point, idx) => (
@@ -183,51 +190,57 @@ const userRole = userRoleType ? RoleDisplayNameMap[userRoleType] : "Guest";
         ))}
       </div>
 
-      <div className="flex items-center space-x-2 mt-4">
-        <Checkbox2
-        className='bg-pink-300'
-          checked={isUniversalChecked}
-          onCheckedChange={(val) => setUniversalChecked(!!val)}
-          required
-        />
-        <Label className="text-sm cursor-pointer">
-          I agree to the above universal terms and policies.
-        </Label>
-      </div>
+      {!viewOnly && (
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox2
+            className="bg-pink-300"
+            checked={isUniversalChecked}
+            onCheckedChange={(val) => setUniversalChecked(!!val)}
+            required
+          />
+          <Label className="text-sm cursor-pointer">
+            I agree to the above universal terms and policies.
+          </Label>
+        </div>
+      )}
 
       {/* Role-specific Consent */}
       {roleConsent.points.length > 0 && (
         <>
           <h2 className="text-xl lg:text-2xl font-semibold mt-6 capitalize">
-            {'7.  '+userRole} Consent
+            {"7.  " + userRole} Consent
           </h2>
           <div className="leading-relaxed space-y-4">
             {roleConsent.points.map((point, idx) => (
-              <li className='ml-1 lg:ml-6 text-base' key={idx}>{point}</li>
+              <li className="ml-1 lg:ml-6 text-base" key={idx}>
+                {point}
+              </li>
             ))}
           </div>
 
-          <div className="flex items-center space-x-2 mt-4">
-            <Checkbox2
-            className='bg-pink-300'
-              checked={isRoleChecked}
-              onCheckedChange={(val) => setRoleChecked(!!val)}
-              required
-            />
-            <Label className="text-sm cursor-pointer">
-              {roleConsent.agreeText}
-            </Label>
-          </div>
+          {!viewOnly && (
+            <div className="flex items-center space-x-2 mt-4">
+              <Checkbox2
+                className="bg-pink-300"
+                checked={isRoleChecked}
+                onCheckedChange={(val) => setRoleChecked(!!val)}
+                required
+              />
+              <Label className="text-sm cursor-pointer">
+                {roleConsent.agreeText}
+              </Label>
+            </div>
+          )}
         </>
       )}
 
-      <div className="flex justify-end mt-8">
-        <Button
-          className="bg-[#f0d9d3] hover:bg-[#ebcbc2] text-[##3F3F3D] border-1 border-[#3F3F3D] rounded-lg px-6 py-2"
-        >
-          Submit
-        </Button>
-      </div>
+      {!viewOnly && (
+        <div className="flex justify-end mt-8">
+          <Button className="bg-[#f0d9d3] hover:bg-[#ebcbc2] text-[##3F3F3D] border-1 border-[#3F3F3D] rounded-lg px-6 py-2">
+            Submit
+          </Button>
+        </div>
+      )}
     </form>
   );
 };
