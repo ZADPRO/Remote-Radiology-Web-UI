@@ -38,6 +38,7 @@ import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression from "./ImpressionRecommendation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -66,10 +67,19 @@ interface ReportTemplate {
 type ReportStageLabel =
   | "Predraft"
   | "Draft"
-  | "Reviewed 1"
-  | "Reviewed 2"
+  | "Reviewed 1 Correct"
+  | "Reviewed 1 Edit"
+  | "Reviewed 2 Correct"
+  | "Reviewed 2 Edit"
   | "Signed Off"
-  | "Addendum";
+  // | "Addendum";
+
+  interface ReportStage {
+  label: ReportStageLabel;
+  editStatus: boolean;
+  status: string;
+}
+
 
 const Report: React.FC = () => {
   const [tab, setTab] = useState<number>(4);
@@ -78,7 +88,7 @@ const Report: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [selected, setSelected] = useState<"correct" | "edit">("correct");
+  // const [selected, setSelected] = useState<"correct" | "edit">("correct");
 
   const { role } = useAuth();
 
@@ -158,22 +168,27 @@ const Report: React.FC = () => {
   };
 
   const stageRoleMap: Record<ReportStageLabel, UserRole[]> = {
-    Predraft: ["scribe"],
-    Draft: ["radiologist"],
-    "Reviewed 1": ["admin"],
-    "Reviewed 2": ["codoctor"],
+    Predraft: ["scribe", "admin"],
+    Draft: ["radiologist", "admin"],
+    "Reviewed 1 Correct": ["admin"],
+    "Reviewed 1 Edit": ["admin"],
+    "Reviewed 2 Correct": ["codoctor"],
+    "Reviewed 2 Edit": ["codoctor"],
     "Signed Off": ["doctor", "admin"],
-    Addendum: ["doctor"], // assuming doctor can handle addendums
+    // Addendum: ["doctor", "admin"], // assuming doctor can handle addendums
   };
 
-  const buttonLabels: ReportStageLabel[] = [
-    "Predraft",
-    "Draft",
-    "Reviewed 1",
-    "Reviewed 2",
-    "Signed Off",
-    "Addendum",
-  ];
+  const reportStages: ReportStage[] = [
+  { label: "Predraft", status: "Predraft", editStatus: false },
+  { label: "Draft", status: "Draft", editStatus: false },
+  { label: "Reviewed 1 Correct", status: "Reviewed 1", editStatus: false },
+  { label: "Reviewed 1 Edit",status: "Reviewed 1", editStatus: true },
+  { label: "Reviewed 2 Correct", status: "Reviewed 2", editStatus: false },
+  { label: "Reviewed 2 Edit", status: "Reviewed 2", editStatus: true },
+  { label: "Signed Off", status: "Signed Off", editStatus: false },
+  // { label: "Addendum", editStatus: false },
+];
+
 
 
   const [userDetails, setUserDetails]: any = useState([]);
@@ -459,7 +474,10 @@ const Report: React.FC = () => {
     // listDicomFiles();
   }, []);
 
-  const handleReportSubmit = async (movedStatus: string) => {
+  const [showMailDialog, setShowMailDialog] = useState(false);
+const [mailOption, setMailOption] = useState("");
+
+  const handleReportSubmit = async (movedStatus: string, editStatus: boolean) => {
     setLoading(true);
     try {
       const payload = {
@@ -474,7 +492,9 @@ const Report: React.FC = () => {
         syncStatus: syncStatus.Notes,
         impression: selectedImpressionId,
         recommendation: selectedRecommendationId,
-        editStatus: selected === "edit" ? true : false,
+        editStatus: editStatus,
+        patientMailStatus: mailOption === "patient" || mailOption === "both",
+        managerMailStatus: mailOption === "scancenter" || mailOption === "both",
       };
       console.log(payload);
 
@@ -502,7 +522,7 @@ const Report: React.FC = () => {
       <div className="w-full h-[10vh] bg-[#a3b1a0] flex shadow-sm">
         {/* Main Tabs */}
         <div className="flex w-3/5 h-full">
-          <div className="w-48">
+          <div className="w-auto">
             <img
               src={logo}
               alt="logo"
@@ -538,7 +558,7 @@ const Report: React.FC = () => {
               { label: "General", value: 1 },
               { label: "Right", value: 2 },
               { label: "Left", value: 3 },
-              { label: "Impression", value: 5},
+              { label: "Impression", value: 5 },
               { label: "Report", value: 4 },
             ].map(({ label, value }) => (
               <div
@@ -607,56 +627,36 @@ const Report: React.FC = () => {
           </div>
 
           {/* Table Content */}
-          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
-            <table className="min-w-full divide-y divide-gray-200  text-left">
-              <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
-                <tr>
-                  <th className="px-1 py-2 font-semibold">Created by</th>
-                  <th className="px-1 py-2 font-semibold">Start</th>
-                  <th className="px-1 py-2 font-semibold">End</th>
-                  <th className="px-1 py-2 font-semibold">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {assignData?.reportHistoryData ? (
-                  <>
-                    {assignData?.reportHistoryData.map((item, idx) => (
-                      <tr
-                        key={idx}
-                        className={idx % 2 === 0 ? "bg-white" : "bg-[#f9f2ea]"}
-                      >
-                        <td className="px-2 py-2 text-xs text-center">
-                          {item.HandleUserName}
-                        </td>
-                        <td className="px-2 py-2 text-[10px] text-center">
-                          <div className="space-y-1">
-                            <span className="block">
-                              {new Date(
-                                item.refRHHandleStartTime
-                              ).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              })}
-                            </span>
-                            <span className="block">
-                              {new Date(
-                                item.refRHHandleStartTime
-                              ).toLocaleTimeString("en-GB", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                        </td>
-
-                        <td className="px-2 py-2 text-[10px] text-center">
-                          <div className="space-y-1">
-                            {item.refRHHandleEndTime ? (
-                              <>
+          {role?.type &&
+            ["admin", "scribe", "radiologist"].includes(role?.type) && (
+              <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
+                <table className="min-w-full divide-y divide-gray-200  text-left">
+                  <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
+                    <tr>
+                      <th className="px-1 py-2 font-semibold">Created by</th>
+                      <th className="px-1 py-2 font-semibold">Start</th>
+                      <th className="px-1 py-2 font-semibold">End</th>
+                      <th className="px-1 py-2 font-semibold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {assignData?.reportHistoryData ? (
+                      <>
+                        {assignData?.reportHistoryData.map((item, idx) => (
+                          <tr
+                            key={idx}
+                            className={
+                              idx % 2 === 0 ? "bg-white" : "bg-[#f9f2ea]"
+                            }
+                          >
+                            <td className="px-2 py-2 text-xs text-center">
+                              {item.HandleUserName}
+                            </td>
+                            <td className="px-2 py-2 text-[10px] text-center">
+                              <div className="space-y-1">
                                 <span className="block">
                                   {new Date(
-                                    item.refRHHandleEndTime
+                                    item.refRHHandleStartTime
                                   ).toLocaleDateString("en-GB", {
                                     day: "2-digit",
                                     month: "short",
@@ -665,98 +665,99 @@ const Report: React.FC = () => {
                                 </span>
                                 <span className="block">
                                   {new Date(
-                                    item.refRHHandleEndTime
+                                    item.refRHHandleStartTime
                                   ).toLocaleTimeString("en-GB", {
                                     hour: "2-digit",
                                     minute: "2-digit",
                                   })}
                                 </span>
-                              </>
-                            ) : (
-                              <span className="block">-</span>
-                            )}
-                          </div>
-                        </td>
+                              </div>
+                            </td>
 
-                        <td className="px-2 py-2 text-[10px] text-center font-semibold">
-                          <span
-                            className={
-                              item.refRHHandleEndTime
-                                ? "text-green-600"
-                                : "text-gray-400"
-                            }
-                          >
-                            {item.refRHHandleEndTime ? (
-                              <>
-                                <Dialog>
-                                  <form>
-                                    <DialogTrigger asChild>
-                                      <div className="cursor-pointer">
-                                        {item.refRHHandleStatus + " Completed"}
-                                      </div>
-                                    </DialogTrigger>
-                                    <DialogContent className="">
-                                      <DialogHeader>
-                                        <DialogTitle>
-                                          History Preview
-                                        </DialogTitle>
-                                      </DialogHeader>
-                                      <div className="h-[70vh] overflow-y-auto w-[100%]">
-                                        <TextEditor
-                                          value={item.refRHHandleContentText}
-                                          // onChange={setNotes}
-                                          readOnly={syncStatus.Notes}
-                                        />
-                                      </div>
-                                    </DialogContent>
-                                  </form>
-                                </Dialog>
-                              </>
-                            ) : (
-                              "-"
-                            )}
-                          </span>
+                            <td className="px-2 py-2 text-[10px] text-center">
+                              <div className="space-y-1">
+                                {item.refRHHandleEndTime ? (
+                                  <>
+                                    <span className="block">
+                                      {new Date(
+                                        item.refRHHandleEndTime
+                                      ).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })}
+                                    </span>
+                                    <span className="block">
+                                      {new Date(
+                                        item.refRHHandleEndTime
+                                      ).toLocaleTimeString("en-GB", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <span className="block">-</span>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="px-2 py-2 text-[10px] text-center font-semibold">
+                              <span
+                                className={
+                                  item.refRHHandleEndTime
+                                    ? "text-green-600"
+                                    : "text-gray-400"
+                                }
+                              >
+                                {item.refRHHandleEndTime ? (
+                                  <>
+                                    <Dialog>
+                                      <form>
+                                        <DialogTrigger asChild>
+                                          <div className="cursor-pointer">
+                                            {item.refRHHandleStatus +
+                                              " Completed"}
+                                          </div>
+                                        </DialogTrigger>
+                                        <DialogContent className="">
+                                          <DialogHeader>
+                                            <DialogTitle>
+                                              History Preview
+                                            </DialogTitle>
+                                          </DialogHeader>
+                                          <div className="h-[70vh] overflow-y-auto w-[100%]">
+                                            <TextEditor
+                                              value={
+                                                item.refRHHandleContentText
+                                              }
+                                              // onChange={setNotes}
+                                              readOnly={syncStatus.Notes}
+                                            />
+                                          </div>
+                                        </DialogContent>
+                                      </form>
+                                    </Dialog>
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    ) : (
+                      <tr className="bg-[#f9f2ea]">
+                        <td className="px-2 py-2 text-xs text-center">
+                          No Data Found
                         </td>
                       </tr>
-                    ))}
-                  </>
-                ) : (
-                  <tr className="bg-[#f9f2ea]">
-                    <td className="px-2 py-2 text-xs text-center">
-                      No Data Found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {
-            (role?.id === 1 || role?.id === 5) && (
-              <div className={`flex border-2 border-[#a3b1a0] rounded overflow-hidden mb-2 w-full `}>
-            <button
-              onClick={() => setSelected("correct")}
-              className={`px-4 py-1 font-medium w-1/2 transition text-xs cursor-pointer ${
-                selected === "correct"
-                  ? "bg-[#a3b1a0] text-white m-0.5"
-                  : "bg-gray-200 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Correct
-            </button>
-            <button
-              onClick={() => setSelected("edit")}
-              className={`px-4 py-1 w-1/2 font-medium transition text-xs cursor-pointer ${
-                selected === "edit"
-                  ? "bg-[#a3b1a0] text-white m-0.5"
-                  : "bg-gray-200 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Edit
-            </button>
-          </div>
-            )
-          }
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
           {/* Buttons */}
           {role?.type && (
@@ -765,25 +766,66 @@ const Report: React.FC = () => {
                 location?.readOnly ? "pointer-events-none" : ""
               }`}
             >
-              {buttonLabels.map((label, index) => {
+              {reportStages.map(({ label, editStatus, status }, index) => {
                 const isAllowed = stageRoleMap[label]?.includes(role?.type);
+
+                const handleClick = () => {
+                  if (!isAllowed) return;
+
+                  if (label === "Signed Off") {
+                    setShowMailDialog(true); // open dialog
+                  } else {
+                    handleReportSubmit(status, editStatus); // directly call
+                  }
+                };
 
                 return (
                   <Button
                     key={index}
                     variant="greenTheme"
-                    className="text-xs text-white px-3 py-2 min-w-[48%]"
-                    onClick={() => {
-                      if (isAllowed) {
-                        handleReportSubmit(label);
-                      }
-                    }}
+                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                    onClick={handleClick}
                     disabled={!isAllowed}
                   >
                     {label}
                   </Button>
                 );
               })}
+              <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
+  <DialogContent className="sm:max-w-[400px]">
+    <DialogHeader>
+      <DialogTitle>Select who to send mail to</DialogTitle>
+    </DialogHeader>
+
+    <div className="mt-4">
+      <Select value={mailOption} onValueChange={setMailOption}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Choose recipient" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="patient">Patient</SelectItem>
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          <SelectItem value="both">Both</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+
+    <DialogFooter>
+      <Button
+        variant="greenTheme"
+        disabled={!mailOption}
+        onClick={() => {
+          setShowMailDialog(false);
+          handleReportSubmit("Signed Off", false); // Pass what you need
+        }}
+      >
+        Submit
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+
               {tab === 4 && subTab === 4 && (
                 <>
                   <Button
@@ -991,7 +1033,7 @@ const Report: React.FC = () => {
                     sForm: {
                       value: sForm,
                       onChange: setSForm,
-                    }
+                    },
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1067,105 +1109,106 @@ const Report: React.FC = () => {
                   setsyncStatus={setsyncStatus}
                   readOnly={location.readOnly ? true : false}
                 />
+              ) : subTab === 4 ? (
+                <NotesReport
+                  reportFormData={reportFormData}
+                  textEditor={{
+                    breastImplant: {
+                      value: breastImplantRight,
+                      onChange: setBreastImplantRight,
+                    },
+                    breastDensityandImageRight: {
+                      value: breastDensityandImageRight,
+                      onChange: setBreastDensityandImageRight,
+                    },
+                    nippleAreolaSkinRight: {
+                      value: nippleAreolaSkinRight,
+                      onChange: setNippleAreolaSkinRight,
+                    },
+                    LesionsRight: {
+                      value: LesionsRight,
+                      onChange: setLesionsRight,
+                    },
+                    ComparisonPrior: {
+                      value: ComparisonPrior,
+                      onChange: setComparisonPrior,
+                    },
+                    grandularAndDuctalTissueRight: {
+                      value: grandularAndDuctalTissueRight,
+                      onChange: setGrandularAndDuctalTissueRight,
+                    },
+                    LymphNodesRight: {
+                      value: LymphNodesRight,
+                      onChange: setLymphNodesRight,
+                    },
+                    breastDensityandImageLeft: {
+                      value: breastDensityandImageLeft,
+                      onChange: setBreastDensityandImageLeft,
+                    },
+                    nippleAreolaSkinLeft: {
+                      value: nippleAreolaSkinLeft,
+                      onChange: setNippleAreolaSkinLeft,
+                    },
+                    LesionsLeft: {
+                      value: LesionsLeft,
+                      onChange: setLesionsLeft,
+                    },
+                    ComparisonPriorLeft: {
+                      value: ComparisonPriorLeft,
+                      onChange: setComparisonPriorLeft,
+                    },
+                    grandularAndDuctalTissueLeft: {
+                      value: grandularAndDuctalTissueLeft,
+                      onChange: setGrandularAndDuctalTissueLeft,
+                    },
+                    LymphNodesLeft: {
+                      value: LymphNodesLeft,
+                      onChange: setLymphNodesLeft,
+                    },
+                    ImpressionText: {
+                      value: impressionText,
+                      onChange: setImpressionText,
+                    },
+                    RecommendationText: {
+                      value: recommendationText,
+                      onChange: setRecommendationText,
+                    },
+                  }}
+                  syncStatus={syncStatus}
+                  setsyncStatus={setsyncStatus}
+                  Notes={Notes}
+                  setNotes={setNotes}
+                  name={getAnswer(1)}
+                  gender={getAnswer(6) === "female" ? "F" : getAnswer(5)}
+                  age={getAnswer(5)}
+                  studyTime={
+                    assignData?.reportHistoryData[
+                      assignData?.reportHistoryData.length - 1
+                    ].refRHHandleStartTime.toString() || ""
+                  }
+                  AppointmentDate={
+                    assignData?.appointmentStatus[0]?.refAppointmentDate
+                      ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
+                      : ""
+                  }
+                  ScancenterCode={
+                    assignData?.appointmentStatus[0]?.refSCCustId || ""
+                  }
+                  patientDetails={patientDetails}
+                  readOnly={location.readOnly ? true : false}
+                />
               ) : (
-                subTab === 4 ? (
-                  <NotesReport
-                    reportFormData={reportFormData}
-                    textEditor={{
-                      breastImplant: {
-                        value: breastImplantRight,
-                        onChange: setBreastImplantRight,
-                      },
-                      breastDensityandImageRight: {
-                        value: breastDensityandImageRight,
-                        onChange: setBreastDensityandImageRight,
-                      },
-                      nippleAreolaSkinRight: {
-                        value: nippleAreolaSkinRight,
-                        onChange: setNippleAreolaSkinRight,
-                      },
-                      LesionsRight: {
-                        value: LesionsRight,
-                        onChange: setLesionsRight,
-                      },
-                      ComparisonPrior: {
-                        value: ComparisonPrior,
-                        onChange: setComparisonPrior,
-                      },
-                      grandularAndDuctalTissueRight: {
-                        value: grandularAndDuctalTissueRight,
-                        onChange: setGrandularAndDuctalTissueRight,
-                      },
-                      LymphNodesRight: {
-                        value: LymphNodesRight,
-                        onChange: setLymphNodesRight,
-                      },
-                      breastDensityandImageLeft: {
-                        value: breastDensityandImageLeft,
-                        onChange: setBreastDensityandImageLeft,
-                      },
-                      nippleAreolaSkinLeft: {
-                        value: nippleAreolaSkinLeft,
-                        onChange: setNippleAreolaSkinLeft,
-                      },
-                      LesionsLeft: {
-                        value: LesionsLeft,
-                        onChange: setLesionsLeft,
-                      },
-                      ComparisonPriorLeft: {
-                        value: ComparisonPriorLeft,
-                        onChange: setComparisonPriorLeft,
-                      },
-                      grandularAndDuctalTissueLeft: {
-                        value: grandularAndDuctalTissueLeft,
-                        onChange: setGrandularAndDuctalTissueLeft,
-                      },
-                      LymphNodesLeft: {
-                        value: LymphNodesLeft,
-                        onChange: setLymphNodesLeft,
-                      },
-                      ImpressionText: {
-                        value: impressionText,
-                        onChange: setImpressionText,
-                      },
-                      RecommendationText: {
-                        value: recommendationText,
-                        onChange: setRecommendationText,
-                      },
-                    }}
-                    syncStatus={syncStatus}
-                    setsyncStatus={setsyncStatus}
-                    Notes={Notes}
-                    setNotes={setNotes}
-                    name={getAnswer(1)}
-                    gender={getAnswer(6) === "female" ? "F" : getAnswer(5)}
-                    age={getAnswer(5)}
-                    studyTime={
-                      assignData?.reportHistoryData[
-                        assignData?.reportHistoryData.length - 1
-                      ].refRHHandleStartTime.toString() || ""
-                    }
-                    AppointmentDate={
-                      assignData?.appointmentStatus[0]?.refAppointmentDate
-                        ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
-                        : ""
-                    }
-                    ScancenterCode={
-                      assignData?.appointmentStatus[0]?.refSCCustId || ""
-                    }
-                    patientDetails={patientDetails}
-                    readOnly={location.readOnly ? true : false}
-                  />
-                ) : (subTab === 5 && (
-                  <Impression 
+                subTab === 5 && (
+                  <Impression
                     selectedImpressionId={selectedImpressionId}
                     setSelectedImpressionId={setSelectedImpressionId}
                     selectedRecommendationId={selectedRecommendationId}
                     setSelectedRecommendationId={setSelectedRecommendationId}
                     setRecommendationText={setRecommendationText}
                     setImpressionText={setImpressionText}
-                    />
-                ))
+                    readOnly={location.readOnly ? true : false}
+                  />
+                )
               )}
             </>
           )}

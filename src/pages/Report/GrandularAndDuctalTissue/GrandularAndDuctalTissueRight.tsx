@@ -66,16 +66,33 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
     showDistributions: boolean = false,
     enableOtherInput: boolean = false
   ) => {
-    const parsedList = JSON.parse(
+    const defaultType = label === "Ductal Prominence"
+  ? "No Mass Effect"
+  : label === "Macrocalcifications"
+  ? "Clumped"
+  : "";
+
+const defaultDistribution = showDistributions ? "Non Segmental" : undefined;
+
+const parsedList = JSON.parse(
   getAnswer(listId) ||
-    JSON.stringify([{ type: "", clock: "", level: "", distribution: "", otherText: "" }])
+    JSON.stringify([
+      {
+        type: defaultType,
+        clock: "",
+        level: "",
+        ...(defaultDistribution ? { distribution: defaultDistribution } : {}),
+        ...(enableOtherInput ? { otherText: "" } : {}),
+      },
+    ])
 ) as {
   type: string;
   clock: string;
   level: string;
   distribution?: string;
-  otherText?: string; // <-- NEW
+  otherText?: string;
 }[];
+
 
     const updateList = (
       updated: {
@@ -90,10 +107,12 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
 
     const distributionOptions: string[] = [
       "Diffuse",
+      "Non Segmental",
       "Regional",
       "Grouped",
       "Linear",
       "Segmental",
+      "Ductal"
     ];
 
     return (
@@ -102,20 +121,29 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
           <Label className="text-base font-semibold">{label}</Label>
 
           <Button
-            variant="greenTheme"
-            className="text-shite"
-            onClick={() => {
-              const newItem = {
-                type: label === "Macrocalcifications" ? "Clumped" : "",
-                clock: "",
-                level: "",
-                ...(showDistributions && { distribution: "" }),
-              };
-              updateList([...parsedList, newItem]);
-            }}
-          >
-            Add
-          </Button>
+  variant="greenTheme"
+  className="text-shite"
+  onClick={() => {
+    const getDefaultType = () => {
+      if (label === "Ductal Prominence") return "No Mass Effect";
+      if (label === "Macrocalcifications") return "Clumped";
+      return "";
+    };
+
+    const newItem = {
+      type: getDefaultType(),
+      clock: "",
+      level: "",
+      ...(showDistributions && { distribution: "Non Segmental" }),
+      ...(enableOtherInput && { otherText: "" }),
+    };
+
+    updateList([...parsedList, newItem]);
+  }}
+>
+  Add
+</Button>
+
         </div>
         {parsedList.map((item, index) => (
           <div key={index} className="flex items-center gap-2 pl-4">
@@ -218,7 +246,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
             onCheckedChange={(checked) =>
               handleReportInputChange(
                 questionIds.grandularSelect,
-                checked ? "Present" : ""
+                checked ? "Present" : "Absent"
               )
             }
             className="w-5 h-5 mt-1"

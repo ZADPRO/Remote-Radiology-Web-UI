@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from "react";
 import {
   Table,
@@ -77,6 +78,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { reportService } from "@/services/reportService";
 import { useAuth, UserRole } from "../Routes/AuthContext";
 import { downloadAllDicom, handleAllDownloadDicom } from "@/lib/commonUtlis";
+import { appointmentService } from "@/services/patientInTakeFormService";
+import PatientReport from "./PatientReport";
 
 interface staffData {
   refUserCustId: string;
@@ -93,6 +96,7 @@ interface StatusInfo {
 }
 
 const PatientQueue: React.FC = () => {
+  const { user, role } = useAuth();
   const [patientQueue, setPatientQueue] = useState<TechnicianPatientQueue[]>(
     []
   );
@@ -167,7 +171,7 @@ const PatientQueue: React.FC = () => {
           text: "Yet to Report",
           report: true,
           color: "grey",
-          editAccess: ["scribe", "admin", "doctor"],
+          editAccess: ["scribe", "admin", "radiologist"],
           readOnlyAccess: [],
         };
       }
@@ -177,8 +181,8 @@ const PatientQueue: React.FC = () => {
           text: "Predraft",
           report: true,
           color: "#8e7cc3",
-          editAccess: ["radiologist", "admin", "doctor", "scribe"],
-          readOnlyAccess: ["scribe", "radiologist", "admin", "doctor"],
+          editAccess: ["radiologist", "admin", "scribe"],
+          readOnlyAccess: ["scribe", "radiologist", "admin"],
         };
       }
 
@@ -187,12 +191,11 @@ const PatientQueue: React.FC = () => {
           text: "Draft",
           report: true,
           color: "#3c78d8",
-          editAccess: ["admin", "scribe", "doctor"],
+          editAccess: ["admin", "scribe", "radiologist"],
           readOnlyAccess: [
             "scribe",
             "radiologist",
             "admin",
-            "doctor",
             "scadmin",
           ],
         };
@@ -204,7 +207,7 @@ const PatientQueue: React.FC = () => {
           report: true,
           color: "#e69138",
           editAccess: ["scribe", "admin", "codoctor"],
-          readOnlyAccess: ["scribe", "admin", "doctor", "scadmin"],
+          readOnlyAccess: ["scribe", "admin", "scadmin"],
         };
       }
 
@@ -217,7 +220,6 @@ const PatientQueue: React.FC = () => {
           readOnlyAccess: [
             "scribe",
             "admin",
-            "doctor",
             "scadmin",
             "technician",
             "codoctor",
@@ -239,6 +241,7 @@ const PatientQueue: React.FC = () => {
             "technician",
             "codoctor",
             "radiologist",
+            "patient"
           ],
         };
       }
@@ -257,16 +260,54 @@ const PatientQueue: React.FC = () => {
   const fetchPatientQueue = async () => {
     setLoading(true);
     try {
-      const res = await technicianService.listPatientQueue();
-      console.log("Fetching patient queue...", res);
-      if (res.status) {
-        setStaffData(res.staffData);
-        setPatientQueue(res.data);
-        console.log(res.staffData);
+      if (role?.type == "patient") {
+        const res = await appointmentService.listPatientMedicalHistory();
+        console.log("Fetching medical history...", res);
+        if (res.status) {
+          setPatientQueue(res.data);
+        } else {
+          // Handle error or empty data scenario from API response
+          console.warn("API response status is false, or no data:", res);
+          setPatientQueue([]); // Ensure patientQueue is empty if API indicates failure
+        }
       } else {
-        // Handle error or empty data scenario from API response
-        console.warn("API response status is false, or no data:", res);
-        setPatientQueue([]); // Ensure patientQueue is empty if API indicates failure
+        const res = await technicianService.listPatientQueue();
+        console.log("Fetching patient queue...", res);
+        if (res.status) {
+          const filteredData = res.data.filter(
+            (item: TechnicianPatientQueue) => {
+              const { refAppointmentComplete, dicomFiles } = item;
+
+              // If it's 'fillform', always filter it out
+              if (refAppointmentComplete === "fillform") return false;
+
+              // If it's 'technologistformfill' and role is NOT technician, filter it out
+              if (
+                refAppointmentComplete === "technologistformfill" &&
+                role?.type !== "technician"
+              )
+                return false;
+
+              // If it's 'reportformfill' and dicomFiles is null, filter it out for all except technician
+              if (
+                refAppointmentComplete === "reportformfill" &&
+                !dicomFiles &&
+                role?.type !== "technician"
+              )
+                return false;
+
+              // Else keep the item
+              return true;
+            }
+          );
+          setStaffData(res.staffData);
+          setPatientQueue(filteredData);
+          console.log(res.staffData);
+        } else {
+          // Handle error or empty data scenario from API response
+          console.warn("API response status is false, or no data:", res);
+          setPatientQueue([]); // Ensure patientQueue is empty if API indicates failure
+        }
       }
     } catch (error) {
       console.error("Failed to fetch patient queue:", error);
@@ -682,7 +723,7 @@ const PatientQueue: React.FC = () => {
         accessorKey: "refSCCustId",
         id: "refSCCustId",
         header: ({ column }) => (
-          <div className="flex items-center">
+          <div className="flex items-center justify-center gap-1">
             <span
               className="cursor-pointer text-grey font-semibold"
               onClick={column.getToggleSortingHandler()}
@@ -725,84 +766,111 @@ const PatientQueue: React.FC = () => {
         enableColumnFilter: true,
       },
       {
-        id: "patientForm",
-        header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
-            Patient Form
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="hover:bg-transparent hover:text-gray-200 !p-0"
-                >
-                  <Filter />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-2">
-                {["Filled", "Not Filled"].map((option) => {
-                  const value = option === "Filled" ? "filled" : "notFilled";
-                  return (
-                    <div
-                      key={value}
-                      className="flex items-center gap-2 cursor-pointer py-1"
-                      onClick={() =>
-                        column.setFilterValue(
-                          column.getFilterValue() === value ? undefined : value
-                        )
-                      }
-                    >
-                      <Checkbox2 checked={column.getFilterValue() === value} />
-                      <span>{option}</span>
-                    </div>
-                  );
-                })}
-                <Button
-                  variant="ghost"
-                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
-                >
-                  <XCircle className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
-        ),
-        cell: ({ row }) => {
-          const tempStatus = getFormStatus(row.original.refAppointmentComplete);
-          const formStatus = tempStatus?.patientForm;
+  id: "patientForm",
+  header: ({ column }) => (
+    <div className="flex items-center justify-center gap-1">
+      Patient Form
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            className="hover:bg-transparent hover:text-gray-200 !p-0"
+          >
+            <Filter />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-40 p-2">
+          {["Filled", "Not Filled"].map((option) => {
+            const value = option === "Filled" ? "filled" : "notFilled";
+            return (
+              <div
+                key={value}
+                className="flex items-center gap-2 cursor-pointer py-1"
+                onClick={() =>
+                  column.setFilterValue(
+                    column.getFilterValue() === value ? undefined : value
+                  )
+                }
+              >
+                <Checkbox2 checked={column.getFilterValue() === value} />
+                <span>{option}</span>
+              </div>
+            );
+          })}
+          <Button
+            variant="ghost"
+            className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+            onClick={() => column.setFilterValue(undefined)}
+          >
+            <XCircle className="h-4 w-4" />
+            <span>Clear</span>
+          </Button>
+        </PopoverContent>
+      </Popover>
+    </div>
+  ),
+  cell: ({ row }) => {
+    const tempStatus = getFormStatus(row.original.refAppointmentComplete);
+    const formStatus = tempStatus?.patientForm;
+    const appointmentComplete = row.original.refAppointmentComplete;
 
-          return (
-            <span>
-              {formStatus ? (
-                <button
-                  className="hover:underline cursor-pointer font-bold"
-                  onClick={() =>
-                    navigate("/patientInTakeForm", {
-                      state: {
-                        fetchFormData: true,
-                        appointmentId: row.original.refAppointmentId,
-                        userId: row.original.refUserId,
-                        readOnly: true,
-                      },
-                    })
-                  }
-                >
-                  View
-                </button>
-              ) : (
-                <div className="text-muted-foreground">Not Filled</div>
-              )}
-            </span>
-          );
-        },
-        enableColumnFilter: true,
-        filterFn: (row, value) => {
-          const tempStatus = getFormStatus(row.original.refAppointmentComplete);
-          const filled = tempStatus?.patientForm === true;
-          return value === "filled" ? filled : !filled;
-        },
-      },
+    if (formStatus) {
+      // Form is already filled
+      return (
+        <span>
+          <button
+            className="hover:underline cursor-pointer font-bold"
+            onClick={() =>
+              navigate("/patientInTakeForm", {
+                state: {
+                  fetchFormData: true,
+                  appointmentId: row.original.refAppointmentId,
+                  userId: row.original.refUserId || user?.refUserId,
+                  readOnly: true,
+                },
+              })
+            }
+          >
+            View
+          </button>
+        </span>
+      );
+    } else if (
+      currentUserRole === "patient" &&
+      appointmentComplete === "fillform"
+    ) {
+      // Patient can start the form
+      return (
+        <span>
+          <button
+            className="hover:underline cursor-pointer font-bold"
+            onClick={() =>
+              navigate("/patientInTakeForm", {
+                state: {
+                  fetchFormData: false,
+                  appointmentId: row.original.refAppointmentId,
+                  userId: user?.refUserId,
+                },
+              })
+            }
+          >
+            Start
+          </button>
+        </span>
+      );
+    } else {
+      // Not filled and not eligible
+      return <div className="text-muted-foreground">Not Filled</div>;
+    }
+  },
+  enableColumnFilter: true,
+  filterFn: (row, value) => {
+    const tempStatus = getFormStatus(row.original.refAppointmentComplete);
+    const filled = tempStatus?.patientForm === true;
+    return value === "filled" ? filled : !filled;
+  },
+}
+,
 
       {
         id: "technicianForm",
@@ -1033,6 +1101,8 @@ const PatientQueue: React.FC = () => {
           const [selectedRow, setSelectedRow] = useState<any>(null);
           const [accessModeDialog, setAccessModeDialog] = useState(false);
           const navigate = useNavigate();
+            const [patientReportDialog, setPatientReportDialog] = useState<boolean>(false);
+
 
           const status = getStatus(row.original.refAppointmentComplete);
           const role = currentUserRole as UserRole;
@@ -1045,7 +1115,6 @@ const PatientQueue: React.FC = () => {
 
           const handleViewClick = async () => {
             const currentUserId = currentUser;
-
             if (hasEditAccess) {
               const { status, accessId } = await handleCheckAccess(
                 row.original.refAppointmentId
@@ -1070,13 +1139,18 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              navigate("/report", {
+              if(role === "patient") {
+                setPatientReportDialog(true);
+              } else {
+                navigate("/report", {
                 state: {
                   appointmentId: row.original.refAppointmentId,
                   userId: row.original.refUserId,
                   readOnly: true,
                 },
               });
+              }
+              
             }
           };
 
@@ -1180,6 +1254,16 @@ const PatientQueue: React.FC = () => {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+
+              {user && (
+                  <Dialog
+                open={patientReportDialog}
+                onOpenChange={setPatientReportDialog}
+              >
+                  <PatientReport userId={user?.refUserId} appointmentId={row.original.refAppointmentId} patientReportDialog={patientReportDialog}/>
+              </Dialog>
+              )}
+              
             </div>
           );
         },
@@ -1259,7 +1343,11 @@ const PatientQueue: React.FC = () => {
         header: () => (
           <div className="text-center w-full font-medium m-0 p-0">Changes</div>
         ),
-        cell: () => <div className="text-center w-full">-</div>,
+        cell: ({ row }) => <div className="text-center w-full">
+          {!(row.original.GetCorrectEditModel.isHandleCorrect && row.original.GetCorrectEditModel.isHandleEdited) && "-" }
+          {row.original.GetCorrectEditModel.isHandleCorrect && "C"}
+          {row.original.GetCorrectEditModel.isHandleEdited && "E"}
+        </div>,
       },
 
       {
@@ -1390,7 +1478,13 @@ const PatientQueue: React.FC = () => {
       "changes",
       "pendingRemarks",
     ],
-    patient: [], // Dummy
+    patient: [
+      "dateOfAppointment",
+      "patientFormName",
+      "refSCCustId",
+      "patientForm",
+      "report",
+    ], 
     doctor: [
       "select",
       "dateOfAppointment",
@@ -1524,6 +1618,7 @@ const PatientQueue: React.FC = () => {
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa]"
             disabled={selectedRowIds.length === 0}
+            hidden={role?.type == "patient"}
           >
             <Download className="h-4 w-4" />
             Download Dicom

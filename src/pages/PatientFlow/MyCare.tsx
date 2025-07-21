@@ -53,7 +53,7 @@ const MyCare: React.FC = () => {
   };
 
   return (
-<div className="max-w-6xl mx-auto py-6 mb-5 h-[90vh] px-4 lg:px-0 lg:py-10">
+<div className="max-w-6xl mx-auto py-6 mb-5 lg:h-[90vh] px-4 lg:px-0 lg:py-10">
       {/* Greeting Section */}
       <div>
         <div className="flex items-center gap-2 text-gray-600 text-sm">

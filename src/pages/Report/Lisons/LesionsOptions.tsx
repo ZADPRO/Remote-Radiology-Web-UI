@@ -1,573 +1,595 @@
-import { Button } from '@/components/ui/button';
-import { Checkbox2 } from '@/components/ui/CustomComponents/checkbox2';
-import GridNumber200 from '@/components/ui/CustomComponents/GridNumber200';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Trash } from 'lucide-react';
-import React from 'react';
-import { ReportQuestion } from '../Report';
-import SingleBreastPositionPicker from '@/components/ui/CustomComponents/SingleBreastPositionPicker';
-
+import { Button } from "@/components/ui/button";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Trash } from "lucide-react";
+import React from "react";
+import { ReportQuestion } from "../Report";
+import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 
 interface Props {
-    reportFormData: ReportQuestion[];
-    handleReportInputChange: (questionId: number, value: string) => void;
-    LabelVal: string;
-    mainQId: number;
-    DataQId: number;
+  reportFormData: ReportQuestion[];
+  handleReportInputChange: (questionId: number, value: string) => void;
+  LabelVal: string;
+  mainQId: number;
+  DataQId: number;
+  other?: boolean;
 }
 
 const LesionsOptions: React.FC<Props> = ({
-    reportFormData,
-    handleReportInputChange,
-    LabelVal,
-    mainQId,
-    DataQId
+  reportFormData,
+  handleReportInputChange,
+  LabelVal,
+  mainQId,
+  DataQId,
+  other,
 }) => {
+  const getAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-    const getAnswer = (id: number) =>
-        reportFormData.find((q) => q.questionId === id)?.answer || "";
-
-    return (
-        <>
+  return (
+    <>
+      <div>
+        <div className="lg:px-10 space-y-4">
+          <div className="flex h-[auto] lg:h-[40px] gap-4 items-center">
             <div>
-                <div className="lg:px-10 space-y-4">
-                    <div className="flex h-[auto] lg:h-[40px] gap-4 items-center">
-                        <div>
-                            <Checkbox2
-                                checked={getAnswer(mainQId) === "Present"}
-                                onCheckedChange={(checked) =>
-                                    handleReportInputChange(
-                                        mainQId,
-                                        checked ? "Present" : ""
-                                    )
-                                }
-                            />
-                        </div>
-                        <Label className="font-bold text-base flex flex-wrap lg:items-center">
-                            {LabelVal}
-                        </Label>
-                        {
-                            getAnswer(mainQId) == "Present" && (
-                                <Button
-                                    className="bg-[#a4b2a1] hover:bg-[#a4b2a1]"
-                                    onClick={() => {
-                                        let data: {
-                                            locationclockposition: string,
-                                            locationLevel: string,
-                                            locationLevelPercentage: string,
-                                            distancenipple: string,
-                                            size: string,
-                                            Shape: string,
-                                            Margins: string,
-                                            density: string,
-                                            Transmissionspped: string,
-                                            Internal: string,
-                                            debris: string,
-                                            shadowing: string,
-                                        }[] = [];
-
-                                        try {
-                                            const existing = getAnswer(DataQId);
-                                            data = existing ? JSON.parse(existing) : [];
-                                        } catch (err) {
-                                            console.error("Invalid JSON:", err);
-                                            data = [];
-                                        }
-
-                                        const updated = [
-                                            ...data,
-                                            {
-                                                locationclockposition: "",
-                                                locationLevel: "",
-                                                locationLevelPercentage: "",
-                                                distancenipple: "",
-                                                size: "",
-                                                Shape: "",
-                                                Margins: "",
-                                                density: "",
-                                                Transmissionspped: "",
-                                                debris: "",
-                                                shadowing: "",
-                                            }
-                                        ];
-                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                    }}
-                                >
-                                    Add
-                                </Button>
-                            )
-                        }
-                    </div>
-
-                    {
-                        getAnswer(mainQId) == "Present" && (
-                            <>
-                                {(() => {
-                                    let dataArray: any[] = [];
-                                    try {
-                                        const raw = getAnswer(DataQId);
-                                        dataArray = raw ? JSON.parse(raw) : [];
-                                    } catch (err) {
-                                        console.error("Invalid JSON:", err);
-                                    }
-
-                                    return dataArray.map((data, index) => (
-                                        <div key={index}>
-                                            <div className="flex gap-3 mb-5">
-                                                <div className="ml-[1rem] flex justify-center items-center w-[5%]">{index + 1}.</div>
-
-                                                <div className="w-[85%] flex flex-col space-y-3">
-                                                    {/* Location - Clock Position */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Location - Clock Position
-                                                            </Label>
-                                                            <div className="ml-[2rem] lg:ml-[0rem]">
-                                                                <SingleBreastPositionPicker
-                                                                    value={data.locationclockposition}
-                                                                    onChange={(e) => {
-                                                                        const updated = [...dataArray];
-                                                                        updated[index].locationclockposition = e;
-                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                    }}
-                                                                    singleSelect={true}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Location - Level */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Location - Level
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Coronal Level", value: "Coronal Level" },
-                                                                    { label: "Axial", value: "Axial" },
-                                                                    { label: "Sagital", value: "Sagital" }
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Level-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`levelquestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.locationLevel === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].locationLevel = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-
-                                                        {
-                                                            data.locationLevel === "Sagital" && (
-                                                                <div className="ml-[2rem] lg:ml-[26.5rem]">
-                                                                    <div className="w-full flex items-center gap-2">
-                                                                        <div>M - </div>
-                                                                        <div>
-                                                                            <GridNumber200
-                                                                                value={data.locationLevelPercentage}
-                                                                                onChange={(e) => {
-                                                                                    const updated = [...dataArray];
-                                                                                    updated[index].locationLevelPercentage = e;
-                                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        }
-                                                        {
-                                                            data.locationLevel === "Axial" && (
-                                                                <div className="ml-[2rem] lg:ml-[22rem]">
-                                                                    <div className="w-full flex items-center gap-2">
-                                                                        <div>S - </div>
-                                                                        <div>
-                                                                            <GridNumber200
-                                                                                value={data.locationLevelPercentage}
-                                                                                onChange={(e) => {
-                                                                                    const updated = [...dataArray];
-                                                                                    updated[index].locationLevelPercentage = e;
-                                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        }
-
-                                                        {
-                                                            data.locationLevel === "Coronal Level" && (
-                                                                <div className="ml-[2rem] lg:ml-[14rem]">
-                                                                    <div className="w-full flex items-center gap-2">
-                                                                        <div>P - </div>
-                                                                        <div>
-                                                                            <GridNumber200
-                                                                                value={data.locationLevelPercentage}
-                                                                                onChange={(e) => {
-                                                                                    const updated = [...dataArray];
-                                                                                    updated[index].locationLevelPercentage = e;
-                                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-
-                                                    {/* Distance from Nipple */}
-                                                    <div>
-                                                        <div className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}>
-                                                            <Label className="font-semibold text-base w-full lg:w-50 flex flex-wrap lg:items-center">
-                                                                <span>
-                                                                    Distance from Nipple
-                                                                </span>
-                                                            </Label>
-                                                            <Input
-                                                                type="number"
-                                                                className="w-20"
-                                                                placeholder="cm"
-                                                                value={data.distancenipple}
-                                                                onChange={(e) => {
-                                                                    const updated = [...dataArray];
-                                                                    updated[index].distancenipple = e.target.value;
-                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                }}
-                                                            />
-                                                            <div className="flex items-center ml-[1rem]">
-                                                                cm
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Size */}
-                                                    <div>
-                                                        <div className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}>
-                                                            <Label className="font-semibold text-base w-full lg:w-50 flex flex-wrap lg:items-center">
-                                                                <span>
-                                                                    Size
-                                                                </span>
-                                                            </Label>
-                                                            <Input
-                                                                type="number"
-                                                                className="w-20"
-                                                                placeholder="mm"
-                                                                value={data.size}
-                                                                onChange={(e) => {
-                                                                    const updated = [...dataArray];
-                                                                    updated[index].size = e.target.value;
-                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                }}
-                                                            />
-                                                            <div className="flex items-center ml-[1rem]">
-                                                                mm
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Shape */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Shape
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Round", value: "round" },
-                                                                    { label: "Oval", value: "oval" },
-                                                                    { label: "Irregular", value: "irregular" }
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Shape-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`shapequestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.Shape === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].Shape = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Margins */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Margins
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Circumscribed", value: "circumscribed" },
-                                                                    { label: "Microlobulated", value: "microlobulated" },
-                                                                    { label: "Indistinct", value: "indistinct" },
-                                                                    { label: "Obscured", value: "obscured" },
-                                                                    { label: "Spiculated", value: "spiculated" },
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:min-h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Margins-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`marginsquestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.Margins === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].Margins = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Density/Echogenicity */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Density/Echogenicity
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Hypoechoic", value: "hypoechoic" },
-                                                                    { label: "Isoechoic", value: "isoechoic" },
-                                                                    { label: "Hyperechoic", value: "hyperechoic" },
-                                                                    { label: "Complex", value: "complex" },
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Density-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`densityquestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.density === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].density = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Transmission Speed */}
-                                                    <div>
-                                                        <div className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}>
-                                                            <Label className="font-semibold text-base w-full lg:w-50 flex flex-wrap lg:items-center">
-                                                                <span>
-                                                                    Transmission Speed
-                                                                </span>
-                                                            </Label>
-                                                            <Input
-                                                                type="number"
-                                                                className="w-20"
-                                                                placeholder="m/s"
-                                                                value={data.Transmissionspped}
-                                                                onChange={(e) => {
-                                                                    const updated = [...dataArray];
-                                                                    updated[index].Transmissionspped = e.target.value;
-                                                                    handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                }}
-                                                            />
-                                                            <div className="flex items-center ml-[1rem]">
-                                                                (m/s)
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Internal debris */}
-                                                    <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Internal debris / Shadowing
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Present", value: "present" },
-                                                                    { label: "Not present", value: "not present" },
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Internal-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`internalquestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.debris === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].debris = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div>
-
-
-                                                    {/* shadowing */}
-                                                    {/* <div>
-                                                        <div
-                                                            className={"flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"}
-                                                        >
-                                                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                                                                Shadowing
-                                                            </Label>
-                                                            {
-                                                                [
-                                                                    { label: "Present", value: "present" },
-                                                                    { label: "Not present", value: "not present" },
-                                                                ].map((item, indexVal) => (
-                                                                    <>
-                                                                        <div
-                                                                            className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center"
-                                                                        >
-                                                                            <div key={item.value} className="flex h-auto lg:h-[40px]  items-center gap-2">
-                                                                                <input
-                                                                                    type="radio"
-                                                                                    id={`Shadowing-${mainQId}-${index}-${indexVal}`}
-                                                                                    name={`shadowingquestion-${mainQId}-${index}`}
-                                                                                    value={item.value}
-                                                                                    checked={data.shadowing === item.value}
-                                                                                    onChange={() => {
-                                                                                        const updated = [...dataArray];
-                                                                                        updated[index].shadowing = item.value;
-                                                                                        console.log(updated)
-                                                                                        handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                                                    }
-                                                                                    }
-                                                                                    required={true}
-                                                                                    className="custom-radio"
-                                                                                />
-                                                                                <Label htmlFor={indexVal.toString()}>{item.label}</Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </div>
-                                                    </div> */}
-                                                </div>
-
-                                                <div className="w-[10%] flex justify-center items-center">
-                                                    <Trash
-                                                        className="text-[red] w-5 h-5 cursor-pointer"
-                                                        onClick={() => {
-                                                            const updated = dataArray.filter((_, i) => i !== index);
-                                                            handleReportInputChange(DataQId, JSON.stringify(updated));
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                            {
-                                                index !== dataArray.length - 1 && (
-                                                    <hr />
-                                                )
-                                            }
-                                        </div>
-                                    ));
-                                })()}
-                            </>
-                        )
-                    }
-
-
-                </div>
+              <Checkbox2
+                checked={getAnswer(mainQId) === "Present"}
+                onCheckedChange={(checked) =>
+                  handleReportInputChange(mainQId, checked ? "Present" : "")
+                }
+              />
             </div>
-        </>
-    );
+            <Label className="font-bold text-base flex flex-wrap lg:items-center">
+              {LabelVal}
+            </Label>
+            {getAnswer(mainQId) == "Present" && (
+              <Button
+                className="bg-[#a4b2a1] hover:bg-[#a4b2a1]"
+                onClick={() => {
+                  let data: {
+                    name: string;
+                    locationclockposition: string;
+                    locationLevel: string;
+                    locationLevelPercentage: string;
+                    distancenipple: string;
+                    sizew: string;
+                    sizel: string;
+                    sizeh: string;
+                    Shape: string;
+                    Appearance: string;
+                    Margins: string;
+                    density: string;
+                    Transmissionspped: string;
+                    Internal: string;
+                    debris: string;
+                    shadowing: string;
+                    Volumne: string;
+                  }[] = [];
+
+                  try {
+                    const existing = getAnswer(DataQId);
+                    data = existing ? JSON.parse(existing) : [];
+                  } catch (err) {
+                    console.error("Invalid JSON:", err);
+                    data = [];
+                  }
+
+                  const updated = [
+                    ...data,
+                    {
+                      name: "",
+                      locationclockposition: "",
+                      locationLevel: "",
+                      locationLevelPercentage: "",
+                      distancenipple: "",
+                      sizew: "",
+                      sizel: "",
+                      sizeh: "",
+                      Shape: "",
+                      Appearance: "",
+                      Margins: "",
+                      density: "",
+                      Transmissionspped: "",
+                      debris: "",
+                      shadowing: "",
+                      Volumne: "",
+                    },
+                  ];
+                  handleReportInputChange(DataQId, JSON.stringify(updated));
+                }}
+              >
+                Add
+              </Button>
+            )}
+          </div>
+
+          {getAnswer(mainQId) == "Present" && (
+            <>
+              {(() => {
+                let dataArray: any[] = [];
+                try {
+                  const raw = getAnswer(DataQId);
+                  dataArray = raw ? JSON.parse(raw) : [];
+                } catch (err) {
+                  console.error("Invalid JSON:", err);
+                }
+
+                return dataArray.map((data, index) => (
+                  <div key={index}>
+                    <div className="flex gap-3 mb-5">
+                      <div className="ml-[1rem] flex justify-center items-start mt-0 lg:mt-2 w-[5%]">
+                        {index + 1}.
+                      </div>
+
+                      <div className="w-[85%] flex flex-col space-y-6">
+                        {other && (
+                          <>
+                            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                              <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                                Name
+                              </Label>
+                              <div className="flex items-center gap-2 flex-grow">
+                                <Input
+                                  type="text"
+                                  className="w-40"
+                                  placeholder="Specify"
+                                  value={data.name}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index].name = e.target.value;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        {/* 1. Location - Clock Position */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Location - Clock Position
+                          </Label>
+                          <div className="w-full">
+                            <SingleBreastPositionPicker
+                              value={data.locationclockposition}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].locationclockposition = e;
+                                handleReportInputChange(
+                                  DataQId,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                              singleSelect={true}
+                            />
+                          </div>
+                        </div>
+
+                        {/* 2. Location - Level */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                            <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                              Location - Level
+                            </Label>
+                            <div className="flex flex-wrap gap-3">
+                              {["Coronal Level", "Axial", "Sagital"].map(
+                                (level, i) => (
+                                  <div
+                                    key={level}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      id={`Level-${mainQId}-${index}-${i}`}
+                                      name={`levelquestion-${mainQId}-${index}`}
+                                      value={level}
+                                      checked={data.locationLevel === level}
+                                      onChange={() => {
+                                        const updated = [...dataArray];
+                                        updated[index].locationLevel = level;
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
+                                      required
+                                      className="custom-radio"
+                                    />
+                                    <Label
+                                      htmlFor={`Level-${mainQId}-${index}-${i}`}
+                                    >
+                                      {level}
+                                    </Label>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                          {["Sagital", "Axial", "Coronal Level"].includes(
+                            data.locationLevel
+                          ) && (
+                            <div
+                              className={
+                                "flex items-center gap-2 mt-2 lg:mt-0" +
+                                (data.locationLevel === "Sagital"
+                                  ? " lg:ml-[26.5rem]"
+                                  : data.locationLevel === "Axial"
+                                  ? " lg:ml-[22rem]"
+                                  : " lg:ml-[14rem]")
+                              }
+                            >
+                              <span>
+                                {data.locationLevel === "Sagital"
+                                  ? "M -"
+                                  : data.locationLevel === "Axial"
+                                  ? "S -"
+                                  : "P -"}
+                              </span>
+                              <GridNumber200
+                                value={data.locationLevelPercentage}
+                                onChange={(e) => {
+                                  const updated = [...dataArray];
+                                  updated[index].locationLevelPercentage = e;
+                                  handleReportInputChange(
+                                    DataQId,
+                                    JSON.stringify(updated)
+                                  );
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Distance from Nipple */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Distance from Nipple
+                          </Label>
+                          <div className="flex items-center gap-2 flex-grow">
+                            <Input
+                              type="number"
+                              className="w-20"
+                              placeholder="cm"
+                              value={data.distancenipple}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].distancenipple = e.target.value;
+                                handleReportInputChange(
+                                  DataQId,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                            />
+                            <span className="text-sm">cm</span>
+                          </div>
+                        </div>
+
+                        {/* 4. Size */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Size
+                          </Label>
+                          <div className="flex flex-col sm:flex-row gap-4">
+                            {[
+                              { label: "W", key: "sizew" },
+                              { label: "L", key: "sizel" },
+                              { label: "H", key: "sizeh" },
+                            ].map((dim, i) => (
+                              <div
+                                key={dim.key}
+                                className="flex items-center gap-1"
+                              >
+                                <span className="w-6 text-sm font-bold flex justify-center">
+                                  {dim.label}
+                                </span>
+                                <Input
+                                  type="number"
+                                  className="w-20"
+                                  placeholder="mm"
+                                  value={data[dim.key] || ""}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index][dim.key] = e.target.value;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                />
+                                {i < 2 && (
+                                  <span className="w-6 text-sm font-bold flex justify-center">
+                                    X
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 5. Shape */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Shape
+                          </Label>
+                          <div className="flex flex-wrap gap-3">
+                            {["Round", "Oval", "Irregular"].map((shape, i) => (
+                              <div
+                                key={shape}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  id={`Shape-${mainQId}-${index}-${i}`}
+                                  name={`shapequestion-${mainQId}-${index}`}
+                                  value={shape.toLowerCase()}
+                                  checked={data.Shape === shape.toLowerCase()}
+                                  onChange={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].Shape = shape.toLowerCase();
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  required
+                                  className="custom-radio"
+                                />
+                                <Label
+                                  htmlFor={`Shape-${mainQId}-${index}-${i}`}
+                                >
+                                  {shape}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 6. Appearance */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Appearance
+                          </Label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              { label: "Heterogenous", value: "heterogenous" },
+                              { label: "Homogenous", value: "homogenous" },
+                            ].map((item, i) => (
+                              <div
+                                key={item.value}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  id={`Appearance-${mainQId}-${index}-${i}`}
+                                  name={`appearancequestion-${mainQId}-${index}`}
+                                  value={item.value}
+                                  checked={data.Appearance === item.value}
+                                  onChange={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].Appearance = item.value;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  required
+                                  className="custom-radio"
+                                />
+                                <Label
+                                  htmlFor={`Appearance-${mainQId}-${index}-${i}`}
+                                >
+                                  {item.label}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 7. Margins */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Margins
+                          </Label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              "Circumscribed",
+                              "Microlobulated",
+                              "Indistinct",
+                              "Obscured",
+                              "Spiculated",
+                              "Angular",
+                              "Irregular",
+                            ].map((m, i) => (
+                              <div key={m} className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  id={`Margins-${mainQId}-${index}-${i}`}
+                                  name={`marginsquestion-${mainQId}-${index}`}
+                                  value={m.toLowerCase()}
+                                  checked={data.Margins === m.toLowerCase()}
+                                  onChange={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].Margins = m.toLowerCase();
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  required
+                                  className="custom-radio"
+                                />
+                                <Label
+                                  htmlFor={`Margins-${mainQId}-${index}-${i}`}
+                                >
+                                  {m}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 8. Density/Echogenicity */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Density/Echogenicity
+                          </Label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              "Hypoechoic",
+                              "Isoechoic",
+                              "Hyperechoic",
+                              "Complex",
+                            ].map((d, i) => (
+                              <div key={d} className="flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  id={`Density-${mainQId}-${index}-${i}`}
+                                  name={`densityquestion-${mainQId}-${index}`}
+                                  value={d.toLowerCase()}
+                                  checked={data.density === d.toLowerCase()}
+                                  onChange={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].density = d.toLowerCase();
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  required
+                                  className="custom-radio"
+                                />
+                                <Label
+                                  htmlFor={`Density-${mainQId}-${index}-${i}`}
+                                >
+                                  {d}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 9. Transmission Speed */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Transmission Speed
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              className="w-20"
+                              placeholder="m/s"
+                              value={data.Transmissionspped}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].Transmissionspped =
+                                  e.target.value;
+                                handleReportInputChange(
+                                  DataQId,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                            />
+                            <span className="text-sm">(m/s)</span>
+                          </div>
+                        </div>
+
+                        {/* 10. Internal debris / Shadowing */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Internal debris / Shadowing
+                          </Label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              { label: "Present", value: "present" },
+                              { label: "Not present", value: "not present" },
+                            ].map((item, i) => (
+                              <div
+                                key={item.value}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  id={`Internal-${mainQId}-${index}-${i}`}
+                                  name={`internalquestion-${mainQId}-${index}`}
+                                  value={item.value}
+                                  checked={data.debris === item.value}
+                                  onChange={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].debris = item.value;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  required
+                                  className="custom-radio"
+                                />
+                                <Label
+                                  htmlFor={`Internal-${mainQId}-${index}-${i}`}
+                                >
+                                  {item.label}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 11. Volume */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Volume
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              className="w-20"
+                              placeholder=""
+                              value={data.Volumne}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].Volumne = e.target.value;
+                                handleReportInputChange(
+                                  DataQId,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                            />
+                            <span className="text-sm">cubic mm</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="w-[10%] flex justify-center items-start mt-0 lg:mt-2">
+                        <Trash
+                          className="text-[red] w-5 h-5 cursor-pointer"
+                          onClick={() => {
+                            const updated = dataArray.filter(
+                              (_, i) => i !== index
+                            );
+                            handleReportInputChange(
+                              DataQId,
+                              JSON.stringify(updated)
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {index !== dataArray.length - 1 && <hr />}
+                  </div>
+                ));
+              })()}
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default LesionsOptions;

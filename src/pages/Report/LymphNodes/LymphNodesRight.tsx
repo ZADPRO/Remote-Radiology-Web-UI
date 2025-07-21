@@ -31,11 +31,10 @@ const LymphNodesRight: React.FC<Props> = ({
   label,
   axilaryLabel,
 }) => {
-
   useEffect(() => {
     if (!reportFormData || reportFormData.length === 0) return;
-    getAnswer(questionIds.Intramammaryr) === "" &&
-      handleReportInputChange(questionIds.Intramammaryr, "Present");
+    // getAnswer(questionIds.Intramammaryr) === "" &&
+    //   handleReportInputChange(questionIds.Intramammaryr, "Present");
     getAnswer(questionIds.IntramammaryDatar) === "" &&
       handleReportInputChange(
         questionIds.IntramammaryDatar,
@@ -89,7 +88,7 @@ const LymphNodesRight: React.FC<Props> = ({
           <div>
             <div
               className={
-                "flex flex-wrap gap-0 h-auto lg:h-[40px] items-start lg:items-center"
+                "flex gap-0 h-auto lg:h-[40px] items-center mb-5 lg:mb-0 lg:items-center"
               }
             >
               <Label className="font-semibold text-base w-full lg:w-50 flex flex-wrap lg:items-center">
@@ -142,14 +141,12 @@ const LymphNodesRight: React.FC<Props> = ({
               return dataArray.map((data, index) => (
                 <>
                   <div>
-                    <div
-                      className={
-                        "flex my-2 ml-4 flex-wrap gap-4 items-start lg:items-center"
-                      }
-                    >
-                      <div className="w-[5%]">{index + 1}</div>
-                      <div className="w-[80%]">
-                        <div className="flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center">
+                    <div className={"flex my-2 ml-4 gap-4 items-start"}>
+                      <div className="ml-[1rem] flex justify-center items-start mt-0 lg:mt-2 w-[5%]">
+                        {index + 1}.
+                      </div>
+                      <div className="w-[80%] flex flex-col gap-4">
+                        <div className="flex flex-wrap gap-3 h-auto min-h-[40px] items-start lg:items-center">
                           {[
                             {
                               label: "Benign Morphology",
@@ -169,178 +166,143 @@ const LymphNodesRight: React.FC<Props> = ({
                               value: "not visualized",
                             },
                           ].map((item, indexVal) => (
-                            <>
-                              <div className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center">
-                                <div
-                                  key={item.value}
-                                  className="flex h-auto lg:h-[40px]  items-center gap-2"
-                                >
-                                  <input
-                                    type="radio"
-                                    id={`option-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
-                                    name={`optionquestion-${questionIds.IntramammaryDatar}-${index}`}
-                                    value={item.value}
-                                    checked={data.locationLevel === item.value}
-                                    onChange={() => {
-                                      const updated = [...dataArray];
-                                      updated[index].locationLevel = item.value;
-                                      handleReportInputChange(
-                                        questionIds.IntramammaryDatar,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                    required={true}
-                                    className="custom-radio"
-                                  />
-                                  <Label htmlFor={indexVal.toString()}>
-                                    {item.label}
-                                  </Label>
-                                </div>
-                              </div>
-                            </>
-                          ))}
-                        </div>
-                        {/* Location - Clock Position */}
-                        <div>
-                          <div
-                            className={
-                              "flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"
-                            }
-                          >
-                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                              Location - Clock Position
-                            </Label>
-                            <div className="ml-[2rem] lg:ml-[0rem]">
-                              <SingleBreastPositionPicker
-                                value={data.position}
-                                onChange={(e) => {
+                            <div
+                              key={item.value}
+                              className="flex items-center gap-2 h-auto min-h-[32px]"
+                            >
+                              <input
+                                type="radio"
+                                id={`option-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
+                                name={`optionquestion-${questionIds.IntramammaryDatar}-${index}`}
+                                value={item.value}
+                                checked={data.locationLevel === item.value}
+                                onChange={() => {
                                   const updated = [...dataArray];
-                                  updated[index].position = e;
+                                  updated[index].locationLevel = item.value;
                                   handleReportInputChange(
                                     questionIds.IntramammaryDatar,
                                     JSON.stringify(updated)
                                   );
                                 }}
-                                singleSelect={true}
+                                required
+                                className="custom-radio"
                               />
+                              <Label
+                                htmlFor={`option-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
+                              >
+                                {item.label}
+                              </Label>
                             </div>
+                          ))}
+                        </div>
+
+                        {/* Location - Clock Position */}
+                        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center min-h-[40px]">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Location - Clock Position
+                          </Label>
+                          <div className="w-full">
+                            <SingleBreastPositionPicker
+                              value={data.position}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].position = e;
+                                handleReportInputChange(
+                                  questionIds.IntramammaryDatar,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                              singleSelect={true}
+                            />
                           </div>
                         </div>
 
                         {/* Location - Level */}
-                        <div>
-                          <div
-                            className={
-                              "flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"
-                            }
-                          >
-                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
+                        <div className="flex flex-col gap-2 min-h-[40px]">
+                          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center ">
+                            <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                               Location - Level
                             </Label>
-                            {[
-                              {
-                                label: "Coronal Level",
-                                value: "Coronal Level",
-                              },
-                              { label: "Axial", value: "Axial" },
-                              { label: "Sagital", value: "Sagital" },
-                            ].map((item, indexVal) => (
-                              <>
-                                <div className="flex flex-wrap gap-4 h-auto lg:h-[40px] items-start lg:items-center">
-                                  <div
-                                    key={item.value}
-                                    className="flex h-auto lg:h-[40px]  items-center gap-2"
+
+                            {/* Radios, side-by-side, wrapped on mobile */}
+                            <div className="flex flex-wrap gap-3">
+                              {[
+                                {
+                                  label: "Coronal Level",
+                                  value: "Coronal Level",
+                                },
+                                { label: "Axial", value: "Axial" },
+                                { label: "Sagital", value: "Sagital" },
+                              ].map((item, indexVal) => (
+                                <div
+                                  key={item.value}
+                                  className="flex items-center gap-2 min-h-[32px]"
+                                >
+                                  <input
+                                    type="radio"
+                                    id={`Level-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
+                                    name={`levelquestion-${questionIds.IntramammaryDatar}-${index}`}
+                                    value={item.value}
+                                    checked={data.level === item.value}
+                                    onChange={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].level = item.value;
+                                      handleReportInputChange(
+                                        questionIds.IntramammaryDatar,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    required
+                                    className="custom-radio"
+                                  />
+                                  <Label
+                                    htmlFor={`Level-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
                                   >
-                                    <input
-                                      type="radio"
-                                      id={`Level-${questionIds.IntramammaryDatar}-${index}-${indexVal}`}
-                                      name={`levelquestion-${questionIds.IntramammaryDatar}-${index}`}
-                                      value={item.value}
-                                      checked={data.level === item.value}
-                                      onChange={() => {
-                                        const updated = [...dataArray];
-                                        updated[index].level = item.value;
-                                        handleReportInputChange(
-                                          questionIds.IntramammaryDatar,
-                                          JSON.stringify(updated)
-                                        );
-                                      }}
-                                      required={true}
-                                      className="custom-radio"
-                                    />
-                                    <Label htmlFor={indexVal.toString()}>
-                                      {item.label}
-                                    </Label>
-                                  </div>
+                                    {item.label}
+                                  </Label>
                                 </div>
-                              </>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-
-                          {data.level === "Sagital" && (
-                            <div className="ml-[2rem] lg:ml-[26.5rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>M - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.IntramammaryDatar,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
+                          <div>
+                            {/* Conditional Level Percentage field */}
+                            {["Sagital", "Axial", "Coronal Level"].includes(
+                              data.level
+                            ) && (
+                              <div
+                                className={
+                                  "flex items-center gap-2" +
+                                  (data.level === "Sagital"
+                                    ? " lg:ml-[26.5rem]"
+                                    : data.level === "Axial"
+                                    ? " lg:ml-[22rem]"
+                                    : " lg:ml-[14.5rem]")
+                                }
+                              >
+                                <span>
+                                  {data.level === "Sagital"
+                                    ? "M -"
+                                    : data.level === "Axial"
+                                    ? "S -"
+                                    : "P -"}
+                                </span>
+                                <GridNumber200
+                                  value={data.levelpercentage}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index].levelpercentage = e;
+                                    handleReportInputChange(
+                                      questionIds.IntramammaryDatar,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                />
                               </div>
-                            </div>
-                          )}
-                          {data.level === "Axial" && (
-                            <div className="ml-[2rem] lg:ml-[22rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>S - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.IntramammaryDatar,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {data.level === "Coronal Level" && (
-                            <div className="ml-[2rem] lg:ml-[14rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>P - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.IntramammaryDatar,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className="w-[5%]">
+                      <div className="w-[10%] flex justify-center items-start mt-0 lg:mt-2">
                         <Trash
                           className="text-[red] w-5 h-5 cursor-pointer"
                           onClick={() => {
@@ -391,7 +353,7 @@ const LymphNodesRight: React.FC<Props> = ({
           <div>
             <div
               className={
-                "flex flex-wrap gap-3 h-auto lg:h-[40px] items-start lg:items-center"
+                "flex gap-3 h-auto lg:h-[40px] items-center mb-5 lg:mb-0 lg:items-center"
               }
             >
               <div>
@@ -399,19 +361,13 @@ const LymphNodesRight: React.FC<Props> = ({
                   checked={
                     getAnswer(questionIds.ClipsPresentStatus) === "Present"
                   }
-                  onCheckedChange={(checked) =>
-                  {
-                     handleReportInputChange(
+                  onCheckedChange={(checked) => {
+                    handleReportInputChange(
                       questionIds.ClipsPresentStatus,
                       checked ? "Present" : ""
                     );
-                    handleReportInputChange(
-                      questionIds.ClipsPresentdata,
-                      ""                      
-                    )
-                  }
-                   
-                  }
+                    handleReportInputChange(questionIds.ClipsPresentdata, "");
+                  }}
                 />
               </div>
               <Label className="font-semibold text-base w-full lg:w-40 flex flex-wrap lg:items-center">
@@ -467,149 +423,113 @@ const LymphNodesRight: React.FC<Props> = ({
                   <div>
                     <div
                       className={
-                        "flex my-2 ml-4 flex-wrap gap-4 items-start lg:items-center"
+                        "flex my-2 ml-4 gap-4 items-start lg:items-center"
                       }
                     >
                       <div className="w-[5%]">{index + 1}</div>
-                      <div className="w-[80%]">
+                      <div className="w-[80%] flex flex-col gap-4">
                         {/* Location - Clock Position */}
-                        <div>
-                          <div
-                            className={
-                              "flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"
-                            }
-                          >
-                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
-                              Location - Clock Position
-                            </Label>
-                            <div className="ml-[2rem] lg:ml-[0rem]">
-                              <SingleBreastPositionPicker
-                                value={data.position}
-                                onChange={(e) => {
-                                  const updated = [...dataArray];
-                                  updated[index].position = e;
-                                  handleReportInputChange(
-                                    questionIds.ClipsPresentdata,
-                                    JSON.stringify(updated)
-                                  );
-                                }}
-                                singleSelect={true}
-                              />
-                            </div>
+                        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center min-h-[40px]">
+                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                            Location - Clock Position
+                          </Label>
+                          <div className="w-full">
+                            <SingleBreastPositionPicker
+                              value={data.position}
+                              onChange={(e) => {
+                                const updated = [...dataArray];
+                                updated[index].position = e;
+                                handleReportInputChange(
+                                  questionIds.ClipsPresentdata,
+                                  JSON.stringify(updated)
+                                );
+                              }}
+                              singleSelect={true}
+                            />
                           </div>
                         </div>
 
                         {/* Location - Level */}
-                        <div>
-                          <div
-                            className={
-                              "flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center"
-                            }
-                          >
-                            <Label className="font-semibold w-auto lg:w-50 text-base flex flex-wrap lg:items-center">
+                        <div className="flex flex-col gap-2 min-h-[40px]">
+                          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+                            <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                               Location - Level
                             </Label>
-                            {[
-                              {
-                                label: "Coronal Level",
-                                value: "Coronal Level",
-                              },
-                              { label: "Axial", value: "Axial" },
-                              { label: "Sagital", value: "Sagital" },
-                            ].map((item, indexVal) => (
-                              <>
-                                <div className="flex flex-wrap gap-4 h-auto lg:min-h-[40px] items-start lg:items-center">
-                                  <div
-                                    key={item.value}
-                                    className="flex h-auto lg:min-h-[40px]  items-center gap-2"
+                            <div className="flex flex-wrap gap-3">
+                              {[
+                                {
+                                  label: "Coronal Level",
+                                  value: "Coronal Level",
+                                },
+                                { label: "Axial", value: "Axial" },
+                                { label: "Sagital", value: "Sagital" },
+                              ].map((item, indexVal) => (
+                                <div
+                                  key={item.value}
+                                  className="flex items-center gap-2 min-h-[32px]"
+                                >
+                                  <input
+                                    type="radio"
+                                    id={`Level-${questionIds.ClipsPresentdata}-${index}-${indexVal}`}
+                                    name={`levelquestion-${questionIds.ClipsPresentdata}-${index}`}
+                                    value={item.value}
+                                    checked={data.level === item.value}
+                                    onChange={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].level = item.value;
+                                      handleReportInputChange(
+                                        questionIds.ClipsPresentdata,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    required
+                                    className="custom-radio"
+                                  />
+                                  <Label
+                                    htmlFor={`Level-${questionIds.ClipsPresentdata}-${index}-${indexVal}`}
                                   >
-                                    <input
-                                      type="radio"
-                                      id={`Level-${questionIds.ClipsPresentdata}-${index}-${indexVal}`}
-                                      name={`levelquestion-${questionIds.ClipsPresentdata}-${index}`}
-                                      value={item.value}
-                                      checked={data.level === item.value}
-                                      onChange={() => {
-                                        const updated = [...dataArray];
-                                        updated[index].level = item.value;
-                                        handleReportInputChange(
-                                          questionIds.ClipsPresentdata,
-                                          JSON.stringify(updated)
-                                        );
-                                      }}
-                                      required={true}
-                                      className="custom-radio"
-                                    />
-                                    <Label htmlFor={indexVal.toString()}>
-                                      {item.label}
-                                    </Label>
-                                  </div>
+                                    {item.label}
+                                  </Label>
                                 </div>
-                              </>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-
-                          {data.level === "Sagital" && (
-                            <div className="ml-[2rem] lg:ml-[26.5rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>M - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.ClipsPresentdata,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
+                          <div>
+                            {/* Level Percentage, only if one of the radios is selected */}
+                            {["Sagital", "Axial", "Coronal Level"].includes(
+                              data.level
+                            ) && (
+                              <div
+                                className={
+                                  "flex items-center gap-2 mt-2 lg:mt-0" +
+                                  (data.level === "Sagital"
+                                    ? " lg:ml-[26.5rem]"
+                                    : data.level === "Axial"
+                                    ? " lg:ml-[22rem]"
+                                    : " lg:ml-[14.5rem]")
+                                }
+                              >
+                                <span>
+                                  {data.level === "Sagital"
+                                    ? "M -"
+                                    : data.level === "Axial"
+                                    ? "S -"
+                                    : "P -"}
+                                </span>
+                                <GridNumber200
+                                  value={data.levelpercentage}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index].levelpercentage = e;
+                                    handleReportInputChange(
+                                      questionIds.ClipsPresentdata,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                />
                               </div>
-                            </div>
-                          )}
-                          {data.level === "Axial" && (
-                            <div className="ml-[2rem] lg:ml-[22rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>S - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.ClipsPresentdata,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {data.level === "Coronal Level" && (
-                            <div className="ml-[2rem] lg:ml-[14rem]">
-                              <div className="w-full flex items-center gap-2">
-                                <div>P - </div>
-                                <div>
-                                  <GridNumber200
-                                    value={data.levelpercentage}
-                                    onChange={(e) => {
-                                      const updated = [...dataArray];
-                                      updated[index].levelpercentage = e;
-                                      handleReportInputChange(
-                                        questionIds.ClipsPresentdata,
-                                        JSON.stringify(updated)
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="w-[5%]">

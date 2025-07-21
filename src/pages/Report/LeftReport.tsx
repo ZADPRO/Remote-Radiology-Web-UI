@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import BreastDensityandImageQualityRight from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
+import BreastDensityandImageQuality from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
 import NippleAreolaSkin from "./NippleAreolaSkin/NippleAreolaSkin";
 import GrandularAndDuctalTissueRight from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRight";
 import TextEditor from "@/components/TextEditor";
@@ -254,7 +254,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
           E. LEFT BREAST - DETAILED FINDINGS
         </Label>
       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
-        <BreastDensityandImageQualityRight
+        <BreastDensityandImageQuality
           label="BREAST DENSITY & IMAGE QUALITY (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
@@ -305,7 +305,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <NippleAreolaSkin
           label="NIPPLE, AREOLA & SKIN (Left)"
           reportFormData={reportFormData}
@@ -335,7 +335,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
         )}
       </div>
 
-      <div>
+      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <GrandularAndDuctalTissueRight
           label="Glandular And Ductal tissue (Left)"
           reportFormData={reportFormData}
@@ -363,7 +363,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <LisonsRight
           label="LESIONS (Left)"
           reportFormData={reportFormData}
@@ -390,7 +390,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <LymphNodesRight
           label="LYMPH NODES (Left)"
           axilaryLabel="Left Axillary Nodes"
@@ -418,7 +418,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <ComparisonPriorRight
           label="COMPARISON TO PRIOR STUDIES (Left)"
           reportFormData={reportFormData}

@@ -128,15 +128,15 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There is ${type.toLowerCase()} ${label} noted.`;
+      const base = `There is ${type.toLowerCase()} ${label} noted `;
       const distText =
         showDistribution && distribution
           ? `${
               label[0].toUpperCase() + label.slice(1)
-            } is noted with ${distribution.toLowerCase()} distribution.`
+            } with ${distribution.toLowerCase()} distribution.`
           : "";
       const location =
-        clock && level ? `${clock} o'clock in coronal location P${level}.` : "";
+        clock && level ? `at ${clock} o'clock in coronal location P${level}.` : "";
 
       return `<p>${base} ${distText} ${location}</p>`;
     })

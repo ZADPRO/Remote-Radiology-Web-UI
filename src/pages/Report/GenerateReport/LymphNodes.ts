@@ -46,7 +46,7 @@ export function LymphNodesGenerateString(
       }[];
 
       const sentences = intramammaryList.map((entry) =>
-        `There is ${entry.locationLevel} intramammary lymph node identified located ${entry.position}'o clock at ${entry.level} ${levelState(entry.level)}-${entry.levelpercentage}.`
+        `There is ${entry.locationLevel} intramammary lymph node identified located ${entry.position}'o clock at ${entry.level.toLocaleLowerCase()} ${levelState(entry.level)}-${entry.levelpercentage}.`
       );
 
       result += sentences.join(" ") + " ";

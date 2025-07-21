@@ -172,4 +172,28 @@ export const reportService = {
     console.log(decryptedData);
     return decryptedData;
   },
+
+   getPatientReport: async (id: number, appintmentId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: id, appintmentId: appintmentId }, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/intakeform/getReportData`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      RTCText: string;
+      status: boolean;
+    } = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
 };

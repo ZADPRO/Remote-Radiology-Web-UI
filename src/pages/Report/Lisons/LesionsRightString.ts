@@ -45,10 +45,10 @@ export function LesionsRightString(
                 const namePart = isOther ? `other ( ${data.name} )` : label;
 
                 html += `<span>There is a ${namePart} present at ${location}, located at ${level}${data.locationLevelPercentage}, 
-                    approximately ${data.distancenipple} cm from the nipple. The lesion is ${data.size} mm in size, 
-                    ${data.Shape} shaped, with ${data.Margins} margins and ${data.density} echotexture. 
+                    approximately ${data.distancenipple} cm from the nipple. The lesion is ${data.sizew} mm (width) × ${data.sizel} mm (length) × ${data.sizeh} mm (height) in size, 
+                    ${data.Shape} shaped, ${data.Appearance} apprearance, with ${data.Margins} margins and ${data.density} echotexture. 
                     Transmission speed is measured at ${data.Transmissionspped} m/s. 
-                    Internal debris: ${data.debris}. Shadowing: ${data.shadowing}.
+                    Internal debris: ${data.debris}. Volume is ${data.Volumne} cubic mm.
                 </span><br /><br />`;
             });
         } catch (err) {

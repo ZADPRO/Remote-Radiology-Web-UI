@@ -59,7 +59,7 @@ const NippleAreolaSkin: React.FC<Props> = ({
             onCheckedChange={(checked) =>
               handleReportInputChange(
                 questionIds.nippleSelect,
-                checked ? "Present" : ""
+                checked ? "Present" : "Absent"
               )
             }
             className="w-5 h-5 mt-1"
