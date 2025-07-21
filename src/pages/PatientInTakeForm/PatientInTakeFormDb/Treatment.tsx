@@ -44,12 +44,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const Treatment: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -57,7 +59,7 @@ const Treatment: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Treatment" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
         {/* Treatment */}
         <TwoOptionRadioGroup
@@ -606,6 +608,7 @@ const Treatment: React.FC<Props> = ({
             </>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

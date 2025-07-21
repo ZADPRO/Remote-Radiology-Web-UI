@@ -8,6 +8,7 @@ import { uploadService } from "@/services/commonServices";
 import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { downloadDocumentFile } from "@/lib/commonUtlis";
 
 interface QuestionIds {
   previousBiopsy: number;
@@ -64,6 +65,8 @@ const Biopsy: React.FC<Props> = ({
       }
     }
   };
+
+    const getFile =  formData.find((q) => q.questionId === questionIds.reportDetails)?.file;
 
   return (
     <div className="flex flex-col h-full relative">
@@ -131,6 +134,7 @@ const Biopsy: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
+                      disabledDates={(date) => date > new Date()}
                       required={showBiopsyDetails}
                     />
                   </div>
@@ -299,9 +303,20 @@ const Biopsy: React.FC<Props> = ({
                           Upload File
                         </label>
                         {(selectedFileName || uploadedFileName) && (
-                          <span className="text-sm">
-                            {selectedFileName || uploadedFileName}
-                          </span>
+                          <span
+                                          className={`text-sm ${uploadedFileName && "pointer-events-auto cursor-pointer"}`}
+                                          onClick={() => {
+                                            console.log(getFile);
+                                            getFile &&
+                                              downloadDocumentFile(
+                                                getFile?.base64Data,
+                                                getFile?.contentType,
+                                                "Report"
+                                              );
+                                          }}
+                                        >
+                                          {selectedFileName || uploadedFileName}
+                                        </span>
                         )}
                       </div>
                     </div>

@@ -71,7 +71,7 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
           const id = `opt-${questionId}-${value}`;
           const isSelected = selectedValue === value;
           return (
-            <div key={value} className="flex items-center gap-2">
+            <div key={value} className="flex items-center gap-2 min-h-10">
               <input
                 type="radio"
                 id={id}

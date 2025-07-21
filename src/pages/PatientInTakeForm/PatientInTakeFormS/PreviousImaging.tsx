@@ -157,6 +157,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                     val?.toLocaleDateString("en-CA") || ""
                   )
                 }
+                disabledDates={(date) => date > new Date()}
                 required={showDetails}
               />
             </div>
@@ -219,6 +220,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
             <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100">
               <input
                 type="file"
+                accept=".pdf"
                 className="sr-only"
                 onChange={handleFileChange}
                 required={!(selectedFileName || uploadedFileName)}
@@ -227,7 +229,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
             </label>
             {(selectedFileName || uploadedFileName) && (
               <span
-                className="text-sm"
+                className={`text-sm ${uploadedFileName && "pointer-events-auto cursor-pointer"}`}
                 onClick={() => {
                   getFile &&
                     downloadDocumentFile(

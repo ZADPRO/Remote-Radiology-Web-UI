@@ -19,12 +19,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const CancerHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -34,7 +36,7 @@ const CancerHistory: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Cancer History" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <MultiOptionRadioGroup
           label="A. Do you have any history of breast cancer?"
@@ -78,6 +80,7 @@ const CancerHistory: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={(date) => date > new Date()}
             />
           </div>
         </div>
@@ -131,6 +134,7 @@ const CancerHistory: React.FC<Props> = ({
             className="w-78 text-sm"
           />
         </div>
+      </div>
       </div>
     </div>
   );

@@ -32,7 +32,8 @@ interface QuestionIds {
   skinDate: number;
   skinDateRight: number;
   skinDetails: number;
-  skinDetailsRight: number;
+  skinOther: number;
+  skinOtherRight: number;
   skinChangesType: number;
   skinChangesTypeRight: number;
   nippleDischarge: number;
@@ -145,7 +146,8 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.skinDetails}
-                OtherInputQIDRight={Props.questionIds.skinDetailsRight}
+                skinOther={Props.questionIds.skinOther}
+                skinOtherRight={Props.questionIds.skinOtherRight}
               />
               <Separator className="bg-[#a4b2a1]" />
               <BreastInputWithout

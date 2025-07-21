@@ -53,12 +53,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const BiopsyorCancer: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -75,9 +77,9 @@ const BiopsyorCancer: React.FC<Props> = ({
     }
   ) => {
     return (
-      <div>
-        <Label className="font-semibold text-base">{prefix} - Quadrant</Label>
-        <div className="flex flex-wrap gap-5 mt-2">
+      <div className="space-y-4">
+        <Label className="font-semibold text-base">Quadrant</Label>
+        <div className="flex flex-wrap gap-5 mt-2 pl-4">
           {[
             ["Upper Outer", questionIds.upperOuter],
             ["Upper Inner", questionIds.upperInner],
@@ -88,6 +90,7 @@ const BiopsyorCancer: React.FC<Props> = ({
           ].map(([label, id]) => (
             <div className="flex items-center gap-3" key={label}>
               <Checkbox2
+                name={`${prefix}-${label}}`}
                 checked={getAnswer(id as number) === "true"}
                 onCheckedChange={(checked) =>
                   handleInputChange(id as number, checked ? "true" : "")
@@ -109,11 +112,11 @@ const BiopsyorCancer: React.FC<Props> = ({
     const isKnown = getAnswer(statusId) === "known";
 
     return (
-      <div>
+      <div className="space-y-4">
         <Label className="font-semibold text-base">
-          {prefix} - Clock Position
+          Clock Position
         </Label>
-        <div className="flex gap-4 items-center mt-2">
+        <div className="flex gap-4 items-center mt-2 pl-4">
           {["Unknown", "known"].map((val) => (
             <div className="flex items-center gap-2" key={val}>
               <input
@@ -154,11 +157,11 @@ const BiopsyorCancer: React.FC<Props> = ({
     const isKnown = getAnswer(statusId) === "known";
 
     return (
-      <div>
+      <div className="space-y-4">
         <Label className="font-semibold text-base">
-          {prefix} - Distance from Nipple
+          Distance from Nipple
         </Label>
-        <div className="flex gap-4 items-center mt-2">
+        <div className="flex gap-4 items-center mt-2 pl-4">
           {["Unknown", "known"].map((val) => (
             <div className="flex items-center gap-2" key={val}>
               <input
@@ -179,6 +182,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                 className="w-30"
                 value={getAnswer(valueId)}
                 onChange={(e) => handleInputChange(valueId, e.target.value)}
+                placeholder="Distance"
                 required
               />
               <Label className="text-sm font-semibold">cm</Label>
@@ -195,7 +199,7 @@ const BiopsyorCancer: React.FC<Props> = ({
         FormTitle="Biopsy or Cancer Diagnosis Details"
         className="uppercase"
       />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
         {/*A. Date of diagnosis */}
         <div className="flex flex-col lg:flex-row gap-2 lg:gap-5 mt-2">
@@ -215,6 +219,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={(date) => date > new Date()}
               required
             />
           </div>
@@ -359,7 +364,7 @@ const BiopsyorCancer: React.FC<Props> = ({
           <Label className="font-bold text-base">F. Location of cancer</Label>
           {/* a. Breast */}
           <div className="ml-4">
-            <Label className="font-semibold text-base mb-2">a. Breast</Label>
+            {/* <Label className="font-semibold text-base mb-2">a. Breast</Label> */}
             <div className="flex flex-col items-start gap-4 relative">
               <div className="flex items-center gap-2">
                 <Checkbox2
@@ -372,14 +377,14 @@ const BiopsyorCancer: React.FC<Props> = ({
                     )
                   }
                 />
-                <Label htmlFor="breastRight">Right</Label>
+                <Label htmlFor="breastRight">Right Breast</Label>
               </div>
               {/* --- RIGHT SIDE DETAILS --- */}
               {getAnswer(questionIds.breastRight) === "true" && (
                 <div className="ml-6 flex flex-col gap-4 border-b-2 border-gray-200 pb-4">
-                  <Label className="font-semibold text-base">
+                  {/* <Label className="font-semibold text-base">
                     Right Side Details
-                  </Label>
+                  </Label> */}
                   {/* Quadrant */}
                   {renderQuadrantSection("Right", {
                     upperOuter: questionIds.upperOuterQuadrantRight,
@@ -408,7 +413,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                   <div className="flex flex-col gap-3">
                     <MultiOptionRadioGroup
                       label="Lymph node involvement"
-                      questionId={questionIds.Lymph}
+                      questionId={questionIds.LymphRight}
                       handleInputChange={handleInputChange}
                       formData={formData}
                       options={[
@@ -451,7 +456,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                   <div className="flex flex-col gap-3">
                     <MultiOptionRadioGroup
                       label="Metastasis"
-                      questionId={questionIds.Metastasis}
+                      questionId={questionIds.MetastasisRight}
                       handleInputChange={handleInputChange}
                       formData={formData}
                       options={[
@@ -462,7 +467,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                       required
                     />
 
-                    {getAnswer(questionIds.Metastasis) === "Yes" && (
+                    {getAnswer(questionIds.MetastasisRight) === "Yes" && (
                       <>
                         <div className="ml-6 -mt-2">
                           <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
@@ -472,10 +477,10 @@ const BiopsyorCancer: React.FC<Props> = ({
                             <div className="w-45">
                               <Input
                                 type="text"
-                                value={getAnswer(questionIds.location)}
+                                value={getAnswer(questionIds.locationRight)}
                                 onChange={(e) =>
                                   handleInputChange(
-                                    questionIds.location,
+                                    questionIds.locationRight,
                                     e.target.value
                                   )
                                 }
@@ -499,14 +504,14 @@ const BiopsyorCancer: React.FC<Props> = ({
                     handleInputChange(questionIds.breast, checked ? "true" : "")
                   }
                 />
-                <Label htmlFor="breastLeft">Left</Label>
+                <Label htmlFor="breastLeft">Left Breast</Label>
               </div>
               {/* --- LEFT SIDE DETAILS --- */}
               {getAnswer(questionIds.breast) === "true" && (
                 <div className="ml-6 flex flex-col gap-4">
-                  <Label className="font-semibold text-base">
+                  {/* <Label className="font-semibold text-base">
                     Left Side Details
-                  </Label>
+                  </Label> */}
                   {/* Quadrant */}
                   {renderQuadrantSection("Left", {
                     upperOuter: questionIds.upperOuterQuadrant,
@@ -532,7 +537,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                   )}
 
                   {/*G. Lymph node involvement*/}
-                  <div className="flex flex-col gap-3 -mt-2">
+                  <div className="flex flex-col gap-3">
                     <MultiOptionRadioGroup
                       label="Lymph node involvement"
                       questionId={questionIds.Lymph}
@@ -621,6 +626,7 @@ const BiopsyorCancer: React.FC<Props> = ({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

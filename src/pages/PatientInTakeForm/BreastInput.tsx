@@ -28,12 +28,13 @@ type Props = {
   setData: any;
   skinChangesType?: number;
   skinChangesTypeRight?: number;
-  OtherInputQId?: number;
-  OtherInputQIDRight?: number;
+  skinOther?: number;
+  skinOtherRight?: number;
   technician?: boolean;
   editStatus?: boolean;
   patientData?: any;
   setPatientData?: any;
+  OtherInputQId?: number;
 };
  
 const BreastInput: React.FC<Props> = (Props) => {
@@ -316,7 +317,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                     }
                     required={
                       getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === ""
+                      getAnswerByQuestionId(Props.LQID) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) == ""
                     }
                   />
                 </div>
@@ -330,7 +332,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     onChange={(e) => updateAnswer(Props.SDateRight, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDateRight) === ""}
+                    required={getAnswerByQuestionId(Props.SDateRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
                   />
                 </div>
  
@@ -345,7 +347,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                           onValueChange={(value) =>
                             updateAnswer(Props.SizeRight, value)
                           }
-                          required={getAnswerByQuestionId(Props.SizeRight) === ""}
+                          required={getAnswerByQuestionId(Props.SizeRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
                         >
                           <SelectTrigger className="bg-white w-full">
                             <SelectValue placeholder="Select Size" />
@@ -366,13 +368,13 @@ const BreastInput: React.FC<Props> = (Props) => {
                   {(Props.label === "Skin changes") && (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       {/* <Label>Size</Label> */}
-                      <div className="w-full lg:w-39">
+                      <div className="w-full">
                         <Select
                           value={getAnswerByQuestionId(Props.skinChangesTypeRight) || ""}
                           onValueChange={(value) =>
                             updateAnswer(Props.skinChangesTypeRight!, value)
                           }
-                          required={getAnswerByQuestionId(Props.skinChangesTypeRight) === ""}
+                          required={getAnswerByQuestionId(Props.skinChangesTypeRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
                         >
                           <SelectTrigger className="bg-white w-full">
                             <SelectValue placeholder="Select Skin Changes" />
@@ -393,9 +395,9 @@ const BreastInput: React.FC<Props> = (Props) => {
                             <div className="flex gap-1 w-full ">
                               <Input
                                 placeholder="Specify"
-                                value={getAnswerByQuestionId(Props.OtherInputQIDRight)}
+                                value={getAnswerByQuestionId(Props.skinOtherRight)}
                                 onChange={(e) =>
-                                  updateAnswer(Props.OtherInputQIDRight!, e.target.value)
+                                  updateAnswer(Props.skinOtherRight!, e.target.value)
                                 }
                               />
                             </div>
@@ -428,7 +430,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                     }
                     required={
                       getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === ""
+                      getAnswerByQuestionId(Props.LQID) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) == ""
                     }
                   />
                 </div>
@@ -442,7 +445,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDate) === ""}
+                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
                   />
                 </div>
  
@@ -478,13 +481,13 @@ const BreastInput: React.FC<Props> = (Props) => {
                   {(Props.label === "Skin changes") && (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       {/* <Label>Size</Label> */}
-                      <div className="w-full lg:w-39">
+                      <div className="w-full">
                         <Select
                           value={getAnswerByQuestionId(Props.skinChangesType) || ""}
                           onValueChange={(value) =>
                             updateAnswer(Props.skinChangesType!, value)
                           }
-                          required={getAnswerByQuestionId(Props.skinChangesType) === ""}
+                          required={getAnswerByQuestionId(Props.skinChangesType) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
                         >
                           <SelectTrigger className="bg-white w-full">
                             <SelectValue placeholder="Select Skin Changes" />
@@ -505,9 +508,9 @@ const BreastInput: React.FC<Props> = (Props) => {
                             <div className="flex gap-1 w-full ">
                               <Input
                                 placeholder="Specify"
-                                value={getAnswerByQuestionId(Props.OtherInputQId)}
+                                value={getAnswerByQuestionId(Props.skinOther)}
                                 onChange={(e) =>
-                                  updateAnswer(Props.OtherInputQId!, e.target.value)
+                                  updateAnswer(Props.skinOther!, e.target.value)
                                 }
                               />
                             </div>

@@ -21,12 +21,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const FutureMonitoring: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -34,7 +36,7 @@ const FutureMonitoring: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Future Monitoring Plan" className="uppercase" />
-
+    <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-3 lg:px-20 space-y-6 pb-10">
         {/* A.Current monitoring plan */}
         <div className="flex flex-col gap-2">
@@ -172,6 +174,7 @@ const FutureMonitoring: React.FC<Props> = ({
             </>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

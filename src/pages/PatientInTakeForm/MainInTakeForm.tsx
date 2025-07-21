@@ -255,45 +255,60 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
     //  <div className={readOnly ? "pointer-events-none" : ""}>
     <div className="flex flex-col gap-3 h-dvh lg:flex-row w-full p-5 lg:p-0 bg-gradient-to-b from-[#EED2CF] to-[#FEEEED] overflow-y-auto">
       {/* Left Panel */}
-      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:p-6 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col justify-center lg:items-center gap-2">
-        <Button
-          type="button"
-          variant="link"
-          className="self-start flex text-foreground font-semibold items-center gap-2"
-          onClick={() => handleFormSwitch(1)}
-        >
-          <ArrowLeft />
-          <span className="text-lg font-semibold">Back</span>
-        </Button>
-        <h1 className="text-3xl lg:text-3xl font-semibold lg:mb-6 text-start lg:text-center">
-          Please confirm the reason why you are having this QT scan
-        </h1>
+      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col lg:justify-between gap-2 lg:h-screen">
+        {/* Back Button at Top */}
+        <div className="flex items-center justify-between">
+          <Button
+            type="button"
+            variant="link"
+            className="flex text-foreground font-semibold items-center gap-2 p-4"
+            onClick={() => handleFormSwitch(1)}
+          >
+            <ArrowLeft />
+            <span className="text-lg font-semibold">Back</span>
+          </Button>
+          <img
+            src={logo}
+            alt="logo"
+            className="lg:hidden h-20 w-40 object-contain"
+          />
+        </div>
 
-        <RadioGroup
-          className={`flex flex-col gap-2 lg:gap-5 ${
-            readOnly ? "pointer-events-none" : ""
-          }`}
-          value={selectedOption}
-          onValueChange={setSelectedOption}
-        >
-          {intakeOptions.map(({ id, radioLabel }) => (
-            <React.Fragment key={id}>
-              <div className="flex items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md">
-                <CustomRadioGroupItem
-                  className="text-black bg-white data-[state=checked]:ring-2"
-                  value={id}
-                  id={`r${id}`}
-                />
-                <Label
-                  htmlFor={`r${id}`}
-                  className="text-black lg:text-white text-sm lg:text-2xl leading-snug"
+        {/* Content Centered Vertically */}
+        <div className="flex-grow flex justify-center items-center lg:px-4">
+          <div className="w-full lg:p-6">
+            <h1 className="text-3xl lg:text-3xl font-semibold lg:mb-6 text-start lg:text-center">
+              Please confirm the reason why you are having this QT scan
+            </h1>
+
+            <RadioGroup
+              className={`flex flex-col gap-2 lg:gap-5 ${
+                readOnly ? "pointer-events-none" : ""
+              }`}
+              value={selectedOption}
+              onValueChange={setSelectedOption}
+            >
+              {intakeOptions.map(({ id, radioLabel }) => (
+                <div
+                  key={id}
+                  className="flex items-center bg-[#A3B1A1] lg:bg-transparent gap-3 p-3 lg:p-0 rounded-md"
                 >
-                  {radioLabel}
-                </Label>
-              </div>
-            </React.Fragment>
-          ))}
-        </RadioGroup>
+                  <CustomRadioGroupItem
+                    className="text-black bg-white data-[state=checked]:ring-2"
+                    value={id}
+                    id={`r${id}`}
+                  />
+                  <Label
+                    htmlFor={`r${id}`}
+                    className="text-black lg:text-white text-sm lg:text-2xl leading-snug"
+                  >
+                    {radioLabel}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </div>
       </div>
 
       {/* Right Panel */}
@@ -326,6 +341,8 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
                 readOnly ? "pointer-events-none" : ""
               }`}
             >
+                          <p className="text-start text-foreground font-semibold">Kindly Check a Option to Proceed</p>
+
               {(checkboxData[selectedOption] || []).map((cb) => {
                 const isChecked =
                   formData.find((f) => f.questionId === parseInt(cb.id))
@@ -378,6 +395,7 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
                     <button
                       className="w-1/2 mx-auto bg-[#a4b2a1] text-white font-bold p-3 uppercase border-2 border-white rounded-lg cursor-pointer hover:bg-[#91a48d]"
                       onClick={openSubmitDialog}
+                      hidden={readOnly}
                     >
                       Submit
                     </button>
@@ -407,6 +425,7 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
               <button
                 className="w- mx-auto bg-[#a4b2a1] rounded-2xl text-white p-3"
                 onClick={openSubmitDialog}
+                hidden={readOnly}
               >
                 SUBMIT
               </button>

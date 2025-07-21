@@ -39,12 +39,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const IntervalImagingHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -82,7 +84,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
         FormTitle="Interval Imaging History"
         className="uppercase"
       />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <div className="flex flex-col gap-4">
           <Label className="text-base font-semibold">
@@ -134,6 +136,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
+                      disabledDates={(date) => date > new Date()}
                     />
                   </div>
                   <Input
@@ -181,6 +184,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
+                      disabledDates={(date) => date > new Date()}
                     />
                   </div>
                   <Input
@@ -225,6 +229,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
+                      disabledDates={(date) => date > new Date()}
                     />
                   </div>
                   <Input
@@ -279,6 +284,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
+                      disabledDates={(date) => date > new Date()}
                     />
                   </div>
                   <Input
@@ -355,6 +361,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
   </div>
 )}
 
+      </div>
       </div>
     </div>
   );

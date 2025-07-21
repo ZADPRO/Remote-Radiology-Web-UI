@@ -22,12 +22,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const BiopsyInformation: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -38,7 +40,7 @@ const BiopsyInformation: React.FC<Props> = ({
         FormTitle="BIOPSY INFORMATION (if applicable)"
         className="uppercase"
       />
-
+  <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
         {/* A. Biopsy performed? */}
         <TwoOptionRadioGroup
@@ -79,6 +81,7 @@ const BiopsyInformation: React.FC<Props> = ({
                       val?.toLocaleDateString("en-CA") || ""
                     )
                   }
+                  disabledDates={(date) => date > new Date()}
                   required
                 />
               </div>
@@ -230,6 +233,7 @@ const BiopsyInformation: React.FC<Props> = ({
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );

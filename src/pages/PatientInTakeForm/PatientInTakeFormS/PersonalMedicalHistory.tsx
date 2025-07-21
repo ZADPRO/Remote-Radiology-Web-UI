@@ -22,6 +22,7 @@ interface QuestionIds {
   augmentationposition: number;
   breastSurgeryOthers: number;
   breastSurgeryOthersSpecify: number;
+  breastSurgeryOthersSpecifyDirection: number;
   implants: number;
   implantsSpecify: number;
   implantsOthersSpecify: number;
@@ -229,6 +230,76 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       required
                     />
                   </>
+                )}
+                {getAnswer(questionIds.breastSurgeryOthers) === "true" && (
+                <div className="flex items-center gap-6">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id={`other-right`}
+                            name={`position-other`} // Group radios by unique name
+                            value="Right"
+                            checked={
+                              getAnswer(
+                                questionIds.breastSurgeryOthersSpecifyDirection
+                              ) === "Right"
+                            }
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.breastSurgeryOthersSpecifyDirection,
+                                e.target.value
+                              )
+                            }
+                            className="custom-radio"
+                            required
+                          />
+                          <Label htmlFor={`other-right`}>Right</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id={`other-left`}
+                            name={`position-other`}
+                            value="Left"
+                            checked={
+                              getAnswer(
+                                questionIds.breastSurgeryOthersSpecifyDirection
+                              ) === "Left"
+                            }
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.breastSurgeryOthersSpecifyDirection,
+                                e.target.value
+                              )
+                            }
+                            className="custom-radio"
+                            required
+                          />
+                          <Label htmlFor={`other-left`}>Left</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            id={`other-both`}
+                            name={`position-other`}
+                            value="Both"
+                            checked={
+                              getAnswer(
+                                questionIds.breastSurgeryOthersSpecifyDirection
+                              ) === "Both"
+                            }
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.breastSurgeryOthersSpecifyDirection,
+                                e.target.value
+                              )
+                            }
+                            className="custom-radio"
+                            required
+                          />
+                          <Label htmlFor={`other-both`}>Both</Label>
+                        </div>
+                      </div>
                 )}
               </div>
             </div>
@@ -485,6 +556,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   val?.toLocaleDateString("en-CA") || ""
                                 )
                               }
+                              disabledDates={(date) => date > new Date()}
                             />
                             </div>
                             
