@@ -274,36 +274,45 @@ const PatientQueue: React.FC = () => {
         const res = await technicianService.listPatientQueue();
         console.log("Fetching patient queue...", res);
         if (res.status) {
-          const filteredData = res.data.filter(
-            (item: TechnicianPatientQueue) => {
-              const { refAppointmentComplete, dicomFiles } = item;
+  const filteredData = res.data.filter((item: TechnicianPatientQueue) => {
+    const { refAppointmentComplete, dicomFiles } = item;
 
-              // If it's 'fillform', always filter it out
-              if (refAppointmentComplete === "fillform") return false;
+    // Always filter out 'fillform'
+    if (refAppointmentComplete === "fillform") return false;
 
-              // If it's 'technologistformfill' and role is NOT technician, filter it out
-              if (
-                refAppointmentComplete === "technologistformfill" &&
-                role?.type !== "technician"
-              )
-                return false;
+    // Filter out 'technologistformfill' if role is not technician
+    if (
+      refAppointmentComplete === "technologistformfill" &&
+      role?.type !== "technician"
+    )
+      return false;
 
-              // If it's 'reportformfill' and dicomFiles is null, filter it out for all except technician
-              if (
-                refAppointmentComplete === "reportformfill" &&
-                !dicomFiles &&
-                role?.type !== "technician"
-              )
-                return false;
+    // Filter out 'reportformfill' with no DICOMs if not technician
+    if (
+      refAppointmentComplete === "reportformfill" &&
+      !dicomFiles &&
+      role?.type !== "technician"
+    )
+      return false;
 
-              // Else keep the item
-              return true;
-            }
-          );
-          setStaffData(res.staffData);
-          setPatientQueue(filteredData);
-          console.log(res.staffData);
-        } else {
+    // 🔴 NEW: For doctor or codoctor, only allow if status is 'Reviewed 1' or 'Reviewed 2'
+    if (
+      (role?.type === "doctor" || role?.type === "codoctor") &&
+      refAppointmentComplete !== "Reviewed 1" &&
+      refAppointmentComplete !== "Reviewed 2" &&
+      refAppointmentComplete !== "Signed Off"
+    )
+      return false;
+
+    // ✅ Keep the item
+    return true;
+  });
+
+  setStaffData(res.staffData);
+  setPatientQueue(filteredData);
+  console.log(res.staffData);
+}
+else {
           // Handle error or empty data scenario from API response
           console.warn("API response status is false, or no data:", res);
           setPatientQueue([]); // Ensure patientQueue is empty if API indicates failure

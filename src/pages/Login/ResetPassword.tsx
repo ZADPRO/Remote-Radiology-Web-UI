@@ -114,7 +114,7 @@ const ResetPassword: React.FC = () => {
         <img
           src={loginImg}
           alt="Login"
-          className="h-[75%] w-[90%] max-w-[500px] max-h-[500px] lg:h-[65%] lg:w-[80%]"
+          className="w-[90%] lg:w-[80%]"
         />
       </div>
 

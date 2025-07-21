@@ -15,7 +15,7 @@ const Brochure: React.FC = () => {
   );
 
   const ListItem = ({ icon, text }: { icon?: React.ReactNode; text: string }) => (
-    <div className="flex items-start gap-1">
+    <div className="flex items-center gap-1">
       <div className="ml-4">{icon || <li className="w-4 h-4" />}</div>
       <div>{text}</div>
     </div>
@@ -96,6 +96,10 @@ const Brochure: React.FC = () => {
 
           <p className="mt-4 font-medium">⚠️ Please Discuss With Your Healthcare Provider If You Have:</p>
           {[
+            "Are pregnant (any trimester)",
+            "Are currently breastfeeding or lactating",
+            "Have open wounds or lesions on breast skin",
+            "Have severe mobility limitations that prevent proper positioning",
             "Tremors or involuntary movements",
             "Persistent coughing or breathing difficulties",
             "Claustrophobia or anxiety about enclosed spaces",

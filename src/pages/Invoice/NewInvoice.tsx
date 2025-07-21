@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { invoiceServie } from "@/services/invoiceService";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -154,9 +154,9 @@ const NewInvoice: React.FC<Props> = () => {
         console.log(res);
         if (res.status) {
           toast.success(res.message);
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
+          // setTimeout(() => {
+          navigate(-1);
+          // }, 1000);
         } else {
           toast.error(res.message);
         }
@@ -169,7 +169,7 @@ const NewInvoice: React.FC<Props> = () => {
   };
 
   return (
-    <div className="flex w-full flex-col bg-[#edd1ce]  min-h-screen">
+    <div className="flex w-full flex-col bg-[#edd1ce] min-h-screen">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -179,8 +179,9 @@ const NewInvoice: React.FC<Props> = () => {
       >
         {loading && <LoadingOverlay />}
 
+        {/* Header */}
         <div
-          className="p-2 w-full flex gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
+          className="p-2 w-full flex gap-3 sm:gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
           style={{
             backgroundImage:
               window.innerWidth >= 1024
@@ -188,166 +189,197 @@ const NewInvoice: React.FC<Props> = () => {
                 : undefined,
           }}
         >
-          <div className="w-full flex items-center justify-between px-4">
+          <div className="w-full flex items-center justify-between px-3 sm:px-4">
             {/* Logo (Left) */}
             <img
               src={logoNew}
               alt="logoNew"
-              className="h-12 sm:h-14 object-contain"
+              className="h-10 sm:h-12 lg:h-14 object-contain"
             />
 
             {/* Title (Center) */}
             <div className="flex-1 text-center">
-              <h2 className="text-2xl font-semibold">Invoice</h2>
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold">
+                Invoice
+              </h2>
             </div>
 
-            {/* Spacer to balance alignment (same width as logo) */}
-            <div className="w-24" />
+            {/* Spacer to balance alignment */}
+            <div className="w-20 sm:w-24" />
           </div>
         </div>
 
-        <div className="w-full px-5 pt-2">
+        {/* Back Button */}
+        <div className="w-full px-3 sm:px-5 pt-2">
           <Button
             type="button"
             variant="link"
-            className="self-start flex text-foreground font-semibold items-center gap-2"
+            className="self-start flex text-foreground font-semibold items-center gap-1 sm:gap-2 p-0"
             onClick={() => navigate(-1)}
           >
-            <ArrowLeft />
-            <span className="text-lg font-semibold">Back</span>
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-base sm:text-lg font-semibold">Back</span>
           </Button>
         </div>
-        <div className="px-10 w-full lg:w-full xxl:w-[70%] pt-2 pb-10 flex flex-col lg:flex-row justify-between">
-          <div className="w-[100%] lg:w-[25%] flex flex-col gap-2">
-            <p className="text-base font-bold">From</p>
-            <Input
-              type="text"
-              value={input.fromName}
-              name="fromName"
-              onChange={handleInputChanges}
-              required
-              placeholder="Name"
-              className="w-full text-sm"
-              readOnly
-            />
-            <Input
-              type="text"
-              value={input.fromPhone}
-              name="fromPhone"
-              onChange={handleInputChanges}
-              required
-              readOnly={type === "2"}
-              placeholder="Phone Number"
-              className="w-full text-sm"
-            />
-            <Input
-              type="email"
-              value={input.fromEmail}
-              name="fromEmail"
-              onChange={handleInputChanges}
-              required
-              readOnly={type === "2"}
-              placeholder="Email"
-              className="w-full text-sm"
-            />
-            <Input
-              type="text"
-              value={input.fromPan}
-              name="fromPan"
-              onChange={handleInputChanges}
-              // required
-              placeholder="PAN"
-              className="w-full text-sm"
-            />
-            <Input
-              type="text"
-              value={input.fromGst}
-              name="fromGst"
-              onChange={handleInputChanges}
-              // required
-              placeholder="GST"
-              className="w-full text-sm"
-            />
-            <Textarea
-              value={input.fromAddress}
-              name="fromAddress"
-              onChange={(e) => {
-                setInput((prev) => ({
-                  ...prev,
-                  fromAddress: e.target.value,
-                }));
-              }}
-              required
-              placeholder="Address"
-              className="w-full text-sm"
-            />
-            <p className="text-base font-bold mt-3">To</p>
-            <Input
-              type="text"
-              value={input.toName}
-              name="toName"
-              onChange={handleInputChanges}
-              required
-              placeholder="Name"
-              className="w-full text-sm"
-              readOnly
-            />
-            <Textarea
-              value={input.toAddress}
-              name="toAddress"
-              onChange={(e) => {
-                setInput((prev) => ({
-                  ...prev,
-                  toAddress: e.target.value,
-                }));
-              }}
-              required
-              placeholder="Address"
-              className="w-full text-sm"
-              readOnly={type === "1"}
-            />
-          </div>
-          <div className="w-[100%] lg:w-[25%] mt-4 lg:mt-0 flex flex-col gap-2">
-            <p className="text-base font-bold">Billing Period</p>
-            <div className="flex flex-col gap-1 items-center">
-              <DatePicker
-                value={
-                  input.billingfrom ? new Date(input.billingfrom) : undefined
-                }
-                placeholder="From Date"
-                disabled
+
+        {/* Main Form Content */}
+        <div className="px-4 sm:px-6 lg:px-10 w-full max-w-7xl pt-2 pb-6 sm:pb-10 flex flex-col gap-6 lg:gap-0 lg:flex-row justify-between">
+          {/* From/To Section */}
+          <div className="w-full lg:w-[30%] xl:w-[25%] flex flex-col gap-3 sm:gap-4">
+            <div className="space-y-3 sm:space-y-4">
+              <p className="text-sm sm:text-base font-bold">From</p>
+              <Input
+                type="text"
+                value={input.fromName}
+                name="fromName"
+                onChange={handleInputChanges}
+                required
+                placeholder="Name"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                readOnly
               />
-              <p className="text-base font-bold">To</p>
-              <DatePicker
-                value={input.billingto ? new Date(input.billingto) : undefined}
-                placeholder="To Date"
-                disabled
+              <Input
+                type="text"
+                value={input.fromPhone}
+                name="fromPhone"
+                onChange={handleInputChanges}
+                required
+                readOnly={type === "2"}
+                placeholder="Phone Number"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+              />
+              <Input
+                type="email"
+                value={input.fromEmail}
+                name="fromEmail"
+                onChange={handleInputChanges}
+                required
+                readOnly={type === "2"}
+                placeholder="Email"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+              />
+              <Input
+                type="text"
+                value={input.fromPan}
+                name="fromPan"
+                onChange={handleInputChanges}
+                placeholder="PAN"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+              />
+              <Input
+                type="text"
+                value={input.fromGst}
+                name="fromGst"
+                onChange={handleInputChanges}
+                placeholder="GST"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+              />
+              <Textarea
+                value={input.fromAddress}
+                name="fromAddress"
+                onChange={(e) => {
+                  setInput((prev) => ({
+                    ...prev,
+                    fromAddress: e.target.value,
+                  }));
+                }}
+                required
+                placeholder="Address"
+                className="w-full text-xs sm:text-sm min-h-[80px] sm:min-h-[100px] resize-none"
               />
             </div>
-            <Select
-              value={input.modeofpayment}
-              onValueChange={(val) => {
-                setInput((prev) => ({
-                  ...prev,
-                  modeofpayment: val,
-                }));
-              }}
-              required
-            >
-              <SelectTrigger className={`bg-[#fff] font-medium text-sm w-full`}>
-                <SelectValue placeholder="Mode of Payment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem key={1} value="UPI">
-                  UPI
-                </SelectItem>
-                <SelectItem key={2} value="BANK TRANSFER">
-                  Bank Transfer
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {input.modeofpayment === "UPI" ? (
-              <>
+
+            <div className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
+              <p className="text-sm sm:text-base font-bold">To</p>
+              <Input
+                type="text"
+                value={input.toName}
+                name="toName"
+                onChange={handleInputChanges}
+                required
+                placeholder="Name"
+                className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                readOnly
+              />
+              <Textarea
+                value={input.toAddress}
+                name="toAddress"
+                onChange={(e) => {
+                  setInput((prev) => ({
+                    ...prev,
+                    toAddress: e.target.value,
+                  }));
+                }}
+                required
+                placeholder="Address"
+                className="w-full text-xs sm:text-sm min-h-[80px] sm:min-h-[100px] resize-none"
+                readOnly={type === "1"}
+              />
+            </div>
+          </div>
+
+          {/* Billing Period and Payment Section */}
+          <div className="w-full lg:w-[30%] xl:w-[25%] flex flex-col gap-3 sm:gap-4">
+            <div className="space-y-3 sm:space-y-4">
+              <p className="text-sm sm:text-base font-bold">Billing Period</p>
+              <div className="flex flex-col gap-2 sm:gap-3 items-center">
+                <div className="w-full">
+                  <DatePicker
+                    value={
+                      input.billingfrom
+                        ? new Date(input.billingfrom)
+                        : undefined
+                    }
+                    placeholder="From Date"
+                    disabled
+                  />
+                </div>
+                <p className="text-sm sm:text-base font-bold">To</p>
+                <div className="w-full">
+                  <DatePicker
+                    value={
+                      input.billingto ? new Date(input.billingto) : undefined
+                    }
+                    placeholder="To Date"
+                    disabled
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
+              <Select
+                value={input.modeofpayment}
+                onValueChange={(val) => {
+                  setInput((prev) => ({
+                    ...prev,
+                    modeofpayment: val,
+                  }));
+                }}
+                required
+              >
+                <SelectTrigger className="bg-[#fff] font-medium text-xs sm:text-sm w-full h-9 sm:h-10">
+                  <SelectValue placeholder="Mode of Payment" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    key={1}
+                    value="UPI"
+                    className="text-xs sm:text-sm"
+                  >
+                    UPI
+                  </SelectItem>
+                  <SelectItem
+                    key={2}
+                    value="BANK TRANSFER"
+                    className="text-xs sm:text-sm"
+                  >
+                    Bank Transfer
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {input.modeofpayment === "UPI" ? (
                 <Input
                   type="text"
                   value={input.upiId}
@@ -355,68 +387,70 @@ const NewInvoice: React.FC<Props> = () => {
                   onChange={handleInputChanges}
                   required
                   placeholder="UPI ID"
-                  className="w-full text-sm"
+                  className="w-full text-xs sm:text-sm h-9 sm:h-10"
                 />
-              </>
-            ) : (
-              input.modeofpayment === "BANK TRANSFER" && (
-                <>
-                  <Input
-                    type="text"
-                    value={input.accountHolderName}
-                    name="accountHolderName"
-                    onChange={handleInputChanges}
-                    required
-                    placeholder="Account Holder Name"
-                    className="w-full text-sm"
-                  />
-                  <Input
-                    type="text"
-                    value={input.accountNumber}
-                    name="accountNumber"
-                    onChange={handleInputChanges}
-                    required
-                    placeholder="Account Number"
-                    className="w-full text-sm"
-                  />
-                  <Input
-                    type="text"
-                    value={input.bank}
-                    name="bank"
-                    onChange={handleInputChanges}
-                    required
-                    placeholder="Bank"
-                    className="w-full text-sm"
-                  />
-                  <Input
-                    type="text"
-                    value={input.branch}
-                    name="branch"
-                    onChange={handleInputChanges}
-                    required
-                    placeholder="Branch"
-                    className="w-full text-sm"
-                  />
-                  <Input
-                    type="text"
-                    value={input.ifsc}
-                    name="ifsc"
-                    onChange={handleInputChanges}
-                    required
-                    placeholder="IFSC"
-                    className="w-full text-sm"
-                  />
-                </>
-              )
-            )}
+              ) : (
+                input.modeofpayment === "BANK TRANSFER" && (
+                  <div className="space-y-3 sm:space-y-4">
+                    <Input
+                      type="text"
+                      value={input.accountHolderName}
+                      name="accountHolderName"
+                      onChange={handleInputChanges}
+                      required
+                      placeholder="Account Holder Name"
+                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={input.accountNumber}
+                      name="accountNumber"
+                      onChange={handleInputChanges}
+                      required
+                      placeholder="Account Number"
+                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={input.bank}
+                      name="bank"
+                      onChange={handleInputChanges}
+                      required
+                      placeholder="Bank"
+                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={input.branch}
+                      name="branch"
+                      onChange={handleInputChanges}
+                      required
+                      placeholder="Branch"
+                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={input.ifsc}
+                      name="ifsc"
+                      onChange={handleInputChanges}
+                      required
+                      placeholder="IFSC"
+                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                    />
+                  </div>
+                )
+              )}
+            </div>
           </div>
-          <div className="w-[100%] lg:w-[35%] mt-4 lg:mt-0 flex flex-col gap-2">
-            <div>
-              <p className="text-base font-bold">Invoice Details</p>
+
+          {/* Invoice Details Section */}
+          <div className="w-full lg:w-[35%] flex flex-col gap-3 sm:gap-4">
+            <div className="space-y-3 sm:space-y-4">
+              <p className="text-sm sm:text-base font-bold">Invoice Details</p>
               <div className="bg-[#a4b2a1] rounded-sm">
-                <div className="bg-[#f8f2ea] rounded-sm gap-4 flex w-full py-4 px-2 items-end">
-                  <div className="w-full flex flex-col gap-1">
-                    <p className="text-sm font-bold">Quantity</p>
+                <div className="bg-[#f8f2ea] rounded-sm gap-3 sm:gap-4 flex flex-col sm:flex-row w-full py-3 sm:py-4 px-2 sm:px-3">
+                  <div className="w-full flex flex-col gap-1 sm:gap-2">
+                    <p className="text-xs sm:text-sm font-bold">Quantity</p>
                     <Input
                       type="text"
                       value={input.quantity}
@@ -424,12 +458,12 @@ const NewInvoice: React.FC<Props> = () => {
                       onChange={handleInputChanges}
                       required
                       placeholder="Quantity"
-                      className="w-full text-sm"
+                      className="w-full text-xs sm:text-sm h-8 sm:h-9"
                       readOnly
                     />
                   </div>
-                  <div className="w-full flex flex-col gap-1">
-                    <p className="text-sm font-bold">Amount (INR)</p>
+                  <div className="w-full flex flex-col gap-1 sm:gap-2">
+                    <p className="text-xs sm:text-sm font-bold">Amount (INR)</p>
                     <Input
                       type="text"
                       value={input.amount}
@@ -437,24 +471,38 @@ const NewInvoice: React.FC<Props> = () => {
                       onChange={handleInputChanges}
                       required
                       placeholder="Amount"
-                      className="w-full text-sm"
+                      className="w-full text-xs sm:text-sm h-8 sm:h-9"
                       readOnly
                     />
                   </div>
                 </div>
-                <div className="py-5 px-4 flex flex-row justify-end items-center gap-6">
-                  <div className="text-xl font-bold">Total</div>
-                  <div className="text-xl font-bold">{input.total}/-</div>
+                <div className="py-3 sm:py-4 lg:py-5 px-3 sm:px-4 flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-6">
+                  <div className="text-lg sm:text-xl font-bold">Total</div>
+                  <div className="text-lg sm:text-xl font-bold">
+                    {input.total}/-
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="px-10 w-full flex justify-end mb-10 lg:mb-0 mt-10">
-              <Button
-                type="submit"
-                className="bg-[#a3b1a1] hover:bg-[#a3b1a1] text-base"
-              >
-                Generate Report
-              </Button>
+
+            {/* Submit Button */}
+            <div className="w-full flex justify-center sm:justify-end mt-6 sm:mt-8 lg:mt-10">
+              {loading ? (
+                <Button
+                  type="button"
+                  className="bg-[#a3b1a1] hover:bg-[#a3b1a1] text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px]  min-w-[200px]"
+                >
+                  <Loader className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="bg-[#a3b1a1] hover:bg-[#a3b1a1] text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
+                >
+                  <span className="hidden sm:inline">Generate Report</span>
+                  <span className="sm:hidden">Generate</span>
+                </Button>
+              )}
             </div>
           </div>
         </div>
