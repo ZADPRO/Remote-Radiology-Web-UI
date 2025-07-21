@@ -13,6 +13,8 @@ import {
 } from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
+import { downloadDocumentFile } from "@/lib/commonUtlis";
+import { uploadService } from "@/services/commonServices";
 
 interface IntakeOption {
   questionId: number;
@@ -63,6 +65,33 @@ const BreastBiopsy: React.FC<Props> = ({
           : item
       )
     );
+  };
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    questionId: number
+  ) => {
+    console.log("############Chnaged");
+    const file = e.target.files?.[0];
+    if (file) {
+      // setSelectedFileName(file.name); // Optimistic UI update
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
+      try {
+        const response = await uploadService.uploadFile({
+          formFile: formDataObj,
+        });
+        if (response.status) {
+          console.log(questionId, response.status, response.fileName);
+          handlePatientInputChange(questionId, response.fileName);
+        } else {
+          // setSelectedFileName(""); // Revert on failure
+        }
+      } catch (error) {
+        console.error("File upload failed:", error);
+        // setSelectedFileName(""); // Revert on failure
+      }
+    }
   };
 
   const handleEditClick = (sectionKey: string) => {
@@ -158,9 +187,9 @@ const BreastBiopsy: React.FC<Props> = ({
         <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
           <div className="flex gap-3">
             {/* Check to Confirm Checkbox */}
-            <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
+            <div className={cn(`flex lg:flex-col flex-row items-center w-25 gap-1`)}>
               <div className="text-xs sm:text-xs font-medium">
-                Check to Confirm
+                Check
               </div>
               <Checkbox2
                 className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
@@ -178,11 +207,13 @@ const BreastBiopsy: React.FC<Props> = ({
                     )
                   )
                 }
+                required
               />
             </div>
 
             {/* Edit / Info Icons */}
-            {!isEditing ? (
+            {!readOnly && (
+            !isEditing ? (
               <div className="flex w-20 flex-col gap-1 items-center">
                 <div className="text-xs sm:text-xs font-medium">Edit</div>
                 <Edit
@@ -222,7 +253,8 @@ const BreastBiopsy: React.FC<Props> = ({
                   </PopoverContent>
                 </Popover>
               </div>
-            )}
+            )
+          )}
           </div>
         </div>
       </div>
@@ -257,52 +289,41 @@ const BreastBiopsy: React.FC<Props> = ({
               <>
                 {/* Checkboxes for L/R */}
                 <div className="flex gap-4">
-                  {renderCheckbox(
-                    "L",
-                    434,
-                    editStatuses["breastBiopsy"]
-                  )}
+                  {renderCheckbox("Left", 434, editStatuses["breastBiopsy"])}
 
                   {getPatientAnswer(434) === "true" && (
-                        <MultiRadioOptionalInputInline
-                    questionId={436}
-                    formData={patientFormData}
-                    handleInputChange={handlePatientInputChange}
-                    options={[
-                      { label: "Benign", value: "Benign" },
-                      {
-                        label: "Malignant",
-                        value: "Malignant",
-                      },
-                    ]}
-                  />
-                  )
-                    }
-                  
+                    <MultiRadioOptionalInputInline
+                      questionId={436}
+                      formData={patientFormData}
+                      handleInputChange={handlePatientInputChange}
+                      options={[
+                        { label: "Benign", value: "Benign" },
+                        {
+                          label: "Malignant",
+                          value: "Malignant",
+                        },
+                      ]}
+                    />
+                  )}
                 </div>
 
                 {/* Checkboxes for Benign/Malignant */}
                 <div className="flex gap-4">
-                  {renderCheckbox(
-                    "R",
-                    435,
-                    editStatuses["breastBiopsy"]
-                  )}
+                  {renderCheckbox("Right", 435, editStatuses["breastBiopsy"])}
                   {getPatientAnswer(435) === "true" && (
                     <MultiRadioOptionalInputInline
-                    questionId={437}
-                    formData={patientFormData}
-                    handleInputChange={handlePatientInputChange}
-                    options={[
-                      { label: "Benign", value: "Benign" },
-                      {
-                        label: "Malignant",
-                        value: "Malignant",
-                      },
-                    ]}
-                  />
+                      questionId={437}
+                      formData={patientFormData}
+                      handleInputChange={handlePatientInputChange}
+                      options={[
+                        { label: "Benign", value: "Benign" },
+                        {
+                          label: "Malignant",
+                          value: "Malignant",
+                        },
+                      ]}
+                    />
                   )}
-                  
                 </div>
               </>
             )}
@@ -319,6 +340,43 @@ const BreastBiopsy: React.FC<Props> = ({
                 editStatuses["breastBiopsy"]
               )}
             </div>
+            {getPatientAnswer(164) === "Available" && (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Please Upload the Report
+                </span>
+                <div className="flex items-center gap-3">
+                  <Label className="text-sm font-medium">UPLOAD REPORT</Label>
+                  <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100">
+                    <input
+                      type="file"
+                      className="sr-only"
+                      onChange={(e) => {
+                        handleFileChange(e, 165);
+                      }}
+                      // disabled={editStatus}
+                    />
+                    Upload File
+                  </label>
+                  {getPatientAnswer(165) && (
+                    <span
+                      className="text-sm cursor-pointer pointer-events-auto underline hover:underline-offset-2"
+                      onClick={() =>
+                        downloadDocumentFile(
+                          patientFormData.find((q) => q.questionId === 165)
+                            ?.file?.base64Data || "",
+                          patientFormData.find((q) => q.questionId === 165)
+                            ?.file?.contentType || "",
+                          getPatientAnswer(165)
+                        )
+                      }
+                    >
+                      {getPatientAnswer(165) || "Report.pdf"}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
