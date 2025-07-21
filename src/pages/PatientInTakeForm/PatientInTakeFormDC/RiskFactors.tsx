@@ -21,12 +21,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const RiskFactors: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -45,7 +47,7 @@ const RiskFactors: React.FC<Props> = ({
         FormTitle="Risk Factors and Health Changes"
         className="uppercase"
       />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <div className="flex flex-col gap-4">
           <MultiOptionRadioGroup
@@ -118,6 +120,7 @@ const RiskFactors: React.FC<Props> = ({
           inputPlaceholder="Details"
           optionalInputType="textarea"
         />
+      </div>
       </div>
     </div>
   );

@@ -67,12 +67,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const AbnormalFindings: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -96,8 +98,8 @@ const AbnormalFindings: React.FC<Props> = ({
 ) => {
   return (
     <div>
-      <Label className="font-semibold text-base">{prefix} - Quadrant</Label>
-      <div className="flex flex-wrap gap-5 mt-2">
+      <Label className="font-semibold text-base">Quadrant</Label>
+      <div className="flex flex-wrap gap-5 mt-2 pl-4">
         {[
           ["Upper Outer", questionIds.upperOuter],
           ["Upper Inner", questionIds.upperInner],
@@ -108,6 +110,7 @@ const AbnormalFindings: React.FC<Props> = ({
         ].map(([label, id]) => (
           <div className="flex items-center gap-3" key={label}>
             <Checkbox2
+              name={`quadrant-${prefix}`}
               checked={getAnswer(id as number) === "true"}
               onCheckedChange={(checked) =>
                 handleInputChange(id as number, checked ? "true" : "")
@@ -132,9 +135,9 @@ const AbnormalFindings: React.FC<Props> = ({
   return (
     <div>
       <Label className="font-semibold text-base">
-        {prefix} - Clock Position
+        Clock Position
       </Label>
-      <div className="flex gap-4 items-center mt-2">
+      <div className="flex gap-4 items-center mt-2 pl-4">
         {["Unknown", "known"].map((val) => (
           <div className="flex items-center gap-2" key={val}>
             <input
@@ -178,9 +181,9 @@ const AbnormalFindings: React.FC<Props> = ({
   return (
     <div>
       <Label className="font-semibold text-base">
-        {prefix} - Distance from Nipple
+        Distance from Nipple
       </Label>
-      <div className="flex gap-4 items-center mt-2">
+      <div className="flex gap-4 items-center mt-2 pl-4">
         {["Unknown", "known"].map((val) => (
           <div className="flex items-center gap-2" key={val}>
             <input
@@ -199,6 +202,7 @@ const AbnormalFindings: React.FC<Props> = ({
             <Input
               type="number"
               className="w-30"
+              placeholder="Specify"
               value={getAnswer(valueId)}
               onChange={(e) => handleInputChange(valueId, e.target.value)}
               required
@@ -221,9 +225,9 @@ const AbnormalFindings: React.FC<Props> = ({
   const isKnown = getAnswer(statusId) === "known";
 
   return (
-    <div className="flex flex-col gap-1 mt-4">
+    <div className="flex flex-col gap-1 ">
       <Label className="font-bold text-base">
-        {prefix} - Size of abnormality
+        Size of abnormality
       </Label>
       <div className="flex flex-col lg:flex-row mt-2 gap-4">
         <div className="ml-4 flex gap-5 items-center">
@@ -276,9 +280,9 @@ const renderBiRadsSection = (
   const selected = getAnswer(categoryId);
 
   return (
-    <div className="flex flex-col gap-1 mt-4">
+    <div className="flex flex-col gap-1 ">
       <Label className="font-bold text-base">
-        {prefix} - BI-RADS category assigned
+        BI-RADS category assigned
       </Label>
       <div className="ml-4 mt-3 flex flex-row gap-3 flex-wrap">
         {["0", "3", "4a", "4b", "4c", "5", "Unknown", "Other"].map((option) => (
@@ -320,7 +324,7 @@ const renderBiRadsSection = (
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="ABNORMAL FINDINGS" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
         {/*A. Date abnormality was detected */}
         <div className="flex flex-col lg:flex-row gap-2">
@@ -444,7 +448,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">Mass/Nodule</div>
+              <Label>Mass/Nodule</Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -458,9 +462,9 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">
+              <Label>
                 Architectural distortion
-              </div>
+              </Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -474,7 +478,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">Calcifications</div>
+             <Label>Calcifications</Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -488,7 +492,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">Asymmetry</div>
+             <Label>Asymmetry</Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -502,7 +506,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-bas w-52e">Cyst</div>
+              <Label>Cyst</Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -516,9 +520,9 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">
+              <Label>
                 Fibrocystic changes
-              </div>
+              </Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -532,7 +536,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">Mammogram</div>
+             <Label>Mammogram</Label>
             </div>
             <div className="flex gap-3 h-[40px] items-center">
               <Checkbox2
@@ -546,7 +550,7 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">Fibroadenomas</div>
+             <Label>Fibroadenomas</Label>
             </div>
             <div className="flex gap-3 items-center h-[40px]">
               <Checkbox2
@@ -560,9 +564,9 @@ const renderBiRadsSection = (
                   )
                 }
               />
-              <div className="font-semibold text-base w-52">
+             <Label>
                 Atypical Hyperplasia
-              </div>
+              </Label>
             </div>
             <div className="flex flex-col lg:flex-row gap-1 h-[auto] lg:h-[40px]">
               <div className="flex gap-3 items-center h-[40px]">
@@ -608,7 +612,7 @@ const renderBiRadsSection = (
 
           {/* a. Breast Selection */}
           <div className="ml-4">
-            <Label className="font-semibold text-base mb-2">a. Breast</Label>
+            {/* <Label className="font-semibold text-base mb-2">a. Breast</Label> */}
             <div className="flex flex-col items-start gap-4 relative">
               <div className="flex items-center gap-2">
                 <Checkbox2
@@ -621,14 +625,14 @@ const renderBiRadsSection = (
                     )
                   }
                 />
-                <Label htmlFor="breastRight">Right</Label>
+                <Label htmlFor="breastRight">Right Breast</Label>
               </div>
               {/* --- RIGHT SIDE DETAILS --- */}
               {getAnswer(questionIds.breastRight) === "true" && (
                 <div className="ml-6 flex flex-col gap-4 border-b-2 border-gray-200 pb-4">
-                  <Label className="font-semibold text-base">
+                  {/* <Label className="font-semibold text-base">
                     Right Side Details
-                  </Label>
+                  </Label> */}
                   {/* Quadrant */}
                   {renderQuadrantSection("Right", {
                     upperOuter: questionIds.upperOuterQuadrantRight,
@@ -664,14 +668,14 @@ const renderBiRadsSection = (
                     handleInputChange(questionIds.breast, checked ? "true" : "")
                   }
                 />
-                <Label htmlFor="breastLeft">Left</Label>
+                <Label htmlFor="breastLeft">Left Breast</Label>
               </div>
               {/* --- LEFT SIDE DETAILS --- */}
               {getAnswer(questionIds.breast) === "true" && (
                 <div className="ml-6 flex flex-col gap-4">
-                  <Label className="font-semibold text-base">
+                  {/* <Label className="font-semibold text-base">
                     Left Side Details
-                  </Label>
+                  </Label> */}
                   {/* Quadrant */}
                   {renderQuadrantSection("Left", {
                     upperOuter: questionIds.upperOuterQuadrant,
@@ -706,7 +710,7 @@ const renderBiRadsSection = (
         {/* G. Marker (Fiducial) / Magnetic implants [pacemaker] */}
         <LabeledRadioWithOptionalInput
           name="marker"
-          label="G.  Clip / Marker (Fiducial)"
+          label="E.  Clip / Marker (Fiducial)"
           questionId={questionIds.marker}
           optionalInputQuestionId={questionIds.markerother}
           formData={formData}
@@ -722,7 +726,7 @@ const renderBiRadsSection = (
         {/* H. Magnetic implants [pacemaker] */}
         <LabeledRadioWithOptionalInput
           name="magneticimplants"
-          label="H. Magnetic implants (pacemaker)"
+          label="F. Magnetic implants (pacemaker)"
           questionId={questionIds.magneticimplants}
           optionalInputQuestionId={questionIds.magneticimplantsother}
           formData={formData}
@@ -734,6 +738,7 @@ const renderBiRadsSection = (
           showInputWhenValue="Yes"
           // inputPlaceholder=""
         />
+      </div>
       </div>
     </div>
   );

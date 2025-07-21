@@ -16,12 +16,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const CurrentClinicalStatus: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -31,7 +33,7 @@ const CurrentClinicalStatus: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Current Clinical Status" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-4">
         <Label className="text-bold text-base">
           A. Changes in treatment since last QT scan
@@ -92,6 +94,7 @@ const CurrentClinicalStatus: React.FC<Props> = ({
             required
           />
         </div>
+      </div>
       </div>
     </div>
   );

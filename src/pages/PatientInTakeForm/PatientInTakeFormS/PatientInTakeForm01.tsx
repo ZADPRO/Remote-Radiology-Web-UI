@@ -164,6 +164,10 @@ useEffect(() => {
               historyRelativesSpecify: 50,
               historyRelativesSpecifyAge: 51,
 
+              maleRelativesCancer: 490,
+              maleRelativesSpecify: 491,
+              maleRelativesSpecifyAge: 492,
+
               otherCancers: 52,
               otherCancerSpecify: 53,
               otherCancerSpecifyAge: 54,
@@ -188,6 +192,8 @@ useEffect(() => {
               bmi: 63,
               weightGain: 64,
               additionalComments: 65,
+              height: 493,
+              heightType: 494,
             }}
           />
         );
@@ -211,6 +217,7 @@ useEffect(() => {
               augmentationposition: 76,
               breastSurgeryOthers: 77,
               breastSurgeryOthersSpecify: 78,
+              breastSurgeryOthersSpecifyDirection: 489,
               implants: 79,
               implantsSpecify: 80,
               implantsOthersSpecify: 81,
@@ -251,7 +258,8 @@ useEffect(() => {
               skinDate: 97,
               skinDateRight: 427,
               skinDetails: 98,
-              skinDetailsRight: 488,
+              skinOther: 495,
+              skinOtherRight: 488,
               skinChangesType: 486,
               skinChangesTypeRight: 487,
               nippleDischarge: 99,
@@ -427,7 +435,7 @@ useEffect(() => {
         <img src={logo} className="h-[6vh] px-5" alt="logo" />
       </div>
       <div
-        className="w-full lg:w-4/12 pt-0 lg:pt-10 px-0 lg:px-4 h-[10vh] lg:h-full bg-[#a3b1a1] lg:bg-[#A4B2A1] flex flex-row lg:flex-col overflow-y-auto hide-scrollbar"
+        className="w-full lg:w-4/12 pt-0 h-[10vh] lg:h-full bg-[#a3b1a1] lg:bg-[#A4B2A1] flex flex-row lg:flex-col justify-start overflow-y-auto hide-scrollbar"
         style={{
           backgroundImage: `url(${sidebar_bg})`,
           boxShadow: "6px 4px 26.2px 5px #0000002B",
@@ -437,23 +445,35 @@ useEffect(() => {
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
-        <Button
-          type="button"
-          variant="link"
-          className="pb-4 text-foreground hidden lg:flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft />
-          <span className="text-lg">Back</span>
-        </Button>
-        {options.map((option) => (
+        <div className="relative hidden lg:flex flex-col justify-between py-2 pb-10">
+          <Button
+            type="button"
+            variant="link"
+            className="text-foreground flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft />
+            <span className="text-lg">Back</span>
+          </Button>
+
+          <p className="text-base lg:text-lg text-center font-bold uppercase">
+            Patient InTake Form
+          </p>
+        </div>
+
+        <div className="px-0 lg:px-4 flex lg:block">
+          {options.map((option) => (
           <div
             ref={(el) => {
               optionRefs.current[option] = el;
             }}
             key={option}
-            // onClick={() => setSelectedSection(option)}
-            className="flex gap-2 items-center"
+            onClick={() => {
+              readOnly && setSelectedSection(option);
+            }}
+            className={`flex gap-2 items-center ${
+              readOnly && "cursor-pointer"
+            }`}
           >
             {options.indexOf(option) < options.indexOf(selectedSection) && (
               <div className="inline w-6 lg:w-6 text-white font-bold">
@@ -475,6 +495,8 @@ useEffect(() => {
             </div>
           </div>
         ))}
+        </div>
+        
       </div>
 
       {/* Form Content */}

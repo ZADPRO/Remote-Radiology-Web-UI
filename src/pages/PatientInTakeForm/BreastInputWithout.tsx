@@ -121,7 +121,8 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         required={
                           !(
                             getAnswerByQuestionId(Props.LQID) ||
-                            getAnswerByQuestionId(Props.RQID)
+                            getAnswerByQuestionId(Props.RQID) && 
+                            getAnswerByQuestionId(Props.OtherInputQId) != ""
                           )
                         }
                       />
@@ -139,7 +140,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         onChange={(e) => {
                           updateAnswer(Props.SDateRight, e.target.value);
                         }}
-                        required={getAnswerByQuestionId(Props.RQID) == "false"}
+                        required={getAnswerByQuestionId(Props.RQID) == "false" && getAnswerByQuestionId(Props.SDateRight) != ""}
                       />
                     </div>
 
@@ -163,6 +164,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputPlaceholder="Specify"
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
+                            required
                           />
                         )}
                     </div>
@@ -203,7 +205,8 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         required={
                           !(
                             getAnswerByQuestionId(Props.LQID) ||
-                            getAnswerByQuestionId(Props.RQID)
+                            getAnswerByQuestionId(Props.RQID) && 
+                            getAnswerByQuestionId(Props.OtherInputQId) != ""
                           )
                         }
                       />
@@ -220,7 +223,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         onChange={(e) => {
                           updateAnswer(Props.SDate, e.target.value);
                         }}
-                        required={getAnswerByQuestionId(Props.SDate) == ""}
+                        required={getAnswerByQuestionId(Props.SDate) == "" && getAnswerByQuestionId(Props.OtherInputQId) != ""}
                       />
                     </div>
 
@@ -244,6 +247,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputPlaceholder="Specify"
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
+                            required
                           />
                         )}
                     </div>

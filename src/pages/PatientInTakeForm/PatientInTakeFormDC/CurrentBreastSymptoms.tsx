@@ -9,6 +9,7 @@ type Props = {
   data: any;
   setData: any;
   questionIds: QuestionIds;
+  readOnly: boolean;
 };
 
 interface QuestionIds {
@@ -89,6 +90,7 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="CURRENT BREAST SYMPTOMS" className="uppercase" />
+      <div className={Props.readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 lg:pr-2 space-y-8 pb-10">
         <MultiOptionRadioGroup
           label="A. Do you have any current breast symptoms?"
@@ -220,6 +222,7 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );

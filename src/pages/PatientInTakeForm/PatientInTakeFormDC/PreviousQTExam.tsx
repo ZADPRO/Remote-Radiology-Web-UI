@@ -22,12 +22,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const PreviousQTExam: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -37,7 +39,7 @@ const PreviousQTExam: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Previous QT Exam Details" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <div className="flex flex-col lg:flex-row gap-4">
           <Label className="text-bold text-base">A. Date of previous QT imaging<span className="text-red-500">*</span></Label>
@@ -54,6 +56,7 @@ const PreviousQTExam: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={(date) => date > new Date()}
               required
             />
           </div>
@@ -162,6 +165,7 @@ className="flex-col gap-2 h-auto"
 
         </div>
       </div>
+    </div>
     </div>
   );
 };

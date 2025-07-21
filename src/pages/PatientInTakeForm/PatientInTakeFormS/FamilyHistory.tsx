@@ -19,6 +19,9 @@ interface QuestionIds {
   historyRelativesCancer: number;
   historyRelativesSpecify: number;
   historyRelativesSpecifyAge: number;
+  maleRelativesCancer: number;
+  maleRelativesSpecify: number;
+  maleRelativesSpecifyAge: number;
   otherCancers: number;
   otherCancerSpecify: number;
   otherCancerSpecifyAge: number;
@@ -139,8 +142,26 @@ const FamilyHistory: React.FC<Props> = ({
           />
 
           <LabeledRadioWithOptionalInput
+            name="male-relatives-cancer"
+            label="E. Any male relatives with breast cancer?"
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            questionId={questionIds.maleRelativesCancer}
+            optionalInputQuestionId={questionIds.maleRelativesSpecify}
+            secondaryOptionalInputQuestionId={questionIds.maleRelativesSpecifyAge}
+            showInputWhenValue="Yes"
+            inputPlaceholder="Specify"
+            secondaryInputPlaceholder="Age"
+            secondaryinputWidth="w-20"
+          />
+
+          <LabeledRadioWithOptionalInput
             name="family-genetic-condition"
-            label="E. History of other cancers in the family?"
+            label="F. History of other cancers in the family?"
             options={[
               { label: "No", value: "No" },
               { label: "Yes", value: "Yes" },
@@ -158,7 +179,7 @@ const FamilyHistory: React.FC<Props> = ({
 
           <div className="flex flex-col sm:flex-row gap-2">
             <Label className="font-semibold text-base flex flex-wrap gap-1">
-              F. Others / Additional Comments
+              G. Others / Additional Comments
             </Label>
             <Textarea
               className="w-full lg:w-64"

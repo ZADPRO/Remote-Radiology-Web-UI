@@ -14,12 +14,14 @@ interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
+  readOnly: boolean;
 }
 
 const PatientConcerns: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
+  readOnly
 }) => {
   console.log(formData);
 
@@ -29,7 +31,7 @@ const PatientConcerns: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Patient Concerns and Goals" className="uppercase" />
-
+      <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
        <div className="flex flex-col lg:items-start gap-2">
           <Label className="font-semibold text-base lg:w-[40rem]">A. Current concerns about previous findings</Label>
@@ -61,6 +63,7 @@ const PatientConcerns: React.FC<Props> = ({
             }
             />
         </div>
+      </div>
       </div>
     </div>
   );
