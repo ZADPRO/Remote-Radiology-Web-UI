@@ -96,6 +96,7 @@ export interface TechnicianPatientQueue {
   refUserCustId: string;
   refCategoryId: number;
   refSCCustId: string;
+  refSCId: number;
   refAppointmentDate: string; // or Date, if you're parsing it
   refAppointmentComplete: string; // optionally narrow to "fillform" | "complete" | etc.
   refUserFirstName: string;
@@ -103,6 +104,10 @@ export interface TechnicianPatientQueue {
   refUserId: number;
   refAppointmentRemarks: string;
   dicomFiles: DicomFiles[];
+  GetCorrectEditModel: {
+    isHandleCorrect: boolean,
+    isHandleEdited: boolean
+  }
 }
 
 export const technicianService = {

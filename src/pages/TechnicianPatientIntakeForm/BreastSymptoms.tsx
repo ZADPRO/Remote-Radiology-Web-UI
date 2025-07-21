@@ -6,14 +6,26 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import BreastInputWithout from "../PatientInTakeForm/BreastInputWithout";
 import BreastInputLocation from "../PatientInTakeForm/BreastInputLocation";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
-import { Edit, Info } from "lucide-react";
+import { Droplet, Edit, Info } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { ResponseAudit, ResponsePatientForm } from "./TechnicianPatientIntakeForm";
+import {
+  ResponseAudit,
+  ResponsePatientForm,
+} from "./TechnicianPatientIntakeForm";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface IntakeOption {
   questionId: number;
@@ -28,6 +40,15 @@ interface QuestionIds {
   deformityLeft: number;
   deformityDuration: number;
   deformityDurationRight: number;
+  deformityComments: number;
+  lumporthickeningComments: number;
+  skinchangesComments: number;
+  nippledischargeComments: number;
+  painonpalpationComments: number;
+  nippleretractionComments: number;
+  scarComments: number;
+  soreComments: number;
+  lymphnodesComments: number;
   scar: number;
   scarRight: number;
   scarLeft: number;
@@ -49,7 +70,7 @@ interface Props {
   setTechnicianFormData: any;
   setPatientFormData: any;
   auditData?: ResponseAudit[];
-  readOnly?: boolean
+  readOnly?: boolean;
 }
 
 const BreastSymptoms: React.FC<Props> = ({
@@ -60,7 +81,7 @@ const BreastSymptoms: React.FC<Props> = ({
   setTechnicianFormData,
   setPatientFormData,
   auditData,
-  readOnly
+  readOnly,
 }) => {
   const [editStatuses, setEditStatuses] = useState<Record<string, boolean>>({});
   const [initialAnswers, setInitialAnswers] = useState<
@@ -102,13 +123,19 @@ const BreastSymptoms: React.FC<Props> = ({
     <div className={cn(`flex flex-col items-center w-25 gap-1`, className)}>
       <div className="text-xs font-medium">{name}</div>
       <Checkbox2
-      name={name}
+        name={name}
         className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
         checked={
           patientFormData.find((q) => q.questionId === symptomMainQuestionId)
             ?.verifyTechnician || false
         }
-        onClick={() =>
+        onClick={() => {
+          if (
+            symptomMainQuestionId === 99 &&
+            !patientFormData.find((q) => q.questionId === symptomMainQuestionId)
+              ?.verifyTechnician
+          )
+            setAlert(true);
           handleVerifyChange(
             symptomMainQuestionId,
             !(
@@ -116,143 +143,185 @@ const BreastSymptoms: React.FC<Props> = ({
                 (q) => q.questionId === symptomMainQuestionId
               )?.verifyTechnician || false
             )
-          )
-        }
+          );
+        }}
         required
       />
     </div>
   );
-  
-const handleEditClick = (
-  symptomKey: string,
-  questionIdsToCopy: number[],
-  labels: string[]
-) => {
-  const answers: { label: string; value: string }[] = [];
 
-  questionIdsToCopy.forEach((id, index) => {
-    // Parse refTHData if needed
-    const matchingAudit = auditData?.find((entry) => {
-      let parsedData = [];
+  const handleEditClick = (
+    symptomKey: string,
+    questionIdsToCopy: number[],
+    labels: string[]
+  ) => {
+    const answers: { label: string; value: string }[] = [];
 
-      try {
-        const parsed = JSON.parse(entry.refTHData);
-        if (Array.isArray(parsed)) {
-          parsedData = parsed.map((d) => ({
-            ...d,
-            label: Number(d.label), // 🔁 Ensure label is a number
-          }));
+    questionIdsToCopy.forEach((id, index) => {
+      // Parse refTHData if needed
+      const matchingAudit = auditData?.find((entry) => {
+        let parsedData = [];
+
+        try {
+          const parsed = JSON.parse(entry.refTHData);
+          if (Array.isArray(parsed)) {
+            parsedData = parsed.map((d) => ({
+              ...d,
+              label: Number(d.label), // 🔁 Ensure label is a number
+            }));
+          }
+        } catch {
+          parsedData = [];
         }
-      } catch {
-        parsedData = [];
+
+        // @ts-ignore - temporarily assign parsedTHData if not already present
+        entry.parsedTHData = parsedData;
+
+        return parsedData.some((data) => data.label === id);
+      });
+
+      const parsed = matchingAudit?.parsedTHData?.find(
+        (data) => data.label === id
+      );
+
+      if (parsed) {
+        answers.push({ label: labels[index], value: parsed.newValue });
       }
-
-      // @ts-ignore - temporarily assign parsedTHData if not already present
-      entry.parsedTHData = parsedData;
-
-      return parsedData.some((data) => data.label === id);
     });
 
-    const parsed = matchingAudit?.parsedTHData?.find(
-      (data) => data.label === id
-    );
+    setInitialAnswers((prev) => ({
+      ...prev,
+      [symptomKey]: answers,
+    }));
 
-    if (parsed) {
-      answers.push({ label: labels[index], value: parsed.newValue });
-    }
-  });
+    setEditStatuses((prev) => ({
+      ...prev,
+      [symptomKey]: true,
+    }));
+  };
 
-  setInitialAnswers((prev) => ({
-    ...prev,
-    [symptomKey]: answers,
-  }));
-
-  setEditStatuses((prev) => ({
-    ...prev,
-    [symptomKey]: true,
-  }));
-};
-
-
+  const [alert, setAlert] = useState(false);
 
   const renderSymptomWithVerification = (
     symptomKey: string,
     symptomMainQuestionId: number,
     patientQuestionIds: number[],
     patientAnswerLabels: string[],
-    children: React.ReactNode
+    children: React.ReactNode,
+    CommentsQuestionId?: number
   ) => {
     const isEditing = editStatuses[symptomKey] || false;
 
     return (
-      <div className="flex flex-col lg:flex-row w-full items-center
-       ">
-        <div className="w-full relative">
-          {children}
-          {!isEditing && (
-            <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
-          )}
-        </div>
-        <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
-          <div className="flex gap-3">
-            {renderCheckbox("Check to Confirm", symptomMainQuestionId)}
-            {!readOnly && (
-            !isEditing ? (
-              <div className="flex w-20 flex-col gap-1 items-center">
-                <div className="text-xs font-medium">Edit</div>
-                <Edit
-                  onClick={() =>
-                    handleEditClick(
-                      symptomKey,
-                      patientQuestionIds,
-                      patientAnswerLabels
-                    )
-                  }
-                  className="w-4 h-4 cursor-pointer"
-                />
-              </div>
-            ) : (
-              <div className="flex w-20 flex-col gap-1 items-center">
-                <div className="text-xs font-medium">Info</div>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Info className="w-4 h-4 text-gray-600 hover:text-gray-800 cursor-pointer" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="space-y-2 text-sm text-gray-700">
-                      <div className="font-medium text-gray-900 border-b pb-2 mb-2">
-                        Initial Patient Response
-                      </div>
-                      {(initialAnswers[symptomKey] || []).map(
-                        (pa) =>
-                          pa.value && (
-                            <div
-                              key={pa.label}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="font-medium text-gray-800">
-                                {pa.label}:
-                              </span>
-                              <span className="text-gray-600 text-right">
-                                {pa.value}
-                              </span>
-                            </div>
-                          )
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )
-          )}
+      <>
+        <div className="flex flex-col lg:flex-row w-full items-center">
+          <div className="w-full relative">
+            {children}
+            {!isEditing && (
+              <div className="absolute top-0 left-0 w-full h-full bg-transparent z-10 cursor-not-allowed" />
+            )}
+            {getPatientFormAnswer(symptomMainQuestionId) === "true" &&
+              CommentsQuestionId && (
+                <div
+                  className={`flex gap-1 ml-[21%] w-90 mb-2 ${
+                    symptomKey === "lymph" && "mt-4"
+                  }`}
+                >
+                  <Textarea
+                    placeholder="Additional Comments"
+                    value={getAnswer(CommentsQuestionId)}
+                    onChange={(e) =>
+                      handleInputChange(CommentsQuestionId, e.target.value)
+                    }
+                  />
+                </div>
+              )}
+          </div>
+          <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
+            <div className="flex gap-3">
+              {renderCheckbox("Check", symptomMainQuestionId)}
+              {!readOnly &&
+                (!isEditing ? (
+                  <div className="flex w-20 flex-col gap-1 items-center">
+                    <div className="text-xs font-medium">Edit</div>
+                    <Edit
+                      onClick={() =>
+                        handleEditClick(
+                          symptomKey,
+                          patientQuestionIds,
+                          patientAnswerLabels
+                        )
+                      }
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex w-20 flex-col gap-1 items-center">
+                    <div className="text-xs font-medium">Info</div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Info className="w-4 h-4 text-gray-600 hover:text-gray-800 cursor-pointer" />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                        <div className="space-y-2 text-sm text-gray-700">
+                          <div className="font-medium text-gray-900 border-b pb-2 mb-2">
+                            Initial Patient Response
+                          </div>
+                          {(initialAnswers[symptomKey] || []).map(
+                            (pa) =>
+                              pa.value && (
+                                <div
+                                  key={pa.label}
+                                  className="flex justify-between items-center"
+                                >
+                                  <span className="font-medium text-gray-800">
+                                    {pa.label}:
+                                  </span>
+                                  <span className="text-gray-600 text-right">
+                                    {pa.value}
+                                  </span>
+                                </div>
+                              )
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   };
 
   return (
     <div className="flex h-full flex-col gap-6 p-4 sm:p-2 overflow-y-auto relative">
+      <Dialog open={alert} onOpenChange={setAlert}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Droplet className="h-5 w-5 text-[#abb4a5]" />
+              Water Change Required
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-6">
+            <p className="text-lg text-center font-medium">
+              Kindly Please Change Water
+            </p>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button
+                className="w-full bg-[#abb4a5] hover:bg-[#abb4a5]"
+                onClick={() => setAlert(false)}
+              >
+                Understood
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className={`${readOnly ? "pointer-events-none" : ""} space-y-4`}>
         {renderSymptomWithVerification(
           "clinicalExam",
@@ -275,18 +344,37 @@ const handleEditClick = (
         <div className="space-y-2">
           {getPatientFormAnswer(87) === "Yes" && (
             <>
-              <BreastInputWithout
-                technician={true}
-                label="Deformity / Asymmetry"
-                checkStatusQId={questionIds.deformity}
-                RQID={questionIds.deformityRight}
-                LQID={questionIds.deformityLeft}
-                SDate={questionIds.deformityDuration}
-                SDateRight={questionIds.deformityDurationRight}
-                biggerSide={questionIds.deformityBig}
-                data={technicianFormData}
-                setData={setTechnicianFormData}
-              />
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInputWithout
+                    technician={true}
+                    label="Deformity / Asymmetry"
+                    checkStatusQId={questionIds.deformity}
+                    RQID={questionIds.deformityRight}
+                    LQID={questionIds.deformityLeft}
+                    SDate={questionIds.deformityDuration}
+                    SDateRight={questionIds.deformityDurationRight}
+                    biggerSide={questionIds.deformityBig}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                  />
+                  {getAnswer(questionIds.deformity) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.additionalComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.additionalComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
+              </div>
               {/* Use renderSymptomWithVerification for other symptoms */}
               {renderSymptomWithVerification(
                 "lump",
@@ -309,7 +397,8 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["lump"]}
-                />
+                />,
+                questionIds.lumporthickeningComments
               )}
               {renderSymptomWithVerification(
                 "skin",
@@ -330,7 +419,8 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["skin"]}
-                />
+                />,
+                questionIds.skinchangesComments
               )}
               {renderSymptomWithVerification(
                 "nippleDischarge",
@@ -351,7 +441,8 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["nippleDischarge"]}
-                />
+                />,
+                questionIds.nippledischargeComments
               )}
               {renderSymptomWithVerification(
                 "pain",
@@ -372,7 +463,8 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["pain"]}
-                />
+                />,
+                questionIds.painonpalpationComments
               )}
               {renderSymptomWithVerification(
                 "nippleRetraction",
@@ -403,33 +495,71 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["nippleRetraction"]}
-                />
+                />,
+                questionIds.nippleretractionComments
               )}
 
               {/* Scar and Sore - Technician Only */}
-              <BreastInput
-                technician={true}
-                label="Scar"
-                checkStatusQId={questionIds.scar}
-                RQID={questionIds.scarRight}
-                LQID={questionIds.scarLeft}
-                SDate={questionIds.scarDuration}
-                SDateRight={questionIds.scarDurationRight}
-                data={technicianFormData}
-                setData={setTechnicianFormData}
-              />
-              <BreastInput
-                technician={true}
-                label="Sore"
-                checkStatusQId={questionIds.sore}
-                RQID={questionIds.soreRight}
-                LQID={questionIds.soreLeft}
-                SDate={questionIds.soreDuration}
-                SDateRight={questionIds.soreDurationRight}
-                data={technicianFormData}
-                setData={setTechnicianFormData}
-              />
-
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInput
+                    technician={true}
+                    label="Scar"
+                    checkStatusQId={questionIds.scar}
+                    RQID={questionIds.scarRight}
+                    LQID={questionIds.scarLeft}
+                    SDate={questionIds.scarDuration}
+                    SDateRight={questionIds.scarDurationRight}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                  />
+                  {getAnswer(questionIds.scar) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.scarComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.scarComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
+              </div>
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInput
+                    technician={true}
+                    label="Sore"
+                    checkStatusQId={questionIds.sore}
+                    RQID={questionIds.soreRight}
+                    LQID={questionIds.soreLeft}
+                    SDate={questionIds.soreDuration}
+                    SDateRight={questionIds.soreDurationRight}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                  />
+                  {getAnswer(questionIds.sore) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.soreComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.soreComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
+              </div>
               {/* Lymph Node Swelling - with verification */}
               {renderSymptomWithVerification(
                 "lymph",
@@ -452,7 +582,8 @@ const handleEditClick = (
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["lymph"]}
-                />
+                />,
+                questionIds.lymphnodesComments
               )}
             </>
           )}

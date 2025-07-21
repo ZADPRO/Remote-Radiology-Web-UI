@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew2.png";
 import navbar_bg from "../../assets/navbar_bg.png";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import AllergiesMedications from "./AllergiesMedications";
 import BreastBiopsy from "./BreastBiopsy";
 import AddintionalNotes from "./AddintionalNotes";
@@ -68,7 +68,7 @@ const TechnicianPatientIntakeForm: React.FC<
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
   const [technicianFormData, setTechnicianFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 50 }, (_, index) => ({
+    Array.from({ length: 56 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -271,6 +271,7 @@ const TechnicianPatientIntakeForm: React.FC<
   };
 
   const handleAddTechnicianForm = async () => {
+    setLoading(true);
     try {
       const categoryId = patientFormData.find((item) => item.questionId == 170);
 
@@ -294,6 +295,8 @@ const TechnicianPatientIntakeForm: React.FC<
       }
     } catch (error) {
       console.log(error);
+    } finally {
+    setLoading(false);
     }
   };
 
@@ -382,6 +385,15 @@ const TechnicianPatientIntakeForm: React.FC<
               deformityLeft: 22,
               deformityDuration: 23,
               deformityDurationRight: 47,
+              deformityComments: 48,
+              lumporthickeningComments: 49,
+              skinchangesComments: 50,
+              nippledischargeComments: 51,
+              painonpalpationComments: 52,
+              nippleretractionComments: 53,
+              scarComments: 54,
+              soreComments: 55,
+              lymphnodesComments: 56,
               scar: 24,
               scarRight: 25,
               scarLeft: 26,
@@ -530,7 +542,7 @@ const TechnicianPatientIntakeForm: React.FC<
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
-        <img src={logo} className="h-[8vh]" alt="logo" />
+        <img src={logo} className="h-[4vh] lg:h-[8vh]" alt="logo" />
         <div className="uppercase w-[80%] text-center text-sm sm:text-2xl font-bold">
           Technologist Form
         </div>
@@ -548,26 +560,35 @@ const TechnicianPatientIntakeForm: React.FC<
 
       <div className="px-3 w-full py-2 lg:px-15 h-[80vh]">
         <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar">
-          {options.map((option, index) => (
-            <div
-              ref={(el) => {
-                optionRefs.current[option] = el;
-              }}
-              onClick={() => setSelectedSection(option)}
-              className={` cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
-                index !== option.length - 1 ? "border-r-1" : "border-r-0"
-              } border-r-[#BFB2B2] ${
-                selectedSection === option
-                  ? "border-b-5 border-b-[#abb4a5]"
-                  : "border-b-5 border-b-[#f9f4ed]"
-              }`}
-            >
-              <div className="w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white">
-                {index + 1}
-              </div>
-              <div className="w-[150px] text-sm lg:text-sm">{option}</div>
-            </div>
-          ))}
+          {options.map((option, index) => {
+  const selectedIndex = options.indexOf(selectedSection);
+  const isCompleted = index < selectedIndex;
+
+  return (
+    <div
+      key={option}
+      ref={(el) => {
+        optionRefs.current[option] = el;
+      }}
+      onClick={() => setSelectedSection(option)}
+      className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
+        index !== options.length - 1 ? "border-r-1" : "border-r-0"
+      } border-r-[#BFB2B2] ${
+        selectedSection === option
+          ? "border-b-5 border-b-[#abb4a5]"
+          : "border-b-5 border-b-[#f9f4ed]"
+      } ${isCompleted ? "bg-[#eae0d4] border-b-5 !border-b-[#cbbfb1]" : ""}`} // ✅ light green background if completed
+    >
+      <div
+        className={`w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white`}
+      >
+        {isCompleted ? <Check size={16} /> : index + 1}
+      </div>
+      <div className="w-[150px] text-sm lg:text-sm">{option}</div>
+    </div>
+  );
+})}
+
         </div>
         <div className="mt-[1vh] h-[71vh] bg-[#f9f4ed] rounded-b-2xl">
           <div
