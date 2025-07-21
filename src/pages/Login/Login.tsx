@@ -71,7 +71,7 @@ const Login: React.FC = () => {
         <img
           src={loginImg}
           alt="Login"
-          className="h-[75%] w-[90%] max-w-[500px] max-h-[500px] lg:h-[65%] lg:w-[80%]"
+          className="w-[90%] lg:w-[80%]"
         />
       </div>
 
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
       <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
-          className="hidden h-[15%] mx-auto lg:inline"
+          className="hidden h-[15%] w-auto mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 pb-0 rounded-lg shadow-lg lg:w-[70%] lg:shadow-none">
           <form onSubmit={(e: any) => login(e)} className="flex flex-col gap-6">

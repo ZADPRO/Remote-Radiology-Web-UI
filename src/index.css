@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./custom-form-stepper.css";
@@ -6,9 +6,9 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: "Roboto", sans-serif;
+  font-family: "Work Sans", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
   font-variation-settings: "wdth" 100;
   line-height: 1.5;
@@ -197,6 +197,10 @@ input:-webkit-autofill:active {
 
 *::-webkit-scrollbar-thumb:hover {
   background-color: #a0aec0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .hide-scrollbar {

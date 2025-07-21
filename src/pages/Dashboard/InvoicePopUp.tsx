@@ -174,29 +174,34 @@ const InvoicePopUp: React.FC<Props> = () => {
         background:
           "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
       }}
-      className="h-[90vh] w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+      className="h-[90vh] w-[95vw] sm:w-[90vw] lg:w-[70vw] max-w-4xl overflow-y-auto p-0"
     >
       {loading && <LoadingOverlay />}
       <div className="w-full">
-        <div className="h-[15vh] bg-[#efd4d1] flex items-center justify-between px-4">
+        {/* Header */}
+        <div className="h-[12vh] sm:h-[15vh] bg-[#efd4d1] flex items-center justify-between px-3 sm:px-4 lg:px-6">
           {/* Logo (Left) */}
           <img
             src={logoNew}
             alt="logoNew"
-            className="h-12 sm:h-14 object-contain"
+            className="h-8 sm:h-10 lg:h-12 xl:h-14 object-contain"
           />
 
           {/* Title (Center) */}
           <div className="flex-1 text-center">
-            <h2 className="text-2xl font-semibold">Invoice</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold">
+              Invoice
+            </h2>
           </div>
 
-          {/* Spacer to balance alignment (same width as logo) */}
-          <div className="w-24" />
+          {/* Spacer to balance alignment */}
+          <div className="w-16 sm:w-20 lg:w-24" />
         </div>
-        <div className="flex items-center justify-center px-10 py-5">
+
+        {/* Type Selection Tabs */}
+        <div className="flex items-center justify-center px-4 sm:px-6 lg:px-10 py-3 sm:py-4 lg:py-5">
           {(role?.id === 1 || role?.id === 9) && (
-            <div className="flex gap-4">
+            <div className="flex gap-2 sm:gap-3 lg:gap-4 flex-wrap justify-center">
               <div
                 onClick={() => {
                   setType("1");
@@ -205,9 +210,9 @@ const InvoicePopUp: React.FC<Props> = () => {
                   setSelectedUser(null);
                   setInvoiceHistory([]);
                 }}
-                className={`text-sm w-[100px] h-14 font-bold flex justify-center items-center px-2 rounded-sm cursor-pointer ${
+                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
                   type === "1"
-                    ? "bg-[#a3b1a0]"
+                    ? "bg-[#a3b1a0] text-white"
                     : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
                 }`}
               >
@@ -221,9 +226,9 @@ const InvoicePopUp: React.FC<Props> = () => {
                   setSelectedUser(null);
                   setInvoiceHistory([]);
                 }}
-                className={`text-sm w-[100px] font-bold flex justify-center items-center px-2 rounded-sm cursor-pointer ${
+                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
                   type === "2"
-                    ? "bg-[#a3b1a0]"
+                    ? "bg-[#a3b1a0] text-white"
                     : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
                 }`}
               >
@@ -237,9 +242,9 @@ const InvoicePopUp: React.FC<Props> = () => {
                   setSelectedUser(null);
                   setInvoiceHistory([]);
                 }}
-                className={`text-sm w-[100px] font-bold flex justify-center items-center px-2 rounded-sm cursor-pointer ${
+                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
                   type === "3"
-                    ? "bg-[#a3b1a0]"
+                    ? "bg-[#a3b1a0] text-white"
                     : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
                 }`}
               >
@@ -248,60 +253,69 @@ const InvoicePopUp: React.FC<Props> = () => {
             </div>
           )}
         </div>
-        {
-          (type === "2" || type === "1") && (
-            <div className="w-full flex flex-row my-5">
-          <div className="w-[50%] flex flex-col gap-4 justify-start px-10">
-            {type === "1" && (
-              <>
-                <div>
-                  <Select
-                    value={selectedScanCenter || ""}
-                    onValueChange={(val) => {
-                      setSelectedScanCenter(val);
-                      getUserInvoiceHistory(parseInt(type), parseInt(val));
-                      setDate(null);
-                    }}
-                  >
-                    <SelectTrigger
-                      className={`bg-[#a3b1a0] font-medium p-2 text-sm w-full`}
+
+        {/* Main Content */}
+        {(type === "2" || type === "1") && (
+          <div className="w-full flex flex-col lg:flex-row my-3 sm:my-5">
+            {/* Left Panel - Controls */}
+            <div className="w-full lg:w-[50%] flex flex-col gap-3 sm:gap-4 justify-start px-4 sm:px-6 lg:px-10 mb-4 lg:mb-0">
+              {type === "1" && (
+                <>
+                  <div className="w-full">
+                    <Select
+                      value={selectedScanCenter || ""}
+                      onValueChange={(val) => {
+                        setSelectedScanCenter(val);
+                        getUserInvoiceHistory(parseInt(type), parseInt(val));
+                        setDate(null);
+                      }}
                     >
-                      <SelectValue placeholder="Choose Scan Center" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {scancenterList.map((item, index) => (
-                        <SelectItem key={index} value={item.refSCId.toString()}>
-                          {item.refSCCustId}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-3 justify-end">
-                  {selectedScanCenter && (
-                    <>
-                      <div className="flex gap-5">
+                      <SelectTrigger className="bg-[#a3b1a0] font-medium p-2 text-xs sm:text-sm w-full h-9 sm:h-10">
+                        <SelectValue placeholder="Choose Scan Center" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {scancenterList.map((item, index) => (
+                          <SelectItem
+                            key={index}
+                            value={item.refSCId.toString()}
+                            className="text-xs sm:text-sm"
+                          >
+                            {item.refSCCustId}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 justify-start sm:justify-end">
+                    {selectedScanCenter && (
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full sm:w-auto">
                         {(role?.id === 9 ||
                           role?.id === 1 ||
                           role?.id === 6 ||
                           role?.id === 7) && (
                           <>
-                            <div>
+                            <div className="w-full sm:w-auto">
                               <PopoverDialog>
                                 <PopoverTriggerDialog asChild>
                                   <Button
                                     variant="outline"
                                     className={cn(
-                                      "h-9 px-6 w-full text-sm justify-start text-left font-medium", // ⬅️ size boost
+                                      "h-8 sm:h-9 px-3 sm:px-6 w-full sm:w-auto text-xs sm:text-sm justify-start text-left font-medium",
                                       !date && "text-muted-foreground"
                                     )}
                                   >
-                                    <CalendarIcon className="mr-2 h-5 w-5" />{" "}
-                                    {/* ⬅️ Slightly bigger icon */}
+                                    <CalendarIcon className="mr-1 sm:mr-2 h-4 sm:h-5 w-4 sm:w-5" />
                                     {date ? (
                                       format(date, "MMM yyyy")
                                     ) : (
-                                      <span>Pick a month</span>
+                                      <>
+                                        {" "}
+                                        <span className="hidden sm:inline">
+                                          Pick a month
+                                        </span>
+                                        <span className="sm:hidden">Month</span>
+                                      </>
                                     )}
                                   </Button>
                                 </PopoverTriggerDialog>
@@ -323,8 +337,8 @@ const InvoicePopUp: React.FC<Props> = () => {
                               </PopoverDialog>
                             </div>
                             <Button
-                              disabled={date ? false : true}
-                              className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-sm"
+                              disabled={!date}
+                              className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-xs sm:text-sm h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4"
                               onClick={() => {
                                 navigate("/invoicegenerate", {
                                   state: {
@@ -335,70 +349,75 @@ const InvoicePopUp: React.FC<Props> = () => {
                                 });
                               }}
                             >
-                              Create Report
+                              <span className="hidden sm:inline">
+                                Create Report
+                              </span>
+                              <span className="sm:hidden">Create</span>
                             </Button>
                           </>
                         )}
                       </div>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+                    )}
+                  </div>
+                </>
+              )}
 
-            {type === "2" && (
-              <>
-                <div>
-                  <Select
-                    value={selectedUser || ""}
-                    onValueChange={(val) => {
-                      setSelectedUser(val);
-                      getUserInvoiceHistory(parseInt(type), parseInt(val));
-                      setDate(null);
-                    }}
-                  >
-                    <SelectTrigger
-                      className={`bg-[#a3b1a0] font-medium p-2 text-sm w-full`}
+              {type === "2" && (
+                <>
+                  <div className="w-full">
+                    <Select
+                      value={selectedUser || ""}
+                      onValueChange={(val) => {
+                        setSelectedUser(val);
+                        getUserInvoiceHistory(parseInt(type), parseInt(val));
+                        setDate(null);
+                      }}
                     >
-                      <SelectValue placeholder="Choose User" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {UserList.map((item, index) => (
-                        <SelectItem
-                          key={index}
-                          value={item.refUserId.toString()}
-                        >
-                          {item.refUserCustId}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-3 justify-end">
-                  {selectedUser && (
-                    <>
-                      <div className="flex gap-5">
+                      <SelectTrigger className="bg-[#a3b1a0] font-medium p-2 text-xs sm:text-sm w-full h-9 sm:h-10">
+                        <SelectValue placeholder="Choose User" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {UserList.map((item, index) => (
+                          <SelectItem
+                            key={index}
+                            value={item.refUserId.toString()}
+                            className="text-xs sm:text-sm"
+                          >
+                            {item.refUserCustId}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 justify-start sm:justify-end">
+                    {selectedUser && (
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full sm:w-auto">
                         {(role?.id === 9 ||
                           role?.id === 1 ||
                           role?.id === 6 ||
                           role?.id === 7) && (
                           <>
-                            <div>
+                            <div className="w-full sm:w-auto">
                               <PopoverDialog>
                                 <PopoverTriggerDialog asChild>
                                   <Button
                                     variant="outline"
                                     className={cn(
-                                      "h-9 px-6 text-sm justify-start text-left font-medium", // ⬅️ size boost
+                                      "h-8 sm:h-9 px-3 sm:px-6 w-full sm:w-auto text-xs sm:text-sm justify-start text-left font-medium",
                                       !date && "text-muted-foreground"
                                     )}
                                   >
-                                    <CalendarIcon className="mr-2 h-5 w-5" />{" "}
-                                    {/* ⬅️ Slightly bigger icon */}
+                                    <CalendarIcon className="mr-1 sm:mr-2 h-4 sm:h-5 w-4 sm:w-5" />
                                     {date ? (
                                       format(date, "MMM yyyy")
                                     ) : (
-                                      <span>Pick a month</span>
+                                      <>
+                                        <span className="hidden sm:inline">
+                                          Pick a month
+                                        </span>
+                                        <span className="sm:hidden">Month</span>
+                                      </>
                                     )}
                                   </Button>
                                 </PopoverTriggerDialog>
@@ -420,8 +439,8 @@ const InvoicePopUp: React.FC<Props> = () => {
                               </PopoverDialog>
                             </div>
                             <Button
-                              disabled={date ? false : true}
-                              className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-sm"
+                              disabled={!date}
+                              className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-xs sm:text-sm h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4"
                               onClick={() => {
                                 navigate("/invoicegenerate", {
                                   state: {
@@ -432,95 +451,109 @@ const InvoicePopUp: React.FC<Props> = () => {
                                 });
                               }}
                             >
-                              Create Report
+                              <span className="hidden sm:inline">
+                                Create Report
+                              </span>
+                              <span className="sm:hidden">Create</span>
                             </Button>
                           </>
                         )}
                       </div>
-                    </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Right Panel - Invoice History */}
+            <div className="w-full lg:w-[50%] flex flex-col gap-3 sm:gap-5 h-[30vh] sm:h-[35vh] lg:h-[40vh] overflow-y-auto px-4 sm:px-6 lg:px-10">
+              {(type === "1" || type === "2") && (
+                <div className="flex flex-col gap-3 sm:gap-4 justify-start items-start w-full">
+                  <h3 className="font-bold text-sm sm:text-base lg:hidden">
+                    Invoice History
+                  </h3>
+                  {invoiceHistory && invoiceHistory.length > 0 ? (
+                    invoiceHistory.map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#fff] w-full px-3 sm:px-4 lg:px-5 py-2 sm:py-3 rounded-sm border-2 border-[#a3b1a0] flex justify-between items-center"
+                      >
+                        <div className="font-bold text-xs sm:text-sm">
+                          {item.refIHFromDate.slice(0, 7)}
+                        </div>
+                        <div>
+                          <InvoiceDownloadButton invoiceHistory={item} />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs sm:text-sm font-bold text-center w-full py-4">
+                      No Invoice Found
+                    </p>
                   )}
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
-          <div className="w-[50%] flex flex-col gap-5 h-[40vh] overflow-y-auto ">
-            {(type === "1" || type === "2") && (
-              <div className="px-10 flex flex-col gap-4 justify-start items-start w-full">
-                {invoiceHistory ? (
-                  invoiceHistory.map((item) => (
-                    <div className="bg-[#fff] w-full px-5 py-2 rounded-sm border-2 border-[#a3b1a0] flex justify-between items-center">
-                      <div className="font-bold text-sm">
-                        {item.refIHFromDate.slice(0, 7)}
-                      </div>
-                      <div>
-                        {/* <Download /> */}
-                        <InvoiceDownloadButton invoiceHistory={item} />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <>
-                    <p className="text-sm font-bold">No Invoice Found</p>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-          )
-        }
+        )}
+
+        {/* Amount Edit Form */}
         {type === "3" && (
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleUpdateAmount();
             }}
+            className="px-4 sm:px-6 lg:px-10"
           >
-            <div className="flex gap-10 mt-4 px-10">
-              <div className="flex flex-col items-start gap-3">
-                <p className="font-bold text-base">Scan Center Amount (INR)</p>
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 lg:gap-10 mt-4">
+              <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
+                <p className="font-bold text-sm sm:text-base">
+                  Scan Center Amount (INR)
+                </p>
                 <Input
                   type="number"
                   value={amount.scanCenterAmount}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      scanCenterAmount: parseInt(e.target.value),
+                      scanCenterAmount: parseInt(e.target.value) || 0,
                     }))
                   }
                   required
                   placeholder="Amount"
-                  className="w-full text-sm"
+                  className="w-full sm:w-[200px] lg:w-[250px] text-xs sm:text-sm h-9 sm:h-10"
                 />
               </div>
-              <div className="flex flex-col items-start gap-3">
-                <p className="font-bold text-base">User Amount (INR)</p>
+              <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
+                <p className="font-bold text-sm sm:text-base">
+                  User Amount (INR)
+                </p>
                 <Input
                   type="number"
                   value={amount.userAmount}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      userAmount: parseInt(e.target.value),
+                      userAmount: parseInt(e.target.value) || 0,
                     }))
                   }
                   required
                   placeholder="Amount"
-                  className="w-full text-sm"
+                  className="w-full sm:w-[200px] lg:w-[250px] text-xs sm:text-sm h-9 sm:h-10"
                 />
               </div>
             </div>
-            <div className="flex justify-start mt-6  px-10">
+            <div className="flex justify-start mt-4 sm:mt-6">
               <Button
                 type="submit"
-                className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-sm"
+                className="bg-[#a3b1a0] hover:bg-[#a3b1a0] text-xs sm:text-sm h-8 sm:h-9 px-4 sm:px-6"
               >
                 Save
               </Button>
             </div>
           </form>
         )}
-        
       </div>
     </DialogContent>
   );

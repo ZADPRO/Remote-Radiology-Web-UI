@@ -164,7 +164,7 @@ const [successMessage, setSuccessMessage] = useState("");
         <img
           src={loginImg}
           alt="Login"
-          className="h-[75%] w-[90%] max-w-[500px] max-h-[500px] lg:h-[65%] lg:w-[80%]"
+          className="w-[90%] lg:w-[80%]"
         />
       </div>
 
@@ -172,7 +172,7 @@ const [successMessage, setSuccessMessage] = useState("");
       <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
-          className="hidden w-[40%] h-[20%] mx-auto lg:inline"
+          className="hidden h-[15%] w-auto mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 rounded-lg shadow-lg lg:w-[70%] lg:shadow-none">
           <div className="flex flex-col items-center gap-2 text-center">

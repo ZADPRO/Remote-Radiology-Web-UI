@@ -136,7 +136,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
 
             {/* Centered Content */}
             <div className="flex-1 text-center">
-              <h2 className="text-2xl font-semibold">Radiology Training Material</h2>
+              <h2 className="text-2xl font-semibold">Radiology Training Materials</h2>
               <p className="text-sm text-gray-600 max-w-md mx-auto">
                 EaseQT Platform
               </p>

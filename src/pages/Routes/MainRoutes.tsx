@@ -44,7 +44,7 @@ import AddPerformingProvider from "../AddPerformingProvider/AddPerformingProvide
 import ManagePerformingProvider from "../ManagePerformingProvider/ManagePerformingProvider";
 import AddCoReportingDoctor from "../AddCoReportingDoctor/AddCoReportingDoctor";
 import ManageCoReportingDoctor from "../ManageCoReportingDoctor/ManageCoReportingDoctor";
-import MedicalHistory from "../PatientFlow/MedicalHistory";
+// import MedicalHistory from "../PatientFlow/MedicalHistory";
 import Report from "../Report/Report";
 import PatientQueue from "../PatientQueue/PatientQueue";
 import UploadDicomFiles from "../PatientQueue/UploadDicomFiles";
@@ -156,7 +156,7 @@ const MainRoutes: React.FC = () => {
     { index: true, element: <Navigate to="myCare" replace /> },
     { path: "dashboard", element: <Dashboard /> },
     { path: "myCare", element: <MyCare /> },
-    { path: "medicalHistory", element: <MedicalHistory />},
+    { path: "medicalHistory", element: <PatientQueue />},
   ];
 
   // Helper function to render routes, applying RoleProtectedRoute when needed
@@ -189,6 +189,11 @@ const MainRoutes: React.FC = () => {
       return <Route key={index} path={route.path} element={Element} index={route.index} />;
     });
   };
+
+  // const {refrehToken} = useAuth();
+  // useEffect(() => {
+  //   refrehToken();
+  // }, []);
 
   return (
     <Router>
