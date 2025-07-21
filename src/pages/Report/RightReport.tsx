@@ -262,7 +262,7 @@ const RightReport: React.FC<RightReportProps> = ({
         >
           D. RIGHT BREAST - DETAILED FINDINGS
         </Label>
-      <div className={`${readOnly ? "pointer-events-auto" : ""}`}>
+      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <BreastDensityandImageQualityRight
           label="BREAST DENSITY & IMAGE QUALITY (Right)"
           reportFormData={reportFormData}
@@ -293,7 +293,7 @@ const RightReport: React.FC<RightReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <NippleAreolaSkin
           label="NIPPLE, AREOLA & SKIN (Right)"
           reportFormData={reportFormData}
@@ -350,7 +350,7 @@ const RightReport: React.FC<RightReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <GrandularAndDuctalTissueRight
           label="Glandular And Ductal tissue (Right)"
           reportFormData={reportFormData}
@@ -380,7 +380,7 @@ const RightReport: React.FC<RightReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <LisonsRight
           label="LESIONS (Right)"
           reportFormData={reportFormData}
@@ -409,7 +409,7 @@ const RightReport: React.FC<RightReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <LymphNodesRight
           label="LYMPH NODES (Right)"
           axilaryLabel="Right Axillary Nodes"
@@ -439,7 +439,7 @@ const RightReport: React.FC<RightReportProps> = ({
         )}
       </div>
 
-      <div>
+       <div className={`${readOnly ? "pointer-events-none" : ""}`}>
         <ComparisonPriorRight
           label="COMPARISON TO PRIOR STUDIES (Right)"
           reportFormData={reportFormData}

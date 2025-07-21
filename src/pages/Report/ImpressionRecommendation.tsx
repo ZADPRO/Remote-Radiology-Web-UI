@@ -14,6 +14,7 @@ interface ImpressionProps {
   setSelectedRecommendationId: React.Dispatch<React.SetStateAction<string>>;
   setRecommendationText: React.Dispatch<React.SetStateAction<string>>;
   setImpressionText: React.Dispatch<React.SetStateAction<string>>;
+  readOnly?: boolean;
 }
 
 const ImpressionRecommendation: React.FC<ImpressionProps> = ({
@@ -23,6 +24,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
   setSelectedRecommendationId,
   setImpressionText,
   setRecommendationText,
+  readOnly
 }) => {
 
   const impressionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -30,7 +32,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
   const impressionRecommendation = [
     {
-      color: "#474747",
+      color: "#6e6e6e",
       data: [
         {
           id: "0",
@@ -44,7 +46,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#741b47",
+      color: "#9c3f6d",
       data: [
         {
           id: "1",
@@ -152,7 +154,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#38761d",
+      color: "#5ea443",
       data: [
         {
           id: "4",
@@ -239,7 +241,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#1155cc",
+      color: "#3f7fe0",
       data: [
         {
           id: "6",
@@ -307,7 +309,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#bf9000",
+      color: "#e6b820",
       data: [
         {
           id: "7",
@@ -384,15 +386,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
   return (
     <div className="flex justify-center items-start gap-10 py-6 px-12 w-full h-[90vh] space-y-10 overflow-y-scroll">
-      <div className="flex items-start justify-center gap-4">
-        <div className="w-1/2">
+      <div className={`flex w-full items-start justify-between gap-4 ${readOnly ? "pointer-events-none" : ""}`}>
+        <div className="min-w-[50%] max-w-[50%]">
           {/* Header */}
           <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
             Impression
           </div>
 
           {/* Scrollable container */}
-          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg">
+          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
             {impressionRecommendation.map((contentCategory, index) =>
               contentCategory.data.map((content, idx) => {
                 const isFirst = index === 0 && idx === 0;
@@ -417,7 +419,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     className={`flex cursor-pointer border-b border-b-[#00000030] ${
                       isFirst ? "rounded-tl-lg" : ""
                     } ${isLast ? "rounded-bl-lg" : ""} ${
-                      isSelected ? "bg-[#d9ead3]" : ""
+                      isSelected ? "bg-[#d9ead3]" : "" } ${
+                      readOnly? "pointer-events-none": "" }
                     }`}
                   >
                     <p
@@ -468,17 +471,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
               </SelectContent>
             </Select>
 
-            <div>{selectedImpression?.impressionText}</div>
+            <div className="w-full">{selectedImpression?.impressionText}</div>
           </div>
         </div>
 
-        <div className="w-1/2">
+        <div className="min-w-[50%] max-w-[50%]">
           <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
             Recommendation
           </div>
-          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg">
+          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
             {impressionRecommendation.map((category, index) =>
-              category.data.map((content, idx) => {
+              category.data.map((content, idx) => { 
                 const isFirst = index === 0 && idx === 0;
                 const isLast =
                   index === impressionRecommendation.length - 1 &&
@@ -495,8 +498,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     } ${isLast ? "rounded-bl-lg" : ""} ${
                       selectedRecommendationId === content.id
                         ? "bg-[#d9ead3]"
-                        : ""
-                    }`}
+                        : "" 
+                    }  ${
+                      readOnly? "pointer-events-none": "" }`}
                   >
                     <p
                       className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
@@ -543,7 +547,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 )}
               </SelectContent>
             </Select>
-            <div>{selectedImpression?.recommendationText}</div>
+            <div className="w-full">{selectedImpression?.recommendationText}</div>
           </div>
         </div>
       </div>

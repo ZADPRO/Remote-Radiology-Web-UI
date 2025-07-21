@@ -46,7 +46,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             onCheckedChange={(checked) =>
               handleReportInputChange(
                 questionIds.breastSelect,
-                checked ? "Present" : ""
+                checked ? "Present" : "Absent"
               )
             }
             className="w-5 h-5 mt-1"
@@ -81,7 +81,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
 
           <div className="flex ">
             <Label className="w-[12rem] font-semibold text-base">
-              Fibroglandular Volume
+              Fibroglandular Ratio
             </Label>
             <GridNumberSelectorPopover
               questionId={questionIds.fibroglandularVolume}

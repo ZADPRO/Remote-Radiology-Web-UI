@@ -38,8 +38,8 @@ const ComparisonPriorRight: React.FC<Props> = ({
   useEffect(() => {
     if (!reportFormData || reportFormData.length === 0) return;
 
-    getAnswer(questionIds.ComparisonPriorRight) === "" &&
-      handleReportInputChange(questionIds.ComparisonPriorRight, "Present");
+    // getAnswer(questionIds.ComparisonPriorRight) === "" &&
+    //   handleReportInputChange(questionIds.ComparisonPriorRight, "Present");
     getAnswer(questionIds.LesionCompTable) === "" &&
       handleReportInputChange(
         questionIds.LesionCompTable,

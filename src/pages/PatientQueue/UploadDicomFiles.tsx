@@ -175,126 +175,147 @@ const UploadDicomFiles: React.FC = () => {
     const sideFiles = files.filter((f) => f.side === side);
 
     return (
-      <div className="w-1/2 flex flex-col items-center">
-        <h1>{label}</h1>
+  <div className="w-full lg:w-1/2 flex flex-col items-center mb-6 lg:mb-0">
+    <h1 className="text-lg sm:text-xl font-semibold mb-4">{label}</h1>
 
-        <div className="overflow-auto w-full p-4 border rounded-md">
-          <div className="flex gap-2 items-start">
-            <div className="bg-[#ABB4A5] text-black p-3 rounded-full">
-              <CloudUpload />
-            </div>
-            <div className="flex flex-col">
-              <h1 className="font-bold text-lg">Upload Files</h1>
-              <span className="text-sm text-muted-foreground">
-                Select and upload the files of your choice
-              </span>
-            </div>
-          </div>
-
-          <Separator className="my-4" />
-
-          <div className="border-dashed border-2 border-gray-300 rounded-lg p-6 text-center shadow-sm">
-            <Upload className="mx-auto text-gray-500" size={36} />
-            <p className="text-sm text-gray-700 mt-2">
-              Choose a file or drag & drop it here
-            </p>
-            <p className="text-xs text-gray-500">ZIP files</p>
-            <Button
-              type="button"
-              className="mt-4 bg-[#ABB4A5] hover:bg-[#8e9787]"
-              onClick={() => handleFileClick(side)}
-            >
-              Browse File
-            </Button>
-            <input
-              ref={fileInputRefs[side]}
-              type="file"
-              multiple
-              accept=".zip,.dcm,.dicom"
-              className="hidden"
-              onChange={(e) => handleUpload(e, side)}
-            />
-          </div>
-
-          {error[side] && (
-            <div
-              ref={errorRefs[side]}
-              className="text-red-600 text-sm mt-2 text-center"
-            >
-              {error[side]}
-            </div>
-          )}
-
-          <div className="w-full mt-4 space-y-4">
-            {sideFiles.map((file, idx) => (
-              <div key={idx} className="border rounded-lg p-2 lg:p-4">
-                <div className="flex justify-end">
-                  <button onClick={() => handleDelete(side, file.name)}>
-                    <Trash2
-                      className="text-red-500 hover:text-red-700"
-                      size={18}
-                    />
-                  </button>
-                </div>
-
-                <div className="flex gap-4 items-start truncate max-w-full">
-                  <img src={dicomFile} className="w-16 h-auto mt-1" />
-                  <div className="flex flex-col w-full">
-                    <p className="text-sm font-medium">{file.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {Math.round(file.uploadedSize / 1024)} KB of{" "}
-                      {Math.round(file.size / 1024)} KB
-                    </p>
-                    {file.status === "completed" ? (
-                      <span className="text-sm text-green-500">Completed</span>
-                    ) : (
-                      <span className="text-sm text-blue-500 animate-pulse">
-                        Uploading...
-                      </span>
-                    )}
-                    <Progress
-                      value={(file.uploadedSize / file.size) * 100}
-                      className="mt-2 transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+    <div className="overflow-auto w-full p-3 sm:p-4 border rounded-md">
+      <div className="flex gap-2 sm:gap-3 items-start">
+        <div className="bg-[#ABB4A5] text-black p-2 sm:p-3 rounded-full flex-shrink-0">
+          <CloudUpload className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <h1 className="font-bold text-base sm:text-lg">Upload Files</h1>
+          <span className="text-xs sm:text-sm text-muted-foreground">
+            Select and upload the files of your choice
+          </span>
         </div>
       </div>
-    );
+
+      <Separator className="my-3 sm:my-4" />
+
+      <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 sm:p-6 text-center shadow-sm">
+        <Upload className="mx-auto text-gray-500" size={28} />
+        <p className="text-xs sm:text-sm text-gray-700 mt-2">
+          Choose a file or drag & drop it here
+        </p>
+        <p className="text-xs text-gray-500">ZIP files</p>
+        <Button
+          type="button"
+          className="mt-3 sm:mt-4 bg-[#ABB4A5] hover:bg-[#8e9787] text-sm px-4 py-2"
+          onClick={() => handleFileClick(side)}
+        >
+          Browse File
+        </Button>
+        <input
+          ref={fileInputRefs[side]}
+          type="file"
+          multiple
+          accept=".zip,.dcm,.dicom"
+          className="hidden"
+          onChange={(e) => handleUpload(e, side)}
+        />
+      </div>
+
+      {error[side] && (
+        <div
+          ref={errorRefs[side]}
+          className="text-red-600 text-xs sm:text-sm mt-2 text-center"
+        >
+          {error[side]}
+        </div>
+      )}
+
+      <div className="w-full mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+        {sideFiles.map((file, idx) => (
+          <div key={idx} className="border rounded-lg p-2 sm:p-3 lg:p-4">
+            <div className="flex justify-end mb-2">
+              <button onClick={() => handleDelete(side, file.name)}>
+                <Trash2
+                  className="text-red-500 hover:text-red-700"
+                  size={16}
+                />
+              </button>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4 items-start">
+              <img 
+                src={dicomFile} 
+                className="w-12 sm:w-14 lg:w-16 h-auto mt-1 flex-shrink-0" 
+                alt="DICOM file icon"
+              />
+              <div className="flex flex-col w-full min-w-0">
+                <p className="text-xs sm:text-sm font-medium truncate">
+                  {file.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {Math.round(file.uploadedSize / 1024)} KB of{" "}
+                  {Math.round(file.size / 1024)} KB
+                </p>
+                {file.status === "completed" ? (
+                  <span className="text-xs sm:text-sm text-green-500">
+                    Completed
+                  </span>
+                ) : (
+                  <span className="text-xs sm:text-sm text-blue-500 animate-pulse">
+                    Uploading...
+                  </span>
+                )}
+                <Progress
+                  value={(file.uploadedSize / file.size) * 100}
+                  className="mt-2 transition-all h-1.5 sm:h-2"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
   };
 
   return (
-    <div className="bg-radial-greeting-02 mx-auto my-5 py-2 rounded w-[90%] h-[90%] flex flex-col">
-        {loading && <LoadingOverlay />}
-      <Button
-        type="button"
-        variant="link"
-        className="self-start flex text-foreground font-semibold items-center gap-2"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft />
-        <span className="text-lg font-semibold">Back</span>
-      </Button>
+    <div className="bg-radial-greeting-02 mx-auto my-2 py-2 rounded w-[95%] sm:w-[90%] h-[95%] flex flex-col">
+  {loading && <LoadingOverlay />}
+  <Button
+    type="button"
+    variant="link"
+    className="self-start flex text-foreground font-semibold items-center gap-2 px-2 sm:px-4"
+    onClick={() => navigate(-1)}
+  >
+    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+    <span className="text-base sm:text-lg font-semibold">Back</span>
+  </Button>
 
-      <h1 className="text-center font-semibold text-2xl">Dicom</h1>
+  <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">Dicom</h1>
 
-      {/* This wrapper scrolls */}
-      <div className="flex-1 overflow-auto p-5 m-2 shadow">
-        <div className="flex items-start gap-6 p-5">
-          {renderUploadSection("Left", "Left")}
-          {renderUploadSection("Right", "Right")}
-        </div>
-      </div>
-
-      <div className="mx-auto">
-        <Button type="button" variant="pinkTheme" onClick={handleSaveDicom}>Submit</Button>
-      </div>
-
-      {finalError && <span>{finalError}</span>}
+  {/* This wrapper scrolls */}
+  <div className="flex-1 overflow-auto p-2 sm:p-5 m-1 sm:m-2 lg:shadow">
+    <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-2 sm:p-5">
+      {renderUploadSection("Left", "Left")}
+      {renderUploadSection("Right", "Right")}
     </div>
+  </div>
+
+  <div className="mx-auto pb-4">
+    <Button 
+      type="button" 
+      variant="pinkTheme" 
+      onClick={handleSaveDicom}
+      className="w-full sm:w-auto mx-4 sm:mx-0"
+    >
+      Submit
+    </Button>
+  </div>
+
+  {finalError && (
+    <span className="text-red-500 text-center px-4 pb-2 text-sm">
+      {finalError}
+    </span>
+  )}
+</div>
+
   );
 };
 
