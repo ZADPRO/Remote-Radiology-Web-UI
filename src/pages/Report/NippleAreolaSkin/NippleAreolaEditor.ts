@@ -32,7 +32,7 @@ export function generateNippleAreolaBreastEditor(
   if (skinChanges === "Normal") {
     result += `The QT scan shows normal skin with ${nippleRetraction.toLowerCase()}. The QT scan shows normal skin with ${nippleDeformity.toLowerCase()}.`;
   } else {
-    const skinText = skinChanges === "Other" ? skinChangesOther : skinChanges;
+    const skinText = skinChanges === "Other" ? skinChangesOther : skinChanges.toLocaleLowerCase();
     result += `The QT scan shows ${skinText} in skin with ${nippleRetraction.toLowerCase()}, ${nippleDeformity.toLowerCase()}.`;
   }
 

@@ -56,7 +56,7 @@ export function generateBreastImplantDetailsHTML(
   if (displacement.length > 0) {
     if (displacement !== "None") {
       html += `The displacement is noted in ${
-        displacement === "both" ? "both sides" : `${displacement.toLowerCase()} side`
+        displacement === "Both" ? "both sides" : `${displacement.toLowerCase()} side`
       }. `;
     } else {
       html += `The displacement is not noted. `;

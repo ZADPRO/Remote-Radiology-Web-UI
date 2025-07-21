@@ -25,7 +25,7 @@ export function generateRightBreastReportText(
   //   : "";
 
   let reportText = `The image quality: ${imageQuality}.\n`;
-  reportText += `The breast is ${breastDensity.toLowerCase()} with a fibroglandular ratio of ${fibroglandularVolume.toLowerCase()}% and ${symmetry.toLowerCase()} in symmetry.\n`;
+  reportText += `The breast is ${breastDensity.toLowerCase()} with a fibroglandular ratio of ${fibroglandularVolume.toLowerCase()}% and ${symmetry.toLowerCase()} in symmetrical.\n`;
 
   // if (nippleRetraction) {
   //   reportText += `${nippleRetraction.toLowerCase()

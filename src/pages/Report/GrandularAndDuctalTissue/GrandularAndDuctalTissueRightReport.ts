@@ -65,7 +65,7 @@ export function generateGrandularAndDuctalTissueReport(
     benignFindings.length > 0
       ? `There are multiple ${benignFindings
           .join(", ")
-          .toLocaleLowerCase()} noted throughout the breast in ${clock} o'clock in coronal location P${level}. Otherwise, the breast tissue appears normal.`
+          .toLocaleLowerCase()} noted. Otherwise, the breast tissue appears normal.`
       : "The breast tissue appears normal without benign findings.";
 
   // 2. Macrocalcifications
@@ -91,10 +91,10 @@ export function generateGrandularAndDuctalTissueReport(
   // 5. Ductal Prominence
   const ductalText =
     ductalProminence === "Present" && ductalList.length > 0
-      ? `There is ductal prominence with ${ductalList
+      ? `There is ductal prominence ${ductalList
           .map((d) => d.type)
           .join(" and ")
-          .toLocaleLowerCase()} noted. ${
+          .toLocaleLowerCase()} noted at ${
           clock && level
             ? `${clock} o'clock in coronal location P${level}.`
             : ""
@@ -104,11 +104,11 @@ export function generateGrandularAndDuctalTissueReport(
   return `
     <p><b>Benign Findings</b></p>
     <p>${benignText}</p>
-    <p><b>Calcifications</b></p>
+${macroText && `<p><b>Calcifications</b></p>`}
     ${macroText}
 ${microText}
-${scarText && `<p><b>Calcified Scar</b></p>${scarText.toLowerCase()}`}
-${ductalText && `<p><b>Ductal Prominence</b></p>${ductalText.toLowerCase()}`}
+${scarText && `<p><b>Calcified Scar</b></p>${scarText}`}
+${ductalText && `<p><b>Ductal Prominence</b></p>${ductalText}`}
   `;
 }
 
@@ -131,9 +131,7 @@ function generateCalcificationText(
       const base = `There is ${type.toLowerCase()} ${label} noted `;
       const distText =
         showDistribution && distribution
-          ? `${
-              label[0].toUpperCase() + label.slice(1)
-            } with ${distribution.toLowerCase()} distribution.`
+          ? `with ${distribution.toLowerCase()} distribution`
           : "";
       const location =
         clock && level ? `at ${clock} o'clock in coronal location P${level}.` : "";
