@@ -1,19 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import BreastDensityandImageQuality from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
 import NippleAreolaSkin from "./NippleAreolaSkin/NippleAreolaSkin";
 import GrandularAndDuctalTissueRight from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRight";
 import TextEditor from "@/components/TextEditor";
 import LisonsRight from "./Lisons/LisonsRight";
 import ComparisonPriorRight from "./ComparisonPrior/ComparisonPriorRight";
-import { generateRightBreastReportText } from "./BreastDensityandImageQuality/BreastDensityImageQuality";
 import LymphNodesRight from "./LymphNodes/LymphNodesRight";
-import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
-import { LesionsRightString } from "./Lisons/LesionsRightString";
-import { ComparisonPriorRightString } from "./ComparisonPrior/ComparisonPriorRightString";
-import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
-import { LymphNodesGenerateString } from "./GenerateReport/LymphNodes";
 import { Label } from "@/components/ui/label";
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
+import { breastDensityandImageLeftQuestions, ComparisonPriorLeftQuestion, grandularAndDuctalTissueLeftQuestions, lesionsLeftQuestions, LymphNodesLeftQuestions, nippleAreolaSkinLeftQuestions } from "./ReportQuestionsAssignment";
 
 interface ReportQuestion {
   questionId: number;
@@ -73,165 +68,53 @@ const LeftReport: React.FC<LeftReportProps> = ({
   setsyncStatus,
   readOnly
 }) => {
-  const breastDensityandImageRightQuestions = {
-    imageQuality: 57,
-    breastDensity: 58,
-    fibroglandularVolume: 59,
-    symmetry: 60,
-    breastSelect: 113,
-  };
 
-  const nippleAreolaSkinRightQuestions = {
-    skinChanges: 63,
-    skinChangesOther: 64,
-    nippleDeformity: 65,
-    nippleRetraction: 61,
-    subAreolarMass: 66,
-    architecture: 67,
-    architectureOther: 68,
-    nippleSelect: 114,
-  };
-
-  const grandularAndDuctalTissueRightQuestions = {
-    grandularAndDuctalTissue: 69,
-    benignMicroCysts: 70,
-    benignCapsular: 71,
-    benignFibronodular: 72,
-    calcificationsPresent: 73,
-    macroCalcificationsList: 74,
-    microCalcificationsList: 75,
-    calcifiedScar: 76,
-    calcifiedScarList: 77,
-    ductalProminence: 78,
-    ductalProminenceList: 79,
-    grandularSelect: 115,
-  };
-
-  const lesionsRightQuestions = {
-    lesionsr: 80,
-    simplecrstr: 90,
-    simplecrstDatar: 91,
-    complexcrstr: 92,
-    complexcrstDatar: 93,
-    Heterogeneousstr: 94,
-    HeterogeneousDatar: 95,
-    Hypertrophicstr: 96,
-    HypertrophicDatar: 97,
-    Otherstr: 98,
-    OtherDatar: 99,
-  };
-
-  const LymphNodesRightQuestions = {
-    Intramammaryr: 100,
-    IntramammaryDatar: 101,
-    axillarynodes: 102,
-    ClipsPresentStatus: 103,
-    ClipsPresentdata: 104,
-  };
-
-  const ComparisonPriorRightQuestion = {
-    ComparisonPriorRight: 105,
-    FindingStatus: 106,
-    doubletimefrom: 107,
-    doubletimeto: 108,
-    LesionCompTable: 109,
-  };
-
-  useEffect(() => {
-    if (syncStatus.breastDensityandImageLeft) {
-      textEditor.breastDensityandImageLeft.onChange(
-        generateRightBreastReportText(
-          reportFormData,
-          breastDensityandImageRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.nippleAreolaSkinLeft) {
-      textEditor.nippleAreolaSkinLeft.onChange(
-        generateNippleAreolaBreastEditor(
-          reportFormData,
-          nippleAreolaSkinRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.grandularAndDuctalTissueLeft) {
-      textEditor.grandularAndDuctalTissueLeft.onChange(
-        generateGrandularAndDuctalTissueReport(
-          reportFormData,
-          grandularAndDuctalTissueRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.LesionsLeft) {
-      textEditor.LesionsLeft.onChange(
-        LesionsRightString(reportFormData, lesionsRightQuestions)
-      );
-    }
-
-    if (syncStatus.ComparisonPriorLeft) {
-      textEditor.ComparisonPriorLeft.onChange(
-        ComparisonPriorRightString(reportFormData, ComparisonPriorRightQuestion, "Left")
-      );
-    }
-
-    if (syncStatus.LymphNodesLeft) {
-          textEditor.LymphNodesLeft.onChange(
-            LymphNodesGenerateString(
-              reportFormData,
-              LymphNodesRightQuestions,
-              "Left"
-            ));
-        }
-  }, [reportFormData]);
 
   const syncHandleReportChange = (questionId: number, value: string) => {
-    const isBreastDensityRight = Object.values(breastDensityandImageRightQuestions).includes(questionId);
-    const isNippleAreolaRight = Object.values(nippleAreolaSkinRightQuestions).includes(questionId);
-    const isGrandularRight = Object.values(grandularAndDuctalTissueRightQuestions).includes(questionId);
-    const isLesionsRight = Object.values(lesionsRightQuestions).includes(questionId);
-    const isLymphNodesRight = Object.values(LymphNodesRightQuestions).includes(questionId);
-    const isComparisonPriorRight = Object.values(ComparisonPriorRightQuestion).includes(questionId);
+    const isBreastDensityLeft = Object.values(breastDensityandImageLeftQuestions).includes(questionId);
+    const isNippleAreolaLeft = Object.values(nippleAreolaSkinLeftQuestions).includes(questionId);
+    const isGrandularLeft = Object.values(grandularAndDuctalTissueLeftQuestions).includes(questionId);
+    const isLesionsLeft = Object.values(lesionsLeftQuestions).includes(questionId);
+    const isLymphNodesLeft = Object.values(LymphNodesLeftQuestions).includes(questionId);
+    const isComparisonPriorLeft = Object.values(ComparisonPriorLeftQuestion).includes(questionId);
   
-    if (isBreastDensityRight) {
+    if (isBreastDensityLeft) {
       setsyncStatus({
         ...syncStatus,
-        breastDensityandImageRight: true,
+        breastDensityandImageLeft: true,
       });
       console.log("www", questionId, value)
     }
   
-    if (isNippleAreolaRight) {
+    if (isNippleAreolaLeft) {
       setsyncStatus({
         ...syncStatus,
-        nippleAreolaSkinRight: true,
+        nippleAreolaSkinLeft: true,
       });
     }
   
-    if (isGrandularRight) {
+    if (isGrandularLeft) {
       setsyncStatus({
         ...syncStatus,
-        grandularAndDuctalTissueRight: true,
+        grandularAndDuctalTissueLeft: true,
       });
     }
   
-    if (isLesionsRight) {
+    if (isLesionsLeft) {
       setsyncStatus({
         ...syncStatus,
-      LesionsRight : true,
+      LesionsLeft : true,
       });
     }
   
-    if (isLymphNodesRight) {
+    if (isLymphNodesLeft) {
       setsyncStatus({
         ...syncStatus,
-      LymphNodesRight : true,
+      LymphNodesLeft : true,
       });
     }
   
-    if (isComparisonPriorRight) {
+    if (isComparisonPriorLeft) {
       setsyncStatus({
         ...syncStatus,
       ComparisonPrior : true,
@@ -258,9 +141,9 @@ const LeftReport: React.FC<LeftReportProps> = ({
           label="BREAST DENSITY & IMAGE QUALITY (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={breastDensityandImageRightQuestions}
+          questionIds={breastDensityandImageLeftQuestions}
         />
-        {getAnswer(breastDensityandImageRightQuestions.breastSelect) === "Present" && (
+        {getAnswer(breastDensityandImageLeftQuestions.breastSelect) === "Present" && (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
             {/* {syncStatus.breastDensityandImageLeft ? (
@@ -310,11 +193,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
           label="NIPPLE, AREOLA & SKIN (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={nippleAreolaSkinRightQuestions}
+          questionIds={nippleAreolaSkinLeftQuestions}
           patientFormData={patientFormData}
           side="Left"
         />
-        {getAnswer(nippleAreolaSkinRightQuestions.nippleSelect) === "Present" &&
+        {getAnswer(nippleAreolaSkinLeftQuestions.nippleSelect) === "Present" &&
         (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
@@ -340,9 +223,9 @@ const LeftReport: React.FC<LeftReportProps> = ({
           label="Glandular And Ductal tissue (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={grandularAndDuctalTissueRightQuestions}
+          questionIds={grandularAndDuctalTissueLeftQuestions}
         />
-        {getAnswer(grandularAndDuctalTissueRightQuestions.grandularSelect) === "Present" &&
+        {getAnswer(grandularAndDuctalTissueLeftQuestions.grandularSelect) === "Present" &&
         (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
@@ -368,9 +251,9 @@ const LeftReport: React.FC<LeftReportProps> = ({
           label="LESIONS (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={lesionsRightQuestions}
+          questionIds={lesionsLeftQuestions}
         />
-        {getAnswer(lesionsRightQuestions.lesionsr) === "Present" && (
+        {getAnswer(lesionsLeftQuestions.lesionsr) === "Present" && (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
           </div>
@@ -396,9 +279,9 @@ const LeftReport: React.FC<LeftReportProps> = ({
           axilaryLabel="Left Axillary Nodes"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={LymphNodesRightQuestions}
+          questionIds={LymphNodesLeftQuestions}
         />
-        {getAnswer(LymphNodesRightQuestions.Intramammaryr) === "Present" && (
+        {getAnswer(LymphNodesLeftQuestions.Intramammaryr) === "Present" && (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
           </div>
@@ -423,10 +306,10 @@ const LeftReport: React.FC<LeftReportProps> = ({
           label="COMPARISON TO PRIOR STUDIES (Left)"
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
-          questionIds={ComparisonPriorRightQuestion}
+          questionIds={ComparisonPriorLeftQuestion}
           side="Left"
         />
-        {getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) === "Present" && (
+        {getAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) === "Present" && (
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex items-center justify-between mb-2"> <span className="text-2xl">Report Preview</span>
           </div>
