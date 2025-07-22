@@ -22,6 +22,7 @@ import { ArrowLeft, Loader } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -38,8 +39,34 @@ import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression from "./ImpressionRecommendation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ResponseTechnicianForm } from "@/services/technicianServices";
+import { generateRightBreastReportText } from "./BreastDensityandImageQuality/BreastDensityImageQuality";
+import {
+  breastDensityandImageLeftQuestions,
+  breastDensityandImageRightQuestions,
+  ComparisonPriorLeftQuestion,
+  ComparisonPriorRightQuestion,
+  grandularAndDuctalTissueLeftQuestions,
+  grandularAndDuctalTissueRightQuestions,
+  lesionsLeftQuestions,
+  lesionsRightQuestions,
+  LymphNodesLeftQuestions,
+  LymphNodesRightQuestions,
+  nippleAreolaSkinLeftQuestions,
+  nippleAreolaSkinRightQuestions,
+} from "./ReportQuestionsAssignment";
+import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
+import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
+import { LesionsRightString } from "./Lisons/LesionsRightString";
+import { ComparisonPriorRightString } from "./ComparisonPrior/ComparisonPriorRightString";
+import { LymphNodesGenerateString } from "./GenerateReport/LymphNodes";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -72,15 +99,14 @@ type ReportStageLabel =
   | "Reviewed 1 Edit"
   | "Reviewed 2 Correct"
   | "Reviewed 2 Edit"
-  | "Sign Off"
-  // | "Addendum";
+  | "Sign Off";
+// | "Addendum";
 
-  interface ReportStage {
+interface ReportStage {
   label: ReportStageLabel;
   editStatus: boolean;
   status: string;
 }
-
 
 const Report: React.FC = () => {
   const [tab, setTab] = useState<number>(4);
@@ -95,15 +121,13 @@ const Report: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation().state;
-  
+
   // Use sessionStorage as fallback
   const stateData: {
     appointmentId: number;
     userId: number;
     readOnly: boolean;
-  } =
-    location ??
-    JSON.parse(sessionStorage.getItem("reportStateData") || "{}");
+  } = location ?? JSON.parse(sessionStorage.getItem("reportStateData") || "{}");
 
   const allowNavigationRef = useRef(false);
   const [showDialog, setShowDialog] = useState(false);
@@ -129,7 +153,7 @@ const Report: React.FC = () => {
         if (changesDone && !allowNavigationRef.current) {
           setShowDialog(true);
           history.replaceState({ fake: true }, "", window.location.href);
-      history.pushState(null, "", window.location.href);
+          history.pushState(null, "", window.location.href);
         }
       };
 
@@ -137,7 +161,7 @@ const Report: React.FC = () => {
         window.addEventListener("beforeunload", handleBeforeUnload);
         window.addEventListener("popstate", handlePopState);
         history.replaceState({ fake: true }, "", window.location.href);
-      history.pushState(null, "", window.location.href);
+        history.pushState(null, "", window.location.href);
       }
 
       return () => {
@@ -158,14 +182,119 @@ const Report: React.FC = () => {
     setShowDialog(false);
     navigate(-1);
   };
-
-
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
     Array.from({ length: 200 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
   ); //current higgest question id: 116
+
+
+  useEffect(() => {
+    if (syncStatus.breastDensityandImageRight) {
+      setBreastDensityandImageRight(
+        generateRightBreastReportText(
+          reportFormData,
+          breastDensityandImageRightQuestions
+        )
+      );
+    }
+
+    if (syncStatus.nippleAreolaSkinRight) {
+      setNippleAreolaSkinRight(
+        generateNippleAreolaBreastEditor(
+          reportFormData,
+          nippleAreolaSkinRightQuestions
+        )
+      );
+    }
+
+    if (syncStatus.grandularAndDuctalTissueRight) {
+      setGrandularAndDuctalTissueRight(
+        generateGrandularAndDuctalTissueReport(
+          reportFormData,
+          grandularAndDuctalTissueRightQuestions
+        )
+      );
+    }
+
+    if (syncStatus.LesionsRight) {
+      setLesionsRight(
+        LesionsRightString(reportFormData, lesionsRightQuestions)
+      );
+    }
+
+    if (syncStatus.ComparisonPrior) {
+      setComparisonPrior(
+        ComparisonPriorRightString(
+          reportFormData,
+          ComparisonPriorRightQuestion,
+          "Right"
+        )
+      );
+    }
+
+    if (syncStatus.LymphNodesRight) {
+      setLymphNodesRight(
+        LymphNodesGenerateString(
+          reportFormData,
+          LymphNodesRightQuestions,
+          "Right"
+        )
+      );
+    }
+
+    if (syncStatus.breastDensityandImageLeft) {
+      setBreastDensityandImageLeft(
+        generateRightBreastReportText(
+          reportFormData,
+          breastDensityandImageLeftQuestions
+        )
+      );
+    }
+
+    if (syncStatus.nippleAreolaSkinLeft) {
+      setNippleAreolaSkinLeft(
+        generateNippleAreolaBreastEditor(
+          reportFormData,
+          nippleAreolaSkinLeftQuestions
+        )
+      );
+    }
+
+    if (syncStatus.grandularAndDuctalTissueLeft) {
+      setGrandularAndDuctalTissueLeft(
+        generateGrandularAndDuctalTissueReport(
+          reportFormData,
+          grandularAndDuctalTissueLeftQuestions
+        )
+      );
+    }
+
+    if (syncStatus.LesionsLeft) {
+      setLesionsLeft(LesionsRightString(reportFormData, lesionsLeftQuestions));
+    }
+
+    if (syncStatus.ComparisonPriorLeft) {
+      setComparisonPriorLeft(
+        ComparisonPriorRightString(
+          reportFormData,
+          ComparisonPriorLeftQuestion,
+          "Left"
+        )
+      );
+    }
+
+    if (syncStatus.LymphNodesLeft) {
+      setLymphNodesLeft(
+        LymphNodesGenerateString(
+          reportFormData,
+          LymphNodesLeftQuestions,
+          "Left"
+        )
+      );
+    }
+  }, [reportFormData]);
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
@@ -196,23 +325,23 @@ const Report: React.FC = () => {
   };
 
   const reportStages: ReportStage[] = [
-  { label: "Predraft", status: "Predraft", editStatus: false },
-  { label: "Draft", status: "Draft", editStatus: false },
-  { label: "Reviewed 1 Correct", status: "Reviewed 1", editStatus: false },
-  { label: "Reviewed 1 Edit",status: "Reviewed 1", editStatus: true },
-  { label: "Reviewed 2 Correct", status: "Reviewed 2", editStatus: false },
-  { label: "Reviewed 2 Edit", status: "Reviewed 2", editStatus: true },
-  { label: "Sign Off", status: "Signed Off", editStatus: false },
-  // { label: "Addendum", editStatus: false },
-];
-
-
+    { label: "Predraft", status: "Predraft", editStatus: false },
+    { label: "Draft", status: "Draft", editStatus: false },
+    { label: "Reviewed 1 Correct", status: "Reviewed 1", editStatus: false },
+    { label: "Reviewed 1 Edit", status: "Reviewed 1", editStatus: true },
+    { label: "Reviewed 2 Correct", status: "Reviewed 2", editStatus: false },
+    { label: "Reviewed 2 Edit", status: "Reviewed 2", editStatus: true },
+    { label: "Sign Off", status: "Signed Off", editStatus: false },
+    // { label: "Addendum", editStatus: false },
+  ];
 
   const [userDetails, setUserDetails]: any = useState([]);
 
   // const [dicomFiles, setDicomFiles] = useState<DicomFileList[]>([]);
   const [patientDetails, setPatintDetails]: any = useState([]);
-  const [technicianForm, setTechnicianForm] = useState<ResponseTechnicianForm[]>([]);
+  const [technicianForm, setTechnicianForm] = useState<
+    ResponseTechnicianForm[]
+  >([]);
 
   const [loadTemplateStatus, setLoadTemplateStatus] = useState(false);
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
@@ -290,6 +419,7 @@ const Report: React.FC = () => {
     grandularAndDuctalTissueLeft: true,
     LymphNodesLeft: true,
     Notes: true,
+    ImpressionsRecommendations: true,
 
     sForm: true,
   });
@@ -309,29 +439,28 @@ const Report: React.FC = () => {
       recommendationText: "",
     });
 
-  const [optionalImpressionRecommendation, setOptionalImpressionRecommendation] =
-    useState({
-      selectedImpressionId: "",
-      selectedRecommendationId: "",
-      impressionText: "",
-      recommendationText: "",
-    });
+  const [
+    optionalImpressionRecommendation,
+    setOptionalImpressionRecommendation,
+  ] = useState({
+    selectedImpressionId: "",
+    selectedRecommendationId: "",
+    impressionText: "",
+    recommendationText: "",
+  });
 
-   const [showOptional, setShowOptional] = useState({
-  impression: false,
-  recommendation: false,
-});
-
+  const [showOptional, setShowOptional] = useState({
+    impression: false,
+    recommendation: false,
+  });
 
   const [commonImpressRecomm, setCommonImpressRecomm] = useState<{
-  id: string;
-  text: string;
-}>({
-  id: "",
-  text: "",
-});
-
-  
+    id: string;
+    text: string;
+  }>({
+    id: "",
+    text: "",
+  });
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -358,7 +487,7 @@ const Report: React.FC = () => {
       if (response.status) {
         setAssignData({
           appointmentStatus: response.appointmentStatus,
-          reportHistoryData: response.reportHistoryData || [] ,
+          reportHistoryData: response.reportHistoryData || [],
         });
         setMainImpressionRecommendation((prev) => ({
           ...prev,
@@ -367,6 +496,22 @@ const Report: React.FC = () => {
           selectedRecommendationId:
             response.appointmentStatus[0].refAppointmentRecommendation,
         }));
+        setOptionalImpressionRecommendation((prev) => ({
+          ...prev,
+          selectedImpressionId:
+            response.appointmentStatus[0].refAppointmentImpressionAdditional,
+          selectedRecommendationId:
+            response.appointmentStatus[0].refAppointmentRecommendationAdditional,
+        }));
+        setShowOptional(() => ({
+          impression: response.appointmentStatus[0].refAppointmentImpressionAdditional != "",
+          recommendation: response.appointmentStatus[0].refAppointmentRecommendationAdditional != ""
+        }))
+        
+        setCommonImpressRecomm((prev) => ({
+          ...prev,
+          id: response.appointmentStatus[0].refAppointmentCommonImpressionRecommendation
+        }))
 
         setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
@@ -391,7 +536,7 @@ const Report: React.FC = () => {
             grandularAndDuctalTissueLeft: true,
             LymphNodesLeft: true,
             Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
-
+            ImpressionsRecommendations: true,
             sForm: true,
           });
         }
@@ -526,9 +671,12 @@ const Report: React.FC = () => {
   }, []);
 
   const [showMailDialog, setShowMailDialog] = useState(false);
-const [mailOption, setMailOption] = useState("");
+  const [mailOption, setMailOption] = useState("");
 
-  const handleReportSubmit = async (movedStatus: string, editStatus: boolean) => {
+  const handleReportSubmit = async (
+    movedStatus: string,
+    editStatus: boolean
+  ) => {
     setLoading(true);
     try {
       const payload = {
@@ -543,11 +691,16 @@ const [mailOption, setMailOption] = useState("");
         syncStatus: syncStatus.Notes,
         impression: mainImpressionRecommendation.selectedImpressionId,
         recommendation: mainImpressionRecommendation.selectedRecommendationId,
+        impressionaddtional:
+          optionalImpressionRecommendation.selectedImpressionId,
+        recommendationaddtional:
+          optionalImpressionRecommendation.selectedRecommendationId,
+        commonImpressionRecommendation: commonImpressRecomm.id,
         editStatus: editStatus,
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
       };
-      console.log(payload);
+      console.log("payload", payload);
 
       const res = await reportService.submitReport(payload);
       console.log(res);
@@ -566,8 +719,6 @@ const [mailOption, setMailOption] = useState("");
 
   const getAnswer = (id: number) =>
     responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
-
-  
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -847,20 +998,26 @@ const [mailOption, setMailOption] = useState("");
               <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
                 <DialogContent className="sm:max-w-[400px]">
                   <DialogHeader>
-                    <DialogTitle>Select who to send mail to</DialogTitle>
+                    <DialogTitle>Select Email Recipients</DialogTitle>
+                    <DialogDescription>
+                      Select recipients to proceed with sending the email.
+                    </DialogDescription>
                   </DialogHeader>
 
-                  <div className="mt-4">
+                  <div>
                     <Select value={mailOption} onValueChange={setMailOption}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose recipient" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="patient">Patient</SelectItem>
                         <SelectItem value="scancenter">
                           Scan Center Manager
                         </SelectItem>
-                        <SelectItem value="both">Both</SelectItem>
+                        <SelectItem value="both">
+                          Patient and Scan Center Manager
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1245,12 +1402,13 @@ const [mailOption, setMailOption] = useState("");
                         })),
                     },
                     OptionalRecommendationText: {
-                      value: optionalImpressionRecommendation.recommendationText,
+                      value:
+                        optionalImpressionRecommendation.recommendationText,
                       onChange: (text: string) =>
                         setOptionalImpressionRecommendation((prev) => ({
                           ...prev,
                           recommendationText: text,
-                        })), 
+                        })),
                     },
                     CommonImpresRecommText: {
                       value: commonImpressRecomm.text,
@@ -1259,7 +1417,7 @@ const [mailOption, setMailOption] = useState("");
                           ...prev,
                           text: text,
                         })),
-                    }
+                    },
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}

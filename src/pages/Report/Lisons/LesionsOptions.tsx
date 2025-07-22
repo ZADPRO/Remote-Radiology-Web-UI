@@ -255,7 +255,7 @@ const LesionsOptions: React.FC<Props> = ({
                             <Input
                               type="number"
                               className="w-20"
-                              placeholder="cm"
+                              placeholder="mm"
                               value={data.distancenipple}
                               onChange={(e) => {
                                 const updated = [...dataArray];
@@ -266,7 +266,7 @@ const LesionsOptions: React.FC<Props> = ({
                                 );
                               }}
                             />
-                            <span className="text-sm">cm</span>
+                            <span className="text-sm">mm</span>
                           </div>
                         </div>
 

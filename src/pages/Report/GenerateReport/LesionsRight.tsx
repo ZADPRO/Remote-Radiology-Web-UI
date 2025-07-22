@@ -55,7 +55,7 @@ const LesionsRight: React.FC<Props> = ({
                                             {" "}{data.locationclockposition === "0" ? "Nipple" : data.locationclockposition + "o'clock"}
                                             , located at {data.locationLevel === "Coronal Level" ? "P" : data.locationLevel === "Axial" ? "S" : data.locationLevel === "Sagital" && "M"}{data.locationLevelPercentage}
                                             , approximately {data.distancenipple}
-                                            {" "}cm from the nipple. The lesion is {data.size} mm in size
+                                            {" "}mm from the nipple. The lesion is {data.size} mm in size
                                             , {data.Shape} shaped, with {data.Margins}
                                             {" "}margins and {data.density} echotexture. Transmission speed is measured at
                                             {" "}{data.Transmissionspped} m/s. Internal debris: {data.debris}. Shadowing: {data.shadowing}.

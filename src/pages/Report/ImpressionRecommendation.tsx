@@ -468,6 +468,59 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
     },
   ];
 
+  useEffect(() => {
+  if (mainImpressionRecommendation.selectedImpressionId) {
+    setMainImpressionRecommendation((prev) => ({
+      ...prev,
+      impressionText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === mainImpressionRecommendation.selectedImpressionId
+          )?.impressionText || "", // default to empty string
+      recommendationText: 
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === mainImpressionRecommendation.selectedRecommendationId
+          )?.recommendationText || ""
+    }));
+  }
+
+  if (optionalImpressionRecommendation.selectedImpressionId) {
+    setOptionalImpressionRecommendation((prev) => ({
+      ...prev,
+      impressionText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === optionalImpressionRecommendation.selectedImpressionId
+          )?.impressionText || "",
+       recommendationText: 
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === optionalImpressionRecommendation.selectedRecommendationId
+          )?.recommendationText || ""
+    }));
+  }
+  if(commonImpressRecomm.id) {
+    setCommonImpressRecomm((prev) => ({
+      ...prev,
+      text: additionalOptions.find((item) => item.id === commonImpressRecomm.id)?.text || ""
+    }));
+  }
+}, []);
+
+
   const selectedImpression = impressionRecommendation
     .flatMap((group) => group.data)
     .find(
@@ -568,7 +621,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   setMainImpressionRecommendation((prev) => ({
                     ...prev,
                     selectedImpressionId: val,
+                    selectedRecommendationId: val,
                     impressionText: matched?.impressionText || "",
+                    recommendationText: matched?.recommendationText || "",
                   }));
                 }}
               >
@@ -729,7 +784,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 }}
               >
                 <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
-                  <SelectValue placeholder="Select Impression" />
+                  <SelectValue placeholder="Select Recommendation" />
                 </SelectTrigger>
 
                 <SelectContent>

@@ -168,9 +168,11 @@ const TechnicianPatientIntakeForm: React.FC<
     fetchData();
   }, [location.state]); 
   
-  useEffect(()=>{
+  useEffect(() => {
+  if (controlData?.readOnly === false) {
     handleAssignTechnicianForm(controlData.userId, controlData.appointmentId);
-  },[!controlData.readOnly])
+  }
+}, [controlData?.readOnly]);
 
   const handleFetchPatientForm = async (
     userID: number,

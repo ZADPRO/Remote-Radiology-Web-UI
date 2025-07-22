@@ -87,6 +87,7 @@ type Props = {
   textEditor: TextEditorProps;
   syncStatus: {
     Notes: boolean;
+    ImpressionsRecommendations: boolean;
   };
   setsyncStatus: any;
   Notes: string;
@@ -154,36 +155,35 @@ const NotesReport: React.FC<Props> = ({
             <br/>
             <p><b>TECHNIQUE</b>: Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2 . The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
             <br/>
-            <div><b>BREAST IMPLANTS:</b>${textEditor.breastImplant.value}</div>
+            <div><b>BREAST IMPLANTS:</b><br/>${textEditor.breastImplant.value}</div>
             <br/>
             <p><b>RIGHT BREAST FINDINGS:</b></p>
             <br/>
-            <p><b>BREAST DENSITY & IMAGE QUALITY:</b>${
-              textEditor.breastDensityandImageRight.value
-            }</p>
-            <p><b>NIPPLE, AREOLA & SKIN:</b>${
+            <p><b>BREAST DENSITY & IMAGE QUALITY:</b><br />
+            ${textEditor.breastDensityandImageRight.value}</p><br/>
+            <p><b>NIPPLE, AREOLA & SKIN:</b><br/>${
               textEditor.nippleAreolaSkinRight.value
-            }</p>
+            }</p><br/>
             <p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            <p>${textEditor.grandularAndDuctalTissueRight.value}</p>
-            <p><b>LESIONS:</b></p><br/>
+            ${textEditor.grandularAndDuctalTissueRight.value}<br/>
+            <p><b>LESIONS:</b></p>
             ${textEditor.LesionsRight.value}<br/>
-            <p><b>LYMPH NODES:</b></p><br/>
-            ${textEditor.LymphNodesRight.value}<br/>
-            <p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
+            <p><b>LYMPH NODES:</b></p>
+            ${textEditor.LymphNodesRight.value}<br/><br/>
+            <p><b>COMPARISON TO PRIOR STUDIES:</b></p>
             ${textEditor.ComparisonPrior.value}<br/>
             <p><b>LEFT BREAST FINDINGS:</b></p><br>
-            <p><b>BREAST DENSITY & IMAGE QUALITY:</b>${
+            <p><b>BREAST DENSITY & IMAGE QUALITY:</b><br/>${
               textEditor.breastDensityandImageLeft.value
-            }</p>
-            <p><b>NIPPLE, AREOLA & SKIN:</b>${
+            }</p><br/>
+            <p><b>NIPPLE, AREOLA & SKIN:</b></br>${
               textEditor.nippleAreolaSkinLeft.value
-            }</p>
+            }</p><br/>
             <p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            <p>${textEditor.grandularAndDuctalTissueLeft.value}</p>
-            <p><b>LESIONS:</b></p><br/>
+            ${textEditor.grandularAndDuctalTissueLeft.value}<br/>
+            <p><b>LESIONS:</b></p>
             ${textEditor.LesionsLeft.value}<br/>
-            <p><b>LYMPH NODES:</b></p><br/>
+            <p><b>LYMPH NODES:</b></p>
             ${textEditor.LymphNodesLeft.value}<br/>
             <p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
             ${textEditor.ComparisonPriorLeft.value}<br/>

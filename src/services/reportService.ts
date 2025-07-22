@@ -17,6 +17,9 @@ export interface AppointmentStatus {
   refUserId: number;
   refAppointmentImpression: string;
   refAppointmentRecommendation: string;
+  refAppointmentImpressionAdditional: string;
+  refAppointmentRecommendationAdditional: string;
+  refAppointmentCommonImpressionRecommendation: string;
 }
 
 export interface ReportHistoryData {

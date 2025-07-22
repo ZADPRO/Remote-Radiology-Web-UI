@@ -1,19 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import BreastDensityandImageQualityRight from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
 import NippleAreolaSkin from "./NippleAreolaSkin/NippleAreolaSkin";
 import GrandularAndDuctalTissueRight from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRight";
 import TextEditor from "@/components/TextEditor";
 import LisonsRight from "./Lisons/LisonsRight";
 import ComparisonPriorRight from "./ComparisonPrior/ComparisonPriorRight";
-import { generateRightBreastReportText } from "./BreastDensityandImageQuality/BreastDensityImageQuality";
 import LymphNodesRight from "./LymphNodes/LymphNodesRight";
-import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
-import { LesionsRightString } from "./Lisons/LesionsRightString";
-import { ComparisonPriorRightString } from "./ComparisonPrior/ComparisonPriorRightString";
-import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
-import { LymphNodesGenerateString } from "./GenerateReport/LymphNodes";
 import { Label } from "@/components/ui/label";
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
+import { breastDensityandImageRightQuestions, ComparisonPriorRightQuestion, grandularAndDuctalTissueRightQuestions, lesionsRightQuestions, LymphNodesRightQuestions, nippleAreolaSkinRightQuestions } from "./ReportQuestionsAssignment";
 
 interface ReportQuestion {
   questionId: number;
@@ -74,127 +69,6 @@ const RightReport: React.FC<RightReportProps> = ({
   setsyncStatus,
   readOnly
 }) => {
-
-  const breastDensityandImageRightQuestions = {
-    imageQuality: 14,
-    breastDensity: 15,
-    fibroglandularVolume: 16,
-    symmetry: 17,
-    breastSelect: 110,
-  };
-
-  const nippleAreolaSkinRightQuestions = {
-    skinChanges: 19,
-    skinChangesOther: 20,
-    nippleDeformity: 21,
-    nippleRetraction: 18,
-    subAreolarMass: 22,
-    architecture: 23,
-    architectureOther: 24,
-    nippleSelect: 111,
-  };
-
-  const grandularAndDuctalTissueRightQuestions = {
-    grandularAndDuctalTissue: 25,
-    benignMicroCysts: 26,
-    benignCapsular: 27,
-    benignFibronodular: 28,
-    calcificationsPresent: 29,
-    macroCalcificationsList: 30,
-    microCalcificationsList: 31,
-    calcifiedScar: 32,
-    calcifiedScarList: 33,
-    ductalProminence: 34,
-    ductalProminenceList: 35,
-    grandularSelect: 112
-  };
-
-  const lesionsRightQuestions = {
-    lesionsr: 36,
-    simplecrstr: 37,
-    simplecrstDatar: 38,
-    complexcrstr: 39,
-    complexcrstDatar: 40,
-    Heterogeneousstr: 41,
-    HeterogeneousDatar: 42,
-    Hypertrophicstr: 43,
-    HypertrophicDatar: 44,
-    Otherstr: 45,
-    OtherDatar: 46,
-  }
-
-  const LymphNodesRightQuestions = {
-    Intramammaryr: 47,
-    IntramammaryDatar: 48,
-    axillarynodes: 49,
-    ClipsPresentStatus: 50,
-    ClipsPresentdata: 51,
-  }
-
-  const ComparisonPriorRightQuestion = {
-    ComparisonPriorRight: 52,
-    FindingStatus: 53,
-    doubletimefrom: 54,
-    doubletimeto: 55,
-    LesionCompTable: 56,
-  }
-
-  useEffect(() => {
-
-    if (syncStatus.breastDensityandImageRight) {
-      textEditor.breastDensityandImageRight.onChange(
-        generateRightBreastReportText(
-          reportFormData,
-          breastDensityandImageRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.nippleAreolaSkinRight) {
-      textEditor.nippleAreolaSkinRight.onChange(
-        generateNippleAreolaBreastEditor(
-          reportFormData,
-          nippleAreolaSkinRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.grandularAndDuctalTissueRight) {
-      textEditor.grandularAndDuctalTissueRight.onChange(
-        generateGrandularAndDuctalTissueReport(
-          reportFormData,
-          grandularAndDuctalTissueRightQuestions
-        )
-      );
-    }
-
-    if (syncStatus.LesionsRight) {
-      textEditor.LesionsRight.onChange(
-        LesionsRightString(
-          reportFormData,
-          lesionsRightQuestions
-        ));
-    }
-
-    if (syncStatus.ComparisonPrior) {
-      textEditor.ComparisonPrior.onChange(
-        ComparisonPriorRightString(
-          reportFormData,
-          ComparisonPriorRightQuestion,
-          "Right"
-        ));
-    }
-
-    if (syncStatus.LymphNodesRight) {
-      textEditor.LymphNodesRight.onChange(
-        LymphNodesGenerateString(
-          reportFormData,
-          LymphNodesRightQuestions,
-          "Right"
-        ));
-    }
-  }, [reportFormData]);
-
 
   const syncHandleReportChange = (questionId: number, value: string) => {
   const isBreastDensityRight = Object.values(breastDensityandImageRightQuestions).includes(questionId);
