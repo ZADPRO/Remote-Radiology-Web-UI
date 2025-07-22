@@ -110,6 +110,12 @@ export interface TechnicianPatientQueue {
   }
 }
 
+export interface ResponseTechnicianForm {
+  refTITFId: number;
+  answer: string;
+  questionId: number;
+  // file?: FileData;
+}
 export const technicianService = {
   createNewTechnician: async (formData: NewTechnician) => {
     const token = localStorage.getItem("token");

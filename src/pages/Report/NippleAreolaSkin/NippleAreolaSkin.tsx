@@ -44,8 +44,15 @@ const NippleAreolaSkin: React.FC<Props> = ({
       handleReportInputChange(questionIds.nippleDeformity, "Absent");
     getAnswer(questionIds.architecture) === "" &&
       handleReportInputChange(questionIds.architecture, "Normal");
-    getAnswer(questionIds.nippleRetraction) === "" && handleReportInputChange(questionIds.nippleRetraction, getPatientAnswer(side === "Right" ? 112 : 113));
+    if (getAnswer(questionIds.nippleRetraction) === "") {
+      const answer = getPatientAnswer(side === "Right" ? 112 : 113) || "Absent";
+
+      handleReportInputChange(questionIds.nippleRetraction, answer);
+    }
+
   }, []);
+
+  console.log(patientFormData)
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
@@ -116,8 +123,8 @@ const NippleAreolaSkin: React.FC<Props> = ({
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
             options={[
-              { label: "Present", value: "Present" },
               { label: "Absent", value: "Absent" },
+              { label: "Present", value: "Present" },
             ]}
           />
 

@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -5,34 +7,77 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Plus, Trash } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 
 interface ImpressionProps {
+  mainImpressionRecommendation: {
     selectedImpressionId: string;
-  setSelectedImpressionId: React.Dispatch<React.SetStateAction<string>>;
     selectedRecommendationId: string;
-  setSelectedRecommendationId: React.Dispatch<React.SetStateAction<string>>;
-  setRecommendationText: React.Dispatch<React.SetStateAction<string>>;
-  setImpressionText: React.Dispatch<React.SetStateAction<string>>;
+    impressionText: string;
+    recommendationText: string;
+  };
+  setMainImpressionRecommendation: React.Dispatch<
+    React.SetStateAction<{
+      selectedImpressionId: string;
+      selectedRecommendationId: string;
+      impressionText: string;
+      recommendationText: string;
+    }>
+  >;
+
+  optionalImpressionRecommendation: {
+    selectedImpressionId: string;
+    selectedRecommendationId: string;
+    impressionText: string;
+    recommendationText: string;
+  };
+  setOptionalImpressionRecommendation: React.Dispatch<
+    React.SetStateAction<{
+      selectedImpressionId: string;
+      selectedRecommendationId: string;
+      impressionText: string;
+      recommendationText: string;
+    }>
+  >;
+  showOptional: {
+    impression: boolean;
+    recommendation: boolean;
+  };
+  setShowOptional: React.Dispatch<
+    React.SetStateAction<{
+      impression: boolean;
+      recommendation: boolean;
+    }>
+  >;
+  commonImpressRecomm: {
+    id: string;
+    text: string;
+  };
+  setCommonImpressRecomm: React.Dispatch<
+    React.SetStateAction<{ id: string; text: string }>
+  >;
   readOnly?: boolean;
 }
 
 const ImpressionRecommendation: React.FC<ImpressionProps> = ({
-  selectedImpressionId,
-  setSelectedImpressionId,
-  selectedRecommendationId,
-  setSelectedRecommendationId,
-  setImpressionText,
-  setRecommendationText,
-  readOnly
+  mainImpressionRecommendation,
+  setMainImpressionRecommendation,
+  optionalImpressionRecommendation,
+  setOptionalImpressionRecommendation,
+  showOptional,
+  setShowOptional,
+  commonImpressRecomm,
+  setCommonImpressRecomm,
+  readOnly,
 }) => {
-
   const impressionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const recommendationRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const impressionRecommendation = [
     {
-      color: "#6e6e6e",
+      impressionColor: "#a0a0a0",
+      recommendationColor: "#6e6e6e",
       data: [
         {
           id: "0",
@@ -46,7 +91,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#9c3f6d",
+      impressionColor: "#c47194",
+      recommendationColor: "#9c3f6d",
       data: [
         {
           id: "1",
@@ -154,7 +200,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#5ea443",
+      impressionColor: "#8fc97c",
+      recommendationColor: "#5ea443",
       data: [
         {
           id: "4",
@@ -241,7 +288,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#3f7fe0",
+      impressionColor: "#7aa5ec",
+      recommendationColor: "#3f7fe0",
       data: [
         {
           id: "6",
@@ -309,7 +357,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       ],
     },
     {
-      color: "#e6b820",
+      impressionColor: "#f3d05f",
+      recommendationColor: "#e6b820",
       data: [
         {
           id: "7",
@@ -367,11 +416,64 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
         },
       ],
     },
+    {
+      impressionColor: "#a0a0a0",
+      recommendationColor: "#6e6e6e",
+      data: [
+        {
+          id: "10",
+          impression: "Benign with Implant Complications",
+          impressionText:
+            "Implant rupture is identified as described in the detailed findings. Otherwise, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
+          recommendation: "Implant Complication Management",
+          recommendationText:
+            "Implant rupture/leak has been identified as described in the detailed findings. Consultation with breast surgeon is recommended for appropriate management.",
+        },
+      ],
+    },
+  ];
+
+  const additionalOptions = [
+    {
+      id: "A",
+      text: "The architectural distortion observed is attributed to post-operative or post-procedural changes.",
+    },
+    {
+      id: "B",
+      text: "Blind read. No pathology, no prior medical images, no clinical useful treatment history and no specific clinical symptoms were disclosed. Without this information, the QT imaging study may be of limited value to the patient.",
+    },
+    {
+      id: "C",
+      text: "Comparative addendum can be made if and when the prior QT DICOM images are made available.",
+    },
+    {
+      id: "D",
+      text: "Correlative addendum can be made if and when the biopsy/ Additional standard imaging reports are made available.",
+    },
+    {
+      id: "E",
+      text: "Images were reviewed again. In view with the given history/data, it is prudent to further evaluate the lesion with a targeted ultrasound of the area.",
+    },
+    {
+      id: "F",
+      text: "This is the first QT scan with No prior QT images available for comparison. The most accurate assessment is achieved by comparing the current QT scan to a prior QT scan. If no prior QT scan is available, this study serves as a baseline for future follow-ups. Subsequent QT scans can be utilized to assess segmentation quantification and evaluate changes over time, including doubling time, for treatment response assessment.",
+    },
+    {
+      id: "P",
+      text: "There are no QT findings to explain her right breast pain. The patient should monitor the breast area of pain. If a lump or other palpable finding appears in this area, a targeted ultrasound of the area should be performed.",
+    },
+    {
+      id: "R",
+      text: "We are happy to review the QT scan again if additional evaluation (imaging or biopsy) is performed after the QT scan, as recommended by us, and the results can be included in our report as a correlative addendum.",
+    },
   ];
 
   const selectedImpression = impressionRecommendation
     .flatMap((group) => group.data)
-    .find((impression) => impression.id === selectedImpressionId);
+    .find(
+      (impression) =>
+        impression.id === mainImpressionRecommendation.selectedImpressionId
+    );
 
   useEffect(() => {
     const scrollToCenter = (el: HTMLDivElement | null) => {
@@ -380,175 +482,389 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
       }
     };
 
-    scrollToCenter(impressionRefs.current[selectedImpressionId]);
-    scrollToCenter(recommendationRefs.current[selectedRecommendationId]);
-  }, [selectedImpressionId, selectedRecommendationId]);
+    scrollToCenter(
+      impressionRefs.current[mainImpressionRecommendation.selectedImpressionId]
+    );
+    scrollToCenter(
+      recommendationRefs.current[
+        mainImpressionRecommendation.selectedRecommendationId
+      ]
+    );
+  }, [
+    mainImpressionRecommendation.selectedImpressionId,
+    mainImpressionRecommendation.selectedRecommendationId,
+  ]);
 
   return (
     <div className="flex justify-center items-start gap-10 py-6 px-12 w-full h-[90vh] space-y-10 overflow-y-scroll">
-      <div className={`flex w-full items-start justify-between gap-4 ${readOnly ? "pointer-events-none" : ""}`}>
-        <div className="min-w-[50%] max-w-[50%]">
-          {/* Header */}
-          <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
-            Impression
-          </div>
+      <div
+        className={`flex flex-col w-full items-start justify-between gap-4 ${
+          readOnly ? "pointer-events-none" : ""
+        }`}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-[50%] max-w-[50%]">
+            <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
+              Impression
+            </div>
 
-          {/* Scrollable container */}
-          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-            {impressionRecommendation.map((contentCategory, index) =>
-              contentCategory.data.map((content, idx) => {
-                const isFirst = index === 0 && idx === 0;
-                const isLast =
-                  index === impressionRecommendation.length - 1 &&
-                  idx === contentCategory.data.length - 1;
+            <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
+              {impressionRecommendation.map((contentCategory, index) =>
+                contentCategory.data.map((content, idx) => {
+                  const isFirst = index === 0 && idx === 0;
+                  const isLast =
+                    index === impressionRecommendation.length - 1 &&
+                    idx === contentCategory.data.length - 1;
+                  const isSelected =
+                    mainImpressionRecommendation.selectedImpressionId ===
+                    content.id;
 
-                const isSelected = selectedImpressionId === content.id;
-
-                return (
-                  <div
-                    key={`impression-${content.id}-${idx}`}
-                    ref={(el) => {
-                      impressionRefs.current[content.id] = el;
-                    }}
-                    onClick={() => {
-                      setSelectedImpressionId(content.id),
-                        setSelectedRecommendationId(content.id),
-                        setImpressionText(content.impressionText),
-                        setRecommendationText(content.recommendationText);
-                    }}
-                    className={`flex cursor-pointer border-b border-b-[#00000030] ${
-                      isFirst ? "rounded-tl-lg" : ""
-                    } ${isLast ? "rounded-bl-lg" : ""} ${
-                      isSelected ? "bg-[#d9ead3]" : "" } ${
-                      readOnly? "pointer-events-none": "" }
-                    }`}
-                  >
-                    <p
-                      className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                      style={{
-                        backgroundColor: contentCategory.color,
+                  return (
+                    <div
+                      key={`impression-${content.id}-${idx}`}
+                      ref={(el) => {
+                        impressionRefs.current[content.id] = el;
                       }}
+                      onClick={() => {
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          selectedImpressionId: content.id,
+                          selectedRecommendationId: content.id,
+                          impressionText: content.impressionText,
+                          recommendationText: content.recommendationText,
+                        }));
+                      }}
+                      className={`flex cursor-pointer border-b border-b-[#00000030] ${
+                        isFirst ? "rounded-tl-lg" : ""
+                      } ${isLast ? "rounded-bl-lg" : ""} ${
+                        isSelected ? "bg-[#d9ead3]" : ""
+                      } ${readOnly ? "pointer-events-none" : ""}`}
                     >
-                      {content.id}
-                    </p>
-                    <p className="text-sm pl-2 flex items-center font-semibold">
-                      {content.impression}
-                    </p>
-                  </div>
-                );
-              })
+                      <p
+                        className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
+                        style={{
+                          backgroundColor: contentCategory.impressionColor,
+                        }}
+                      >
+                        {content.id}
+                      </p>
+                      <p className="text-sm pl-2 flex items-center font-semibold">
+                        {content.impression}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
+              <Select
+                value={mainImpressionRecommendation.selectedImpressionId}
+                onValueChange={(val) => {
+                  const matched = impressionRecommendation
+                    .flatMap((cat) => cat.data)
+                    .find((item) => item.id === val);
+
+                  setMainImpressionRecommendation((prev) => ({
+                    ...prev,
+                    selectedImpressionId: val,
+                    impressionText: matched?.impressionText || "",
+                  }));
+                }}
+              >
+                <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full relative">
+                  <SelectValue placeholder="Select Impression" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {impressionRecommendation.map((contentCategory) =>
+                    contentCategory.data.map((content, idx) => (
+                      <SelectItem
+                        key={`impression-${content.id}-${idx}`}
+                        value={content.id}
+                      >
+                        {content.id + " - " + content.impression}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+
+              <div className="w-full">{selectedImpression?.impressionText}</div>
+            </div>
+
+            <div
+              className="flex justify-end mt-2 w-full"
+              hidden={showOptional.impression}
+            >
+              <Button
+                variant="greenTheme"
+                onClick={() =>
+                  setShowOptional((prev) => ({ ...prev, impression: true }))
+                }
+              >
+                <Plus />
+                <span>Add</span>
+              </Button>
+            </div>
+
+            {showOptional.impression && (
+              <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
+                <div className="flex justify-between items-center">
+                  <h1>Add-On</h1>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setOptionalImpressionRecommendation((prev) => ({
+                        ...prev,
+                        selectedImpressionId: "",
+                        impressionText: "",
+                      }));
+                      setShowOptional((prev) => ({
+                        ...prev,
+                        impression: false,
+                      }));
+                    }}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
+                <Select
+                  value={optionalImpressionRecommendation.selectedImpressionId}
+                  onValueChange={(val) => {
+                    const matched = impressionRecommendation
+                      .flatMap((cat) => cat.data)
+                      .find((item) => item.id === val);
+
+                    setOptionalImpressionRecommendation((prev) => ({
+                      ...prev,
+                      selectedImpressionId: val,
+                      impressionText: matched?.impressionText || "",
+                    }));
+                  }}
+                >
+                  <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
+                    <SelectValue placeholder="Select Impression" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {impressionRecommendation.map((contentCategory) =>
+                      contentCategory.data.map((content, idx) => (
+                        <SelectItem
+                          key={`impression-${content.id}-${idx}`}
+                          value={content.id}
+                        >
+                          {content.id + " - " + content.impression}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+
+                <div className="w-full">
+                  {optionalImpressionRecommendation?.impressionText}
+                </div>
+              </div>
             )}
           </div>
 
-          <div className="mt-4 flex flex-col gap-4">
-            <Select
-              value={selectedImpressionId}
-              onValueChange={(val) => {
-                setSelectedImpressionId(val);
+          <div className="min-w-[50%] max-w-[50%]">
+            <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
+              Recommendation
+            </div>
 
-                const matched = impressionRecommendation
-                  .flatMap((cat) => cat.data)
-                  .find((item) => item.id === val);
+            <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
+              {impressionRecommendation.map((category, index) =>
+                category.data.map((content, idx) => {
+                  const isFirst = index === 0 && idx === 0;
+                  const isLast =
+                    index === impressionRecommendation.length - 1 &&
+                    idx === category.data.length - 1;
 
-                setImpressionText(matched?.impressionText || ""); // fallback to empty string if not found
-              }}
-            >
-              <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-64 relative">
-                <SelectValue placeholder="Select Impression" />
-              </SelectTrigger>
-
-              <SelectContent>
-                {impressionRecommendation.map((contentCategory) =>
-                  contentCategory.data.map((content, idx) => (
-                    <SelectItem
-                      key={`impression-${content.id}-${idx}`}
-                      value={content.id}
+                  return (
+                    <div
+                      key={`rec-${content.id}`}
+                      ref={(el) => {
+                        recommendationRefs.current[content.id] = el;
+                      }}
+                      className={`flex border-b border-b-[#00000030] ${
+                        isFirst ? "rounded-tl-lg" : ""
+                      } ${isLast ? "rounded-bl-lg" : ""} ${
+                        mainImpressionRecommendation.selectedRecommendationId ===
+                        content.id
+                          ? "bg-[#d9ead3]"
+                          : ""
+                      } ${readOnly ? "pointer-events-none" : ""}`}
                     >
-                      {content.id + " - " + content.impression}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+                      <p
+                        className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
+                        style={{
+                          backgroundColor: category.recommendationColor,
+                        }}
+                      >
+                        {content.id}
+                      </p>
+                      <p className="text-sm pl-2 flex items-center font-semibold">
+                        {content.recommendation}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
-            <div className="w-full">{selectedImpression?.impressionText}</div>
+            <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
+              <Select
+                value={mainImpressionRecommendation.selectedRecommendationId}
+                onValueChange={(val) => {
+                  const matched = impressionRecommendation
+                    .flatMap((cat) => cat.data)
+                    .find((item) => item.id === val);
+
+                  setMainImpressionRecommendation((prev) => ({
+                    ...prev,
+                    selectedRecommendationId: val,
+                    recommendationText: matched?.recommendationText || "",
+                  }));
+                }}
+              >
+                <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
+                  <SelectValue placeholder="Select Impression" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {impressionRecommendation.map((contentCategory) =>
+                    contentCategory.data.map((content, idx) => (
+                      <SelectItem
+                        key={`impression-${content.id}-${idx}`}
+                        value={content.id}
+                      >
+                        {content.id + " - " + content.recommendation}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+
+              <div className="w-full">
+                {selectedImpression?.recommendationText}
+              </div>
+            </div>
+
+            <div
+              className="flex justify-end mt-2 w-full"
+              hidden={showOptional.recommendation}
+            >
+              <Button
+                variant="greenTheme"
+                onClick={() =>
+                  setShowOptional((prev) => ({ ...prev, recommendation: true }))
+                }
+              >
+                <Plus />
+                <span>Add</span>
+              </Button>
+            </div>
+
+            {showOptional.recommendation && (
+              <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
+                <div className="flex justify-between items-center">
+                  <h1>Add-On</h1>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setOptionalImpressionRecommendation((prev) => ({
+                        ...prev,
+                        selectedRecommendationId: "",
+                        recommendationText: "",
+                      }));
+                      setShowOptional((prev) => ({
+                        ...prev,
+                        recommendation: false,
+                      }));
+                    }}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
+                <Select
+                  value={
+                    optionalImpressionRecommendation.selectedRecommendationId
+                  }
+                  onValueChange={(val) => {
+                    const matched = impressionRecommendation
+                      .flatMap((cat) => cat.data)
+                      .find((item) => item.id === val);
+
+                    setOptionalImpressionRecommendation((prev) => ({
+                      ...prev,
+                      selectedRecommendationId: val,
+                      recommendationText: matched?.recommendationText || "",
+                    }));
+                  }}
+                >
+                  <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
+                    <SelectValue placeholder="Select Recommendation" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {impressionRecommendation.map((contentCategory) =>
+                      contentCategory.data.map((content, idx) => (
+                        <SelectItem
+                          key={`impression-${content.id}-${idx}`}
+                          value={content.id}
+                        >
+                          {content.id + " - " + content.recommendation}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+
+                <div className="w-full">
+                  {optionalImpressionRecommendation?.recommendationText}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="min-w-[50%] max-w-[50%]">
-          <div className="bg-[#a3b1a1] mx-4 p-2 rounded-t-lg text-xl text-center font-bold">
-            Recommendation
-          </div>
-          <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-            {impressionRecommendation.map((category, index) =>
-              category.data.map((content, idx) => { 
-                const isFirst = index === 0 && idx === 0;
-                const isLast =
-                  index === impressionRecommendation.length - 1 &&
-                  idx === category.data.length - 1;
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            Common Impression / Recommendation
+          </Label>
+          <Select
+            value={commonImpressRecomm.id}
+            onValueChange={(value) => {
+              const selected = additionalOptions.find(
+                (opt) => opt.id === value
+              );
+              if (selected) {
+                setCommonImpressRecomm({
+                  id: selected.id,
+                  text: selected.text,
+                });
+              }
+            }}
+          >
+            <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
+              <SelectValue placeholder="Select option" />
+            </SelectTrigger>
+            <SelectContent>
+              {additionalOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.id} - {option.text.split(" ").slice(0, 10).join(" ")}
+                  ...
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-                return (
-                  <div
-                    key={`rec-${content.id}`}
-                    ref={(el) => {
-                      recommendationRefs.current[content.id] = el;
-                    }}
-                    className={`flex border-b border-b-[#00000030] ${
-                      isFirst ? "rounded-tl-lg" : ""
-                    } ${isLast ? "rounded-bl-lg" : ""} ${
-                      selectedRecommendationId === content.id
-                        ? "bg-[#d9ead3]"
-                        : "" 
-                    }  ${
-                      readOnly? "pointer-events-none": "" }`}
-                  >
-                    <p
-                      className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                      style={{ backgroundColor: category.color }}
-                    >
-                      {content.id}
-                    </p>
-                    <p className="text-sm pl-2 flex items-center font-semibold">
-                      {content.recommendation}
-                    </p>
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          <div className="mt-4 flex flex-col gap-4">
-            <Select
-              value={selectedRecommendationId}
-              onValueChange={(val) => {
-                setSelectedRecommendationId(val);
-
-                const matched = impressionRecommendation
-                  .flatMap((cat) => cat.data)
-                  .find((item) => item.id === val);
-
-                setRecommendationText(matched?.recommendationText || ""); // fallback to empty string if not found
-              }}
-            >
-              <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-64">
-                <SelectValue placeholder="Select Impression" />
-              </SelectTrigger>
-
-              <SelectContent>
-                {impressionRecommendation.map((contentCategory) =>
-                  contentCategory.data.map((content, idx) => (
-                    <SelectItem
-                      key={`impression-${content.id}-${idx}`}
-                      value={content.id}
-                    >
-                      {content.id + " - " + content.recommendation}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-            <div className="w-full">{selectedImpression?.recommendationText}</div>
-          </div>
+          {commonImpressRecomm.text && (
+            <div className="text-sm mt-2 p-2 rounded border whitespace-pre-wrap">
+              {commonImpressRecomm.text}
+            </div>
+          )}
         </div>
       </div>
     </div>

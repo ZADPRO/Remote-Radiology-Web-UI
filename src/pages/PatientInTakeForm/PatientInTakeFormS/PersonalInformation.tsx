@@ -99,7 +99,7 @@ const PersonalInformation: React.FC<Props> = ({
     const braSizeCondition =
       braSizeOptions.findIndex(
         (option) => option.value === getAnswer(questionIds.braSize)
-      ) >= braSizeOptions.findIndex((option) => option.value === "DDD");
+      ) >= braSizeOptions.findIndex((option) => option.value === "F");
 
     if (braSizeCondition) {
       isEligible = false;

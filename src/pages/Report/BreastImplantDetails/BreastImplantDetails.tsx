@@ -55,6 +55,7 @@ const BreastImplantDetails: React.FC<Props> = ({
     getAnswer(questionIds.implantPositon) === "" &&
       handleReportInputChange(questionIds.implantPositon, "Subpectoral");
 
+      console.log("2222", patientFormData)
     getAnswer(questionIds.implantMaterial) === "" &&
       handleReportInputChange(
         questionIds.implantMaterial,

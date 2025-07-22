@@ -13,20 +13,20 @@ interface GridNumberSelectorPopoverProps {
   min?: number
   max?: number
   className?: string
+  value?: string
 }
 
 const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
   questionId,
+  value,
   handleInputChange,
   min = 1,
   max = 100,
   className,
 }) => {
-  const [selectedNumber, setSelectedNumber] = useState<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSelect = (num: number) => {
-    setSelectedNumber(num)
     handleInputChange(questionId, String(num))
     setIsOpen(false)
   }
@@ -37,7 +37,7 @@ const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className={cn("w-28", className)}>
-          {selectedNumber !== null ? `${selectedNumber}%` : "Select %"}
+          {value ? `${value}%` : "Select %"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-2">
@@ -48,7 +48,7 @@ const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
               onClick={() => handleSelect(num)}
               className={cn(
                 "text-xs p-1 text-center rounded transition cursor-pointer",
-                selectedNumber === num
+                Number(value) === num
                   ? "bg-blue-600 text-white border-blue-700"
                   : "bg-white hover:bg-gray-100 border-gray-300"
               )}
@@ -61,5 +61,6 @@ const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
     </Popover>
   )
 }
+
 
 export default GridNumberSelectorPopover
