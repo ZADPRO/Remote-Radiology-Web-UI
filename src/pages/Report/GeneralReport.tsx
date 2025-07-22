@@ -7,6 +7,7 @@ import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPa
 import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
+import { ResponseTechnicianForm } from "@/services/technicianServices";
 
 interface ReportQuestion {
   questionId: number;
@@ -29,6 +30,7 @@ interface RightReportProps {
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
   handlePatientInputChange: (questionId: number, value: string) => void;
+  technicianFormData: ResponseTechnicianForm[];
   textEditor: TextEditorProps;
   syncStatus: {
     breastImplantRight: boolean;
@@ -43,6 +45,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
   handleReportInputChange,
   patientFormData,
   handlePatientInputChange,
+  technicianFormData,
   textEditor,
   syncStatus,
   setsyncStatus,
@@ -63,8 +66,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
     ruptureSignsOther: 12,
     ruptureType: 13,
     implantMaterialOther: 116,
-    symmetry: 117,
   };
+
+  const symmetryQuestions = {
+    symmetry: 117
+  }
 
   useEffect(() => {
     if (syncStatus.breastImplantRight) {
@@ -96,6 +102,17 @@ const GeneralReport: React.FC<RightReportProps> = ({
     }
     handleReportInputChange(questionId, value);
   }
+  const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
+
+    const getTechnicianAnswer = (id: number) => technicianFormData.find((q) => q.questionId === id)?.answer || "";
+
+  useEffect(() => {
+    if (!reportFormData || reportFormData.length === 0) return;
+    console.log("22222",getTechnicianAnswer(19), technicianFormData);
+    if(technicianFormData.length > 0) {
+    getAnswer(symmetryQuestions.symmetry) == "" && handleReportInputChange(symmetryQuestions.symmetry, getTechnicianAnswer(19) == "true" ? "Asymmetry" : "Symmetrical size and shape");
+    }
+  }, [technicianFormData]);
 
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
@@ -168,7 +185,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
             <MultiRadioOptionalInputInline
               label="Symmetry"
               labelClassname="w-[12rem]"
-              questionId={breastImpantRightQuestions.symmetry}
+              questionId={symmetryQuestions.symmetry}
               formData={reportFormData}
               handleInputChange={handleReportInputChange}
               options={[
