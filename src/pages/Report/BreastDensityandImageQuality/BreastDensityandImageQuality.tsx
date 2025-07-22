@@ -85,6 +85,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             </Label>
             <GridNumberSelectorPopover
               questionId={questionIds.fibroglandularVolume}
+                value={getAnswer(questionIds.fibroglandularVolume)} // <- from saved data
               handleInputChange={handleReportInputChange}
             />
           </div>

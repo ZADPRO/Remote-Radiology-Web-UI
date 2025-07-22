@@ -63,6 +63,18 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  OptionalImpressionText: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  OptionalRecommendationText: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  CommonImpresRecommText: {
+    value: string;
+    onChange: (value: string) => void;
+  }
 }
 
 interface ReportQuestion {
@@ -175,10 +187,13 @@ const NotesReport: React.FC<Props> = ({
             ${textEditor.LymphNodesLeft.value}<br/>
             <p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
             ${textEditor.ComparisonPriorLeft.value}<br/>
-            <p><b>IMPRESSION:</b></p><br/>
-            ${textEditor.ImpressionText.value}<br/><br />
-            <p><b>RECOMMENDATION:</b></p><br/>
-            ${textEditor.RecommendationText.value}<br/>
+            <p><b>IMPRESSION:</b></p>
+            ${textEditor.ImpressionText.value}<br/>${textEditor.OptionalImpressionText.value}<br/><br />
+            <p><b>RECOMMENDATION:</b></p>
+            ${textEditor.RecommendationText.value}<br/>${textEditor.OptionalRecommendationText.value}<br/></br/>
+            <p><b>COMMON:</b></p>
+            ${textEditor.CommonImpresRecommText.value}
+            <br/>
             `);
     }
   }, [reportFormData, syncStatus]);

@@ -287,7 +287,7 @@ const MasterAdmin: React.FC = () => {
                   onOpenChange={setBrochureMobileMenu}
                 >
                   <DropdownMenuTrigger asChild>
-                    <div className="bg-[#f8f3eb] p-2 rounded-full hover:bg-[#ffeac9] hover:text-white transition">
+                    <div className="bg-[#f8f3eb] p-2 2 rounded-full hover:bg-[#ffeac9] hover:text-white transition">
                       {React.cloneElement(menu.icon, {
                         className: "w-5 h-5 text-gray-700",
                       })}
@@ -511,7 +511,7 @@ const MasterAdmin: React.FC = () => {
                 ) : (
                   <div
                     key={menu.path}
-                    className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-3xl cursor-pointer transition ${
+                    className={`flex items-center justify-center gap-2 py-1.5 2xl:py-3 px-3 2xl:px-4 rounded-3xl cursor-pointer transition ${
                       selectedMenu === menu.label
                         ? "bg-[#B1B8AA]"
                         : "bg-[#f8f3eb]"
@@ -522,7 +522,7 @@ const MasterAdmin: React.FC = () => {
                     }}
                   >
                     {menu.icon}
-                    <span className="text-sm font-semibold mt-[1.5px]">
+                    <span className="text-sm 2xl:text-lg font-semibold mt-[1.5px]">
                       {menu.label}
                     </span>
                   </div>
@@ -557,19 +557,30 @@ const MasterAdmin: React.FC = () => {
               onOpenChange={setIsDropDownOpen}
             >
               <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer bg-[#f8f3eb] w-10 h-10">
-                  <AvatarImage src="/profile.jpg" alt="User" />
-                  <AvatarFallback className="bg-[#f9f4ec] text-xs">
-                    {user?.refUserFirstName.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="flex items-center gap-2 cursor-pointer p-2 rounded-md">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src="/profile.jpg" alt="User" />
+                    <AvatarFallback className="bg-[#f9f4ec] text-xs">
+                      {user?.refUserFirstName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">
+                      {user?.refUserFirstName}
+                    </span>
+                    <span className="text-xs font-semibold">
+                      {user?.refUserCustId}
+                    </span>
+                  </div>
+                </div>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() => {
-                    setIsEditDialogOpen(true), setIsDropDownOpen(false);
+                    setIsEditDialogOpen(true);
+                    setIsDropDownOpen(false);
                   }}
                 >
                   Profile
@@ -586,14 +597,6 @@ const MasterAdmin: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold">
-                {user?.refUserFirstName}
-              </span>
-              <span className="text-xs font-semibold">
-                {user?.refUserCustId}
-              </span>
-            </div>
           </div>
 
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

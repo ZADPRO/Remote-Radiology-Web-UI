@@ -39,6 +39,7 @@ import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression from "./ImpressionRecommendation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ResponseTechnicianForm } from "@/services/technicianServices";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -71,7 +72,7 @@ type ReportStageLabel =
   | "Reviewed 1 Edit"
   | "Reviewed 2 Correct"
   | "Reviewed 2 Edit"
-  | "Signed Off"
+  | "Sign Off"
   // | "Addendum";
 
   interface ReportStage {
@@ -93,54 +94,70 @@ const Report: React.FC = () => {
   const { role } = useAuth();
 
   const navigate = useNavigate();
-
-  const [changesDone, setChangesDone] = useState(false);
+  const location = useLocation().state;
   
-  const [showDialog, setShowDialog] = useState(false);
+  // Use sessionStorage as fallback
+  const stateData: {
+    appointmentId: number;
+    userId: number;
+    readOnly: boolean;
+  } =
+    location ??
+    JSON.parse(sessionStorage.getItem("reportStateData") || "{}");
+
   const allowNavigationRef = useRef(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [changesDone, setChangesDone] = useState(false);
 
   useEffect(() => {
-    if(location?.readOnly == false) {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (changesDone && !allowNavigationRef.current) {
-        e.preventDefault();
-        e.returnValue = ""; // triggers browser alert
-      }
-    };
-
-    const handlePopState = () => {
-      if (changesDone && !allowNavigationRef.current) {
-        setShowDialog(true);
-        // Push the same URL to cancel back navigation
-        history.pushState(null, "", window.location.href);
-      }
-    };
-
-    if (changesDone) {
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      window.addEventListener("popstate", handlePopState);
-      // Push fake state once to block initial back
-      history.pushState(null, "", window.location.href);
+    if (location) {
+      sessionStorage.setItem("reportStateData", JSON.stringify(location));
     }
+  }, [location]);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }
+  // Handle browser reload and back navigation
+  useEffect(() => {
+    if (stateData?.readOnly === false) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        if (changesDone && !allowNavigationRef.current) {
+          e.preventDefault();
+          e.returnValue = ""; // triggers confirmation dialog
+        }
+      };
+
+      const handlePopState = () => {
+        if (changesDone && !allowNavigationRef.current) {
+          setShowDialog(true);
+          history.replaceState({ fake: true }, "", window.location.href);
+      history.pushState(null, "", window.location.href);
+        }
+      };
+
+      if (changesDone) {
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("popstate", handlePopState);
+        history.replaceState({ fake: true }, "", window.location.href);
+      history.pushState(null, "", window.location.href);
+      }
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
   }, [changesDone]);
+
+  useEffect(() => {
+    if (allowNavigationRef.current) {
+      navigate(-1);
+    }
+  }, [allowNavigationRef.current]);
 
   const handleLeave = () => {
     allowNavigationRef.current = true;
     setShowDialog(false);
     navigate(-1);
   };
-
-  useEffect(() => {
-    if(allowNavigationRef.current == true) {
-      navigate(-1)
-    }
-  }, [allowNavigationRef.current])
 
 
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
@@ -174,7 +191,7 @@ const Report: React.FC = () => {
     "Reviewed 1 Edit": ["admin"],
     "Reviewed 2 Correct": ["codoctor"],
     "Reviewed 2 Edit": ["codoctor"],
-    "Signed Off": ["doctor", "admin"],
+    "Sign Off": ["doctor", "admin"],
     // Addendum: ["doctor", "admin"], // assuming doctor can handle addendums
   };
 
@@ -185,7 +202,7 @@ const Report: React.FC = () => {
   { label: "Reviewed 1 Edit",status: "Reviewed 1", editStatus: true },
   { label: "Reviewed 2 Correct", status: "Reviewed 2", editStatus: false },
   { label: "Reviewed 2 Edit", status: "Reviewed 2", editStatus: true },
-  { label: "Signed Off", status: "Signed Off", editStatus: false },
+  { label: "Sign Off", status: "Signed Off", editStatus: false },
   // { label: "Addendum", editStatus: false },
 ];
 
@@ -195,6 +212,7 @@ const Report: React.FC = () => {
 
   // const [dicomFiles, setDicomFiles] = useState<DicomFileList[]>([]);
   const [patientDetails, setPatintDetails]: any = useState([]);
+  const [technicianForm, setTechnicianForm] = useState<ResponseTechnicianForm[]>([]);
 
   const [loadTemplateStatus, setLoadTemplateStatus] = useState(false);
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
@@ -276,8 +294,6 @@ const Report: React.FC = () => {
     sForm: true,
   });
 
-  const location: { appointmentId: number; userId: number; readOnly: boolean } =
-    useLocation().state;
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
     null
   );
@@ -285,10 +301,37 @@ const Report: React.FC = () => {
     ResponsePatientForm[]
   >([]);
 
-  const [selectedImpressionId, setSelectedImpressionId] = useState<string>("");
-  const [selectedRecommendationId, setSelectedRecommendationId] = useState<string>("");
-  const [impressionText, setImpressionText] = useState("");
-  const [recommendationText, setRecommendationText] = useState("");
+  const [mainImpressionRecommendation, setMainImpressionRecommendation] =
+    useState({
+      selectedImpressionId: "",
+      selectedRecommendationId: "",
+      impressionText: "",
+      recommendationText: "",
+    });
+
+  const [optionalImpressionRecommendation, setOptionalImpressionRecommendation] =
+    useState({
+      selectedImpressionId: "",
+      selectedRecommendationId: "",
+      impressionText: "",
+      recommendationText: "",
+    });
+
+   const [showOptional, setShowOptional] = useState({
+  impression: false,
+  recommendation: false,
+});
+
+
+  const [commonImpressRecomm, setCommonImpressRecomm] = useState<{
+  id: string;
+  text: string;
+}>({
+  id: "",
+  text: "",
+});
+
+  
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -299,14 +342,15 @@ const Report: React.FC = () => {
         intakeFormData: ResponsePatientForm[];
         reportIntakeFormData: ReportQuestion[];
         reportTextContentData: TextEditorContent[];
+        technicianIntakeFormData: ResponseTechnicianForm[];
         reportFormateList: any;
         userDeatils: any;
         patientDetails: any;
         status: boolean;
       } = await reportService.assignReport(
-        location.appointmentId,
-        location.userId,
-        location.readOnly
+        stateData.appointmentId,
+        stateData.userId,
+        stateData.readOnly
       );
 
       console.log(response);
@@ -316,10 +360,17 @@ const Report: React.FC = () => {
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [] ,
         });
-        setSelectedImpressionId(response.appointmentStatus[0].refAppointmentImpression);
-        setSelectedRecommendationId(response.appointmentStatus[0].refAppointmentRecommendation);
+        setMainImpressionRecommendation((prev) => ({
+          ...prev,
+          selectedImpressionId:
+            response.appointmentStatus[0].refAppointmentImpression,
+          selectedRecommendationId:
+            response.appointmentStatus[0].refAppointmentRecommendation,
+        }));
+
         setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
+        setTechnicianForm(response.technicianIntakeFormData || []);
         if (response.reportIntakeFormData) {
           setReportFormData(response.reportIntakeFormData);
         }
@@ -358,8 +409,8 @@ const Report: React.FC = () => {
   // const listDicomFiles = async () => {
   //   try {
   //     const res = await technicianService.listDicom(
-  //       location.appointmentId,
-  //       location.userId
+  //       stateData.appointmentId,
+  //       stateData.userId
   //     );
   //     console.log(res);
 
@@ -482,16 +533,16 @@ const [mailOption, setMailOption] = useState("");
     try {
       const payload = {
         reportIntakeForm: reportFormData,
-        appointmentId: location.appointmentId,
+        appointmentId: stateData.appointmentId,
         technicianIntakeForm: [],
         patientIntakeForm: [],
         reportTextContent: Notes,
-        patientId: location.userId,
+        patientId: stateData.userId,
         movedStatus: movedStatus,
         currentStatus: assignData?.appointmentStatus[0]?.refAppointmentComplete,
         syncStatus: syncStatus.Notes,
-        impression: selectedImpressionId,
-        recommendation: selectedRecommendationId,
+        impression: mainImpressionRecommendation.selectedImpressionId,
+        recommendation: mainImpressionRecommendation.selectedRecommendationId,
         editStatus: editStatus,
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
@@ -515,6 +566,8 @@ const [mailOption, setMailOption] = useState("");
 
   const getAnswer = (id: number) =>
     responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
+
+  
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -772,7 +825,7 @@ const [mailOption, setMailOption] = useState("");
                 const handleClick = () => {
                   if (!isAllowed) return;
 
-                  if (label === "Signed Off") {
+                  if (label === "Sign Off") {
                     setShowMailDialog(true); // open dialog
                   } else {
                     handleReportSubmit(status, editStatus); // directly call
@@ -792,39 +845,40 @@ const [mailOption, setMailOption] = useState("");
                 );
               })}
               <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
-  <DialogContent className="sm:max-w-[400px]">
-    <DialogHeader>
-      <DialogTitle>Select who to send mail to</DialogTitle>
-    </DialogHeader>
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle>Select who to send mail to</DialogTitle>
+                  </DialogHeader>
 
-    <div className="mt-4">
-      <Select value={mailOption} onValueChange={setMailOption}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Choose recipient" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="patient">Patient</SelectItem>
-          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
-          <SelectItem value="both">Both</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+                  <div className="mt-4">
+                    <Select value={mailOption} onValueChange={setMailOption}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose recipient" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="patient">Patient</SelectItem>
+                        <SelectItem value="scancenter">
+                          Scan Center Manager
+                        </SelectItem>
+                        <SelectItem value="both">Both</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-    <DialogFooter>
-      <Button
-        variant="greenTheme"
-        disabled={!mailOption}
-        onClick={() => {
-          setShowMailDialog(false);
-          handleReportSubmit("Signed Off", false); // Pass what you need
-        }}
-      >
-        Submit
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
-
+                  <DialogFooter>
+                    <Button
+                      variant="greenTheme"
+                      disabled={!mailOption}
+                      onClick={() => {
+                        setShowMailDialog(false);
+                        handleReportSubmit("Signed Off", false); // Pass what you need
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
               {tab === 4 && subTab === 4 && (
                 <>
@@ -996,8 +1050,8 @@ const [mailOption, setMailOption] = useState("");
           {tab === 1 && (
             <PatientInTakeForm
               fetchFormData={true}
-              appointmentId={location.appointmentId}
-              userId={location.userId}
+              appointmentId={stateData.appointmentId}
+              userId={stateData.userId}
               readOnly={true}
             />
           )}
@@ -1006,15 +1060,15 @@ const [mailOption, setMailOption] = useState("");
             <TechnicianPatientIntakeForm
               fetchFormData={true}
               fetchTechnicianForm={true}
-              appointmentId={location.appointmentId}
-              userId={location.userId}
+              appointmentId={stateData.appointmentId}
+              userId={stateData.userId}
               readOnly={true}
             />
           )}
           {tab === 3 && (
             <DicomList
-              appointmentId={location.appointmentId}
-              userId={location.userId}
+              appointmentId={stateData.appointmentId}
+              userId={stateData.userId}
             />
           )}
           {tab === 4 && (
@@ -1025,6 +1079,7 @@ const [mailOption, setMailOption] = useState("");
                   handleReportInputChange={handleReportInputChange}
                   patientFormData={responsePatientInTake}
                   handlePatientInputChange={handlePatientInputChange}
+                  technicianFormData={technicianForm}
                   textEditor={{
                     breastImplant: {
                       value: breastImplantRight,
@@ -1107,7 +1162,7 @@ const [mailOption, setMailOption] = useState("");
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
-                  readOnly={location.readOnly ? true : false}
+                  readOnly={stateData.readOnly ? true : false}
                 />
               ) : subTab === 4 ? (
                 <NotesReport
@@ -1166,13 +1221,45 @@ const [mailOption, setMailOption] = useState("");
                       onChange: setLymphNodesLeft,
                     },
                     ImpressionText: {
-                      value: impressionText,
-                      onChange: setImpressionText,
+                      value: mainImpressionRecommendation.impressionText,
+                      onChange: (text: string) =>
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          impressionText: text,
+                        })),
+                    },
+                    OptionalImpressionText: {
+                      value: optionalImpressionRecommendation.impressionText,
+                      onChange: (text: string) =>
+                        setOptionalImpressionRecommendation((prev) => ({
+                          ...prev,
+                          impressionText: text,
+                        })),
                     },
                     RecommendationText: {
-                      value: recommendationText,
-                      onChange: setRecommendationText,
+                      value: mainImpressionRecommendation.recommendationText,
+                      onChange: (text: string) =>
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          recommendationText: text,
+                        })),
                     },
+                    OptionalRecommendationText: {
+                      value: optionalImpressionRecommendation.recommendationText,
+                      onChange: (text: string) =>
+                        setOptionalImpressionRecommendation((prev) => ({
+                          ...prev,
+                          recommendationText: text,
+                        })), 
+                    },
+                    CommonImpresRecommText: {
+                      value: commonImpressRecomm.text,
+                      onChange: (text: string) =>
+                        setCommonImpressRecomm((prev) => ({
+                          ...prev,
+                          text: text,
+                        })),
+                    }
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1195,18 +1282,26 @@ const [mailOption, setMailOption] = useState("");
                     assignData?.appointmentStatus[0]?.refSCCustId || ""
                   }
                   patientDetails={patientDetails}
-                  readOnly={location.readOnly ? true : false}
+                  readOnly={stateData.readOnly ? true : false}
                 />
               ) : (
                 subTab === 5 && (
                   <Impression
-                    selectedImpressionId={selectedImpressionId}
-                    setSelectedImpressionId={setSelectedImpressionId}
-                    selectedRecommendationId={selectedRecommendationId}
-                    setSelectedRecommendationId={setSelectedRecommendationId}
-                    setRecommendationText={setRecommendationText}
-                    setImpressionText={setImpressionText}
-                    readOnly={location.readOnly ? true : false}
+                    mainImpressionRecommendation={mainImpressionRecommendation}
+                    setMainImpressionRecommendation={
+                      setMainImpressionRecommendation
+                    }
+                    optionalImpressionRecommendation={
+                      optionalImpressionRecommendation
+                    }
+                    setOptionalImpressionRecommendation={
+                      setOptionalImpressionRecommendation
+                    }
+                    showOptional={showOptional}
+                    setShowOptional={setShowOptional}
+                    commonImpressRecomm={commonImpressRecomm}
+                    setCommonImpressRecomm={setCommonImpressRecomm}
+                    readOnly={stateData.readOnly}
                   />
                 )
               )}
