@@ -468,7 +468,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
           <div className="flex flex-col gap-4 w-full lg:w-1/3">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="Radiologist ID">
-                Radiologist ID
+                WellthGreen Performing Provider ID
               </Label>
               <Input
                 id="Radiologist ID"

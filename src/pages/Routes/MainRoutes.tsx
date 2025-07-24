@@ -154,6 +154,8 @@ const MainRoutes: React.FC = () => {
     { path: "viewScanCenter", element: <ViewScanCenter /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "analytics", element: <Analytics /> },
+    { path: "addWgDoctor", element: <AddWGPerformingProvider />},
+    { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
   ];
 
   const patientRoutes: AppRoute[] = [

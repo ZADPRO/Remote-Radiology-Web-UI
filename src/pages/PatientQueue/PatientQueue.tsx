@@ -239,6 +239,7 @@ const PatientQueue: React.FC = () => {
             "radiologist", 
             "wgdoctor",
             "patient",
+            "manager"
           ],
         };
       }

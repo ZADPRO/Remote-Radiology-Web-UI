@@ -751,7 +751,7 @@ const ManageWGPerformingProvider: React.FC = () => {
           }}
           className="h-11/12 w-[80vw] overflow-y-auto"
         >
-          <DialogTitle>Edit Radiologist</DialogTitle>
+          <DialogTitle>Edit WellthGreen Performing Provider</DialogTitle>
 
           {selectedRadiologistId !== null && (
             <EditWGPerformingProvider
