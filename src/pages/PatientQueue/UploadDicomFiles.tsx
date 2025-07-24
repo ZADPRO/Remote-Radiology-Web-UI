@@ -198,7 +198,7 @@ const UploadDicomFiles: React.FC = () => {
         <p className="text-xs sm:text-sm text-gray-700 mt-2">
           Choose a file or drag & drop it here
         </p>
-        <p className="text-xs text-gray-500">ZIP files</p>
+        {/* <p className="text-xs text-gray-500">ZIP files</p> */}
         <Button
           type="button"
           className="mt-3 sm:mt-4 bg-[#ABB4A5] hover:bg-[#8e9787] text-sm px-4 py-2"
@@ -210,7 +210,7 @@ const UploadDicomFiles: React.FC = () => {
           ref={fileInputRefs[side]}
           type="file"
           multiple
-          accept=".zip,.dcm,.dicom"
+          // accept=".zip,.dcm,.dicom"
           className="hidden"
           onChange={(e) => handleUpload(e, side)}
         />
@@ -291,8 +291,8 @@ const UploadDicomFiles: React.FC = () => {
   <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">Dicom</h1>
 
   {/* This wrapper scrolls */}
-  <div className="flex-1 overflow-auto p-2 sm:p-5 m-1 sm:m-2 lg:shadow">
-    <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-2 sm:p-5">
+  <div className="flex-1 overflow-auto p-0 sm:p-5 m-1 sm:m-2 lg:shadow">
+    <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-0 sm:p-5">
       {renderUploadSection("Left", "Left")}
       {renderUploadSection("Right", "Right")}
     </div>

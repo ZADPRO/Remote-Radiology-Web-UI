@@ -7,6 +7,7 @@ import DatePicker from "@/components/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -434,6 +435,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   val?.toLocaleDateString("en-CA") || ""
                                 )
                               }
+                              disabledDates={dateDisablers.noFuture}
                             />
                             </div>
                             
@@ -556,7 +558,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   val?.toLocaleDateString("en-CA") || ""
                                 )
                               }
-                              disabledDates={(date) => date > new Date()}
+                              disabledDates={dateDisablers.noFuture}
                             />
                             </div>
                             

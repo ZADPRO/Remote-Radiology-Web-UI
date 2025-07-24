@@ -7,6 +7,7 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import DatePicker from "@/components/date-picker";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   abnormality: number;
@@ -351,6 +352,7 @@ const renderBiRadsSection = (
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
+              disabledDates={dateDisablers.noFuture}
             />
           </div>
         </div>

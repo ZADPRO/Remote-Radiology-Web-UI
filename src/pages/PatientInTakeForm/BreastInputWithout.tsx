@@ -95,16 +95,22 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                     >
                       {Props.label == "Deformity / Asymmetry" && (
                         <div className="flex items-center gap-2">
-                        <input 
-                          type="radio"
-                          name="biggerRight"
-                          value="Right"
-                          className="custom-radio"
-                          checked={getAnswerByQuestionId(Props.biggerSide) === "Right"}
-                          onChange={() => Props.biggerSide && updateAnswer(Props.biggerSide, "Right")}
+                          <input
+                            type="radio"
+                            name="biggerRight"
+                            value="Right"
+                            className="custom-radio"
+                            checked={
+                              getAnswerByQuestionId(Props.biggerSide) ===
+                              "Right"
+                            }
+                            onChange={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "Right")
+                            }
                           />
                           <Label>Bigger Side</Label>
-                          </div>
+                        </div>
                       )}
                       <Label>R</Label>
 
@@ -119,11 +125,11 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           );
                         }}
                         required={
-                          !(
-                            getAnswerByQuestionId(Props.LQID) ||
-                            getAnswerByQuestionId(Props.RQID) && 
-                            getAnswerByQuestionId(Props.OtherInputQId) != ""
-                          )
+                          getAnswerByQuestionId(Props.OtherInputQId) === "" &&
+                          !["true"].includes(
+                            getAnswerByQuestionId(Props.RQID)
+                          ) &&
+                          !["true"].includes(getAnswerByQuestionId(Props.LQID))
                         }
                       />
                     </div>
@@ -140,7 +146,10 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         onChange={(e) => {
                           updateAnswer(Props.SDateRight, e.target.value);
                         }}
-                        required={getAnswerByQuestionId(Props.RQID) == "false" && getAnswerByQuestionId(Props.SDateRight) != ""}
+                        required={
+                          getAnswerByQuestionId(Props.RQID) == "true" &&
+                          getAnswerByQuestionId(Props.SDateRight) != ""
+                        }
                       />
                     </div>
 
@@ -179,16 +188,21 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                     >
                       {Props.label == "Deformity / Asymmetry" && (
                         <div className="flex items-center gap-2">
-                        <input 
-                          type="radio"
-                          name="biggerLeft"
-                          value="Left"
-                          className="custom-radio"
-                          checked={getAnswerByQuestionId(Props.biggerSide) === "Left"}
-                          onChange={() => Props.biggerSide && updateAnswer(Props.biggerSide, "Left")}
+                          <input
+                            type="radio"
+                            name="biggerLeft"
+                            value="Left"
+                            className="custom-radio"
+                            checked={
+                              getAnswerByQuestionId(Props.biggerSide) === "Left"
+                            }
+                            onChange={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "Left")
+                            }
                           />
                           <Label>Bigger Side</Label>
-                          </div>
+                        </div>
                       )}
                       <Label>L</Label>
 
@@ -203,11 +217,11 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           );
                         }}
                         required={
-                          !(
-                            getAnswerByQuestionId(Props.LQID) ||
-                            getAnswerByQuestionId(Props.RQID) && 
-                            getAnswerByQuestionId(Props.OtherInputQId) != ""
-                          )
+                          getAnswerByQuestionId(Props.OtherInputQId) === "" &&
+                          !["true"].includes(
+                            getAnswerByQuestionId(Props.RQID)
+                          ) &&
+                          !["true"].includes(getAnswerByQuestionId(Props.LQID))
                         }
                       />
                     </div>
@@ -223,7 +237,10 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         onChange={(e) => {
                           updateAnswer(Props.SDate, e.target.value);
                         }}
-                        required={getAnswerByQuestionId(Props.SDate) == "" && getAnswerByQuestionId(Props.OtherInputQId) != ""}
+                        required={
+                          getAnswerByQuestionId(Props.LQID) == "true" &&
+                          getAnswerByQuestionId(Props.SDate) != ""
+                        }
                       />
                     </div>
 
@@ -334,20 +351,20 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                     )}
                 </div> */}
               </div>
-               <div className="w-1/2">
-                  {/* Other Input */}
-                  {(Props.OtherInputQId && !Props.technician) && (
-                    <div className="flex gap-1 w-full ">
-                      <Textarea
-                        placeholder="Additional Comments"
-                        value={getAnswerByQuestionId(Props.OtherInputQId)}
-                        onChange={(e) =>
-                          updateAnswer(Props.OtherInputQId!, e.target.value)
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
+              <div className="w-1/2">
+                {/* Other Input */}
+                {Props.OtherInputQId && !Props.technician && (
+                  <div className="flex gap-1 w-full ">
+                    <Textarea
+                      placeholder="Additional Comments"
+                      value={getAnswerByQuestionId(Props.OtherInputQId)}
+                      onChange={(e) =>
+                        updateAnswer(Props.OtherInputQId!, e.target.value)
+                      }
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
