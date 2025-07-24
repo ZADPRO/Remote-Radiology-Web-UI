@@ -187,7 +187,7 @@ const BreastBiopsy: React.FC<Props> = ({
         <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4">
           <div className="flex gap-3">
             {/* Check to Confirm Checkbox */}
-            <div className={cn(`flex lg:flex-col flex-row items-center w-25 gap-1`)}>
+            <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
               <div className="text-xs sm:text-xs font-medium">
                 Check
               </div>
@@ -371,7 +371,7 @@ const BreastBiopsy: React.FC<Props> = ({
                         )
                       }
                     >
-                      {getPatientAnswer(165) || "Report.pdf"}
+                      {getPatientAnswer(165) || "Report"}
                     </span>
                   )}
                 </div>

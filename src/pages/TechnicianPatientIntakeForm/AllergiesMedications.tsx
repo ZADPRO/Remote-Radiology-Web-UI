@@ -1,6 +1,6 @@
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -97,12 +97,12 @@ const AllergiesMedications: React.FC<Props> = ({
 
   return (
     <div
-      className={`flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto ${
+      className={`flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto`}>
+      <div className={`${
         readOnly ? "pointer-events-none" : ""
-      }`}
-    >
-      {/* Priority */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      }`}>
+             {/* Priority */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Label className="w-full sm:w-1/3 text-base font-semibold">
           a. What is the priority level of this request?
         </Label>
@@ -125,13 +125,14 @@ const AllergiesMedications: React.FC<Props> = ({
           {renderCheckbox("Chlorine", questionIds.Chlorine)}
           {renderCheckbox("Others", questionIds.Others)}
           {getAnswer(questionIds.Others) === "true" && (
-            <Input
+            <Textarea
               placeholder="Specify"
-              className="w-full sm:w-auto"
+              className="w-64"
               value={getAnswer(questionIds.OtherSpecify)}
               onChange={(e) =>
                 handleInputChange(questionIds.OtherSpecify, e.target.value)
               }
+              required
             />
           )}
         </div>
@@ -162,12 +163,12 @@ const AllergiesMedications: React.FC<Props> = ({
           )}
 
           {/* Others checkbox and specify input on same line */}
-          <div className="flex items-center gap-2 w-60">
+          <div className="flex items-start gap-2">
             {renderCheckbox("Others", questionIds.MedicationOthers, "")}
             {getAnswer(questionIds.MedicationOthers) === "true" && (
-              <Input
+              <Textarea
                 placeholder="Specify"
-                className="flex-1 min-w-0"
+                className="flex-1 w-64"
                 value={getAnswer(questionIds.MedicationOtherSpecify)}
                 onChange={(e) =>
                   handleInputChange(
@@ -175,11 +176,15 @@ const AllergiesMedications: React.FC<Props> = ({
                     e.target.value
                   )
                 }
+                required
               />
             )}
           </div>
         </div>
       </div>
+      </div>
+ 
+      
     </div>
   );
 };
