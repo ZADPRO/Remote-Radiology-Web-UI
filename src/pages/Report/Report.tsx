@@ -99,6 +99,7 @@ type ReportStageLabel =
   | "Reviewed 1 Edit"
   | "Reviewed 2 Correct"
   | "Reviewed 2 Edit"
+  | "Insert Signature"
   | "Sign Off";
 // | "Addendum";
 
@@ -314,13 +315,14 @@ const Report: React.FC = () => {
   };
 
   const stageRoleMap: Record<ReportStageLabel, UserRole[]> = {
-    Predraft: ["scribe", "admin"],
-    Draft: ["radiologist", "admin"],
-    "Reviewed 1 Correct": ["admin"],
-    "Reviewed 1 Edit": ["admin"],
+    Predraft: ["scribe", "admin", "wgdoctor"],
+    Draft: ["radiologist", "admin", "wgdoctor"],
+    "Reviewed 1 Correct": ["admin", "wgdoctor"],
+    "Reviewed 1 Edit": ["admin", "wgdoctor"],
     "Reviewed 2 Correct": ["codoctor"],
     "Reviewed 2 Edit": ["codoctor"],
-    "Sign Off": ["doctor", "admin"],
+    "Insert Signature": ["admin", "wgdoctor", "doctor"],
+    "Sign Off": ["doctor", "admin", "wgdoctor"],
     // Addendum: ["doctor", "admin"], // assuming doctor can handle addendums
   };
 
@@ -331,6 +333,7 @@ const Report: React.FC = () => {
     { label: "Reviewed 1 Edit", status: "Reviewed 1", editStatus: true },
     { label: "Reviewed 2 Correct", status: "Reviewed 2", editStatus: false },
     { label: "Reviewed 2 Edit", status: "Reviewed 2", editStatus: true },
+    { label: "Insert Signature", status: "", editStatus: false },
     { label: "Sign Off", status: "Signed Off", editStatus: false },
     // { label: "Addendum", editStatus: false },
   ];
@@ -405,7 +408,7 @@ const Report: React.FC = () => {
   const [Notes, setNotes] = useState("");
 
   const [syncStatus, setsyncStatus] = useState({
-    breastImplantRight: true,
+    breastImplant: true,
     breastDensityandImageRight: true,
     nippleAreolaSkinRight: true,
     LesionsRight: true,
@@ -522,7 +525,7 @@ const Report: React.FC = () => {
         if (response.reportTextContentData) {
           setNotes(response.reportTextContentData[0]?.refRTCText);
           setsyncStatus({
-            breastImplantRight: true,
+            breastImplant: true,
             breastDensityandImageRight: true,
             nippleAreolaSkinRight: true,
             LesionsRight: true,
@@ -763,7 +766,7 @@ const Report: React.FC = () => {
               { label: "Right", value: 2 },
               { label: "Left", value: 3 },
               { label: "Impression", value: 5 },
-              { label: "Report", value: 4 },
+              { label: "Final Report", value: 4 },
             ].map(({ label, value }) => (
               <div
                 key={label}
@@ -796,7 +799,7 @@ const Report: React.FC = () => {
             <span className="text-lg font-semibold">Back</span>
           </Button>
           {/* Details Content */}
-          <div className="flex flex-col gap-1 mt-2">
+          <div className="flex flex-col gap-1 mt-2 pb-5">
             <div className="text-sm">
               Name: <span className="font-semibold">{getAnswer(1)}</span>
             </div>
@@ -832,7 +835,9 @@ const Report: React.FC = () => {
 
           {/* Table Content */}
           {role?.type &&
-            ["admin", "scribe", "radiologist"].includes(role?.type) && (
+            ["admin", "scribe", "radiologist", "wgdoctor"].includes(
+              role?.type
+            ) && (
               <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
                 <table className="min-w-full divide-y divide-gray-200  text-left">
                   <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
@@ -964,120 +969,18 @@ const Report: React.FC = () => {
             )}
 
           {/* Buttons */}
-          {role?.type && (
-            <div
-              className={`flex flex-wrap gap-2 ${
-                location?.readOnly ? "pointer-events-none" : ""
-              }`}
-            >
-              {reportStages.map(({ label, editStatus, status }, index) => {
-                const isAllowed = stageRoleMap[label]?.includes(role?.type);
+          {tab === 4 && subTab === 4 && (
+            <>
+            <Button
+            variant="greenTheme"
+            className="text-xs w-full text-white px-3 py-2 mb-2 min-w-[48%]"
+            onClick={() => setLoadTemplateStatus(true)}
+            disabled={syncStatus.Notes}
+          >
+            Load Template
+          </Button>
 
-                const handleClick = () => {
-                  if (!isAllowed) return;
-
-                  if (label === "Sign Off") {
-                    setShowMailDialog(true); // open dialog
-                  } else {
-                    handleReportSubmit(status, editStatus); // directly call
-                  }
-                };
-
-                return (
-                  <Button
-                    key={index}
-                    variant="greenTheme"
-                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                    onClick={handleClick}
-                    disabled={!isAllowed}
-                  >
-                    {label}
-                  </Button>
-                );
-              })}
-              <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
-                <DialogContent className="sm:max-w-[400px]">
-                  <DialogHeader>
-                    <DialogTitle>Select Email Recipients</DialogTitle>
-                    <DialogDescription>
-                      Select recipients to proceed with sending the email.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div>
-                    <Select value={mailOption} onValueChange={setMailOption}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose recipient" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="patient">Patient</SelectItem>
-                        <SelectItem value="scancenter">
-                          Scan Center Manager
-                        </SelectItem>
-                        <SelectItem value="both">
-                          Patient and Scan Center Manager
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <DialogFooter>
-                    <Button
-                      variant="greenTheme"
-                      disabled={!mailOption}
-                      onClick={() => {
-                        setShowMailDialog(false);
-                        handleReportSubmit("Signed Off", false); // Pass what you need
-                      }}
-                    >
-                      Submit
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              {tab === 4 && subTab === 4 && (
-                <>
-                  <Button
-                    variant="greenTheme"
-                    className="text-xs w-full text-white px-3 py-2 min-w-[48%]"
-                    onClick={() => setLoadTemplateStatus(true)}
-                  >
-                    Load Template
-                  </Button>
-                  {(role.type === "doctor" || role.type === "admin") && (
-                    <Button
-                      variant="greenTheme"
-                      className="text-xs w-full text-white px-3 py-2 min-w-[48%]"
-                      onClick={() => {
-                        const date = new Date().toLocaleDateString();
-                        console.log(userDetails);
-                        const signatureRow = `
-                    <br/>
-                    <h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>Dr. ${
-                      userDetails.refUserFirstName
-                    },</strong></h3>${
-                          userDetails.specialization
-                            ? '<h3 class="ql-align-right"><strong>' +
-                              userDetails.specialization +
-                              ",</strong></h3>"
-                            : ""
-                        }<h3 class=\"ql-align-right\"><strong><em>${date}</em></strong></h3>
-                          
-                      `;
-                        const notesData = Notes + signatureRow;
-                        setNotes(notesData);
-                        setsyncStatus({
-                          ...syncStatus,
-                          Notes: false,
-                        });
-                      }}
-                    >
-                      Insert Signature
-                    </Button>
-                  )}
-                  <Dialog
+          <Dialog
                     onOpenChange={setLoadTemplateStatus}
                     open={loadTemplateStatus}
                   >
@@ -1198,8 +1101,106 @@ const Report: React.FC = () => {
                       </div>
                     </DialogContent>
                   </Dialog>
-                </>
-              )}
+                  </>
+          )
+          
+          }
+
+          {role?.type && (
+            <div
+              className={`flex flex-wrap gap-2 ${
+                location?.readOnly ? "pointer-events-none" : ""
+              }`}
+            >
+              {reportStages.map(({ label, editStatus, status }, index) => {
+                const isAllowed = stageRoleMap[label]?.includes(role?.type);
+
+                const handleClick = () => {
+                  if (!isAllowed) return;
+
+                  if (label === "Sign Off") {
+                    setShowMailDialog(true); // open dialog
+                  } else if(status == "" && label == "Insert Signature") {
+                    const date = new Date().toLocaleDateString();
+                        console.log(userDetails);
+                        const signatureRow = `
+                    <br/>
+                    <h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>Dr. ${
+                      userDetails.refUserFirstName
+                    },</strong></h3>${
+                          userDetails.specialization
+                            ? '<h3 class="ql-align-right"><strong>' +
+                              userDetails.specialization +
+                              ",</strong></h3>"
+                            : ""
+                        }<h3 class=\"ql-align-right\"><strong><em>${date}</em></strong></h3>
+                          
+                      `;
+                        const notesData = Notes + signatureRow;
+                        setNotes(notesData);
+                        setsyncStatus({
+                          ...syncStatus,
+                          Notes: false,
+                        });
+                  } else {
+                    handleReportSubmit(status, editStatus); // directly call
+                  }
+                };
+
+                return (
+                  <Button
+                    key={index}
+                    variant="greenTheme"
+                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                    onClick={handleClick}
+                    disabled={!isAllowed}
+                    hidden={(label == "Insert Signature" &&  !(tab === 4 && subTab === 4))}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
+              <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle>Select Email Recipients</DialogTitle>
+                    <DialogDescription>
+                      Select recipients to proceed with sending the email.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div>
+                    <Select value={mailOption} onValueChange={setMailOption}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose recipient" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="patient">Patient</SelectItem>
+                        <SelectItem value="scancenter">
+                          Scan Center Manager
+                        </SelectItem>
+                        <SelectItem value="both">
+                          Patient and Scan Center Manager
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      variant="greenTheme"
+                      disabled={!mailOption}
+                      onClick={() => {
+                        setShowMailDialog(false);
+                        handleReportSubmit("Signed Off", false); // Pass what you need
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </div>

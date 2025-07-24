@@ -1,6 +1,7 @@
 import TextEditor from "@/components/TextEditor";
 import { Button } from "@/components/ui/button";
 import React, { useEffect } from "react";
+import { breastDensityandImageRightQuestions, ComparisonPriorLeftQuestion, ComparisonPriorRightQuestion, grandularAndDuctalTissueRightQuestions, lesionsLeftQuestions, lesionsRightQuestions, LymphNodesLeftQuestions, LymphNodesRightQuestions, nippleAreolaSkinRightQuestions } from "./ReportQuestionsAssignment";
 
 interface TextEditorProps {
   breastImplant: {
@@ -118,6 +119,21 @@ const NotesReport: React.FC<Props> = ({
   patientDetails,
   readOnly
 }) => {
+    const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
+    const breastDensityRight = getAnswer(breastDensityandImageRightQuestions.breastSelect) == "Present" ? true : false;
+    const nippleAreolaRight = getAnswer(nippleAreolaSkinRightQuestions.nippleSelect) == "Present" ? true : false;
+    const glandularRight = getAnswer(grandularAndDuctalTissueRightQuestions.grandularSelect) == "Present" ? true : false;
+    const lessionsRight = getAnswer(lesionsRightQuestions.lesionsr) == "Preent" ? true : false;
+    const lymphRight = getAnswer(LymphNodesRightQuestions.Intramammaryr) == "Present" ? true : false;
+    const comparisonRight = getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) == "Present" ? true : false;
+    const breastDensityLeft = getAnswer(breastDensityandImageRightQuestions.breastSelect) == "Present" ? true : false;
+    const nippleAreolaLeft = getAnswer(nippleAreolaSkinRightQuestions.nippleSelect) == "Present" ? true : false;
+    const glandularLeft = getAnswer(grandularAndDuctalTissueRightQuestions.grandularSelect) == "Present" ? true : false;
+    const lessionsLeft = getAnswer(lesionsLeftQuestions.lesionsr) == "Preent" ? true : false;
+    const lymphLeft = getAnswer(LymphNodesLeftQuestions.Intramammaryr) == "Present" ? true : false;
+    const comparisonLeft = getAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) == "Present" ? true : false;
+    
+    
   useEffect(() => {
     if (syncStatus.Notes) {
       setNotes(`
@@ -159,34 +175,34 @@ const NotesReport: React.FC<Props> = ({
             <br/>
             <p><b>RIGHT BREAST FINDINGS:</b></p>
             <br/>
-            <p><b>BREAST DENSITY & IMAGE QUALITY:</b><br />
-            ${textEditor.breastDensityandImageRight.value}</p><br/>
-            <p><b>NIPPLE, AREOLA & SKIN:</b><br/>${
+            ${breastDensityRight ? `<p><b>BREAST DENSITY & IMAGE QUALITY:</b><br />
+            ${textEditor.breastDensityandImageRight.value}</p><br/>` : ``}
+            ${nippleAreolaRight ? `<p><b>NIPPLE, AREOLA & SKIN:</b><br/>${
               textEditor.nippleAreolaSkinRight.value
-            }</p><br/>
-            <p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            ${textEditor.grandularAndDuctalTissueRight.value}<br/>
-            <p><b>LESIONS:</b></p>
-            ${textEditor.LesionsRight.value}<br/>
-            <p><b>LYMPH NODES:</b></p>
-            ${textEditor.LymphNodesRight.value}<br/><br/>
-            <p><b>COMPARISON TO PRIOR STUDIES:</b></p>
-            ${textEditor.ComparisonPrior.value}<br/>
+            }</p><br/>` : ``}
+            ${glandularRight ? `<p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
+            ${textEditor.grandularAndDuctalTissueRight.value}<br/>` : ``}
+            ${lessionsRight ? `<p><b>LESIONS:</b></p>
+            ${textEditor.LesionsRight.value}<br/>` : ``}
+            ${lymphRight ? `<p><b>LYMPH NODES:</b></p>
+            ${textEditor.LymphNodesRight.value}<br/><br/>` : ``}
+            ${comparisonRight ? `<p><b>COMPARISON TO PRIOR STUDIES:</b></p>
+            ${textEditor.ComparisonPrior.value}<br/>` : ``}
             <p><b>LEFT BREAST FINDINGS:</b></p><br>
-            <p><b>BREAST DENSITY & IMAGE QUALITY:</b><br/>${
+            ${breastDensityLeft ? `<p><b>BREAST DENSITY & IMAGE QUALITY:</b><br/>${
               textEditor.breastDensityandImageLeft.value
-            }</p><br/>
-            <p><b>NIPPLE, AREOLA & SKIN:</b></br>${
+            }</p><br/>` : ``}
+            ${nippleAreolaLeft ? `<p><b>NIPPLE, AREOLA & SKIN:</b></br>${
               textEditor.nippleAreolaSkinLeft.value
-            }</p><br/>
-            <p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            ${textEditor.grandularAndDuctalTissueLeft.value}<br/>
-            <p><b>LESIONS:</b></p>
-            ${textEditor.LesionsLeft.value}<br/>
-            <p><b>LYMPH NODES:</b></p>
-            ${textEditor.LymphNodesLeft.value}<br/>
-            <p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
-            ${textEditor.ComparisonPriorLeft.value}<br/>
+            }</p><br/>` : ``}
+            ${glandularLeft ? `<p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
+            ${textEditor.grandularAndDuctalTissueLeft.value}<br/>` : ``}
+            ${lessionsLeft ? `<p><b>LESIONS:</b></p>
+            ${textEditor.LesionsLeft.value}<br/>` : ``}
+            ${lymphLeft ? `<p><b>LYMPH NODES:</b></p>
+            ${textEditor.LymphNodesLeft.value}<br/>` : ``}
+            ${comparisonLeft ? `p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
+            ${textEditor.ComparisonPriorLeft.value}<br/>` : ``}
             <p><b>IMPRESSION:</b></p>
             ${textEditor.ImpressionText.value}<br/>${textEditor.OptionalImpressionText.value}<br/><br />
             <p><b>RECOMMENDATION:</b></p>

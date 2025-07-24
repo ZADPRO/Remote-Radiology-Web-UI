@@ -48,7 +48,7 @@ interface RightReportProps {
   patientFormData: ResponsePatientForm[];
   textEditor: TextEditorProps;
   syncStatus: {
-    breastImplantRight: boolean;
+    breastImplant: boolean;
     breastDensityandImageRight: boolean;
     nippleAreolaSkinRight: boolean;
     LesionsRight: boolean;
