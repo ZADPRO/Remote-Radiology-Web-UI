@@ -151,6 +151,7 @@ const LifeStyleFactors: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.bmi, e.target.value)
                 }
+                placeholder="Specify"
               />
             </div>
           </div>

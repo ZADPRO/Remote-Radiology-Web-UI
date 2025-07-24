@@ -220,7 +220,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
             <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100">
               <input
                 type="file"
-                accept=".pdf"
+                accept=".pdf, .jpg, .jpeg, .png"
                 className="sr-only"
                 onChange={handleFileChange}
                 required={!(selectedFileName || uploadedFileName)}

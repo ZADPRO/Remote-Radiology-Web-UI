@@ -332,7 +332,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     onChange={(e) => updateAnswer(Props.SDateRight, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDateRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
+                    required={getAnswerByQuestionId(Props.SDateRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.RQID) != ""}
                   />
                 </div>
  
@@ -445,7 +445,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
+                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.RQID) != ""}
                   />
                 </div>
  

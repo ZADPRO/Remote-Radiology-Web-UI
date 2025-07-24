@@ -10,7 +10,6 @@ import {
 import { uploadService } from "@/services/commonServices";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { useAuth } from "../Routes/AuthContext";
-import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 
 interface files {
   profile_img: File | null;
@@ -196,7 +195,7 @@ const ViewScanCenter: React.FC = () => {
           <div className="flex flex-col justify-between h-full w-full lg:w-3/4">
             {/* Appointment */}
             <h1 className="text-2xl font-bold">SCAN CENTER DETAILS</h1>
-            <div className="flex justify-start lg:justify-end items-center gap-2 mb-4">
+            {/* <div className="flex justify-start lg:justify-end items-center gap-2 mb-4">
               <Checkbox2
                 id="appointment"
                 checked={formData.refSCAppointments}
@@ -210,7 +209,7 @@ const ViewScanCenter: React.FC = () => {
               <label htmlFor="appointment" className="font-semibold text-sm">
                 APPOINTMENT
               </label>
-            </div>
+            </div> */}
 
             {/* Fields */}
             <div className="space-y-4">
@@ -243,7 +242,7 @@ const ViewScanCenter: React.FC = () => {
                 },
               ].map(({ label, value, key }, index) => (
                 <div key={index} className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
-                  <label className="font-semibold text-sm w-28">{label} :</label>
+                  <label className="font-semibold text-sm w-1/5">{label} :</label>
                   <Input
                     value={value}
                     disabled={key === "refSCCustId"}
