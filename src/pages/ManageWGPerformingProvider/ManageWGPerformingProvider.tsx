@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -8,17 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import { ArrowLeft } from "lucide-react";
 // Import ArrowUp and ArrowDown
-import {
-  Plus,
-  ChevronsLeft,
-  ChevronsRight,
-  Filter,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import { Plus, ChevronsLeft, ChevronsRight, Filter, ArrowUp, ArrowDown } from 'lucide-react';
+import { ListAllRadiologists, radiologistService } from '@/services/radiologistService';
 
 // Import ShadCN UI Popover, Input, and Dialog components
 import {
@@ -27,7 +21,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // ShadCN Pagination Imports
 import {
@@ -59,57 +57,52 @@ import {
   ColumnFiltersState,
   VisibilityState,
   getPaginationRowModel,
-} from "@tanstack/react-table";
-import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import { useNavigate } from "react-router-dom";
-import EditWellthGreenManager from "./EditWellthGreenManager";
-import { ListAllManager, managerService } from "@/services/managerService";
+} from '@tanstack/react-table';
+// import EditRadiologist from './EditRadiologist';
+import LoadingOverlay from '@/components/ui/CustomComponents/loadingOverlay';
+import { useNavigate } from 'react-router-dom';
+import EditWGPerformingProvider from './EditWGPerformingProvider';
 
-const ManageWellthGreenAdmin: React.FC = () => {
-  const [managers, setManagers] = useState<ListAllManager[]>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>("");
+const ManageWGPerformingProvider: React.FC = () => {
+  const [radiologists, setRadiologists] = useState<ListAllRadiologists[]>([]);
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
-  const [selectedManagerId, setSelectedManagerId] = useState<number | null>(
-    null
-  );
+  const [selectedRadiologistId, setSelectedRadiologistId] = useState<number | null>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<string | null
 
   const navigate = useNavigate();
 
-  const getAllManager = async () => {
+  const getAllRadiologists = async () => {
     setLoading(true);
     try {
-      const res = await managerService.listAllWellthGreenManager();
-      console.log("Fetching scribe...", res);
-      setManagers(res.data);
+      const res = await radiologistService.listAllWellgreenPP();
+      console.log("Fetching radiologists...", res);
+      setRadiologists(res.data);
     } catch (error) {
-      console.error("Failed to fetch scribe:", error);
-      setManagers([]);
-    } finally {
+      console.error("Failed to fetch radiologists:", error);
+      setRadiologists([]);
+    }
+    finally{
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getAllManager();
+    getAllRadiologists();
   }, []);
 
-  const columns = useMemo<ColumnDef<ListAllManager>[]>(
+  const columns = useMemo<ColumnDef<ListAllRadiologists>[]>(
     () => [
       {
-        accessorFn: (row: ListAllManager) =>
-          `${row.refUserFirstName} ${row.refUserLastName}`,
-        id: "name",
+        accessorFn: (row: ListAllRadiologists) => `${row.refUserFirstName} ${row.refUserLastName}`,
+        id: 'name',
         header: ({ column }) => (
-          <div className="flex items-center">
-            {" "}
-            {/* Removed justify-between */}
+          <div className="flex items-center"> {/* Removed justify-between */}
             <span
               className="cursor-pointer font-semibold text-white"
               onClick={column.getToggleSortingHandler()}
@@ -121,16 +114,16 @@ const ManageWellthGreenAdmin: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === "asc"
-                  ? "Sorted ascending"
-                  : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                column.getIsSorted() === 'asc'
+                  ? 'Sorted ascending'
+                  : column.getIsSorted() === 'desc'
+                  ? 'Sorted descending'
+                  : 'Not sorted'
               }
             >
-              {column.getIsSorted() === "asc" ? (
+              {column.getIsSorted() === 'asc' ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
+              ) : column.getIsSorted() === 'desc' ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" /> // Subtle arrow for unsorted
@@ -139,18 +132,14 @@ const ManageWellthGreenAdmin: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Name...`}
-                    value={(column.getFilterValue() ?? "") as string}
+                    value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -168,33 +157,36 @@ const ManageWellthGreenAdmin: React.FC = () => {
           </div>
         ),
         enableColumnFilter: true,
+        size: 180,
+        minSize: 120,
+        maxSize: 250,
       },
       {
-        accessorKey: "refUserCustId",
-        id: "managerId",
+        accessorKey: 'refUserCustId',
+        id: 'radiologistId',
         header: ({ column }) => (
           <div className="flex items-center">
             <span
               className="cursor-pointer font-semibold text-white"
               onClick={column.getToggleSortingHandler()}
             >
-              Manager ID
+              WGPP ID
             </span>
             <Button
               variant="ghost"
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === "asc"
-                  ? "Sorted ascending"
-                  : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                column.getIsSorted() === 'asc'
+                  ? 'Sorted ascending'
+                  : column.getIsSorted() === 'desc'
+                  ? 'Sorted descending'
+                  : 'Not sorted'
               }
             >
-              {column.getIsSorted() === "asc" ? (
+              {column.getIsSorted() === 'asc' ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
+              ) : column.getIsSorted() === 'desc' ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -203,18 +195,14 @@ const ManageWellthGreenAdmin: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Radiologist ID...`}
-                    value={(column.getFilterValue() ?? "") as string}
+                    value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -226,10 +214,13 @@ const ManageWellthGreenAdmin: React.FC = () => {
           </div>
         ),
         enableColumnFilter: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
       },
       {
-        accessorKey: "refCODOEmail",
-        id: "mailId",
+        accessorKey: 'refCODOEmail',
+        id: 'mailId',
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -243,16 +234,16 @@ const ManageWellthGreenAdmin: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === "asc"
-                  ? "Sorted ascending"
-                  : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                column.getIsSorted() === 'asc'
+                  ? 'Sorted ascending'
+                  : column.getIsSorted() === 'desc'
+                  ? 'Sorted descending'
+                  : 'Not sorted'
               }
             >
-              {column.getIsSorted() === "asc" ? (
+              {column.getIsSorted() === 'asc' ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
+              ) : column.getIsSorted() === 'desc' ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -261,18 +252,14 @@ const ManageWellthGreenAdmin: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Mail ID...`}
-                    value={(column.getFilterValue() ?? "") as string}
+                    value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -284,10 +271,13 @@ const ManageWellthGreenAdmin: React.FC = () => {
           </div>
         ),
         enableColumnFilter: true,
+        size: 250,
+        minSize: 150,
+        maxSize: 350,
       },
       {
-        accessorKey: "refCODOPhoneNo1",
-        id: "mobileNumber",
+        accessorKey: 'refCODOPhoneNo1',
+        id: 'mobileNumber',
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -301,16 +291,16 @@ const ManageWellthGreenAdmin: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === "asc"
-                  ? "Sorted ascending"
-                  : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                column.getIsSorted() === 'asc'
+                  ? 'Sorted ascending'
+                  : column.getIsSorted() === 'desc'
+                  ? 'Sorted descending'
+                  : 'Not sorted'
               }
             >
-              {column.getIsSorted() === "asc" ? (
+              {column.getIsSorted() === 'asc' ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
+              ) : column.getIsSorted() === 'desc' ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -319,18 +309,14 @@ const ManageWellthGreenAdmin: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Mobile Number...`}
-                    value={(column.getFilterValue() ?? "") as string}
+                    value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -342,11 +328,13 @@ const ManageWellthGreenAdmin: React.FC = () => {
           </div>
         ),
         enableColumnFilter: true,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
       },
       {
-        accessorFn: (row: ListAllManager) =>
-          row.refUserStatus === "true" ? "Active" : "Inactive",
-        id: "status",
+        accessorFn: (row: ListAllRadiologists) => (row.refUserStatus === "true" ? 'Active' : 'Inactive'),
+        id: 'status',
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -360,16 +348,16 @@ const ManageWellthGreenAdmin: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === "asc"
-                  ? "Sorted ascending"
-                  : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                column.getIsSorted() === 'asc'
+                  ? 'Sorted ascending'
+                  : column.getIsSorted() === 'desc'
+                  ? 'Sorted descending'
+                  : 'Not sorted'
               }
             >
-              {column.getIsSorted() === "asc" ? (
+              {column.getIsSorted() === 'asc' ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === "desc" ? (
+              ) : column.getIsSorted() === 'desc' ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -378,17 +366,13 @@ const ManageWellthGreenAdmin: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <select
-                    value={(column.getFilterValue() ?? "") as string}
+                    value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
                       column.setFilterValue(event.target.value || undefined)
                     }
@@ -404,36 +388,34 @@ const ManageWellthGreenAdmin: React.FC = () => {
           </div>
         ),
         cell: ({ row }) => {
-          const status =
-            row.original.refUserStatus === "true" ? "Active" : "Inactive";
+          const status = row.original.refUserStatus === "true" ? 'Active' : 'Inactive';
           return (
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                status === "Active"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              <span
-                className={`w-2 h-2 mr-1 rounded-full ${
-                  status === "Active" ? "bg-green-500" : "bg-red-500"
-                }`}
-              ></span>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`}>
+              <span className={`w-2 h-2 mr-1 rounded-full ${
+                status === 'Active' ? 'bg-green-500' : 'bg-red-500'
+              }`}></span>
               {status}
             </span>
           );
         },
         enableColumnFilter: true,
-        filterFn: "equals",
+        filterFn: 'equals',
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
       },
       {
-        id: "actions",
-        header: () => <div className="text-white">Manage Profile</div>,
+        id: 'actions',
+        header: () => (
+          <div className='text-white'>Manage Profile</div>
+        ),
         cell: ({ row }) => (
           <Button
-            className="bg-[#A3B1A1] hover:bg-[#81927f] py-1 px-3 rounded text-xs"
+            className='bg-[#A3B1A1] hover:bg-[#81927f] py-1 px-3 rounded text-xs'
             onClick={() => {
-              setSelectedManagerId(row.original.refUserId);
+              setSelectedRadiologistId(row.original.refUserId);
               setIsEditDialogOpen(true);
             }}
           >
@@ -443,13 +425,16 @@ const ManageWellthGreenAdmin: React.FC = () => {
         enableSorting: false,
         enableColumnFilter: false,
         enableHiding: false,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
       },
     ],
     []
   );
 
-  const table = useReactTable<ListAllManager>({
-    data: managers,
+  const table = useReactTable<ListAllRadiologists>({
+    data: radiologists,
     columns,
     state: {
       sorting,
@@ -468,24 +453,23 @@ const ManageWellthGreenAdmin: React.FC = () => {
     initialState: {
       pagination: {
         pageSize: 5,
-      },
-    },
+      }
+    }
   });
 
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
       <div
-        className="p-4 bg-[#A3B1A1] flex gap-5 items-center lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
+        className="p-4 flex gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
         style={{
-          backgroundColor: "#A3B1A1",
           backgroundImage:
             window.innerWidth >= 1024 ? `url(${addRadiologist_Bg})` : undefined,
         }}
       >
         <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <h1 className="text-[#3F3F3D] uppercase font-[900] text-xl lg:text-2xl text-center lg:text-left tracking-widest">
-          Manage Wellth Green Manager
+          Manage Wellthgreen Performing Provider
         </h1>
       </div>
       <div className="w-11/12 mx-auto my-0 space-y-3 py-4">
@@ -556,9 +540,9 @@ const ManageWellthGreenAdmin: React.FC = () => {
           {/* Add Radiologist Button */}
           <Button
             className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5"
-            onClick={() => navigate("../addManager")}
+            onClick={() => navigate("../addWgDoctor")}
           >
-            <Plus /> Add Wellth Green Manager
+            <Plus /> Add Performing Provider
           </Button>
         </div>
 
@@ -584,11 +568,15 @@ const ManageWellthGreenAdmin: React.FC = () => {
                       style={{
                         width: header.getSize(),
                         minWidth:
-                          (header.column.columnDef as ColumnDef<ListAllManager>)
-                            .minSize || "auto",
+                          (
+                            header.column
+                              .columnDef as ColumnDef<ListAllRadiologists>
+                          ).minSize || "auto",
                         maxWidth:
-                          (header.column.columnDef as ColumnDef<ListAllManager>)
-                            .maxSize || "auto",
+                          (
+                            header.column
+                              .columnDef as ColumnDef<ListAllRadiologists>
+                          ).maxSize || "auto",
                       }}
                     >
                       {header.isPlaceholder
@@ -625,7 +613,7 @@ const ManageWellthGreenAdmin: React.FC = () => {
                     colSpan={columns.length}
                     className="h-24 text-start lg:text-center text-gray-500"
                   >
-                    No Results Found.
+                    No results found.
                   </TableCell>
                 </TableRow>
               )}
@@ -763,19 +751,19 @@ const ManageWellthGreenAdmin: React.FC = () => {
           }}
           className="h-11/12 w-[80vw] overflow-y-auto"
         >
-          <DialogTitle>Edit Wellth Green Manager</DialogTitle>
+          <DialogTitle>Edit Radiologist</DialogTitle>
 
-          {selectedManagerId !== null && (
-            <EditWellthGreenManager
-              managerId={selectedManagerId}
+          {selectedRadiologistId !== null && (
+            <EditWGPerformingProvider
+              radiologistId={selectedRadiologistId}
               setIsEditDialogOpen={setIsEditDialogOpen}
-              onUpdate={getAllManager}
+              onUpdate={getAllRadiologists}
             />
           )}
         </DialogContent>
       </Dialog>
     </div>
   );
-};
+}
 
-export default ManageWellthGreenAdmin;
+export default ManageWGPerformingProvider;

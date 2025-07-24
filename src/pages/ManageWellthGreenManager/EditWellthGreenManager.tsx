@@ -1,6 +1,7 @@
 import DatePicker from "@/components/date-picker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -360,13 +361,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* Aadhar Card */}
           <div className="flex flex-col gap-1.5 w-full">
             <Label className="text-sm" htmlFor="aadhar-upload">
-              Aadhar Card (.pdf) <span className="text-red-500">*</span>
+              Aadhar Card <span className="text-red-500">*</span>
             </Label>
-            <Input
+            <FileUploadButton
               id="aadhar-upload"
-              type="file"
-              accept=".pdf"
-              className="bg-[#a1b7c3]"
+              label="Upload Aadhar"
+              required={true}
+              isFilePresent={formData.refMDAadhar.length > 0}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
@@ -398,7 +399,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                   downloadFile(
                     formData.aadharFile!.base64Data,
                     formData.aadharFile!.contentType,
-                    "Aadhar.pdf"
+                    "Aadhar"
                   )
                 }
               >
@@ -419,13 +420,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* Driver's License */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm" htmlFor="license-upload">
-              Driver's License (.pdf) <span className="text-red-500">*</span>
+              Driver's License <span className="text-red-500">*</span>
             </Label>
-            <Input
+            <FileUploadButton
               id="license-upload"
-              type="file"
-              accept=".pdf"
-              className="bg-[#a1b7c3]"
+              label="Upload License"
+              required={false} // Or true if this is mandatory and no file present
+              isFilePresent={!!formData.refMDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
@@ -433,6 +434,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                     setError("File must be less than 5MB.");
                     return;
                   }
+
                   handleSingleFileUpload({
                     file,
                     fieldName: "refMDDrivingLicense",
@@ -441,6 +443,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                 }
               }}
             />
+
             {files.drivers_license ? (
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
@@ -491,9 +494,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                 }
                 disabled
               >
-                <SelectTrigger
-                  className="bg-white"
-                >
+                <SelectTrigger className="bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -546,13 +547,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* PAN Card */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm" htmlFor="pan-upload">
-              PAN Card (.pdf) <span className="text-red-500">*</span>
+              PAN Card <span className="text-red-500">*</span>
             </Label>
-            <Input
+            <FileUploadButton
               id="pan-upload"
-              type="file"
-              accept=".pdf"
-              className="bg-[#a1b7c3]"
+              label="Upload PAN"
+              required={false}
+              isFilePresent={!!formData.refMDPan}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
@@ -568,6 +569,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                 }
               }}
             />
+
             {files.pan ? (
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
@@ -613,12 +615,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             Educational Certificates (.pdf, multiple, max 10MB each){" "}
             <span className="text-red-500">*</span>
           </Label>
-          <Input
+          <FileUploadButton
             id="edu-certs-upload"
-            type="file"
+            label="Upload Education Certificates"
             accept=".pdf"
             multiple
-            className="bg-[#a1b7c3]"
+            required={false}
+            isFilePresent={files.education_certificate.length > 0}
             onChange={async (e) => {
               const selectedFiles = e.target.files;
               if (selectedFiles) {
@@ -638,6 +641,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
               }
             }}
           />
+
           {/* Display Existing Education Certificates */}
           {formData.educationCertificateFiles &&
             formData.educationCertificateFiles.length > 0 && (

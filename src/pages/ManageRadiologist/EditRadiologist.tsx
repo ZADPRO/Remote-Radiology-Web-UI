@@ -14,10 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import DatePicker from "@/components/date-picker";import { Camera, FileText, Pencil, X } from "lucide-react";
+import DatePicker from "@/components/date-picker";
+import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 // Define the props interface for EditRadiologist
 interface EditRadiologistProps {
@@ -55,72 +57,72 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-      if (error && errorRef.current) {
-        errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, [error]);
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [error]);
 
   const [formData, setFormData] = useState<ListSpecificRadiologist>({
-  aadharFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  panFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  profileImgFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  digitalSignatureFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  drivingLicenseFile: {
-    base64Data: "",
-    contentType: "",
-  },
+    aadharFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    panFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    digitalSignatureFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    drivingLicenseFile: {
+      base64Data: "",
+      contentType: "",
+    },
 
-  cvFiles: [],
-  licenseFiles: [],
-  malpracticeinsureance_files: [],
-  medicalLicenseSecurity: [],
+    cvFiles: [],
+    licenseFiles: [],
+    malpracticeinsureance_files: [],
+    medicalLicenseSecurity: [],
 
-  refCODOEmail: "",
-  refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "+91",
-  refCODOPhoneNo2: "",
-  refCODOPhoneNo2CountryCode: "+91",
+    refCODOEmail: "",
+    refCODOPhoneNo1: "",
+    refCODOPhoneNo1CountryCode: "+91",
+    refCODOPhoneNo2: "",
+    refCODOPhoneNo2CountryCode: "+91",
 
-  refRAAadhar: "",
-  refRADrivingLicense: "",
-  refRADigitalSignature: "",
-  refRAMBBSRegNo: "",
-  refRAMDRegNo: "",
-  refRAPan: "",
-  refRASpecialization: "",
+    refRAAadhar: "",
+    refRADrivingLicense: "",
+    refRADigitalSignature: "",
+    refRAMBBSRegNo: "",
+    refRAMDRegNo: "",
+    refRAPan: "",
+    refRASpecialization: "",
 
-  refRTId: 0,
-  refUserCustId: "",
-  refUserDOB: "",
-  refUserFirstName: "",
-  refUserLastName: "",
-  refUserId: 0,
-  refUserProfileImg: "",
-  refUserStatus: true,
-});
+    refRTId: 0,
+    refUserCustId: "",
+    refUserDOB: "",
+    refUserFirstName: "",
+    refUserLastName: "",
+    refUserId: 0,
+    refUserProfileImg: "",
+    refUserStatus: true,
+  });
 
   const [files, setFiles] = useState<TempFilesState>({
-      profile_img: null,
-      cv_files: [],
-      license_files: [],
-      pan: null,
-      aadhar: null,
-      drivers_license: null,
-      malpracticeinsureance_files: [],
-      digital_signature: null,
-    });
+    profile_img: null,
+    cv_files: [],
+    license_files: [],
+    pan: null,
+    aadhar: null,
+    drivers_license: null,
+    malpracticeinsureance_files: [],
+    digital_signature: null,
+  });
 
   const [tempLicenses, setTempLicenses] = useState<TempLicense[]>([]);
   const [tempCVFiles, setTempCVs] = useState<TempLicense[]>([]);
@@ -135,7 +137,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       );
       console.log("Fetching radiologist...", res);
 
-      const radiologistData = res.data[0]; 
+      const radiologistData = res.data[0];
 
       setFormData(radiologistData);
     } catch (error: any) {
@@ -177,9 +179,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  const handleDigitalSignatureUpload = async (
-    file: File,
-  ) => {
+  const handleDigitalSignatureUpload = async (file: File) => {
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
     setError("");
@@ -187,14 +187,14 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       const response = await uploadService.uploadImage({
         formImg: formDataImg,
       });
-  
+
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
           refRADigitalSignature: response.fileName,
           digitalSignatureFile: null,
         }));
-  
+
         setFiles((prev) => ({
           ...prev,
           digital_signature: file,
@@ -286,7 +286,9 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  const handleRemoveSingleFile = (key: "profile_img" | "pan" | "aadhar" | "digital_signature") => {
+  const handleRemoveSingleFile = (
+    key: "profile_img" | "pan" | "aadhar" | "digital_signature"
+  ) => {
     setFiles((prev) => ({
       ...prev,
       [key]: null,
@@ -341,8 +343,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
-      }
-      else {
+      } else {
         setError(res.message);
       }
     } catch (error) {
@@ -354,7 +355,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  if(loading) return (<LoadingOverlay />);
+  if (loading) return <LoadingOverlay />;
 
   if (!formData) return <div className="p-4">No radiologist data found.</div>;
 
@@ -377,7 +378,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -389,7 +390,6 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
   console.log(tempLicenses);
   console.log(tempCVFiles);
   console.log(tempMalpractice);
-
 
   return (
     <>
@@ -552,29 +552,24 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 Aadhar <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="aadhar-upload"
-                type="file"
-                accept=".pdf"
-                value={formData.refRAAadhar.length == 0 ? "" : ""}
-                required={formData.refRAAadhar.length == 0}
-                className="bg-[#a1b7c3]"
+                label="Upload Aadhar"
+                required={true}
+                isFilePresent={formData.refRAAadhar.length > 0}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const maxSize = 5 * 1024 * 1024;
-                  if (file.size > maxSize) {
-                    setError("Aadhar file must be less than 5MB.");
-                    return;
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("File must be less than 5MB.");
+                      return;
+                    }
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "refRAAadhar",
+                      tempFileKey: "aadhar",
+                    });
                   }
-
-                  handleSingleFileUpload({
-                    file,
-                    fieldName: "refRAAadhar",
-                    tempFileKey: "aadhar",
-                  });
-                  setError(null);
                 }}
               />
 
@@ -619,29 +614,20 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 Driving License <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="drivers-license-upload"
-                type="file"
+                label="Upload Driving License"
                 accept=".pdf"
-                className="bg-[#a1b7c3]"
-                value={formData.refRADrivingLicense.length == 0 ? "" : ""}
-                required={formData.refRADrivingLicense.length == 0}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const maxSize = 5 * 1024 * 1024;
-                  if (file.size > maxSize) {
-                    setError("Driving License file must be less than 5MB.");
-                    return;
-                  }
-
+                required
+                isFilePresent={formData.refRADrivingLicense.length > 0}
+                maxSize={5 * 1024 * 1024} // 5MB
+                setError={setError}
+                onValidFile={(file) => {
                   handleSingleFileUpload({
                     file,
                     fieldName: "refRADrivingLicense",
                     tempFileKey: "drivers_license",
                   });
-                  setError(null);
                 }}
               />
 
@@ -744,10 +730,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                   }
                   disabled
                 >
-                  <SelectTrigger
-                    disabled
-                    className="bg-white"
-                  >
+                  <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
@@ -908,18 +891,16 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 License <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="license-upload"
-                type="file"
-                accept=".pdf"
                 multiple
-                className="bg-[#a1b7c3]"
                 required={
                   !(
                     formData.licenseFiles?.length > 0 ||
                     files.license_files.length > 0
                   )
                 }
+                isFilePresent={files.license_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
                   if (!filesSelected) return;
@@ -1065,138 +1046,136 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
             </div>
 
             <div className="flex flex-col gap-1.5 w-full">
-  <Label className="text-sm font-medium" htmlFor="cv-upload">
-    CV <span className="text-red-500">*</span>
-  </Label>
+              <Label className="text-sm font-medium" htmlFor="cv-upload">
+                CV <span className="text-red-500">*</span>
+              </Label>
 
-  <Input
-    id="cv-upload"
-    type="file"
-    accept=".pdf"
-    multiple
-    className="bg-[#a1b7c3]"
-    required={
-      !(
-        formData.cvFiles?.length > 0 ||
-        files.cv_files.length > 0
-      )
-    }
-    onChange={async (e) => {
-      const filesSelected = e.target.files;
-      if (!filesSelected) return;
+              <FileUploadButton
+                id="cv-upload"
+                accept=".pdf"
+                multiple
+                required={
+                  !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
+                }
+                isFilePresent={files.cv_files.length > 0}
+                onChange={async (e) => {
+                  const filesSelected = e.target.files;
+                  if (!filesSelected) return;
 
-      const selectedFiles = Array.from(filesSelected);
-      const filteredFiles = selectedFiles.filter(
-        (file) =>
-          file.size <= 10 * 1024 * 1024 &&
-          !files.cv_files.some((f) => f.name === file.name)
-      );
+                  const selectedFiles = Array.from(filesSelected);
+                  const filteredFiles = selectedFiles.filter(
+                    (file) =>
+                      file.size <= 10 * 1024 * 1024 &&
+                      !files.cv_files.some((f) => f.name === file.name)
+                  );
 
-      for (const file of filteredFiles) {
-        await uploadAndStoreFile(file, "cv_files");
-      }
-    }}
-  />
+                  for (const file of filteredFiles) {
+                    await uploadAndStoreFile(file, "cv_files");
+                  }
+                }}
+              />
 
-  {/* Uploaded CV Files */}
-  {files.cv_files?.length > 0 && (
-    <div className="mt-3 flex flex-col gap-3">
-      {files.cv_files.map((file, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group"
-        >
-          <div className="flex items-center gap-3 w-4/5 truncate">
-            <div className="bg-blue-100 p-2 rounded-md">
-              <FileText className="w-5 h-5 text-blue-600" />
+              {/* Uploaded CV Files */}
+              {files.cv_files?.length > 0 && (
+                <div className="mt-3 flex flex-col gap-3">
+                  {files.cv_files.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group"
+                    >
+                      <div className="flex items-center gap-3 w-4/5 truncate">
+                        <div className="bg-blue-100 p-2 rounded-md">
+                          <FileText className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <span
+                          title={file.name}
+                          className="truncate font-semibold text-blue-800"
+                        >
+                          {file.name}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFiles((prev) => ({
+                            ...prev,
+                            cv_files:
+                              prev.cv_files?.filter((_, i) => i !== index) ||
+                              [],
+                          }));
+                          setTempCVs((prev) =>
+                            prev.filter((cv) => cv.old_file_name !== file.name)
+                          );
+                        }}
+                        className="text-red-500 hover:text-red-700 transition"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Existing CV Files */}
+              {formData.cvFiles?.length > 0 && (
+                <div className="mt-3 flex flex-col gap-3">
+                  {formData.cvFiles.map((file, index) => (
+                    <div
+                      key={`existing-cv-${index}`}
+                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                    >
+                      <div
+                        className="flex items-center gap-3 w-4/5 truncate"
+                        onClick={() =>
+                          downloadFile(
+                            file.cvFileData.base64Data,
+                            file.cvFileData.contentType,
+                            file.refCVOldFileName
+                          )
+                        }
+                      >
+                        <div className="bg-green-100 p-2 rounded-md">
+                          <FileText className="w-5 h-5 text-green-600" />
+                        </div>
+                        <span
+                          title={file.refCVOldFileName}
+                          className="truncate font-semibold text-green-800"
+                        >
+                          {file.refCVOldFileName || `Existing CV ${index + 1}`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => {
+                            const updatedCvFiles = prev.cvFiles?.filter(
+                              (_, i) => i !== index
+                            );
+                            return {
+                              ...prev,
+                              cvFiles: updatedCvFiles || [],
+                            };
+                          });
+
+                          const data = {
+                            id: file.refCVID,
+                            file_name: file.refCVFileName,
+                            old_file_name: file.refCVOldFileName,
+                            status: "delete" as const,
+                          };
+                          setTempCVs((prev) => [...prev, data]);
+                        }}
+                        className="text-red-500 hover:text-red-700 transition"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <span
-              title={file.name}
-              className="truncate font-semibold text-blue-800"
-            >
-              {file.name}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setFiles((prev) => ({
-                ...prev,
-                cv_files: prev.cv_files?.filter((_, i) => i !== index) || [],
-              }));
-              setTempCVs((prev) =>
-                prev.filter((cv) => cv.old_file_name !== file.name)
-              );
-            }}
-            className="text-red-500 hover:text-red-700 transition"
-            title="Remove file"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
-
-  {/* Existing CV Files */}
-  {formData.cvFiles?.length > 0 && (
-    <div className="mt-3 flex flex-col gap-3">
-      {formData.cvFiles.map((file, index) => (
-        <div
-          key={`existing-cv-${index}`}
-          className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-        >
-          <div
-            className="flex items-center gap-3 w-4/5 truncate"
-            onClick={() =>
-              downloadFile(
-                file.cvFileData.base64Data,
-                file.cvFileData.contentType,
-                file.refCVOldFileName
-              )
-            }
-          >
-            <div className="bg-green-100 p-2 rounded-md">
-              <FileText className="w-5 h-5 text-green-600" />
-            </div>
-            <span
-              title={file.refCVOldFileName}
-              className="truncate font-semibold text-green-800"
-            >
-              {file.refCVOldFileName || `Existing CV ${index + 1}`}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setFormData((prev) => {
-                const updatedCvFiles = prev.cvFiles?.filter(
-                  (_, i) => i !== index
-                );
-                return {
-                  ...prev,
-                  cvFiles: updatedCvFiles || [],
-                };
-              });
-
-              const data = {
-                id: file.refCVID,
-                file_name: file.refCVFileName,
-                old_file_name: file.refCVOldFileName,
-                status: "delete" as const,
-              };
-              setTempCVs((prev) => [...prev, data]);
-            }}
-            className="text-red-500 hover:text-red-700 transition"
-            title="Remove file"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
 
             <div className="flex flex-col gap-1.5 w-full">
               <Label
@@ -1206,16 +1185,12 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 Malpractice Insurance <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="malpractice-upload"
-                type="file"
-                accept=".pdf"
+                label="Upload Malpractice Insurance"
                 multiple
-                value={
-                  formData.malpracticeinsureance_files.length == 0 ? "" : ""
-                }
-                required={formData.malpracticeinsureance_files.length == 0}
-                className="bg-[#a1b7c3]"
+                required={formData.malpracticeinsureance_files.length === 0}
+                isFilePresent={files.malpracticeinsureance_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
                   if (!filesSelected) return;
@@ -1348,26 +1323,25 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 Digital Signature <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="digital-signature-upload"
-                type="file"
+                label="Upload Digital Signature"
                 accept="image/png, image/jpeg, image/jpg"
-                className="bg-[#a1b7c3]"
-                value={files.digital_signature ? "" : ""}
                 required={
                   !formData.refRADigitalSignature && !files.digital_signature
                 }
+                isFilePresent={!!files.digital_signature}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
-                  const maxSize = 5 * 1024 * 1024;
+                  const maxSize = 5 * 1024 * 1024; // 5MB
                   if (file.size > maxSize) {
                     setError("Digital signature image must be less than 5MB.");
                     return;
                   }
 
-                  handleDigitalSignatureUpload(file); // Should update tempFiles.digital_signature
+                  handleDigitalSignatureUpload(file); // updates files.digital_signature
                   setError(null);
                 }}
               />

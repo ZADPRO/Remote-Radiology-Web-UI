@@ -1,6 +1,7 @@
 import DatePicker from "@/components/date-picker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -593,29 +594,25 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
               Driving License <span className="text-red-500">*</span>
             </Label>
 
-            <Input
-              id="drivers-license-upload"
-              type="file"
-              accept=".pdf"
-              className="bg-[#a1b7c3]"
-              value={""}
-              required={formData.refTDDrivingLicense.length == 0}
+             <FileUploadButton
+              id="license-upload"
+              label="Upload License"
+              required={false} // Or true if this is mandatory and no file present
+              isFilePresent={!!formData.refTDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (!file) return;
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
+                    return;
+                  }
 
-                const maxSize = 5 * 1024 * 1024;
-                if (file.size > maxSize) {
-                  setError("Driving License file must be less than 5MB.");
-                  return;
+                  handleSingleFileUpload({
+                    file,
+                    fieldName: "refTDDrivingLicense",
+                    tempFileKey: "drivers_license",
+                  });
                 }
-
-                handleSingleFileUpload({
-                  file,
-                  fieldName: "refTDDrivingLicense",
-                  tempFileKey: "drivers_license",
-                });
-                setError(null);
               }}
             />
 
@@ -664,34 +661,32 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
               License <span className="text-red-500">*</span>
             </Label>
 
-            <Input
-              id="license-upload"
-              type="file"
-              accept=".pdf"
-              multiple
-              className="bg-[#a1b7c3]"
-              required={
-                !(
-                  formData.licenseFiles?.length > 0 ||
-                  files.license_files.length > 0
-                )
-              }
-              onChange={async (e) => {
-                const filesSelected = e.target.files;
-                if (!filesSelected) return;
-
-                const selectedFiles = Array.from(filesSelected);
-                const filteredFiles = selectedFiles.filter(
-                  (file) =>
-                    file.size <= 10 * 1024 * 1024 &&
-                    !files.license_files.some((f) => f.name === file.name)
-                );
-
-                for (const file of filteredFiles) {
-                  await uploadAndStoreFile(file, "license_files");
-                }
-              }}
-            />
+            <FileUploadButton
+                            id="license-upload"
+                            multiple
+                            required={
+                              !(
+                                formData.licenseFiles?.length > 0 ||
+                                files.license_files.length > 0
+                              )
+                            }
+                            isFilePresent={files.license_files.length > 0}
+                            onChange={async (e) => {
+                              const filesSelected = e.target.files;
+                              if (!filesSelected) return;
+            
+                              const selectedFiles = Array.from(filesSelected);
+                              const filteredFiles = selectedFiles.filter(
+                                (file) =>
+                                  file.size <= 10 * 1024 * 1024 &&
+                                  !files.license_files.some((f) => f.name === file.name)
+                              );
+            
+                              for (const file of filteredFiles) {
+                                await uploadAndStoreFile(file, "license_files");
+                              }
+                            }}
+                          />
 
             {/* Uploaded License Files */}
             {files.license_files?.length > 0 && (
@@ -801,35 +796,34 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
           <div className="flex flex-col gap-1.5 w-full">
                         <Label className="text-sm" htmlFor="digital-signature-upload">
                           Digital Signature <span className="text-red-500">*</span>
                         </Label>
           
-                        <Input
-                          id="digital-signature-upload"
-                          type="file"
-                          accept="image/png, image/jpeg, image/jpg"
-                          className="bg-[#a1b7c3]"
-                          value={files.digital_signature ? "" : ""}
-                          required={
-                            !formData.refTDDigitalSignature && !files.digital_signature
-                          }
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-          
-                            const maxSize = 5 * 1024 * 1024;
-                            if (file.size > maxSize) {
-                              setError("Digital signature image must be less than 5MB.");
-                              return;
-                            }
-          
-                            handleDigitalSignatureUpload(file); // Should update tempFiles.digital_signature
-                            setError(null);
-                          }}
-                        />
+                        <FileUploadButton
+                id="digital-signature-upload"
+                label="Upload Digital Signature"
+                accept="image/png, image/jpeg, image/jpg"
+                required={
+                  !formData.refTDDigitalSignature && !files.digital_signature
+                }
+                isFilePresent={!!files.digital_signature}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  const maxSize = 5 * 1024 * 1024; // 5MB
+                  if (file.size > maxSize) {
+                    setError("Digital signature image must be less than 5MB.");
+                    return;
+                  }
+
+                  handleDigitalSignatureUpload(file); // updates files.digital_signature
+                  setError(null);
+                }}
+              />
           
                         {/* Show newly uploaded signature */}
                         {files.digital_signature && (

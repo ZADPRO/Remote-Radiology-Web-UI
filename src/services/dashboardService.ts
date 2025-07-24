@@ -1,17 +1,17 @@
 import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
-
+ 
 export interface TrainingMaterial {
   refTMFileName: string;
   refTMFilePath: string;
   refTMId: number;
   refTMStatus: boolean
 }
-
+ 
 export const dashboardService = {
   dashboardInfo: async () => {
     const token = localStorage.getItem("token");
-
+ 
     const res = await axios.get(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/profile/user/dashboard`,
       {
@@ -26,11 +26,11 @@ export const dashboardService = {
     localStorage.setItem("token", res.data.token);
     return decryptData;
   },
-
+ 
   uploadTrainingMaterial: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
-
+ 
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_PROFILESERVICE}/trainingmaterial/add`,
       { encryptedData: payload },
@@ -41,7 +41,7 @@ export const dashboardService = {
         },
       }
     );
-
+ 
     const decryptedData = decrypt(res.data.data, res.data.token);
     localStorage.setItem("token", res.data.token);
     return decryptedData;
@@ -63,16 +63,15 @@ export const dashboardService = {
       status: boolean;
     } = decrypt(res.data.data, res.data.token);
     localStorage.setItem("token", res.data.token);
-
+ 
     return decryptedData;
   },
-  
-  downloadTrainingMaterial: async (fileId: number, filename: string) => {
+ 
+  downloadTrainingMaterial: async (fileId: number) => {
     const token = localStorage.getItem("token");
     const payload = encrypt({ id: fileId }, token);
     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_PROFILESERVICE
+      `${import.meta.env.VITE_API_URL_PROFILESERVICE
       }/trainingmaterial/download`,
       { encryptedData: payload },
       {
@@ -85,22 +84,24 @@ export const dashboardService = {
     );
     console.log(res);
     const blob = res.data;
-
-    // Create a URL for the blob and trigger download
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+ 
+    // // Create a URL for the blob and trigger download
+    // const url = window.URL.createObjectURL(blob);
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = filename;
+    // document.body.appendChild(a);
+    // a.click();
+    // document.body.removeChild(a);
+    // window.URL.revokeObjectURL(url);
+ 
+    return blob
   },
-
+ 
   deleteTrainingMaterial: async (fileId: number) => {
     const token = localStorage.getItem("token");
     const payload = encrypt({ id: fileId }, token);
-
+ 
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_PROFILESERVICE}/trainingmaterial/delete`,
       { encryptedData: payload },
@@ -111,7 +112,7 @@ export const dashboardService = {
         },
       }
     );
-
+ 
     const decryptedData = decrypt(res.data.data, res.data.token);
     localStorage.setItem("token", res.data.token);
     return decryptedData;

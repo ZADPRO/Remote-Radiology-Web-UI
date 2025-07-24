@@ -1,6 +1,12 @@
 import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
-import { CVFileDetails, FileData, LicenseFileDetails, MalpracticeInsuranceFileDetails, UploadFile } from "./commonServices";
+import {
+  CVFileDetails,
+  FileData,
+  LicenseFileDetails,
+  MalpracticeInsuranceFileDetails,
+  UploadFile,
+} from "./commonServices";
 import { MedicalLicenseSecurity } from "./doctorService";
 
 export interface NewRadiologist {
@@ -32,7 +38,7 @@ export interface NewRadiologist {
 }
 
 export interface ListAllRadiologists {
- refCODOEmail: string;
+  refCODOEmail: string;
   refCODOPhoneNo1: string;
   refRTId: number;
   refUserCustId: string;
@@ -44,13 +50,13 @@ export interface ListAllRadiologists {
 
 export interface GetMedicalLicenseSecurity {
   refMLSId: number;
-refMLSNo: string;
-refMLSState: string;
-refMLStatus: string;
+  refMLSNo: string;
+  refMLSState: string;
+  refMLStatus: string;
 }
 
 export interface ListSpecificRadiologist {
-  aadharFile: FileData ;
+  aadharFile: FileData;
   panFile: FileData;
   profileImgFile: FileData | null;
   digitalSignatureFile: FileData | null;
@@ -59,7 +65,7 @@ export interface ListSpecificRadiologist {
   cvFiles: CVFileDetails[];
   licenseFiles: LicenseFileDetails[];
   malpracticeinsureance_files: MalpracticeInsuranceFileDetails[];
-  medicalLicenseSecurity: GetMedicalLicenseSecurity[];   
+  medicalLicenseSecurity: GetMedicalLicenseSecurity[];
 
   refCODOEmail: string;
   refCODOPhoneNo1: string;
@@ -85,8 +91,44 @@ export interface ListSpecificRadiologist {
   refUserStatus: boolean;
 }
 
+export interface ListSpecificWGPerformingProvider {
+  aadharFile: FileData;
+  panFile: FileData;
+  profileImgFile: FileData | null;
+  digitalSignatureFile: FileData | null;
+  drivingLicenseFile: FileData;
+
+  cvFiles: CVFileDetails[];
+  licenseFiles: LicenseFileDetails[];
+  malpracticeinsureance_files: MalpracticeInsuranceFileDetails[];
+  medicalLicenseSecurity: GetMedicalLicenseSecurity[];
+
+  refCODOEmail: string;
+  refCODOPhoneNo1: string;
+  refCODOPhoneNo1CountryCode: string;
+  refCODOPhoneNo2: string;
+  refCODOPhoneNo2CountryCode: string;
+
+  refWGPPAadhar: string;
+  refWGPPDrivingLicense: string;
+  refWGPPDigitalSignature: string;
+  refWGPPMBBSRegNo: string;
+  refWGPPMDRegNo: string;
+  refWGPPPan: string;
+  refWGPPSpecialization: string;
+
+  refRTId: number;
+  refUserCustId: string;
+  refUserDOB: string;
+  refUserFirstName: string;
+  refUserLastName: string;
+  refUserId: number;
+  refUserProfileImg: string;
+  refUserStatus: boolean;
+}
+
 export const radiologistService = {
-  createNewRadiologist: async ( formData: NewRadiologist ) => {
+  createNewRadiologist: async (formData: NewRadiologist) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
     const res = await axios.post(
@@ -108,7 +150,9 @@ export const radiologistService = {
   listAllRadiologists: async () => {
     const token = localStorage.getItem("token");
     const res = await axios.get(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/profile/radiologist/list-allradiologist`,
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/profile/radiologist/list-allradiologist`,
       {
         headers: {
           Authorization: token,
@@ -122,12 +166,12 @@ export const radiologistService = {
     return decryptedData;
   },
 
-  listSpecificRadiologist: async ( radiologistId: number ) => {
+  listAllWellgreenPP: async () => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({id: radiologistId}, token);
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/profile/radiologist/list-radiologist`,
-       { encryptedData: payload },
+    const res = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/profile/wellthgreenperformingprovider/list-allperformingprovider`,
       {
         headers: {
           Authorization: token,
@@ -141,12 +185,54 @@ export const radiologistService = {
     return decryptedData;
   },
 
-  updateRadiologist: async ( formData: any ) => {
+  listSpecificRadiologist: async (radiologistId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: radiologistId }, token);
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/profile/radiologist/list-radiologist`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  listSpecificWGPerformingProvider: async (radiologistId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: radiologistId }, token);
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/profile/wellthgreenperformingprovider/list-performingprovider`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  updateRadiologist: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
     const res = await axios.patch(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/radiologist/update`,
-       { encryptedData: payload },
+      { encryptedData: payload },
       {
         headers: {
           Authorization: token,
@@ -158,5 +244,25 @@ export const radiologistService = {
     localStorage.setItem("token", res.data.token);
     console.log(decryptedData);
     return decryptedData;
-  }
+  },
+  updateWGPerformingProvider: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+    const res = await axios.patch(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/wellgreenperformingprovider/update`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    localStorage.setItem("token", res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
 };

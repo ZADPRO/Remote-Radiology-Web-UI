@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { forgotPasswordService } from "@/services/authenticationService";
 import { useNavigate } from "react-router-dom";
-import loginImg from "../../assets/Login/Login.png";
+import loginImg from "../../assets/Login/Login.jpg";
 import loginTexture from "../../assets/Login/Login-Texture.png"
 import logoNew from "../../assets/LogoNew.png";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -169,7 +169,7 @@ const [successMessage, setSuccessMessage] = useState("");
       </div>
 
       {/* Right section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
           className="hidden h-[15%] w-auto mx-auto lg:inline"
@@ -226,13 +226,13 @@ const [successMessage, setSuccessMessage] = useState("");
               className="flex flex-col gap-6 mt-6"
             >
               <div className="grid gap-6">
-                <div className="grid gap-2 text-[#828282] text-[14px]">
+                <div className="grid gap-2 text-[14px]">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="m@example.com"
-                    className="bg-[#A3B1A1] border border-[#3F3F3D] text-[#FFF5F5]"
+                    className="bg-[#A3B1A1] border border-[#3F3F3D]"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -243,7 +243,7 @@ const [successMessage, setSuccessMessage] = useState("");
                 </div>
 
                 {otpSent && (
-                  <div className="grid gap-2 text-[#828282] text-[14px]">
+                  <div className="grid gap-2 text-[14px]">
                     <Label htmlFor="otp">Passcode</Label>
                     {/* <Input
                       id="otp"
@@ -304,7 +304,7 @@ const [successMessage, setSuccessMessage] = useState("");
               className="flex flex-col gap-6 mt-6"
             >
               <div className="grid gap-6">
-                <div className="grid gap-2 text-[#828282] text-[14px]">
+                <div className="grid gap-2 text-[14px]">
                   <Label htmlFor="newPassword">New Password</Label>
                   <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                     <Input
@@ -354,7 +354,7 @@ const [successMessage, setSuccessMessage] = useState("");
                   </div>
                 </div>
 
-                <div className="grid gap-2 text-[#828282] text-[14px]">
+                <div className="grid gap-2 text-[14px]">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                     <Input

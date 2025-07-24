@@ -62,11 +62,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
  
-    const handleTextChange = (delta: any, oldDelta: any, source: string) => {
+    const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
       if (source === "user") {
         onManualEdit?.(); // trigger sync breaker
       }
-      console.log(delta, oldDelta, source)
+      // console.log(delta, oldDelta, source)
     };
  
     editor.on("text-change", handleTextChange);

@@ -29,6 +29,7 @@ import {
   type NewScanCenterAdmin,
 } from "@/services/scancenterService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -586,32 +587,30 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Driver's License <span className="text-red-500">*</span>
           </Label>
 
-          <Input
-            id="drivers-license-upload"
-            type="file"
-            accept=".pdf"
-            className="bg-[#a1b7c3]"
-            value={formData.drivers_license.length == 0 ? "" : ""}
-            required={formData.drivers_license.length == 0}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
+          <FileUploadButton
+                  id="drivers-license-upload"
+                  label="Upload Driver's License"
+                  required={true}
+                  isFilePresent={formData.drivers_license.length > 0}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
 
-              const maxSize = 5 * 1024 * 1024;
-              if (file.size > maxSize) {
-                setError("Driver's license file must be less than 5MB.");
-                return;
-              }
+                    const maxSize = 5 * 1024 * 1024;
+                    if (file.size > maxSize) {
+                      setError("Driver's license file must be less than 5MB.");
+                      return;
+                    }
 
-              handleSingleFileUpload({
-                file,
-                fieldName: "drivers_license",
-                setFormData,
-                setTempFiles,
-                tempFileKey: "drivers_license",
-              });
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "drivers_license",
+                      setFormData,
+                      setTempFiles,
+                      tempFileKey: "drivers_license",
+                    });
             }}
-          />
+                />
 
           {/* Uploaded Driver's License */}
           {tempFiles.drivers_license && (

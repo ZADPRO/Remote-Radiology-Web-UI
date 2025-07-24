@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { UploadFile, uploadService } from "@/services/commonServices";
-import {
-  NewRadiologist,
-  radiologistService,
-} from "@/services/radiologistService";
 import { useNavigate } from "react-router-dom";
 import { MedicalLicenseSecurity } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import {
+  NewWGPerformingProvider,
+  wgDoctorService,
+} from "@/services/wgdoctorService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
@@ -41,10 +41,10 @@ interface TempFilesState {
   digital_signature: File | null;
 }
 
-const AddRadiologist: React.FC = () => {
+const AddWGPerformingProvider: React.FC = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<NewRadiologist>({
+  const [formData, setFormData] = useState<NewWGPerformingProvider>({
     firstname: "",
     lastname: "", // Removed lastname
     profile_img: "",
@@ -96,91 +96,100 @@ const AddRadiologist: React.FC = () => {
   }, [error]);
 
   // Functions moved from subcomponents
-  const handleSingleFileUpload = useCallback(async ({
-    file,
-    fieldName, // e.g., "aadhar_file" or "pan_file"
-    tempFileKey, // e.g., "aadhar" or "pan"
-  }: {
-    file: File;
-    fieldName: keyof NewRadiologist;
-    tempFileKey: keyof TempFilesState;
-  }) => {
-    const formDataObj = new FormData();
-    formDataObj.append("file", file);
+  const handleSingleFileUpload = useCallback(
+    async ({
+      file,
+      fieldName, // e.g., "aadhar_file" or "pan_file"
+      tempFileKey, // e.g., "aadhar" or "pan"
+    }: {
+      file: File;
+      fieldName: keyof NewWGPerformingProvider;
+      tempFileKey: keyof TempFilesState;
+    }) => {
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
 
-    try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      try {
+        const response = await uploadService.uploadFile({
+          formFile: formDataObj,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          [fieldName]: response.fileName, // just path to backend
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            [fieldName]: response.fileName, // just path to backend
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          [tempFileKey]: file, // store full File object for UI
-        }));
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          setFiles((prev) => ({
+            ...prev,
+            [tempFileKey]: file, // store full File object for UI
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const uploadAndStoreFile = useCallback(async (
-    file: File,
-    field: keyof NewRadiologist,
-    tempFileKey: keyof TempFilesState,
-  ): Promise<void> => {
-    const formData = new FormData();
-    formData.append("file", file);
+  const uploadAndStoreFile = useCallback(
+    async (
+      file: File,
+      field: keyof NewWGPerformingProvider,
+      tempFileKey: keyof TempFilesState
+    ): Promise<void> => {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    try {
-      const response = await uploadService.uploadFile({ formFile: formData });
+      try {
+        const response = await uploadService.uploadFile({ formFile: formData });
 
-      if (response.status) {
-        const result: UploadFile = {
-          file_name: response.fileName,
-          old_file_name: file.name,
-        };
+        if (response.status) {
+          const result: UploadFile = {
+            file_name: response.fileName,
+            old_file_name: file.name,
+          };
 
-        // Update formData
-        setFormData((prev) => ({
-          ...prev,
-          [field]: [...((prev[field] as UploadFile[]) || []), result],
-        }));
+          // Update formData
+          setFormData((prev) => ({
+            ...prev,
+            [field]: [...((prev[field] as UploadFile[]) || []), result],
+          }));
 
-        // Update tempFiles
-        setFiles((prev) => ({
-          ...prev,
-          [tempFileKey]: [...((prev[tempFileKey] as File[]) || []), file],
-        }));
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          // Update tempFiles
+          setFiles((prev) => ({
+            ...prev,
+            [tempFileKey]: [...((prev[tempFileKey] as File[]) || []), file],
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const handleRemoveMultiFile = useCallback((
-    key: "cv_files" | "license_files" | "malpracticeinsureance_files",
-    index: number
-  ) => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: (prev[key] as File[]).filter((_, i) => i !== index),
-    }));
+  const handleRemoveMultiFile = useCallback(
+    (
+      key: "cv_files" | "license_files" | "malpracticeinsureance_files",
+      index: number
+    ) => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: (prev[key] as File[]).filter((_, i) => i !== index),
+      }));
 
-    setFormData((prev) => ({
-      ...prev,
-      [key]: (prev[key] as UploadFile[]).filter((_, i) => i !== index),
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [key]: (prev[key] as UploadFile[]).filter((_, i) => i !== index),
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
   const handleAddMedicalLicense = useCallback(() => {
     setFormData((prev) => ({
@@ -192,98 +201,112 @@ const AddRadiologist: React.FC = () => {
     }));
   }, [setFormData]);
 
-  const handleRemoveMedicalLicense = useCallback((index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      medical_license_security: prev.medical_license_security.filter(
-        (_, i) => i !== index
-      ),
-    }));
-  }, [setFormData]);
+  const handleRemoveMedicalLicense = useCallback(
+    (index: number) => {
+      setFormData((prev) => ({
+        ...prev,
+        medical_license_security: prev.medical_license_security.filter(
+          (_, i) => i !== index
+        ),
+      }));
+    },
+    [setFormData]
+  );
 
-  const handleMedicalLicenseChange = useCallback((
-    index: number,
-    field: keyof MedicalLicenseSecurity,
-    value: string
-  ) => {
-    const updated = [...formData.medical_license_security];
-    updated[index][field] = value;
+  const handleMedicalLicenseChange = useCallback(
+    (index: number, field: keyof MedicalLicenseSecurity, value: string) => {
+      const updated = [...formData.medical_license_security];
+      updated[index][field] = value;
 
-    setFormData((prev) => ({
-      ...prev,
-      medical_license_security: updated,
-    }));
-  }, [formData.medical_license_security, setFormData]);
+      setFormData((prev) => ({
+        ...prev,
+        medical_license_security: updated,
+      }));
+    },
+    [formData.medical_license_security, setFormData]
+  );
 
-  const handleRemoveSingleFile = useCallback((
-    key: "profile_img" | "pan" | "aadhar" | "drivers_license" | "digital_signature"
-  ) => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: null,
-    }));
+  const handleRemoveSingleFile = useCallback(
+    (
+      key:
+        | "profile_img"
+        | "pan"
+        | "aadhar"
+        | "drivers_license"
+        | "digital_signature"
+    ) => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
 
-    setFormData((prev) => ({
-      ...prev,
-      [key]: "", // Set to empty string for file paths
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [key]: "", // Set to empty string for file paths
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
-  const handleDigitalSignatureUpload = useCallback(async (
-    file: File,
-  ) => {
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
-    setError("");
-    try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+  const handleDigitalSignatureUpload = useCallback(
+    async (file: File) => {
+      const formDataImg = new FormData();
+      formDataImg.append("profileImage", file);
+      setError("");
+      try {
+        const response = await uploadService.uploadImage({
+          formImg: formDataImg,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          digital_signature: response.fileName,
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            digital_signature: response.fileName,
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          digital_signature: file,
-        }));
-      } else {
-        setError("Digital signature upload failed.");
+          setFiles((prev) => ({
+            ...prev,
+            digital_signature: file,
+          }));
+        } else {
+          setError("Digital signature upload failed.");
+        }
+      } catch (err) {
+        setError("Error uploading digital signature.");
       }
-    } catch (err) {
-      setError("Error uploading digital signature.");
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const handleProfileImageUpload = useCallback(async (file: File) => {
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
+  const handleProfileImageUpload = useCallback(
+    async (file: File) => {
+      const formDataImg = new FormData();
+      formDataImg.append("profileImage", file);
 
-    try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      try {
+        const response = await uploadService.uploadImage({
+          formImg: formDataImg,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          profile_img: response.fileName,
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            profile_img: response.fileName,
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          profile_img: file,
-        }));
-      } else {
-        setError("Profile image upload failed");
+          setFiles((prev) => ({
+            ...prev,
+            profile_img: file,
+          }));
+        } else {
+          setError("Profile image upload failed");
+        }
+      } catch (err) {
+        setError("Error uploading profile image");
       }
-    } catch (err) {
-      setError("Error uploading profile image");
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
   const renderStepForm = () => {
     return (
@@ -339,9 +362,16 @@ const AddRadiologist: React.FC = () => {
                   label="Upload Aadhar"
                   required={true}
                   isFilePresent={formData.aadhar.length > 0}
-                  maxSize={5 * 1024 * 1024} // 5MB
-                  setError={setError}
-                  onValidFile={(file) => {
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    const maxSize = 5 * 1024 * 1024;
+                    if (file.size > maxSize) {
+                      setError("Aadhar file must be less than 5MB.");
+                      return;
+                    }
+
                     handleSingleFileUpload({
                       file,
                       fieldName: "aadhar",
@@ -573,25 +603,29 @@ const AddRadiologist: React.FC = () => {
                 </Label>
 
                 <FileUploadButton
-                  id="drivers-license-upload"
-                  label="Upload Driver's License"
-                  required={true}
-                  isFilePresent={formData.drivers_license.length > 0}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+                  id="license-upload"
+                  label="Upload License Files"
+                  multiple
+                  required={formData.license_files.length === 0}
+                  isFilePresent={formData.license_files.length > 0}
+                  onChange={async (e) => {
+                    const filesSelected = e.target.files;
+                    if (!filesSelected) return;
 
-                    const maxSize = 5 * 1024 * 1024;
-                    if (file.size > maxSize) {
-                      setError("Driver's license file must be less than 5MB.");
-                      return;
+                    const selectedFiles = Array.from(filesSelected);
+                    const filteredFiles = selectedFiles.filter(
+                      (file) =>
+                        file.size <= 10 * 1024 * 1024 &&
+                        !files.license_files.some((f) => f.name === file.name)
+                    );
+
+                    for (const file of filteredFiles) {
+                      await uploadAndStoreFile(
+                        file,
+                        "license_files",
+                        "license_files"
+                      );
                     }
-
-                    handleSingleFileUpload({
-                      file,
-                      fieldName: "drivers_license",
-                      tempFileKey: "drivers_license",
-                    });
                   }}
                 />
 
@@ -767,39 +801,27 @@ const AddRadiologist: React.FC = () => {
                 </Label>
 
                 <FileUploadButton
-                  id="malpractice-upload"
-                  label="Upload Malpractice Insurance"
+                  id="license-upload"
+                  label="Upload License Files"
                   multiple
-                  required={formData.malpracticeinsureance_files.length === 0}
-                  isFilePresent={
-                    formData.malpracticeinsureance_files.length > 0
-                  }
+                  required={formData.license_files.length === 0}
+                  isFilePresent={formData.license_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
                     if (!filesSelected) return;
 
                     const selectedFiles = Array.from(filesSelected);
-                    const maxSize = 10 * 1024 * 1024;
-
                     const filteredFiles = selectedFiles.filter(
                       (file) =>
-                        file.size <= maxSize &&
-                        !files.malpracticeinsureance_files.some(
-                          (existingFile) => existingFile.name === file.name
-                        )
+                        file.size <= 10 * 1024 * 1024 &&
+                        !files.license_files.some((f) => f.name === file.name)
                     );
-
-                    if (filteredFiles.length < selectedFiles.length) {
-                      setError(
-                        "Some files were larger than 10MB or were duplicates and were not added."
-                      );
-                    }
 
                     for (const file of filteredFiles) {
                       await uploadAndStoreFile(
                         file,
-                        "malpracticeinsureance_files",
-                        "malpracticeinsureance_files"
+                        "license_files",
+                        "license_files"
                       );
                     }
                   }}
@@ -892,8 +914,28 @@ const AddRadiologist: React.FC = () => {
     setLoading(true);
     try {
       // Basic validation before submission (removed lastname check)
-      if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.pan || !formData.aadhar || !formData.drivers_license || !formData.mbbs_register_number || !formData.md_register_number || !formData.specialization || formData.cv_files.length === 0 || formData.license_files.length === 0 || formData.malpracticeinsureance_files.length === 0 || !formData.digital_signature || formData.medical_license_security.some(lic => !lic.State || !lic.MedicalLicenseSecurityNo)) {
-        setError("Please fill in all required fields and upload all necessary documents.");
+      if (
+        !formData.firstname ||
+        !formData.email ||
+        !formData.phone ||
+        !formData.dob ||
+        !formData.pan ||
+        !formData.aadhar ||
+        !formData.drivers_license ||
+        !formData.mbbs_register_number ||
+        !formData.md_register_number ||
+        !formData.specialization ||
+        formData.cv_files.length === 0 ||
+        formData.license_files.length === 0 ||
+        formData.malpracticeinsureance_files.length === 0 ||
+        !formData.digital_signature ||
+        formData.medical_license_security.some(
+          (lic) => !lic.State || !lic.MedicalLicenseSecurityNo
+        )
+      ) {
+        setError(
+          "Please fill in all required fields and upload all necessary documents."
+        );
         setLoading(false);
         return;
       }
@@ -914,12 +956,12 @@ const AddRadiologist: React.FC = () => {
       }
 
       console.log("finalForm", formData); // Keep this for debugging
-      const res = await radiologistService.createNewRadiologist(formData);
+      const res = await wgDoctorService.createNewWgPerformingProvider(formData);
       console.log(res);
       if (res.status) {
         toast.success(res.message);
         setTimeout(() => {
-          navigate("../manageRadiologist");
+          navigate(-1);
         }, 1500);
       } else {
         setError(res.message);
@@ -927,8 +969,7 @@ const AddRadiologist: React.FC = () => {
     } catch (error) {
       console.log(error);
       setError("");
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -954,7 +995,7 @@ const AddRadiologist: React.FC = () => {
         }}
       >
         <h1 className="text-[#3F3F3D] uppercase font-[900] lg:pl-10 text-xl lg:text-3xl text-center lg:text-left tracking-widest">
-          Add Radiologist
+          Add WellthGreen Performing Provider
         </h1>
       </div>
 
@@ -1067,4 +1108,4 @@ const AddRadiologist: React.FC = () => {
   );
 };
 
-export default AddRadiologist;
+export default AddWGPerformingProvider;

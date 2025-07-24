@@ -29,6 +29,7 @@ import {
   NewCoReportingDoctor
 } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -503,13 +504,11 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Driver's License <span className="text-red-500">*</span>
           </Label>
 
-          <Input
+          <FileUploadButton
             id="drivers-license-upload"
-            type="file"
-            accept=".pdf"
-            className="bg-[#a1b7c3]"
-            value={formData.drivers_license.length == 0 ? "" : ""}
-            required={formData.drivers_license.length == 0}
+            label="Upload Driver's License"
+            required={true}
+            isFilePresent={formData.drivers_license.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -723,33 +722,32 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             Upload License <span className="text-red-500">*</span>
           </Label>
 
-          <Input
-            id="license-upload"
-            type="file"
-            accept=".pdf"
-            multiple
-            className="bg-[#a1b7c3]"
-            required
-            onChange={async (e) => {
-              const filesSelected = e.target.files;
-              if (!filesSelected) return;
+          <FileUploadButton
+                  id="license-upload"
+                  label="Upload License Files"
+                  multiple
+                  required={formData.license_files.length === 0}
+                  isFilePresent={formData.license_files.length > 0}
+                  onChange={async (e) => {
+                    const filesSelected = e.target.files;
+                    if (!filesSelected) return;
 
-              const selectedFiles = Array.from(filesSelected);
-              const filteredFiles = selectedFiles.filter(
-                (file) =>
-                  file.size <= 10 * 1024 * 1024 &&
-                  !tempFiles.license_files.some((f) => f.name === file.name)
-              );
+                    const selectedFiles = Array.from(filesSelected);
+                    const filteredFiles = selectedFiles.filter(
+                      (file) =>
+                        file.size <= 10 * 1024 * 1024 &&
+                        !tempFiles.license_files.some((f) => f.name === file.name)
+                    );
 
-              for (const file of filteredFiles) {
-                await uploadAndStoreFile(
-                  file,
-                  "license_files",
-                  "license_files"
-                );
-              }
-            }}
-          />
+                    for (const file of filteredFiles) {
+                      await uploadAndStoreFile(
+                        file,
+                        "license_files",
+                        "license_files"
+                      );
+                    }
+                  }}
+                />
 
           {tempFiles.license_files.length > 0 && (
             <ul className="mt-2 space-y-1 text-sm text-gray-700">
@@ -781,44 +779,44 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             Upload Malpractice Insurance <span className="text-red-500">*</span>
           </Label>
 
-          <Input
-            id="malpractice-upload"
-            type="file"
-            accept=".pdf"
-            multiple
-            className="bg-[#a1b7c3]"
-            value={formData.malpracticeinsureance_files.length === 0 ? "" : ""}
-            required={formData.malpracticeinsureance_files.length === 0}
-            onChange={async (e) => {
-              const filesSelected = e.target.files;
-              if (!filesSelected) return;
+          <FileUploadButton
+                  id="malpractice-upload"
+                  label="Upload Malpractice Insurance Files"
+                  multiple
+                  required={formData.malpracticeinsureance_files.length === 0}
+                  isFilePresent={
+                    formData.malpracticeinsureance_files.length > 0
+                  }
+                  onChange={async (e) => {
+                    const filesSelected = e.target.files;
+                    if (!filesSelected) return;
 
-              const selectedFiles = Array.from(filesSelected);
-              const maxSize = 10 * 1024 * 1024;
+                    const selectedFiles = Array.from(filesSelected);
+                    const maxSize = 10 * 1024 * 1024;
 
-              const filteredFiles = selectedFiles.filter(
-                (file) =>
-                  file.size <= maxSize &&
-                  !tempFiles.malpracticeinsureance_files.some(
-                    (existingFile) => existingFile.name === file.name
-                  )
-              );
+                    const filteredFiles = selectedFiles.filter(
+                      (file) =>
+                        file.size <= maxSize &&
+                        !tempFiles.malpracticeinsureance_files.some(
+                          (existingFile) => existingFile.name === file.name
+                        )
+                    );
 
-              if (filteredFiles.length < selectedFiles.length) {
-                setError(
-                  "Some files were larger than 10MB or were duplicates and were not added."
-                );
-              }
+                    if (filteredFiles.length < selectedFiles.length) {
+                      setError(
+                        "Some files were larger than 10MB or were duplicates and were not added."
+                      );
+                    }
 
-              for (const file of filteredFiles) {
-                await uploadAndStoreFile(
-                  file,
-                  "malpracticeinsureance_files",
-                  "malpracticeinsureance_files"
-                );
-              }
-            }}
-          />
+                    for (const file of filteredFiles) {
+                      await uploadAndStoreFile(
+                        file,
+                        "malpracticeinsureance_files",
+                        "malpracticeinsureance_files"
+                      );
+                    }
+                  }}
+                />
 
           {tempFiles.malpracticeinsureance_files.length > 0 && (
             <ul className="mt-2 space-y-2 text-sm text-gray-800">
@@ -851,26 +849,27 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             Digital Signature <span className="text-red-500">*</span>
           </Label>
 
-          <Input
-            id="digital-signature-upload"
-            type="file"
-            accept="image/png, image/jpeg, image/jpg"
-            className="bg-[#a1b7c3]"
-            value={formData.digital_signature?.length === 0 ? "" : ""}
-            required={formData.digital_signature?.length === 0}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
+          <FileUploadButton
+                  id="digital-signature-upload"
+                  label="Upload Digital Signature"
+                  accept="image/png, image/jpeg, image/jpg"
+                  required={formData.digital_signature?.length === 0}
+                  isFilePresent={formData.digital_signature?.length > 0}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
 
-              const maxSize = 5 * 1024 * 1024; // 5MB
-              if (file.size > maxSize) {
-                setError("Digital signature image must be less than 5MB.");
-                return;
-              }
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                      setError(
+                        "Digital signature image must be less than 5MB."
+                      );
+                      return;
+                    }
 
-              handleDigitalSignatureUpload(file);
-            }}
-          />
+                    handleDigitalSignatureUpload(file);
+                  }}
+                />
 
           {/* Uploaded Digital Signature Preview */}
           {tempFiles.digital_signature && (

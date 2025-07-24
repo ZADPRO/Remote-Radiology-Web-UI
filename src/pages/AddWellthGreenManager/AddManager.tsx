@@ -24,6 +24,8 @@ import { UploadFile, uploadService } from "@/services/commonServices";
 import { useNavigate } from "react-router-dom";
 import { managerService, NewManager } from "@/services/managerService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import { dateDisablers } from "@/lib/dateUtils";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -402,13 +404,11 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Aadhar <span className="text-red-500">*</span>
           </Label>
 
-          <Input
+          <FileUploadButton
             id="aadhar-upload"
-            type="file"
-            accept=".pdf"
-            className="bg-[#a1b7c3]"
-            value={""} // prevents controlled/uncontrolled warning
-            required={formData.aadhar.length === 0}
+            label="Upload Aadhar"
+            required={true}
+            isFilePresent={formData.aadhar.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -448,6 +448,30 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Driver's License <span className="text-red-500">*</span>
           </Label>
 
+          <FileUploadButton
+            id="drivers-license-upload"
+            label="Upload Driver's License"
+            required={true}
+            isFilePresent={formData.drivers_license.length > 0}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              const maxSize = 5 * 1024 * 1024;
+              if (file.size > maxSize) {
+                setError("Driver's license file must be less than 5MB.");
+                return;
+              }
+
+              handleSingleFileUpload({
+                file,
+                fieldName: "drivers_license",
+                tempFileKey: "drivers_license",
+              });
+            }}
+          />
+
+          {/* 
           <Input
             id="drivers-license-upload"
             type="file"
@@ -471,7 +495,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "drivers_license",
               });
             }}
-          />
+          /> */}
 
           {/* Uploaded Driver's License */}
           {tempFiles.drivers_license && (
@@ -551,6 +575,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 dob: val?.toLocaleDateString("en-CA") || "",
               }));
             }}
+            disabledDates={dateDisablers.noFuture}
           />
         </div>
 
@@ -559,10 +584,33 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             PAN <span className="text-red-500">*</span>
           </Label>
 
-          <Input
+          <FileUploadButton
+            id="pan-upload"
+            label="Upload Pan"
+            required={true}
+            isFilePresent={formData.pan.length > 0}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              const maxSize = 5 * 1024 * 1024;
+              if (file.size > maxSize) {
+                setError("PAN file must be less than 5MB.");
+                return;
+              }
+
+              handleSingleFileUpload({
+                file,
+                fieldName: "pan",
+                tempFileKey: "pan",
+              });
+            }}
+          />
+
+          {/* <Input
             id="pan-upload"
             type="file"
-            accept=".pdf"
+            accept=".pdf, .jpeg, .jpg, .png"
             className="bg-[#a1b7c3]"
             value={""} // avoids controlled/uncontrolled warning
             required={formData.pan.length === 0}
@@ -582,7 +630,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "pan",
               });
             }}
-          />
+          /> */}
 
           {/* Uploaded PAN File */}
           {tempFiles.pan && (
@@ -673,14 +721,12 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             <span className="text-red-500">*</span>
           </Label>
 
-          <Input
-            id="edu-upload"
-            type="file"
-            accept=".pdf"
+          <FileUploadButton
+            id="education-certificate-upload"
+            label="Upload Certificates"
             multiple
-            className="bg-[#a1b7c3]"
-            value={formData.education_certificate.length === 0 ? "" : ""}
-            required={formData.education_certificate.length === 0}
+            required
+            isFilePresent={formData.education_certificate.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;
               if (!filesSelected) return;
@@ -702,7 +748,6 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
                 );
               }
 
-              // Upload each file and store in formData
               for (const file of filteredFiles) {
                 await uploadAndStoreFile(
                   file,

@@ -65,7 +65,7 @@ const InvoicePopUp: React.FC<Props> = () => {
 
     console.log(role?.id);
 
-    if (role?.id === 6 || role?.id === 7) {
+    if (role?.id === 6 || role?.id === 7 || role?.id === 10) {
       setType("2");
       setSelectedUser(user?.refUserId?.toString() || "");
       setUserList([
@@ -396,7 +396,9 @@ const InvoicePopUp: React.FC<Props> = () => {
                         {(role?.id === 9 ||
                           role?.id === 1 ||
                           role?.id === 6 ||
-                          role?.id === 7) && (
+                          role?.id === 7 ||
+                          role?.id === 10
+                        ) && (
                           <>
                             <div className="w-full sm:w-auto">
                               <PopoverDialog>

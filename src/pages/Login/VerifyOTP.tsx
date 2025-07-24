@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Timer from "@/components/Timer/Timer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authenticationService } from "@/services/authenticationService";
-import loginImg from "../../assets/Login/Login.png";
+import loginImg from "../../assets/Login/Login.jpg";
 import loginTexture from "../../assets/Login/Login-Texture.png";
 import { RoleList, useAuth } from "../Routes/AuthContext";
 
@@ -112,6 +112,9 @@ const VerifyOTP: React.FC = () => {
           case 9:
             role = { type: "manager", id: 9 };
             break;
+          case 10:
+            role = { type: "wgdoctor", id: 10 };
+            break;
           default:
             role = null; // Or assign a default role if needed
             break;
@@ -162,7 +165,7 @@ const VerifyOTP: React.FC = () => {
       </div>
 
       {/* Right section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:py-8 lg:px-8 lg:justify-center lg:shadow-2xl relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:justify-center lg:shadow-2xl relative">
         <img
           src={logoNew}
           className="hidden w-auto h-[15%] mx-auto lg:inline"

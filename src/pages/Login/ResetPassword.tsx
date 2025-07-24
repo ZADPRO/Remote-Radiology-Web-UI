@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { authenticationService } from "@/services/authenticationService";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import loginImg from "../../assets/Login/Login.png";
+import loginImg from "../../assets/Login/Login.jpg";
 import loginTexture from "../../assets/Login/Login-Texture.png";
 import logoNew from "../../assets/LogoNew.png";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -144,11 +144,11 @@ const ResetPassword: React.FC = () => {
             </div>
 
             <div className="grid gap-6">
-              <div className="grid gap-2 text-[#828282] text-[14px]">
-                <Label htmlFor="newPassword" className="text-[#525252]">
+              <div className="grid gap-2 text-[14px]">
+                <Label htmlFor="newPassword">
                   New Password
                 </Label>
-                <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] text-[#FFF5F5] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
+                <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
@@ -196,11 +196,11 @@ const ResetPassword: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid gap-2 text-[#828282] text-[14px]">
-                <Label htmlFor="confirmPassword" className="text-[#525252]">
+              <div className="grid gap-2 text-[14px]">
+                <Label htmlFor="confirmPassword">
                   Confirm Password
                 </Label>
-                <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] text-[#FFF5F5] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
+                <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}

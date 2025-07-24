@@ -117,8 +117,8 @@ export interface ListSpecificCoDoctor {
   refCODOPhoneNo1: string;
   refCODOPhoneNo1CountryCode: string;
 
-  refDDNPI: string;
-  refDDSocialSecurityNo: string;
+  refCDNPI: string;
+  refCDSocialSecurityNo: string;
 
   digital_signature: string;
   drivers_license: string;

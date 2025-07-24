@@ -75,14 +75,13 @@ const MyCare: React.FC = () => {
 
       {/* Hero Section - Title and Paragraph */}
       <div className="w-full mt-4 space-y-1 md:w-[80%] lg:w-[65%]">
-        <h1 className="font-bold text-4xl leading-tight tracking-wide sm:text-5xl lg:text-6xl lg:leading-[108%]">
+        {/* <h1 className="font-bold text-4xl leading-tight tracking-wide sm:text-5xl lg:text-6xl lg:leading-[108%]">
           Gentle Care Confident Screening
-        </h1>
-        <p className="text-sm sm:text-base">
-          At EaseQT, we offer gentle, advanced breast screenings in a warm,
-          caring environment, empowering you to take charge of your health with
-          confidence.
-        </p>
+        </h1> */}
+<p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+  <strong className="font-semibold text-lg text-gray-900">QT (Quantitative Transmission) Imaging</strong>, also known as Breast Acoustic CT, is a cutting-edge technology for breast cancer screening. Utilizing advanced sound-wave imaging, it generates a 3D reconstruction of the breast in minutes. This revolutionary method provides a safe, comfortable, fast, radiation-free, and highly efficient alternative to traditional breast imaging techniques.
+</p>
+
       </div>
 
       {/* Appointment Form and Image Section */}

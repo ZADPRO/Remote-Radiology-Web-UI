@@ -15,6 +15,7 @@ import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { doctorService, ListSpecificCoDoctor } from "@/services/doctorService";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 
 // Define the props interface for EditCoReportingDoctor
@@ -86,8 +87,8 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
   refCODOPhoneNo1: "",
   refCODOPhoneNo1CountryCode: "",
 
-  refDDNPI: "",
-  refDDSocialSecurityNo: "",
+  refCDNPI: "",
+  refCDSocialSecurityNo: "",
 
   digital_signature: "",
   drivers_license: "",
@@ -231,10 +232,10 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
         phone: formData.refCODOPhoneNo1,
         phoneCountryCode: formData.refCODOPhoneNo1CountryCode,
         drivers_license_no: formData.drivers_license,
-        social_security_no: formData.refDDSocialSecurityNo,
+        social_security_no: formData.refCDSocialSecurityNo,
         drivers_license: formData.drivers_license,
         Specialization: formData.Specialization,
-        npi: formData.refDDNPI,
+        npi: formData.refCDNPI,
         status: formData.refUserStatus,
         license_files: tempLicenses,
         malpracticeinsureance_files: tempMalpractice,
@@ -520,11 +521,11 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 type="text"
                 placeholder="Enter Social Security Number"
                 className="bg-white"
-                value={formData.refDDSocialSecurityNo}
+                value={formData.refCDSocialSecurityNo}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    refDDSocialSecurityNo: e.target.value,
+                    refCDSocialSecurityNo: e.target.value,
                   }))
                 }
                 required
@@ -604,20 +605,16 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 Driving License <span className="text-red-500">*</span>
               </Label>
 
-              <Input
-                id="drivers-license-upload"
-                type="file"
-                accept=".pdf"
-                className="bg-[#a1b7c3]"
-                value={""}
-                required={formData.drivers_license.length == 0}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const maxSize = 5 * 1024 * 1024;
-                  if (file.size > maxSize) {
-                    setError("Driving License file must be less than 5MB.");
+              <FileUploadButton
+              id="license-upload"
+              label="Upload License"
+              required={false} // Or true if this is mandatory and no file present
+              isFilePresent={!!formData.drivers_license}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
                     return;
                   }
 
@@ -626,9 +623,9 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                     fieldName: "drivers_license",
                     tempFileKey: "drivers_license",
                   });
-                  setError(null);
-                }}
-              />
+                }
+              }}
+            />
 
               {/* Show uploaded or existing Driving License file */}
               {files.drivers_license ? (
@@ -678,9 +675,9 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 type="text"
                 placeholder="Enter NPI"
                 className="bg-white"
-                value={formData.refDDNPI}
+                value={formData.refCDNPI}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, refDDNPI: e.target.value }))
+                  setFormData((prev) => ({ ...prev, refCDNPI: e.target.value }))
                 }
                 required
               />
@@ -709,18 +706,16 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 License <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="license-upload"
-                type="file"
-                accept=".pdf"
                 multiple
-                className="bg-[#a1b7c3]"
                 required={
                   !(
                     formData.licenseFiles?.length > 0 ||
                     files.license_files.length > 0
                   )
                 }
+                isFilePresent={files.license_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
                   if (!filesSelected) return;
@@ -853,16 +848,12 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 Malpractice Insurance <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="malpractice-upload"
-                type="file"
-                accept=".pdf"
+                label="Upload Malpractice Insurance"
                 multiple
-                value={
-                  formData.malpracticeinsureance_files.length == 0 ? "" : ""
-                }
-                required={formData.malpracticeinsureance_files.length == 0}
-                className="bg-[#a1b7c3]"
+                required={formData.malpracticeinsureance_files.length === 0}
+                isFilePresent={files.malpracticeinsureance_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
                   if (!filesSelected) return;
@@ -995,26 +986,25 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 Digital Signature <span className="text-red-500">*</span>
               </Label>
 
-              <Input
+              <FileUploadButton
                 id="digital-signature-upload"
-                type="file"
+                label="Upload Digital Signature"
                 accept="image/png, image/jpeg, image/jpg"
-                className="bg-[#a1b7c3]"
-                value={files.digital_signature ? "" : ""}
                 required={
                   !formData.digital_signature && !files.digital_signature
                 }
+                isFilePresent={!!files.digital_signature}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
-                  const maxSize = 5 * 1024 * 1024;
+                  const maxSize = 5 * 1024 * 1024; // 5MB
                   if (file.size > maxSize) {
                     setError("Digital signature image must be less than 5MB.");
                     return;
                   }
 
-                  handleDigitalSignatureUpload(file); // Should update tempFiles.digital_signature
+                  handleDigitalSignatureUpload(file); // updates files.digital_signature
                   setError(null);
                 }}
               />

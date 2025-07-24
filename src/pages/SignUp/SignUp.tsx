@@ -9,7 +9,7 @@ import logoNew from "../../assets/LogoNew.png";
 import { signupService } from "@/services/authenticationService";
 // import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import loginImg from "../../assets/Login/Login.png";
+import loginImg from "../../assets/Login/Login.jpg";
 import loginTexture from "../../assets/Login/Login-Texture.png"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -216,7 +216,7 @@ const SignUp: React.FC = () => {
         />
       </div>
 
-      <div className="flex flex-1 lg:basis-[45%] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center bg-[#EDD1CE] relative">
+      <div className="flex flex-1 lg:basis-[45%] flex-col justify-start lg:px-8 lg:shadow-2xl lg:justify-center bg-[#EDD1CE] relative">
         <img
           src={logoNew}
           className="hidden w-auto h-[15%] mx-auto lg:inline"
@@ -257,15 +257,15 @@ const SignUp: React.FC = () => {
             {step === 1 && (
               <>
                 <div className="flex gap-2 justify-between">
-                  <div className="grid gap-2 w-full text-[#828282] text-[14px]">
-                    <Label htmlFor="firstname" className="text-[#525252]">
+                  <div className="grid gap-2 w-full text-[14px]">
+                    <Label htmlFor="firstname">
                       Full Name
                     </Label>
                     <Input
                       id="firstname"
                       type="text"
                       placeholder="Full Name"
-                      className="bg-[#A3B1A1] border border-[#3F3F3D] text-[#FFF5F5]"
+                      className="bg-[#A3B1A1] border border-[#3F3F3D]"
                       value={formData.firstname}
                       onChange={(e) =>
                         setFormData({ ...formData, firstname: e.target.value })
@@ -276,7 +276,7 @@ const SignUp: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-[#828282] text-[14px]" htmlFor="phone">
+                  <Label className="text-[14px]" htmlFor="phone">
                     Phone Number
                   </Label>
                   <div className="flex gap-2">
@@ -289,7 +289,7 @@ const SignUp: React.FC = () => {
                         }))
                       }
                     >
-                      <SelectTrigger className="bg-[#A3B1A1] text-[#FFF5F5] border border-[#3F3F3D] flex-[1]">
+                      <SelectTrigger className="bg-[#A3B1A1] border border-[#3F3F3D] flex-[1]">
                         <SelectValue placeholder="Country Code" />
                       </SelectTrigger>
                       <SelectContent>
@@ -301,7 +301,7 @@ const SignUp: React.FC = () => {
                       id="phone"
                       type="number"
                       placeholder="Enter Phone Number"
-                      className="bg-[#A3B1A1] border border-[#3F3F3D] text-[#FFF5F5] flex-[5]"
+                      className="bg-[#A3B1A1] border border-[#3F3F3D] flex-[5]"
                       value={formData.phone}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -317,14 +317,14 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid gap-2 text-[#828282] text-[14px]">
-                  <Label htmlFor="email" className="text-[#525252]">
+                <div className="grid gap-2 text-[14px]">
+                  <Label htmlFor="email">
                     Email
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    className="bg-[#A3B1A1] border border-[#3F3F3D] text-[#FFF5F5]"
+                    className="bg-[#A3B1A1] border border-[#3F3F3D]"
                     placeholder="john@example.com"
                     value={formData.email}
                     onChange={(e) =>
@@ -337,8 +337,8 @@ const SignUp: React.FC = () => {
             )}
 
             {step === 2 && (
-              <div className="grid gap-2 text-[#828282] text-[14px]">
-                <Label htmlFor="otp" className="text-[#525252]">
+              <div className="grid gap-2 text-[14px]">
+                <Label htmlFor="otp">
                   Enter Passcode
                 </Label>
                 <div className="flex items-center justify-center">
@@ -389,11 +389,11 @@ const SignUp: React.FC = () => {
 
             {step === 3 && (
               <>
-                <div className="grid gap-2 text-[#828282] text-[14px]">
-                  <Label htmlFor="password" className="text-[#525252]">
+                <div className="grid gap-2 text-[14px]">
+                  <Label htmlFor="password">
                     Password
                   </Label>
-                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] text-[#FFF5F5] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
+                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
@@ -442,11 +442,11 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid gap-2 text-[#828282] text-[14px]">
-                  <Label htmlFor="confirmPassword" className="text-[#525252]">
+                <div className="grid gap-2 text-[14px]">
+                  <Label htmlFor="confirmPassword">
                     Confirm Password
                   </Label>
-                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] text-[#FFF5F5] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
+                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
