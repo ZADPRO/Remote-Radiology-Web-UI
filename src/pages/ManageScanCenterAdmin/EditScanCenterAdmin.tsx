@@ -15,6 +15,7 @@ import { Camera, FileText, Pencil } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { ListSpecificScanCenterAdmin, scanCenterAdminService } from "@/services/scancenterService";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 // Define the props interface for EditScanCenterAdmin
 interface EditScanCenterAdminProps {
@@ -532,18 +533,16 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                 Drivers License <span className="text-red-500">*</span>
               </Label>
 
-              <Input
-                id="drivers-license-upload"
-                type="file"
-                accept=".pdf"
-                className="bg-[#a1b7c3]"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const maxSize = 5 * 1024 * 1024;
-                  if (file.size > maxSize) {
-                    setError("PAN file must be less than 5MB.");
+               <FileUploadButton
+              id="license-upload"
+              label="Upload License"
+              required={false} // Or true if this is mandatory and no file present
+              isFilePresent={!!formData.refRDDrivingLicense}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
                     return;
                   }
 
@@ -552,8 +551,9 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                     fieldName: "refRDDrivingLicense",
                     tempFileKey: "drivers_license",
                   });
-                }}
-              />
+                }
+              }}
+            />
 
               {/* Show uploaded or existing Driving License file */}
             {files.drivers_license ? (

@@ -1,6 +1,7 @@
 import DatePicker from "@/components/date-picker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -454,29 +455,24 @@ const EditScribe: React.FC<EditScribeProps> = ({
               Aadhar <span className="text-red-500">*</span>
             </Label>
 
-            <Input
+            <FileUploadButton
               id="aadhar-upload"
-              type="file"
-              accept=".pdf"
-              value={formData.refSDAadhar.length == 0 ? "" : ""}
-              required={formData.refSDAadhar.length == 0}
-              className="bg-[#a1b7c3]"
+              label="Upload Aadhar"
+              required={true}
+              isFilePresent={formData.refSDAadhar.length > 0}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (!file) return;
-
-                const maxSize = 5 * 1024 * 1024;
-                if (file.size > maxSize) {
-                  setError("Aadhar file must be less than 5MB.");
-                  return;
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
+                    return;
+                  }
+                  handleSingleFileUpload({
+                    file,
+                    fieldName: "refSDAadhar",
+                    tempFileKey: "aadhar",
+                  });
                 }
-
-                handleSingleFileUpload({
-                  file,
-                  fieldName: "refSDAadhar",
-                  tempFileKey: "aadhar",
-                });
-                setError(null);
               }}
             />
 
@@ -521,29 +517,26 @@ const EditScribe: React.FC<EditScribeProps> = ({
               Driving License <span className="text-red-500">*</span>
             </Label>
 
-            <Input
-              id="drivers-license-upload"
-              type="file"
+            <FileUploadButton
+              id="license-upload"
+              label="Upload License"
               accept=".pdf"
-              className="bg-[#a1b7c3]"
-              value={formData.refSDDrivingLicense.length == 0 ? "" : ""}
-              required={formData.refSDDrivingLicense.length == 0}
+              required={false} // Or true if this is mandatory and no file present
+              isFilePresent={!!formData.refSDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (!file) return;
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
+                    return;
+                  }
 
-                const maxSize = 5 * 1024 * 1024;
-                if (file.size > maxSize) {
-                  setError("Driving License file must be less than 5MB.");
-                  return;
+                  handleSingleFileUpload({
+                    file,
+                    fieldName: "refSDDrivingLicense",
+                    tempFileKey: "drivers_license",
+                  });
                 }
-
-                handleSingleFileUpload({
-                  file,
-                  fieldName: "refSDDrivingLicense",
-                  tempFileKey: "drivers_license",
-                });
-                setError(null);
               }}
             />
 
@@ -651,31 +644,28 @@ const EditScribe: React.FC<EditScribeProps> = ({
             />
           </div>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <Label className="text-sm font-medium" htmlFor="pan-upload">
-              PAN <span className="text-red-500">*</span>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm" htmlFor="pan-upload">
+              PAN Card <span className="text-red-500">*</span>
             </Label>
-
-            <Input
+            <FileUploadButton
               id="pan-upload"
-              type="file"
-              accept=".pdf"
-              className="bg-[#a1b7c3]"
+              label="Upload PAN"
+              required={false}
+              isFilePresent={!!formData.refSDPan}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (!file) return;
-
-                const maxSize = 5 * 1024 * 1024;
-                if (file.size > maxSize) {
-                  setError("PAN file must be less than 5MB.");
-                  return;
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    setError("File must be less than 5MB.");
+                    return;
+                  }
+                  handleSingleFileUpload({
+                    file,
+                    fieldName: "refSDPan",
+                    tempFileKey: "pan",
+                  });
                 }
-
-                handleSingleFileUpload({
-                  file,
-                  fieldName: "refSDPan",
-                  tempFileKey: "pan",
-                });
               }}
             />
 
@@ -724,36 +714,32 @@ const EditScribe: React.FC<EditScribeProps> = ({
               Education Certificate <span className="text-red-500">*</span>
             </Label>
 
-            <Input
-              id="license-upload"
-              type="file"
-              accept=".pdf"
-              multiple
-              className="bg-[#a1b7c3]"
-              required={
-                !(
-                  formData.educationCertificateFiles?.length > 0 ||
-                  files.education_certificate.length > 0
-                )
-              }
-              onChange={async (e) => {
-                const filesSelected = e.target.files;
-                if (!filesSelected) return;
-
-                const selectedFiles = Array.from(filesSelected);
-                const filteredFiles = selectedFiles.filter(
-                  (file) =>
-                    file.size <= 10 * 1024 * 1024 &&
-                    !files.education_certificate.some(
+            <FileUploadButton
+            id="edu-certs-upload"
+            label="Upload Education Certificates"
+            accept=".pdf"
+            multiple
+            required={false}
+            isFilePresent={files.education_certificate.length > 0}
+            onChange={async (e) => {
+              const selectedFiles = e.target.files;
+              if (selectedFiles) {
+                for (const file of Array.from(selectedFiles)) {
+                  if (file.size > 10 * 1024 * 1024) {
+                    setError(`File ${file.name} exceeds 10MB limit.`);
+                    continue;
+                  }
+                  if (
+                    !files.education_certificate.find(
                       (f) => f.name === file.name
                     )
-                );
-
-                for (const file of filteredFiles) {
-                  await uploadAndStoreFile(file, "education_certificate");
+                  ) {
+                    await uploadAndStoreFile(file, "education_certificate");
+                  }
                 }
-              }}
-            />
+              }
+            }}
+          />
 
             {/* Uploaded License Files */}
             {files.education_certificate?.length > 0 && (

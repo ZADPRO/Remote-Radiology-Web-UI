@@ -8,6 +8,7 @@ interface UserConsentProps {
   setEditingDialogOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   viewOnly?: boolean;
   staticType?: string;
+  onSubmit?: () => void;
 }
 
 type RoleType =
@@ -155,6 +156,7 @@ const UserConsent: React.FC<UserConsentProps> = ({
   setEditingDialogOpen,
   viewOnly,
   staticType,
+  onSubmit
 }) => {
   const { role } = useAuth();
 
@@ -177,6 +179,7 @@ const UserConsent: React.FC<UserConsentProps> = ({
   const [isRoleChecked, setRoleChecked] = useState(false);
 
   const handleSubmit = () => {
+    onSubmit && onSubmit();
     setEditingDialogOpen && setEditingDialogOpen(false);
     console.log("Consent submitted for role:", userRole);
   };
@@ -206,12 +209,13 @@ const UserConsent: React.FC<UserConsentProps> = ({
       {!viewOnly && (
         <div className="flex items-center space-x-2 mt-4">
           <Checkbox2
-            className="bg-pink-300"
+            className="bg-white"
+            id="universal-consent"
             checked={isUniversalChecked}
             onCheckedChange={(val) => setUniversalChecked(!!val)}
             required
           />
-          <Label className="text-sm cursor-pointer">
+          <Label htmlFor="universal-consent" className="text-sm cursor-pointer">
             I agree to the above universal terms and policies.
           </Label>
         </div>
@@ -234,12 +238,13 @@ const UserConsent: React.FC<UserConsentProps> = ({
           {!viewOnly && (
             <div className="flex items-center space-x-2 mt-4">
               <Checkbox2
-                className="bg-pink-300"
+                className="bg-white"
                 checked={isRoleChecked}
+                id="role-consent"
                 onCheckedChange={(val) => setRoleChecked(!!val)}
                 required
               />
-              <Label className="text-sm cursor-pointer">
+              <Label htmlFor="role-consent" className="text-sm cursor-pointer">
                 {roleConsent.agreeText}
               </Label>
             </div>

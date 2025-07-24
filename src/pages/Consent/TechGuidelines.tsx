@@ -119,48 +119,17 @@ const TechGuidelines: React.FC = () => {
                 </div>
               </>
             ))}
+            
             <div className="">
               <div className="text-sm flex mb-3 gap-3 mt-4 font-normal text-justify">
                 <div>2.</div>
-                <div>Absolute Contraindications - STOP if ANY Present:</div>
+                <div>Relative Contraindications - Assess Carefully:</div>
               </div>
               {[
                 "Pregnancy (any trimester)",
                 "Currently lactating/breastfeeding",
                 "Open wounds or lesions on breast skin",
                 "Severe mobility limitations preventing proper positioning",
-              ].map((data) => (
-                <>
-                  <div className="ml-3 flex flex-col text-sm font-normal text-start">
-                    <div className="flex flex-row items-center gap-2">
-                      <div className="text-xs">
-                        <CircleSmall />
-                      </div>
-                      <div>{data}</div>
-                    </div>
-                    <div>
-                      {data === "Approved Uses:" && (
-                        <div className="mt-2 mb-2 ml-7">
-                          {[
-                            "• Reflection-mode and transmission-mode ultrasound imaging of the breast",
-                            "• Fibroglandular tissue volume (FGV) assessment",
-                            "• FGV-to-total breast volume (TBV) ratio calculations",
-                          ].map((subdata) => (
-                            <div>{subdata}</div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              ))}
-            </div>
-            <div className="">
-              <div className="text-sm flex mb-3 gap-3 mt-4 font-normal text-justify">
-                <div>3.</div>
-                <div>Relative Contraindications - Assess Carefully:</div>
-              </div>
-              {[
                 "Tremors or involuntary movements",
                 "Persistent coughing or breathing difficulties",
                 "Claustrophobia or anxiety about enclosed spaces",
@@ -444,7 +413,7 @@ const TechGuidelines: React.FC = () => {
             {[
               "DO NOT interpret images or provide diagnostic information to patients",
               "DO NOT suggest QT imaging can replace standard mammography screening",
-              "DO NOT exceed FDA-approved indications for scanning",
+              // "DO NOT exceed FDA-approved indications for scanning",
             ].map((data) => (
               <>
                 <div className="ml-3 flex items-center gap-2 mt-[0.4rem] text-sm font-normal text-justify">

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import logoNew from "../../assets/LogoNew.png";
-import loginImg from "../../assets/Login/Login.png";
+import loginImg from "../../assets/Login/Login.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import welcomeImg from "../../assets/Login/Welcome.png";
-import { Checkbox } from "../../components/ui/checkbox";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import loginTexture from "../../assets/Login/Login-Texture.png"
 // import { decrypt } from "@/Helper";
@@ -76,7 +75,7 @@ const Login: React.FC = () => {
       </div>
 
       {/* Right login form section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start py-8 lg:px-8 lg:shadow-2xl lg:justify-center relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
           className="hidden h-[15%] w-auto mx-auto lg:inline"
@@ -106,13 +105,13 @@ const Login: React.FC = () => {
             </div>
 
             <div className="grid gap-4 lg:gap-6">
-              <div className="grid gap-2 text-[#828282] text-[14px]">
+              <div className="grid gap-2 text-[14px]">
                 <Label htmlFor="email" className="text-[#525252]">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  className="bg-[#A3B1A1] border border-[#3F3F3D] text-[#FFF5F5]"
+                  className="bg-[#A3B1A1] border border-[#3F3F3D]"
                   value={formData.username}
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
@@ -120,10 +119,10 @@ const Login: React.FC = () => {
                   required
                 />
               </div>
-              <div className="grid gap-2 text-[#828282] text-[14px]">
+              <div className="grid gap-2 text-[14px]">
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="password" className="text-[#525252]">Password</Label>
-                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] text-[#FFF5F5] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
+                  <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
@@ -145,7 +144,7 @@ const Login: React.FC = () => {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
+                  {/* <div className="flex items-center gap-3">
                     <Checkbox id="rememberMe" className="text-[#3F3F3D]" />
                     <label
                       htmlFor="rememberMe"
@@ -153,7 +152,7 @@ const Login: React.FC = () => {
                     >
                       Remember Me
                     </label>
-                  </div>
+                  </div> */}
 
                   <div
                     onClick={() => {

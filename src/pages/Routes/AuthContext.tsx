@@ -1,25 +1,32 @@
 // AuthContext.tsx
-import { decrypt } from '@/Helper';
-import { FileData } from '@/services/commonServices';
-import axios from 'axios';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { decrypt } from "@/Helper";
+import { FileData } from "@/services/commonServices";
+import axios from "axios";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { useIdleLogout } from "./UseIdleLogout";
 
 export const RoleList = [
-  { type: 'admin', id: 1 },
-  { type: 'technician', id: 2 },
-  { type: 'scadmin', id: 3 },
-  { type: 'patient', id: 4 },
-  { type: 'doctor', id: 5 },   // performing provider
-  { type: 'radiologist', id: 6 },
-  { type: 'scribe', id: 7 },
-  { type: 'codoctor', id: 8 },
-  { type: 'manager', id: 9 },  // Weelth Green Manager
+  { type: "admin", id: 1 },
+  { type: "technician", id: 2 },
+  { type: "scadmin", id: 3 },
+  { type: "patient", id: 4 },
+  { type: "doctor", id: 5 }, // performing provider
+  { type: "radiologist", id: 6 },
+  { type: "scribe", id: 7 },
+  { type: "codoctor", id: 8 },
+  { type: "manager", id: 9 }, // Weelth Green Manager
+  { type: "wgdoctor", id: 10 }, // Weelth Green Manager
 ] as const;
 
 export type Role = (typeof RoleList)[number] | null;
 
-export type UserRole = (typeof RoleList)[number]['type'];
+export type UserRole = (typeof RoleList)[number]["type"];
 
 // ✅ API Response interface
 export interface UserProfile {
@@ -31,7 +38,7 @@ export interface UserProfile {
   refRTId: number;
   refSCId: number;
   refCODOEmail: string;
-  profileImgFile: FileData | null
+  profileImgFile: FileData | null;
 }
 
 // ✅ Context Type
@@ -48,7 +55,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // ✅ Provider Component
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [role, setRoleState] = useState<Role>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,11 +91,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate("/");
       } else {
         const decryptData = decrypt(res.data.data, res.data.token);
-        console.log(decryptData)
+        console.log(decryptData);
         const profile: UserProfile = decryptData.data;
         setUser(profile);
         localStorage.setItem("token", res.data.token);
-        
+
         const matchedRole =
           RoleList.find((r) => r.id === profile.refRTId) || null;
         setRole(matchedRole);
@@ -100,12 +109,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  useEffect(() => {
-    refreshToken(); // This will override storedRole with actual API response
-  }, []);
+    const logout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/");
+  };
+  
+    useIdleLogout(refreshToken, logout);
+
+    useEffect(() => {
+      console.log()
+      refreshToken();
+    }, [])
 
   return (
-    <AuthContext.Provider value={{ role, setRole, user, setUser, loading, refreshToken  }}>
+    <AuthContext.Provider
+      value={{ role, setRole, user, setUser, loading, refreshToken }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -114,6 +134,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 // ✅ Custom hook to consume context
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

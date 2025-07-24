@@ -23,6 +23,7 @@ import { UploadFile, uploadService } from "@/services/commonServices";
 import { useNavigate } from "react-router-dom";
 import { NewScribe, scribeService } from "@/services/scribeService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -216,13 +217,11 @@ const AddScribe: React.FC = () => {
                   Aadhar <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="aadhar-upload"
-                  type="file"
-                  accept=".pdf"
-                  className="bg-[#a1b7c3]"
-                  value={formData.aadhar.length === 0 ? "" : undefined}
-                  required={formData.aadhar.length === 0}
+                  label="Upload Aadhar"
+                  required={true}
+                  isFilePresent={formData.aadhar.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -241,7 +240,7 @@ const AddScribe: React.FC = () => {
                   }}
                 />
 
-                {/* Show uploaded Aadhar file */}
+                {/* Uploaded Aadhar */}
                 {files.aadhar && (
                   <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.aadhar.name}</span>
@@ -262,13 +261,11 @@ const AddScribe: React.FC = () => {
                   Driver's License <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="drivers-license-upload"
-                  type="file"
-                  accept=".pdf"
-                  className="bg-[#a1b7c3]"
-                  value={formData.drivers_license.length === 0 ? "" : undefined}
-                  required={formData.drivers_license.length === 0}
+                  label="Upload Driver's License"
+                  required={true}
+                  isFilePresent={formData.drivers_license.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -374,13 +371,11 @@ const AddScribe: React.FC = () => {
                   PAN <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="pan-upload"
-                  type="file"
-                  accept=".pdf"
-                  className="bg-[#a1b7c3]"
-                  value={formData.pan.length === 0 ? "" : undefined}
-                  required={formData.pan.length === 0}
+                  label="Upload Pan"
+                  required={true}
+                  isFilePresent={formData.pan.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -399,11 +394,10 @@ const AddScribe: React.FC = () => {
                   }}
                 />
 
-                {/* Show uploaded PAN file */}
+                {/* Uploaded PAN */}
                 {files.pan && (
-                  <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.pan.name}</span>
-
                     <button
                       type="button"
                       onClick={() => handleRemoveSingleFile("pan")}
@@ -424,75 +418,73 @@ const AddScribe: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-15">
             <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
               <div className="flex flex-col gap-1.5 w-full">
-                <Label className="text-sm" htmlFor="edu-upload">
-                  Upload Educational Certificates{" "}
-                  <span className="text-red-500">*</span>
-                </Label>
+          <Label className="text-sm" htmlFor="edu-upload">
+            Upload Educational Certificates{" "}
+            <span className="text-red-500">*</span>
+          </Label>
 
-                <Input
-                  id="edu-upload"
-                  type="file"
-                  accept=".pdf"
-                  multiple
-                  className="bg-[#a1b7c3]"
-                  value={formData.education_certificate.length === 0 ? "" : undefined}
-                  required={formData.education_certificate.length === 0}
-                  onChange={async (e) => {
-                    const filesSelected = e.target.files;
-                    if (!filesSelected) return;
+          <FileUploadButton
+            id="education-certificate-upload"
+            label="Upload Certificates"
+            multiple
+            required
+            isFilePresent={formData.education_certificate.length > 0}
+            onChange={async (e) => {
+              const filesSelected = e.target.files;
+              if (!filesSelected) return;
 
-                    const selectedFiles = Array.from(filesSelected);
-                    const maxSize = 10 * 1024 * 1024;
+              const selectedFiles = Array.from(filesSelected);
+              const maxSize = 10 * 1024 * 1024;
 
-                    const filteredFiles = selectedFiles.filter(
-                      (file) =>
-                        file.size <= maxSize &&
-                        !files.education_certificate.some(
-                          (existingFile) => existingFile.name === file.name
-                        )
-                    );
+              const filteredFiles = selectedFiles.filter(
+                (file) =>
+                  file.size <= maxSize &&
+                  !files.education_certificate.some(
+                    (existingFile) => existingFile.name === file.name
+                  )
+              );
 
-                    if (filteredFiles.length < selectedFiles.length) {
-                      setError(
-                        "Some files were larger than 10MB or were duplicates and were not added."
-                      );
+              if (filteredFiles.length < selectedFiles.length) {
+                setError(
+                  "Some files were larger than 10MB or were duplicates and were not added."
+                );
+              }
+
+              for (const file of filteredFiles) {
+                await uploadAndStoreFile(
+                  file,
+                  "education_certificate",
+                  "education_certificate",
+                  
+                );
+              }
+            }}
+          />
+
+          {/* Show uploaded file names */}
+          {files.education_certificate.length > 0 && (
+            <div className="mt-2 flex flex-col gap-2">
+              {files.education_certificate.map((file, index) => (
+                <div
+                  key={index}
+                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2"
+                >
+                  <span className="break-words">{file.name}</span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleRemoveMultiFile("education_certificate", index)
                     }
-
-                    // Upload each file and store in formData
-                    for (const file of filteredFiles) {
-                      await uploadAndStoreFile(
-                        file,
-                        "education_certificate",
-                        "education_certificate"
-                      );
-                    }
-                  }}
-                />
-
-                {/* Show uploaded file names */}
-                {files.education_certificate.length > 0 && (
-                  <div className="mt-2 flex flex-col gap-2">
-                    {files.education_certificate.map((file, index) => (
-                      <div
-                        key={index}
-                        className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2"
-                      >
-                        <span className="break-words">{file.name}</span>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveMultiFile("education_certificate", index)
-                          }
-                          className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
             </div>
           </div>
         </div>

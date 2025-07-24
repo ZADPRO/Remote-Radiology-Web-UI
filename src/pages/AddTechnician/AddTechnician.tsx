@@ -25,6 +25,7 @@ import { NewTechnician, technicianService } from "@/services/technicianServices"
 import { Checkbox } from "@/components/ui/checkbox";
 import { ListSpecificScanCenter, scancenterService } from "@/services/scancenterService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -387,13 +388,11 @@ const AddTechnician: React.FC = () => {
                   Driver's License <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="drivers-license-upload"
-                  type="file"
-                  accept=".pdf"
-                  className="bg-[#a1b7c3]"
-                  value={formData.drivers_license.length === 0 ? "" : undefined}
-                  required={formData.drivers_license.length === 0}
+                  label="Upload Driver's License"
+                  required={true}
+                  isFilePresent={formData.drivers_license.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -456,14 +455,12 @@ const AddTechnician: React.FC = () => {
                   Upload License <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="license-upload"
-                  type="file"
-                  accept=".pdf"
+                  label="Upload License Files"
                   multiple
-                  className="bg-[#a1b7c3]"
-                  value={formData.license_files.length === 0 ? "" : undefined}
                   required={formData.license_files.length === 0}
+                  isFilePresent={formData.license_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
                     if (!filesSelected) return;
@@ -476,7 +473,11 @@ const AddTechnician: React.FC = () => {
                     );
 
                     for (const file of filteredFiles) {
-                      await uploadAndStoreFile(file, "license_files", "license_files");
+                      await uploadAndStoreFile(
+                        file,
+                        "license_files",
+                        "license_files"
+                      );
                     }
                   }}
                 />
@@ -511,20 +512,21 @@ const AddTechnician: React.FC = () => {
                   Digital Signature <span className="text-red-500">*</span>
                 </Label>
 
-                <Input
+                <FileUploadButton
                   id="digital-signature-upload"
-                  type="file"
+                  label="Upload Digital Signature"
                   accept="image/png, image/jpeg, image/jpg"
-                  className="bg-[#a1b7c3]"
-                  value={formData.digital_signature?.length === 0 ? "" : undefined}
                   required={formData.digital_signature?.length === 0}
+                  isFilePresent={formData.digital_signature?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
 
                     const maxSize = 5 * 1024 * 1024; // 5MB
                     if (file.size > maxSize) {
-                      setError("Digital signature image must be less than 5MB.");
+                      setError(
+                        "Digital signature image must be less than 5MB."
+                      );
                       return;
                     }
 

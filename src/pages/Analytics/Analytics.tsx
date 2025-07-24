@@ -26,18 +26,29 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, ChevronDown, User } from "lucide-react";
-import { MonthPicker } from "@/components/ui/monthpicker";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import { RoleList, useAuth, UserRole } from "../Routes/AuthContext";
 import { ListScanCenter } from "@/services/scancenterService";
 import { TATPieChart } from "./TATPieChart";
+import { DateRange } from "react-day-picker";
+import { Calendar } from "@/components/calendar";
+import { ChevronDown, User } from "lucide-react";
 
 const Analytics: React.FC = () => {
-  const [date, setDate] = React.useState<Date>(new Date());
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
 
-  date && console.log(format(date, "yyyy-MM"));
+  console.log(dateRange);
+  const [open, setOpen] = React.useState(false);
+
+  const handleSelect = (range: DateRange | undefined) => {
+    if (range) {
+      console.log(range);
+      setDateRange(range);
+    }
+  };
 
   const [centerSelectedValue, setCenterSelectedValue] = useState<number | null>(
     null
@@ -89,19 +100,30 @@ const Analytics: React.FC = () => {
   const accessMap: Record<AccessKey, UserRole[]> = {
     userselect: ["admin", "manager"],
     scancenterselect: ["admin", "manager"],
-    totalCorrect: ["radiologist"],
-    totalEdit: ["radiologist"],
-    recoCodeCount: ["admin"],
-    TAT: ["radiologist", "technician", "codoctor", "doctor"],
+    totalCorrect: ["radiologist", "wgdoctor"],
+    totalEdit: ["radiologist", "wgdoctor"],
+    recoCodeCount: ["admin", "wgdoctor"],
+    TAT: ["radiologist", "technician", "codoctor", "doctor", "wgdoctor"],
     totalCaseCountPopover: ["radiologist"],
-    previousMonth: ["admin", "manager", "scadmin", "radiologist", "technician"],
-    scanIndications: ["admin", "manager", "scadmin", "technician"],
+    previousMonth: [
+      "admin",
+      "manager",
+      "scadmin",
+      "radiologist",
+      "technician",
+      "wgdoctor",
+      "scribe",
+      "codoctor",
+      "doctor",
+    ],
+    scanIndications: ["admin", "manager", "scadmin", "technician", "wgdoctor"],
     turnaroundTime: [
       "admin",
       "radiologist",
       "technician",
       "codoctor",
       "doctor",
+      "wgdoctor",
     ],
   } as const;
 
@@ -135,10 +157,17 @@ const Analytics: React.FC = () => {
   const fetchOverallScanCenter = async (scId: number) => {
     try {
       console.log(scId);
+      if (!dateRange.from || !dateRange.to) {
+        console.error("Date range is incomplete.");
+        return;
+      }
+
       const res = await analyticsService.overallScanCenter(
         scId,
-        format(date, "yyyy-MM")
+        format(dateRange.from, "yyyy-MM-dd"),
+        format(dateRange.to, "yyyy-MM-dd")
       );
+
       console.log("overall", res);
 
       if (res.status) {
@@ -147,6 +176,7 @@ const Analytics: React.FC = () => {
         setAllUsers(res.UserListIds);
         setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics);
         setRecode(res.ImpressionModel);
+        setTatStats([])
       }
     } catch (error) {
       console.log(error);
@@ -158,14 +188,18 @@ const Analytics: React.FC = () => {
       user?.refUserId === null ||
       user?.refUserId === undefined ||
       role?.id === null ||
-      role?.id === undefined
+      role?.id === undefined ||
+      dateRange === undefined ||
+      dateRange.from === undefined ||
+      dateRange.to === undefined
     )
       return;
     try {
       const res = await analyticsService.analyticsPerUser(
         userId,
         roleId,
-        format(date, "yyyy-MM")
+        format(dateRange?.from, "yyyy-MM-dd"),
+        format(dateRange?.to, "yyyy-MM-dd")
       );
 
       console.log("peruser", res);
@@ -202,7 +236,7 @@ const Analytics: React.FC = () => {
     } else {
       fetchAnalyticsPeruser(user.refUserId, role?.id);
     }
-  }, [date]);
+  }, [dateRange]);
 
   useEffect(() => {
     centerSelectedValue && fetchOverallScanCenter(Number(centerSelectedValue));
@@ -318,7 +352,7 @@ const Analytics: React.FC = () => {
         </div>
 
         <div className="flex items-start justify-between">
-          <Popover>
+          {/* <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -328,12 +362,46 @@ const Analytics: React.FC = () => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-5 w-5" />{" "}
-                {/* ⬅️ Slightly bigger icon */}
+                {/* ⬅️ Slightly bigger icon */}{" "}
+          {/*}
                 {date ? format(date, "MMM yyyy") : <span>Pick a month</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <MonthPicker onMonthSelect={setDate} selectedMonth={date} />
+            </PopoverContent>
+          </Popover> */}
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal p-5"
+              >
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    `${format(dateRange.from, "MMM d, yyyy")} - ${format(
+                      dateRange.to,
+                      "MMM d, yyyy"
+                    )}`
+                  ) : (
+                    format(dateRange.from, "MMM d, yyyy")
+                  )
+                ) : (
+                  <span className="text-muted-foreground">
+                    Pick a date range
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                autoFocus
+                mode="range"
+                selected={dateRange}
+                onSelect={handleSelect}
+                numberOfMonths={2}
+                required={false}
+              />
             </PopoverContent>
           </Popover>
         </div>

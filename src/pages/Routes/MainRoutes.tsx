@@ -50,6 +50,8 @@ import PatientQueue from "../PatientQueue/PatientQueue";
 import UploadDicomFiles from "../PatientQueue/UploadDicomFiles";
 import Analytics from "../Analytics/Analytics";
 import NewInvoice from "../Invoice/NewInvoice";
+import AddWGPerformingProvider from "../AddWGPerformingProvider/AddWGPerformingProvider";
+import ManageWGPerformingProvider from "../ManageWGPerformingProvider/ManageWGPerformingProvider";
 
 // Define a type for route configurations to improve readability and type safety
 interface AppRoute {
@@ -86,6 +88,8 @@ const MainRoutes: React.FC = () => {
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
     { path: "patientQueue", element: <PatientQueue />},
+    { path: "addWgDoctor", element: <AddWGPerformingProvider />},
+    { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
   ];
 
   const scAdminRoutes: AppRoute[] = [
@@ -158,6 +162,13 @@ const MainRoutes: React.FC = () => {
     { path: "myCare", element: <MyCare /> },
     { path: "medicalHistory", element: <PatientQueue />},
   ];
+
+   const wgDocotrRoutes: AppRoute[] = [
+    { index: true, element: <Navigate to="dashboard" replace /> },
+    { path: "dashboard", element: <Dashboard /> },
+    { path: "patientQueue", element: <PatientQueue />},
+    { path: "analytics", element: <Analytics /> },
+  ]
 
   // Helper function to render routes, applying RoleProtectedRoute when needed
   const renderRoutes = (routes: AppRoute[]) => {
@@ -257,6 +268,17 @@ const MainRoutes: React.FC = () => {
             }
           >
             {renderRoutes(scAdminRoutes)}
+          </Route>
+
+          <Route
+            path="/wgdoctor"
+            element={
+              <RoleProtectedRoute allowedRoles={["wgdoctor"]}>
+                <MasterAdmin />
+              </RoleProtectedRoute>
+            }
+          >
+            {renderRoutes(wgDocotrRoutes)}
           </Route>
 
           <Route

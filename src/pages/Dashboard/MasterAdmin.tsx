@@ -38,6 +38,7 @@ import GeneralGuidelines from "./GeneralGuidelines";
 import UserConsent from "../Consent/UserConsent";
 import logoNew from "../../assets/LogoNew.png";
 import PatientProfile from "../Profile/PatientProfile";
+import WGPerformingProvider from "../Profile/WGPerformingProvider";
 // import {
 //   HiChartPie,
 //   HiUser,
@@ -64,6 +65,8 @@ const MasterAdmin: React.FC = () => {
         return <CoReportingDoctorProfile />;
       case "radiologist":
         return <RadiologistProfile />;
+        case "wgdoctor":
+        return <WGPerformingProvider />;
       case "patient":
         return <PatientProfile />;
       case "admin":
@@ -187,17 +190,17 @@ const MasterAdmin: React.FC = () => {
     ],
     patient: [
       {
-        label: "My Care",
+        label: "Home",
         path: "/patient/myCare",
         icon: <img src={dashboard} className="w-4 h-4" />,
       },
       {
-        label: "Medical History",
+        label: "My Reports",
         path: "/patient/medicalHistory",
         icon: <img src={medicalHistory} className="w-5 h-5" />,
       },
       {
-        label: "Patient Brochure",
+        label: "Patient Info",
         path: "/patient/dashboard",
         icon: <img src={PatientBrochure} className="w-5 h-5" />,
       },
@@ -253,6 +256,23 @@ const MasterAdmin: React.FC = () => {
         icon: <ChartPie className="w-4 h-4" />,
       },
     ],
+     wgdoctor: [
+      {
+        label: "Dashboard",
+        path: "/wgdoctor/dashboard",
+        icon: <img src={dashboard} className="w-4 h-4" />,
+      },
+      {
+        label: "Patient Queue",
+        path: "/wgdoctor/patientQueue",
+        icon: <PersonStanding className="w-4 h-4" />,
+      },
+      {
+        label: "Analytics",
+        path: "/wgdoctor/analytics",
+        icon: <ChartPie className="w-4 h-4" />,
+      },
+    ],
   };
 
   const menus = role?.type ? roleMenus[role.type] || [] : [];
@@ -280,7 +300,7 @@ const MasterAdmin: React.FC = () => {
       <div className="lg:hidden fixed bottom-0 left-0 w-full h-[8vh] bg-white rounded-t-2xl shadow-md flex items-center justify-between px-10 z-50">
         {menus.map((menu) => (
           <>
-            {menu.label === "Patient Brochure" ? (
+            {menu.label === "Patient Info" ? (
               <>
                 <DropdownMenu
                   open={BrochureMobileMenu}
@@ -300,12 +320,54 @@ const MasterAdmin: React.FC = () => {
                       onClick={() => {
                         setBrochureMobileMenu(false);
                         setBrochureMenuopen(true);
-                        setActiveDialogContent(<Brochure />);
+                         setActiveDialogContent(
+                               <DialogContent
+                                style={{
+                                  background:
+                                    "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
+                                }}
+                                className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+                              >
+                                <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
+                                  {/* Logo (Left) */}
+                                  <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
+                                    <img
+                                      src={logoNew}
+                                      alt="logo"
+                                      className="w-full h-full object-contain"
+                                    />
+                                  </div>
+
+                                  {/* Centered Content */}
+                                  <div className="flex-1 text-center">
+                                    <h2 className="text-2xl font-semibold">
+                                      Brochure
+                                    </h2>
+                                    <p className="text-sm text-gray-600 max-w-md mx-auto">
+                                      EaseQT Platform
+                                    </p>
+                                  </div>
+
+                                  {/* Spacer to balance logo width */}
+                                  <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
+                                </DialogHeader>
+                                <Brochure/>
+                                 <h2 className="text-2xl text-center my-3 font-semibold">
+                                      General Guidelines
+                                    </h2>
+                                <GeneralGuidelines/>
+                                <h2 className="text-2xl text-center my-3 font-semibold">
+                                      Disclaimer
+                                    </h2>
+                                <Disclaimer/>
+                                
+                              </DialogContent>
+                            );
                       }}
                     >
-                      Brouchure
+                      Brochure
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+                    {/* <DropdownMenuItem
                       className="cursor-pointer"
                       onClick={() => {
                         setBrochureMobileMenu(false);
@@ -324,7 +386,7 @@ const MasterAdmin: React.FC = () => {
                       }}
                     >
                       General guidelines
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem
                       className="cursor-pointer"
                       onClick={() => {
@@ -408,7 +470,7 @@ const MasterAdmin: React.FC = () => {
           <div className="hidden lg:flex items-center gap-3">
             {menus.map((menu) => (
               <>
-                {menu.label === "Patient Brochure" ? (
+                {menu.label === "Patient Info" ? (
                   <>
                     <DropdownMenu
                       open={BrochureMenu}
@@ -417,14 +479,14 @@ const MasterAdmin: React.FC = () => {
                       <DropdownMenuTrigger asChild>
                         <div
                           key={menu.path}
-                          className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-3xl cursor-pointer transition ${
+                          className={`flex items-center justify-center gap-2 py-1.5 2xl:py-3 px-3 2xl:px-4 rounded-3xl cursor-pointer transition ${
                             selectedMenu === menu.label
                               ? "bg-[#B1B8AA]"
                               : "bg-[#f8f3eb]"
                           }`}
                         >
                           {menu.icon}
-                          <span className="text-sm font-semibold mt-[1.5px]">
+                          <span className="text-sm 2xl:text-lg font-semibold mt-[1.5px]">
                             {menu.label}
                           </span>
                         </div>
@@ -436,12 +498,53 @@ const MasterAdmin: React.FC = () => {
                           onClick={() => {
                             setBrochureMenu(false);
                             setBrochureMenuopen(true);
-                            setActiveDialogContent(<Brochure />);
+                            setActiveDialogContent(
+                               <DialogContent
+                                style={{
+                                  background:
+                                    "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
+                                }}
+                                className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+                              >
+                                <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
+                                  {/* Logo (Left) */}
+                                  <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
+                                    <img
+                                      src={logoNew}
+                                      alt="logo"
+                                      className="w-full h-full object-contain"
+                                    />
+                                  </div>
+
+                                  {/* Centered Content */}
+                                  <div className="flex-1 text-center">
+                                    <h2 className="text-2xl font-semibold">
+                                      Brochure
+                                    </h2>
+                                    <p className="text-sm text-gray-600 max-w-md mx-auto">
+                                      EaseQT Platform
+                                    </p>
+                                  </div>
+
+                                  {/* Spacer to balance logo width */}
+                                  <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
+                                </DialogHeader>
+                                <Brochure/>
+                                 <h2 className="text-2xl text-center my-3 font-semibold">
+                                      General Guidelines
+                                    </h2>
+                                <GeneralGuidelines/>
+                                <h2 className="text-2xl text-center my-3 font-semibold">
+                                      Disclaimer
+                                    </h2>
+                                <Disclaimer/>
+                              </DialogContent>
+                            );
                           }}
                         >
-                          Brouchure
+                          Brochure
                         </DropdownMenuItem>
-                        <DropdownMenuItem
+                        {/* <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => {
                             setBrochureMenu(false);
@@ -460,7 +563,7 @@ const MasterAdmin: React.FC = () => {
                           }}
                         >
                           General guidelines
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => {

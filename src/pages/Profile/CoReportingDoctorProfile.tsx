@@ -188,7 +188,7 @@ const CoReportingDoctorProfile: React.FC = () => {
             <Label htmlFor="socialSecurityNo">Social Security Number</Label>
             <Input
               id="socialSecurityNo"
-              value={formData.refDDSocialSecurityNo || "N/A"}
+              value={formData.refCDSocialSecurityNo || "N/A"}
               readOnly
               className="bg-white"
             />
@@ -272,7 +272,7 @@ const CoReportingDoctorProfile: React.FC = () => {
             <Label htmlFor="npi">NPI</Label>
             <Input
               id="npi"
-              value={formData.refDDNPI || "N/A"}
+              value={formData.refCDNPI || "N/A"}
               readOnly
               className="bg-white"
             />

@@ -2,9 +2,7 @@ import {
   Mail,
   Phone,
   FileText,
-  Info,
   BookOpen,
-  ClipboardList,
   FileSignature,
   FileImage,
   ReceiptText,
@@ -20,12 +18,10 @@ import TechGuidelines from "../Consent/TechGuidelines";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import logoNew from "../../assets/LogoNew.png";
 import UserConsent from "../Consent/UserConsent";
-import Brochure from "./Brochure";
-import Disclaimer from "./Disclaimer";
-import GeneralGuidelines from "./GeneralGuidelines";
 import RadiologyTrainingMaterial from "./RadiologyTrainingMaterial";
 import InvoicePopUp from "./InvoicePopUp";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import PatientInformation from "./PatientInformation";
 
 const Dashboard: React.FC = () => {
   const [userData, setUserData] = useState<UserProfile>();
@@ -51,6 +47,7 @@ const Dashboard: React.FC = () => {
     try {
       const res = await dashboardService.dashboardInfo();
       if (res.status) {
+        console.log(res.data)
         setUserData(res.data);
       }
     } catch (error) {
@@ -71,9 +68,9 @@ const Dashboard: React.FC = () => {
       icon: <User className="w-12 h-12 text-[#4e5b4d]" />,
       options: [
         {
-          label: "Brochure",
+          label: "Patient Brochure",
           icon: <FileText className="w-6 h-6" />,
-          dialogContent: <Brochure />,
+          dialogContent: <PatientInformation />,
           allowesUser: [
             "admin",
             "technician",
@@ -83,38 +80,58 @@ const Dashboard: React.FC = () => {
             "scribe",
             "codoctor",
             "manager",
+            "doctor",
+            "wgdoctor"
           ],
         },
-        {
-          label: "Disclaimer",
-          icon: <Info className="w-6 h-6" />,
-          dialogContent: <Disclaimer />,
-          allowesUser: [
-            "admin",
-            "technician",
-            "scadmin",
-            "patient",
-            "radiologist",
-            "scribe",
-            "codoctor",
-            "manager",
-          ],
-        },
-        {
-          label: "General Guidelines",
-          icon: <ClipboardList className="w-6 h-6" />,
-          dialogContent: <GeneralGuidelines />,
-          allowesUser: [
-            "admin",
-            "technician",
-            "scadmin",
-            "patient",
-            "radiologist",
-            "scribe",
-            "codoctor",
-            "manager",
-          ],
-        },
+        // {
+        //   label: "Brochure",
+        //   icon: <FileText className="w-6 h-6" />,
+        //   dialogContent: <Brochure />,
+        //   allowesUser: [
+        //     "admin",
+        //     "technician",
+        //     "scadmin",
+        //     "patient",
+        //     "radiologist",
+        //     "scribe",
+        //     "codoctor",
+        //     "manager",
+        //     "wgdoctor"
+        //   ],
+        // },
+        // {
+        //   label: "Disclaimer",
+        //   icon: <Info className="w-6 h-6" />,
+        //   dialogContent: <Disclaimer />,
+        //   allowesUser: [
+        //     "admin",
+        //     "technician",
+        //     "scadmin",
+        //     "patient",
+        //     "radiologist",
+        //     "scribe",
+        //     "codoctor",
+        //     "manager",
+        //     "wgdoctor"
+        //   ],
+        // },
+        // {
+        //   label: "General Guidelines",
+        //   icon: <ClipboardList className="w-6 h-6" />,
+        //   dialogContent: <GeneralGuidelines />,
+        //   allowesUser: [
+        //     "admin",
+        //     "technician",
+        //     "scadmin",
+        //     "patient",
+        //     "radiologist",
+        //     "scribe",
+        //     "codoctor",
+        //     "manager",
+        //     "wgdoctor"
+        //   ],
+        // },
         {
           label: "Consent Form",
           icon: <FileSignature className="w-6 h-6" />,
@@ -150,10 +167,11 @@ const Dashboard: React.FC = () => {
             "technician",
             "scadmin",
             "patient",
-            "radiologist",
             "scribe",
             "codoctor",
+            "doctor",
             "manager",
+            "wgdoctor"
           ],
         },
       ],
@@ -165,7 +183,9 @@ const Dashboard: React.FC = () => {
         "radiologist",
         "scribe",
         "codoctor",
+        "doctor",
         "manager",
+        "wgdoctor"
       ],
     },
     {
@@ -184,6 +204,7 @@ const Dashboard: React.FC = () => {
             "scribe",
             "codoctor",
             "manager",
+            "wgdoctor"
           ],
         },
         {
@@ -222,10 +243,10 @@ const Dashboard: React.FC = () => {
             "admin",
             "technician",
             "scadmin",
-            "radiologist",
             "scribe",
             "codoctor",
             "manager",
+            "wgdoctor"
           ],
         },
       ],
@@ -237,6 +258,7 @@ const Dashboard: React.FC = () => {
         "scribe",
         "codoctor",
         "manager",
+        "wgdoctor"
       ],
     },
     {
@@ -275,16 +297,16 @@ const Dashboard: React.FC = () => {
               <UserConsent viewOnly staticType={"radiologist"} />
             </DialogContent>
           ),
-          allowesUser: ["admin", "radiologist", "manager"],
+          allowesUser: ["admin", "radiologist", "manager", "wgdoctor"],
         },
         {
           label: "Radiology Training Materials",
           icon: <FileImage className="w-6 h-6" />,
           dialogContent: <RadiologyTrainingMaterial />,
-          allowesUser: ["admin", "radiologist", "manager"],
+          allowesUser: ["admin", "radiologist", "manager", "wgdoctor"],
         },
       ],
-      allowesUser: ["admin", "radiologist", "manager"],
+      allowesUser: ["admin", "radiologist", "manager", "wgdoctor"],
     },
     {
       role: "Admin",
@@ -294,10 +316,10 @@ const Dashboard: React.FC = () => {
           label: "Invoices",
           icon: <ReceiptText className="w-6 h-6" />,
           dialogContent: <InvoicePopUp />,
-          allowesUser: ["admin", "radiologist", "scribe"],
+          allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin"],
         },
       ],
-      allowesUser: ["admin", "radiologist", "scribe"],
+      allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin"],
     },
   ];
 

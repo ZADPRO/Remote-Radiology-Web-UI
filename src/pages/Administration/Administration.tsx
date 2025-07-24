@@ -1,10 +1,11 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import scancenterImg from "../../assets/Administration/Manage Scan Center.png";
+import wgPPImg from "../../assets/Administration/Manage WGPP.png";
 import scribeImg from "../../assets/Administration/Manage Scribe.png";
 import radiologistImg from "../../assets/Administration/Manage Radiologist.png";
 import weelthGreenImg from "../../assets/Administration/Manage Weelth Green Manager.png";
+import scanCenterImg from "../../assets/Administration/Manage Scan Center.png";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Routes/AuthContext";
 
@@ -13,6 +14,7 @@ interface AdminCardProps {
   icon: React.ReactNode;
   bgColor?: string;
   onClick?: () => void;
+  textWidth?: string;
 }
 
 const AdminCard: React.FC<AdminCardProps> = ({
@@ -20,6 +22,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
   icon,
   bgColor,
   onClick,
+  textWidth
 }) => {
   return (
     <Card
@@ -29,9 +32,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
       )}
       onClick={onClick}
     >
-      <CardContent className="flex flex-col justify-center items-center text-center h-full space-y-3 p-4">
+      <CardContent className="flex flex-col justify-center items-center w-full h-full space-y-3 px-4">
         <div className="w-16 h-16 xl:w-20 xl:h-20">{icon}</div>
-        <div className="text-sm xl:text-base font-semibold text-[#3f3f3f] leading-tight">
+        <div className={`text-xs xl:text-sm 2xl:text-base font-semibold text-[#3f3f3f] text-center leading-tight ${textWidth}`}>
           {title}
         </div>
       </CardContent>
@@ -72,8 +75,18 @@ const Administration: React.FC = () => {
                 onClick={() =>
                   navigate(`/${role?.type}/manageWellthGreenManager`)
                 }
+                textWidth="w-full"
               />
             )}
+            <AdminCard
+              title="Manage Wellthgreen Performing Provider"
+              icon={
+                <img src={wgPPImg} alt="WGP Performing Provider" className="w-full h-full" />
+              }
+              bgColor="bg-[#c3c8bc]"
+              onClick={() => navigate(`/${role?.type}/manageWgDoctor`)}
+              textWidth="w-full"
+            />
 
             <AdminCard
               title="Manage Radiologist"
@@ -86,6 +99,7 @@ const Administration: React.FC = () => {
               }
               bgColor="bg-[#c3c8bc]"
               onClick={() => navigate(`/${role?.type}/manageRadiologist`)}
+              textWidth="w-1/2"
             />
             <AdminCard
               title="Manage Scribe"
@@ -94,6 +108,7 @@ const Administration: React.FC = () => {
               }
               bgColor="bg-[#c3c8bc]"
               onClick={() => navigate(`/${role?.type}/manageScribe`)}
+              textWidth="w-1/2"
             />
           </div>
         </div>
@@ -112,16 +127,17 @@ const Administration: React.FC = () => {
           </h2>
           <div className="flex justify-center">
             <AdminCard
-              title="Manage Scan centre"
+              title="Manage Scan Centre"
               icon={
                 <img
-                  src={scancenterImg}
+                  src={scanCenterImg}
                   alt="Scan centre"
                   className="w-full h-full"
                 />
               }
               bgColor="bg-[#F4D9D9]"
               onClick={() => navigate(`/${role?.type}/manageScanCenter`)}
+              textWidth="w-2/3"
             />
           </div>
         </div>

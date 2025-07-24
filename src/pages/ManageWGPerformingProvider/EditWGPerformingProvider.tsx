@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  radiologistService,
+  ListSpecificWGPerformingProvider,
+} from "@/services/radiologistService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input"; // Import Input
 import { Label } from "@/components/ui/label"; // Import Label
@@ -10,24 +14,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import DatePicker from "@/components/date-picker";
-import { Camera, FileText, Pencil, X } from "lucide-react";
+import DatePicker from "@/components/date-picker";import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
-import { doctorService, ListSpecificPerformingProvider } from "@/services/doctorService";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
-// Define the props interface for EditPerformingProvider
-interface EditPerformingProviderProps {
-    scanCenterId: number;
-  scanCenterDoctorId: number;
+// Define the props interface for EditRadiologist
+interface EditRadiologistProps {
+  radiologistId: number;
   setIsEditDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onUpdate: () => void;
 }
 // Interface for temporary file storage
 interface TempFilesState {
   profile_img: File | null;
+  cv_files: File[];
   license_files: File[];
+  pan: File | null;
+  aadhar: File | null;
   drivers_license: File | null;
   malpracticeinsureance_files: File[];
   digital_signature: File | null;
@@ -40,22 +45,31 @@ interface TempLicense {
   status: "new" | "delete"; // you can expand status as needed
 }
 
-const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
-    scanCenterId,
-  scanCenterDoctorId,
+const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
+  radiologistId,
   setIsEditDialogOpen,
   onUpdate,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null); // State for error messages
+  const errorRef = useRef<HTMLDivElement>(null);
 
-  console.log(error);
+  useEffect(() => {
+      if (error && errorRef.current) {
+        errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, [error]);
 
-  const [tempLicenses, setTempLicenses] = useState<TempLicense[]>([]);
-    const [tempMalpractice, setTempMalpractice] = useState<TempLicense[]>([]);
-
-  const [formData, setFormData] = useState<ListSpecificPerformingProvider>({
+  const [formData, setFormData] = useState<ListSpecificWGPerformingProvider>({
+  aadharFile: {
+    base64Data: "",
+    contentType: "",
+  },
+  panFile: {
+    base64Data: "",
+    contentType: "",
+  },
   profileImgFile: {
     base64Data: "",
     contentType: "",
@@ -64,34 +78,29 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     base64Data: "",
     contentType: "",
   },
-  driversLicenseFile: {
+  drivingLicenseFile: {
     base64Data: "",
     contentType: "",
   },
 
+  cvFiles: [],
   licenseFiles: [],
   malpracticeinsureance_files: [],
   medicalLicenseSecurity: [],
 
-  aadharFile: {
-    base64Data: "",
-    contentType: "",
-  }, // optional based on earlier structure
-  panFile: {
-    base64Data: "",
-    contentType: "",
-  },    // optional based on earlier structure
-
   refCODOEmail: "",
   refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "",
+  refCODOPhoneNo1CountryCode: "+91",
+  refCODOPhoneNo2: "",
+  refCODOPhoneNo2CountryCode: "+91",
 
-  refDDNPI: "",
-  refDDSocialSecurityNo: "",
-
-  digital_signature: "",
-  drivers_license: "",
-  Specialization: "",
+  refWGPPAadhar: "",
+  refWGPPDrivingLicense: "",
+  refWGPPDigitalSignature: "",
+  refWGPPMBBSRegNo: "",
+  refWGPPMDRegNo: "",
+  refWGPPPan: "",
+  refWGPPSpecialization: "",
 
   refRTId: 0,
   refUserCustId: "",
@@ -100,31 +109,39 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
   refUserLastName: "",
   refUserId: 0,
   refUserProfileImg: "",
-  refUserStatus: false,
+  refUserStatus: true,
 });
-
 
   const [files, setFiles] = useState<TempFilesState>({
       profile_img: null,
+      cv_files: [],
       license_files: [],
+      pan: null,
+      aadhar: null,
       drivers_license: null,
       malpracticeinsureance_files: [],
       digital_signature: null,
     });
 
-  const getSpecificCenterAdmin = async () => {
+  const [tempLicenses, setTempLicenses] = useState<TempLicense[]>([]);
+  const [tempCVFiles, setTempCVs] = useState<TempLicense[]>([]);
+  const [tempMalpractice, setTempMalpractice] = useState<TempLicense[]>([]);
+
+  const getSpecificRadiologist = async () => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
-      const res = await doctorService.getSpecificPerformingProvider(
-        scanCenterId, scanCenterDoctorId
+      const res = await radiologistService.listSpecificWGPerformingProvider(
+        radiologistId
       );
-      console.log("Fetching Center Admin...", res);
+      console.log("Fetching radiologist...", res);
 
-      setFormData(res.data[0]);
+      const radiologistData = res.data[0]; 
+
+      setFormData(radiologistData);
     } catch (error: any) {
-      console.error("Error fetching center admin:", error);
-      setError(error.message || "Failed to fetch center admin details.");
+      console.error("Error fetching radiologist:", error);
+      setError(error.message || "Failed to fetch radiologist details.");
     } finally {
       setLoading(false);
     }
@@ -161,13 +178,43 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     }
   };
 
+  const handleDigitalSignatureUpload = async (
+    file: File,
+  ) => {
+    const formDataImg = new FormData();
+    formDataImg.append("profileImage", file);
+    setError("");
+    try {
+      const response = await uploadService.uploadImage({
+        formImg: formDataImg,
+      });
+  
+      if (response.status) {
+        setFormData((prev) => ({
+          ...prev,
+          refRADigitalSignature: response.fileName,
+          digitalSignatureFile: null,
+        }));
+  
+        setFiles((prev) => ({
+          ...prev,
+          digital_signature: file,
+        }));
+      } else {
+        setError("Digital signature upload failed.");
+      }
+    } catch (err) {
+      setError("Error uploading digital signature.");
+    }
+  };
+
   const handleSingleFileUpload = async ({
     file,
     fieldName, // e.g., "aadhar_file" or "pan_file"
     tempFileKey, // e.g., "aadhar" or "pan"
   }: {
     file: File;
-    fieldName: keyof ListSpecificPerformingProvider;
+    fieldName: keyof ListSpecificWGPerformingProvider;
     tempFileKey: keyof TempFilesState;
   }) => {
     const formDataObj = new FormData();
@@ -196,45 +243,49 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     }
   };
 
-//   const uploadAndStoreFile = async (
-//     file: File,
-//     tempField: keyof files,
-//     uploadFn = uploadService.uploadFile // optional, default upload function
-//   ): Promise<void> => {
-//     const formData = new FormData();
-//     formData.append("file", file);
+  const uploadAndStoreFile = async (
+    file: File,
+    tempField: keyof TempFilesState,
+    uploadFn = uploadService.uploadFile // optional, default upload function
+  ): Promise<void> => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-//     try {
-//       const response = await uploadFn({ formFile: formData });
+    try {
+      const response = await uploadFn({ formFile: formData });
 
-//       if (response.status) {
-//         const result: TempLicense = {
-//           file_name: response.fileName,
-//           old_file_name: file.name,
-//           status: "new" as const,
-//         };
+      if (response.status) {
+        const result: TempLicense = {
+          file_name: response.fileName,
+          old_file_name: file.name,
+          status: "new" as const,
+        };
 
-//         console.log(result);
+        console.log(result);
 
-//         if (tempField == "license_files") {
-//           setTempLicenses((prev) => [...prev, result]);
-//         }
+        if (tempField == "license_files") {
+          setTempLicenses((prev) => [...prev, result]);
+        }
 
-//         if (tempField == "cv_files") {
-//           setTempCVs((prev) => [...prev, result]);
-//         }
+        if (tempField == "cv_files") {
+          setTempCVs((prev) => [...prev, result]);
+        }
 
-//         setFiles((prev) => ({
-//           ...prev,
-//           [tempField]: [...((prev[tempField] as File[]) || []), file],
-//         }));
-//       } else {
-//         setError(`Upload failed for file: ${file.name}`);
-//       }
-//     } catch (err) {
-//       setError(`Error uploading file: ${file.name}`);
-//     }
-//   };
+        if (tempField == "malpracticeinsureance_files") {
+          setTempMalpractice((prev) => [...prev, result]);
+        }
+
+        setFiles((prev) => ({
+          ...prev,
+          [tempField]: [...((prev[tempField] as File[]) || []), file],
+        }));
+      } else {
+        setError(`Upload failed for file: ${file.name}`);
+      }
+    } catch (err) {
+      setError(`Error uploading file: ${file.name}`);
+    }
+  };
 
   const handleRemoveSingleFile = (key: "profile_img" | "pan" | "aadhar" | "digital_signature") => {
     setFiles((prev) => ({
@@ -253,8 +304,8 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
   };
 
   useEffect(() => {
-    getSpecificCenterAdmin();
-  }, [scanCenterDoctorId]); // Re-run effect if scanCenterAdminId changes
+    getSpecificRadiologist();
+  }, [radiologistId]); // Re-run effect if radiologistId changes
 
   const handleSubmit = async () => {
     setSaveLoading(true);
@@ -265,41 +316,48 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         id: formData.refUserId,
         firstname: formData.refUserFirstName,
         lastname: formData.refUserLastName,
-        profile_img: formData.refUserProfileImg,
         email: formData.refCODOEmail,
         dob: formData.refUserDOB,
         phone: formData.refCODOPhoneNo1,
+        emergency_phone: formData.refCODOPhoneNo2,
         phoneCountryCode: formData.refCODOPhoneNo1CountryCode,
-        drivers_license_no: formData.drivers_license,
-        social_security_no: formData.refDDSocialSecurityNo,
-        drivers_license: formData.drivers_license,
-        Specialization: formData.Specialization,
-        npi: formData.refDDNPI,
+        emergency_phoneCountryCode: formData.refCODOPhoneNo2CountryCode,
+        mbbs_register_number: formData.refWGPPMBBSRegNo,
+        md_register_number: formData.refWGPPMDRegNo,
+        specialization: formData.refWGPPSpecialization,
+        pan: formData.refWGPPPan,
+        aadhar: formData.refWGPPAadhar,
+        drivers_license: formData.refWGPPDrivingLicense,
+        digital_signature: formData.refWGPPDigitalSignature,
+        profile_img: formData.refUserProfileImg,
         status: formData.refUserStatus,
+        cv_files: tempCVFiles,
         license_files: tempLicenses,
         malpracticeinsureance_files: tempMalpractice,
-        digital_signature:  formData.digital_signature,
       };
-      console.log("payload",payload);
-      const res = await doctorService.updatePerformingProvider(payload);
+      console.log(payload);
+      const res = await radiologistService.updateRadiologist(payload);
       console.log(res);
       if (res.status) {
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
       }
+      else {
+        setError(res.message);
+      }
     } catch (error) {
       console.log(error);
+      setError("Failed to update radiologist. Please try again.");
     } finally {
       setLoading(false);
       setSaveLoading(false);
     }
   };
 
-//   if (error) return <div className="text-red-500 mb-4 p-4">{error}</div>;
   if(loading) return (<LoadingOverlay />);
 
-  if (!formData) return <div className="p-4">No Performing Provider Admin data found.</div>;
+  if (!formData) return <div className="p-4">No radiologist data found.</div>;
 
   function downloadFile(
     base64Data: string,
@@ -320,7 +378,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -329,75 +387,10 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  const uploadAndStoreFile = async (
-      file: File,
-      tempField: keyof TempFilesState,
-      uploadFn = uploadService.uploadFile // optional, default upload function
-    ): Promise<void> => {
-      const formData = new FormData();
-      formData.append("file", file);
-  
-      try {
-        const response = await uploadFn({ formFile: formData });
-  
-        if (response.status) {
-          const result: TempLicense = {
-            file_name: response.fileName,
-            old_file_name: file.name,
-            status: "new" as const,
-          };
-  
-          console.log(result);
-  
-          if (tempField == "license_files") {
-            setTempLicenses((prev) => [...prev, result]);
-          }
-  
-          if (tempField == "malpracticeinsureance_files") {
-            setTempMalpractice((prev) => [...prev, result]);
-          }
-  
-          setFiles((prev) => ({
-            ...prev,
-            [tempField]: [...((prev[tempField] as File[]) || []), file],
-          }));
-        } else {
-          setError(`Upload failed for file: ${file.name}`);
-        }
-      } catch (err) {
-        setError(`Error uploading file: ${file.name}`);
-      }
-    };
+  console.log(tempLicenses);
+  console.log(tempCVFiles);
+  console.log(tempMalpractice);
 
-    const handleDigitalSignatureUpload = async (
-        file: File,
-      ) => {
-        const formDataImg = new FormData();
-        formDataImg.append("profileImage", file);
-        setError("");
-        try {
-          const response = await uploadService.uploadImage({
-            formImg: formDataImg,
-          });
-      
-          if (response.status) {
-            setFormData((prev) => ({
-              ...prev,
-              digital_signature: response.fileName,
-              digitalSignatureFile: null,
-            }));
-      
-            setFiles((prev) => ({
-              ...prev,
-              digital_signature: file,
-            }));
-          } else {
-            setError("Digital signature upload failed.");
-          }
-        } catch (err) {
-          setError("Error uploading digital signature.");
-        }
-      };
 
   return (
     <>
@@ -474,11 +467,11 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
           )}
           <div className="flex flex-col gap-4 w-full lg:w-1/3">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-sm" htmlFor="Performing Provider Admin ID">
-                Performing Provider Admin ID
+              <Label className="text-sm" htmlFor="Radiologist ID">
+                Radiologist ID
               </Label>
               <Input
-                id="Performing Provider Admin ID"
+                id="Radiologist ID"
                 type="text"
                 className="bg-white"
                 disabled
@@ -501,7 +494,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 }
                 required
               >
-                <SelectTrigger id="status" className="bg-white w-full">
+                <SelectTrigger id="gender" className="bg-white w-full">
                   <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -535,25 +528,6 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 required
               />
             </div>
-            {/* <div className="flex flex-col gap-1.5">
-              <Label className="text-sm" htmlFor="lastname">
-                Last Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="lastname"
-                type="text"
-                placeholder="Enter Last Name"
-                className="bg-white"
-                value={formData.refUserLastName || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    refUserLastName: e.target.value,
-                  }))
-                }
-                required
-              />
-            </div> */}
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="email">
                 E-Mail <span className="text-red-500">*</span>
@@ -574,26 +548,171 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 disabled
               />
             </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Label className="text-sm " htmlFor="social_security_no">
-                Social Security Number <span className="text-red-500">*</span>
+            <div className="flex flex-col gap-1.5 w-full">
+              <Label className="text-sm font-medium" htmlFor="aadhar-upload">
+                Aadhar <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="social_security_no"
-                type="text"
-                placeholder="Enter Social Security Number"
-                className="bg-white"
-                value={formData.refDDSocialSecurityNo}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    social_security_no: e.target.value,
-                  }))
-                }
-                required
+
+              <FileUploadButton
+                id="aadhar-upload"
+                label="Upload Aadhar"
+                required={true}
+                isFilePresent={formData.refWGPPAadhar.length > 0}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("File must be less than 5MB.");
+                      return;
+                    }
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "refWGPPAadhar",
+                      tempFileKey: "aadhar",
+                    });
+                  }
+                }}
               />
+
+              {/* Show uploaded or existing Aadhar file */}
+              {files.aadhar ? (
+                <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
+                  <div className="bg-blue-100 p-2 rounded-md">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="truncate text-sm font-medium text-blue-800">
+                    {files.aadhar.name}
+                  </span>
+                </div>
+              ) : (
+                formData.refWGPPAadhar &&
+                formData.aadharFile && (
+                  <div
+                    className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    onClick={() =>
+                      downloadFile(
+                        formData.aadharFile.base64Data,
+                        formData.aadharFile.contentType,
+                        "Aadhar_File"
+                      )
+                    }
+                  >
+                    <div className="bg-green-100 p-2 rounded-md">
+                      <FileText className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="truncate text-sm font-medium text-green-800">
+                      Aadhar Document
+                    </span>
+                  </div>
+                )
+              )}
             </div>
+            <div className="flex flex-col gap-1.5 w-full">
+              <Label
+                className="text-sm font-medium"
+                htmlFor="drivers-license-upload"
+              >
+                Driving License <span className="text-red-500">*</span>
+              </Label>
+
+              <FileUploadButton
+                id="drivers-license-upload"
+                label="Upload Driving License"
+                accept=".pdf"
+                required
+                isFilePresent={formData.refWGPPDrivingLicense.length > 0}
+                maxSize={5 * 1024 * 1024} // 5MB
+                setError={setError}
+                onValidFile={(file) => {
+                  handleSingleFileUpload({
+                    file,
+                    fieldName: "refWGPPDrivingLicense",
+                    tempFileKey: "drivers_license",
+                  });
+                }}
+              />
+
+              {/* Show uploaded or existing Driving License file */}
+              {files.drivers_license ? (
+                <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
+                  <div className="bg-blue-100 p-2 rounded-md">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <span className="truncate text-sm font-medium text-blue-800">
+                    {files.drivers_license.name}
+                  </span>
+                </div>
+              ) : (
+                formData.refWGPPDrivingLicense &&
+                formData.drivingLicenseFile && (
+                  <div
+                    className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    onClick={() =>
+                      downloadFile(
+                        formData.drivingLicenseFile.base64Data,
+                        formData.drivingLicenseFile.contentType,
+                        "drivers_license"
+                      )
+                    }
+                  >
+                    <div className="bg-green-100 p-2 rounded-md">
+                      <FileText className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="truncate text-sm font-medium text-green-800">
+                      Driving License Document
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+            {/* <div className="flex flex-col gap-1.5 w-full">
+                      <Label className="text-sm" htmlFor="drivers-license-upload">
+                        Driver's License <span className="text-red-500">*</span>
+                      </Label>
+            
+                      <Input
+                        id="drivers-license-upload"
+                        type="file"
+                        accept=".pdf"
+                        className="bg-[#a1b7c3]"
+                        value={formData.drivers_license.length == 0 ? "" : ""}
+                        required={formData.drivers_license.length == 0}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+            
+                          const maxSize = 5 * 1024 * 1024;
+                          if (file.size > maxSize) {
+                            setError("Driver's license file must be less than 5MB.");
+                            return;
+                          }
+            
+                          handleSingleFileUpload({
+                            file,
+                            fieldName: "drivers_license",
+                            tempFileKey: "drivers_license",
+                          });
+                        }}
+                      />
+            
+                      {/* Uploaded Driver's License */}{" "}
+            {/*}
+                      {files.drivers_license && (
+                        <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
+                          <span className="break-words">
+                            {files.drivers_license.name}
+                          </span>
+            
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSingleFile("drivers_license")}
+                            className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div> */}
           </div>
 
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
@@ -612,15 +731,12 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                   }
                   disabled
                 >
-                  <SelectTrigger
-                    disabled
-                    className="bg-white"
-                  >
+                  <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="+1">USA (+1)</SelectItem>
-                    {/* <SelectItem value="+91">IN (+91)</SelectItem> */}
+                    {/* <SelectItem value="+1">USA (+1)</SelectItem> */}
+                    <SelectItem value="+91">IN (+91)</SelectItem>
                     {/* Add more country codes as needed */}
                   </SelectContent>
                 </Select>
@@ -644,6 +760,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 />
               </div>
             </div>
+
             <div className="flex flex-col gap-1.5 w-full relative">
               <Label className="text-sm" htmlFor="dob">
                 Date Of Birth <span className="text-red-500">*</span>
@@ -664,56 +781,54 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 }}
               />
             </div>
+
             <div className="flex flex-col gap-1.5 w-full">
-              <Label
-                className="text-sm font-medium"
-                htmlFor="drivers-license-upload"
-              >
-                Driving License <span className="text-red-500">*</span>
+              <Label className="text-sm font-medium" htmlFor="pan-upload">
+                PAN <span className="text-red-500">*</span>
               </Label>
 
               <FileUploadButton
-              id="license-upload"
-              label="Upload License"
-              required={false} // Or true if this is mandatory and no file present
-              isFilePresent={!!formData.drivers_license}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  if (file.size > 5 * 1024 * 1024) {
-                    setError("File must be less than 5MB.");
-                    return;
+                id="pan-upload"
+                label="Upload PAN"
+                accept=".pdf"
+                required={false}
+                isFilePresent={!!formData.refWGPPPan}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("File must be less than 5MB.");
+                      return;
+                    }
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "refWGPPPan",
+                      tempFileKey: "pan",
+                    });
                   }
+                }}
+              />
 
-                  handleSingleFileUpload({
-                    file,
-                    fieldName: "drivers_license",
-                    tempFileKey: "drivers_license",
-                  });
-                }
-              }}
-            />
-
-              {/* Show uploaded or existing Driving License file */}
-              {files.drivers_license ? (
+              {/* Show uploaded or existing PAN file */}
+              {files.pan ? (
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
                   <span className="truncate text-sm font-medium text-blue-800">
-                    {files.drivers_license.name}
+                    {files.pan.name}
                   </span>
                 </div>
               ) : (
-                formData.drivers_license &&
-                formData.driversLicenseFile && (
+                formData.refWGPPPan &&
+                formData.panFile && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
                     onClick={() =>
                       downloadFile(
-                        formData.driversLicenseFile.base64Data,
-                        formData.driversLicenseFile.contentType,
-                        "drivers_license"
+                        formData.panFile.base64Data,
+                        formData.panFile.contentType,
+                        "Pan_File"
                       )
                     }
                   >
@@ -721,7 +836,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                       <FileText className="w-5 h-5 text-green-600" />
                     </div>
                     <span className="truncate text-sm font-medium text-green-800">
-                      Driving License Document
+                      PAN Document
                     </span>
                   </div>
                 )
@@ -734,17 +849,20 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-15 w-full">
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-sm " htmlFor="npi">
-                NPI <span className="text-red-500">*</span>
+              <Label className="text-sm" htmlFor="mbbsRegNo">
+                MBBS Registration Number <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="npi"
+                id="mbbsRegNo"
                 type="text"
-                placeholder="Enter NPI"
+                placeholder="Enter Number"
                 className="bg-white"
-                value={formData.refDDNPI}
+                value={formData.refWGPPMBBSRegNo || ""}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, refDDNPI: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    refRAMBBSRegNo: e.target.value,
+                  }))
                 }
                 required
               />
@@ -758,11 +876,11 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 type="text"
                 placeholder="Enter Specialization"
                 className="bg-white"
-                value={formData.Specialization || ""}
+                value={formData.refWGPPSpecialization || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    Specialization: e.target.value,
+                    refRASpecialization: e.target.value,
                   }))
                 }
                 required
@@ -775,6 +893,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
 
               <FileUploadButton
                 id="license-upload"
+                accept=".pdf"
                 multiple
                 required={
                   !(
@@ -907,6 +1026,158 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
           </div>
 
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm" htmlFor="mdRegNo">
+                MD Registration Number <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="mdRegNo"
+                type="text"
+                placeholder="Enter Number"
+                className="bg-white"
+                value={formData.refWGPPMDRegNo || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refRAMDRegNo: e.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5 w-full">
+              <Label className="text-sm font-medium" htmlFor="cv-upload">
+                CV <span className="text-red-500">*</span>
+              </Label>
+
+              <FileUploadButton
+                id="cv-upload"
+                accept=".pdf"
+                multiple
+                required={
+                  !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
+                }
+                isFilePresent={files.cv_files.length > 0}
+                onChange={async (e) => {
+                  const filesSelected = e.target.files;
+                  if (!filesSelected) return;
+
+                  const selectedFiles = Array.from(filesSelected);
+                  const filteredFiles = selectedFiles.filter(
+                    (file) =>
+                      file.size <= 10 * 1024 * 1024 &&
+                      !files.cv_files.some((f) => f.name === file.name)
+                  );
+
+                  for (const file of filteredFiles) {
+                    await uploadAndStoreFile(file, "cv_files");
+                  }
+                }}
+              />
+
+              {/* Uploaded CV Files */}
+              {files.cv_files?.length > 0 && (
+                <div className="mt-3 flex flex-col gap-3">
+                  {files.cv_files.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group"
+                    >
+                      <div className="flex items-center gap-3 w-4/5 truncate">
+                        <div className="bg-blue-100 p-2 rounded-md">
+                          <FileText className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <span
+                          title={file.name}
+                          className="truncate font-semibold text-blue-800"
+                        >
+                          {file.name}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFiles((prev) => ({
+                            ...prev,
+                            cv_files:
+                              prev.cv_files?.filter((_, i) => i !== index) ||
+                              [],
+                          }));
+                          setTempCVs((prev) =>
+                            prev.filter((cv) => cv.old_file_name !== file.name)
+                          );
+                        }}
+                        className="text-red-500 hover:text-red-700 transition"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Existing CV Files */}
+              {formData.cvFiles?.length > 0 && (
+                <div className="mt-3 flex flex-col gap-3">
+                  {formData.cvFiles.map((file, index) => (
+                    <div
+                      key={`existing-cv-${index}`}
+                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                    >
+                      <div
+                        className="flex items-center gap-3 w-4/5 truncate"
+                        onClick={() =>
+                          downloadFile(
+                            file.cvFileData.base64Data,
+                            file.cvFileData.contentType,
+                            file.refCVOldFileName
+                          )
+                        }
+                      >
+                        <div className="bg-green-100 p-2 rounded-md">
+                          <FileText className="w-5 h-5 text-green-600" />
+                        </div>
+                        <span
+                          title={file.refCVOldFileName}
+                          className="truncate font-semibold text-green-800"
+                        >
+                          {file.refCVOldFileName || `Existing CV ${index + 1}`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => {
+                            const updatedCvFiles = prev.cvFiles?.filter(
+                              (_, i) => i !== index
+                            );
+                            return {
+                              ...prev,
+                              cvFiles: updatedCvFiles || [],
+                            };
+                          });
+
+                          const data = {
+                            id: file.refCVID,
+                            file_name: file.refCVFileName,
+                            old_file_name: file.refCVOldFileName,
+                            status: "delete" as const,
+                          };
+                          setTempCVs((prev) => [...prev, data]);
+                        }}
+                        className="text-red-500 hover:text-red-700 transition"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-col gap-1.5 w-full">
               <Label
                 className="text-sm font-medium"
@@ -918,6 +1189,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               <FileUploadButton
                 id="malpractice-upload"
                 label="Upload Malpractice Insurance"
+                accept=".pdf"
                 multiple
                 required={formData.malpracticeinsureance_files.length === 0}
                 isFilePresent={files.malpracticeinsureance_files.length > 0}
@@ -1058,7 +1330,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 label="Upload Digital Signature"
                 accept="image/png, image/jpeg, image/jpg"
                 required={
-                  !formData.digital_signature && !files.digital_signature
+                  !formData.refWGPPDigitalSignature && !files.digital_signature
                 }
                 isFilePresent={!!files.digital_signature}
                 onChange={(e) => {
@@ -1097,7 +1369,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
 
               {/* Show existing digital signature from backend */}
               {!files.digital_signature &&
-                formData.digital_signature &&
+                formData.refWGPPDigitalSignature &&
                 formData.digitalSignatureFile && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
                     <img
@@ -1134,9 +1406,16 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
             {saveLoading ? "Saving..." : "Save Changes"}
           </Button>
         </div>
+
+        {error && (
+          <Alert ref={errorRef} variant="destructive" className="mt-2">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </form>
     </>
   );
 };
 
-export default EditPerformingProvider;
+export default EditWGPerformingProvider;
