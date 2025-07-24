@@ -207,6 +207,11 @@ const MasterAdmin: React.FC = () => {
     ],
     manager: [
       {
+        label: "Dashboard",
+        path: "/manager/dashboard",
+        icon: <img src={dashboard} className="w-4 h-4" />,
+      },
+      {
         label: "Administration",
         path: "/manager/administration",
         icon: <Settings2 className="w-4 h-4" />,

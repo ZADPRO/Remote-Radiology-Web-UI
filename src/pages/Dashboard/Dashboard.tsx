@@ -316,10 +316,10 @@ const Dashboard: React.FC = () => {
           label: "Invoices",
           icon: <ReceiptText className="w-6 h-6" />,
           dialogContent: <InvoicePopUp />,
-          allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin"],
+          allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin", "manager"],
         },
       ],
-      allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin"],
+      allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin", "manager"],
     },
   ];
 
