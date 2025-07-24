@@ -5,6 +5,7 @@ interface QuestionIds {
   implantConfiguration: number;
   implantPositon: number;
   implantMaterial: number;
+  implantMaterialOther: number;
   displacement: number;
   contracture: number;
   contractureSev: number;
@@ -33,6 +34,7 @@ export function generateBreastImplantDetailsHTML(
   const config = getAnswer(questionIds.implantConfiguration);
   const position = getAnswer(questionIds.implantPositon);
   const material = getAnswer(questionIds.implantMaterial);
+  const materialOther = getAnswer(questionIds.implantMaterialOther);
   const displacement = getAnswer(questionIds.displacement);
   const contracture = getAnswer(questionIds.contracture);
   // const contractureSev = getAnswer(questionIds.contractureSev);
@@ -51,7 +53,7 @@ export function generateBreastImplantDetailsHTML(
      html += ` implant`;
   }
 
-  html += ` with ${position.toLowerCase()} in position, with speed of sound consistent with ${material.toLowerCase()}. `;
+  html += ` with ${position.toLowerCase()} in position, with speed of sound consistent with ${material == "Other"? `${material.toLowerCase()} - ${materialOther}` : material.toLowerCase()}. `;
 
   if (displacement.length > 0) {
     if (displacement !== "None") {

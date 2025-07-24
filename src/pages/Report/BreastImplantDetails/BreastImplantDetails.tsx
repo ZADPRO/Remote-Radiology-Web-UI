@@ -35,7 +35,6 @@ const BreastImplantDetails: React.FC<Props> = ({
   handleReportInputChange,
   patientFormData,
 }) => {
-  console.log(reportFormData);
 
   const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
   const getPatientAnswer = (id: number) => patientFormData.find((q) => q.questionId === id)?.answer || "";
@@ -55,7 +54,6 @@ const BreastImplantDetails: React.FC<Props> = ({
     getAnswer(questionIds.implantPositon) === "" &&
       handleReportInputChange(questionIds.implantPositon, "Subpectoral");
 
-      console.log("2222", patientFormData)
     getAnswer(questionIds.implantMaterial) === "" &&
       handleReportInputChange(
         questionIds.implantMaterial,
@@ -78,7 +76,6 @@ const BreastImplantDetails: React.FC<Props> = ({
       );
   }, [patientFormData]);
 
-  console.log(getPatientAnswer(80));
   return (
     <div className="w-full">
      <Label
@@ -137,7 +134,7 @@ const BreastImplantDetails: React.FC<Props> = ({
               label="Implant Material"
               labelClassname="w-[12rem]"
               questionId={questionIds.implantMaterial}
-              optionalInputQuestionId={questionIds.ruptureSignsOther}
+              optionalInputQuestionId={questionIds.implantMaterialOther}
                   showOptionalForValue="Other"
                   optionalInputWidth="w-60"
               formData={reportFormData}

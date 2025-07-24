@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
 import { ResponseTechnicianForm } from "@/services/technicianServices";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { breastImpantRightQuestions, symmetryQuestions } from "./ReportQuestionsAssignment";
 
 interface ReportQuestion {
   questionId: number;
@@ -33,7 +35,7 @@ interface RightReportProps {
   technicianFormData: ResponseTechnicianForm[];
   textEditor: TextEditorProps;
   syncStatus: {
-    breastImplantRight: boolean;
+    breastImplant: boolean;
     sForm: boolean;
   };
   setsyncStatus: any;
@@ -51,29 +53,10 @@ const GeneralReport: React.FC<RightReportProps> = ({
   setsyncStatus,
   readOnly
 }) => {
-  const breastImpantRightQuestions = {
-    breastImplants: 1,
-    implantConfiguration: 2,
-    implantPositon: 3,
-    implantMaterial: 4,
-    displacement: 5,
-    contracture: 6,
-    contractureSev: 7,
-    contractureSide: 8,
-    rupture: 9,
-    ruptureLocation: 10,
-    ruptureSigns: 11,
-    ruptureSignsOther: 12,
-    ruptureType: 13,
-    implantMaterialOther: 116,
-  };
-
-  const symmetryQuestions = {
-    symmetry: 117
-  }
+  
 
   useEffect(() => {
-    if (syncStatus.breastImplantRight) {
+    if (syncStatus.breastImplant) {
       textEditor.breastImplant.onChange(
         generateBreastImplantDetailsHTML(
           reportFormData,
@@ -106,11 +89,14 @@ const GeneralReport: React.FC<RightReportProps> = ({
 
     const getTechnicianAnswer = (id: number) => technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
+    console.log(getTechnicianAnswer(22))
+
   useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0) return;
-    console.log("22222",getTechnicianAnswer(19), technicianFormData);
+    if (!reportFormData || reportFormData.length === 0 || !technicianFormData || technicianFormData.length === 0) return;
     if(technicianFormData.length > 0) {
     getAnswer(symmetryQuestions.symmetry) == "" && handleReportInputChange(symmetryQuestions.symmetry, getTechnicianAnswer(19) == "true" ? "Asymmetry" : "Symmetrical size and shape");
+    getAnswer(symmetryQuestions.symmetryLeft) == "" && handleReportInputChange(symmetryQuestions.symmetryLeft, getTechnicianAnswer(21));
+    getAnswer(symmetryQuestions.symmetryRight) == "" && handleReportInputChange(symmetryQuestions.symmetryRight, getTechnicianAnswer(22));
     }
   }, [technicianFormData]);
 
@@ -163,10 +149,10 @@ const GeneralReport: React.FC<RightReportProps> = ({
             value={textEditor.breastImplant.value}
             onChange={textEditor.breastImplant.onChange}
             onManualEdit={() => {
-              if (syncStatus.breastImplantRight) {
+              if (syncStatus.breastImplant) {
                 setsyncStatus({
                   ...syncStatus,
-                  breastDensityandImageRight: false,
+                  breastImplantRight: false,
                 });
               }
             }}
@@ -196,6 +182,24 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 { label: "Asymmetry", value: "Asymmetry" },
               ]}
             />
+
+              {getAnswer(symmetryQuestions.symmetry) == "Asymmetry" && (
+                <div className="flex flex-col lg:flex-row lg:items-center w-full gap-2 relative">
+              <Label className="font-semibold text-base w-[12rem]">Side</Label>
+              <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-2">
+                <Checkbox2 id="symmetryLeft" checked={getAnswer(symmetryQuestions.symmetryLeft) == "true"}/>
+                <Label htmlFor="symmetryLeft">Left</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox2 id="symmetryLeft" checked={getAnswer(symmetryQuestions.symmetryRight) == "true"}/>
+                <Label htmlFor="symmetryLeft">Right</Label>
+              </div>
+              </div>
+              
+            </div>
+              )}
+            
           </div>
         </div>
       </div>

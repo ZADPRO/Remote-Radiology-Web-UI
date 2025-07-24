@@ -1,12 +1,35 @@
-export const breastDensityandImageRightQuestions = {
+export const breastImpantRightQuestions = {
+    breastImplants: 1,
+    implantConfiguration: 2,
+    implantPositon: 3,
+    implantMaterial: 4,
+    displacement: 5,
+    contracture: 6,
+    contractureSev: 7,
+    contractureSide: 8,
+    rupture: 9,
+    ruptureLocation: 10,
+    ruptureSigns: 11,
+    ruptureSignsOther: 12,
+    ruptureType: 13,
+    implantMaterialOther: 116,
+  };
+
+  export const symmetryQuestions = {
+    symmetry: 117,
+    symmetryLeft: 118,
+    symmetryRight: 119,
+  }
+  export const breastDensityandImageRightQuestions = {
+  breastSelect: 110,
   imageQuality: 14,
   breastDensity: 15,
   fibroglandularVolume: 16,
   symmetry: 17,
-  breastSelect: 110,
 };
 
 export const nippleAreolaSkinRightQuestions = {
+  nippleSelect: 111,
   skinChanges: 19,
   skinChangesOther: 20,
   nippleDeformity: 21,
@@ -14,10 +37,10 @@ export const nippleAreolaSkinRightQuestions = {
   subAreolarMass: 22,
   architecture: 23,
   architectureOther: 24,
-  nippleSelect: 111,
 };
 
 export const grandularAndDuctalTissueRightQuestions = {
+  grandularSelect: 112,
   grandularAndDuctalTissue: 25,
   benignMicroCysts: 26,
   benignCapsular: 27,
@@ -29,7 +52,6 @@ export const grandularAndDuctalTissueRightQuestions = {
   calcifiedScarList: 33,
   ductalProminence: 34,
   ductalProminenceList: 35,
-  grandularSelect: 112,
 };
 
 export const lesionsRightQuestions = {
