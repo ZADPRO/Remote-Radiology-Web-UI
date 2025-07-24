@@ -384,7 +384,7 @@ const PriorImaging: React.FC<Props> = ({
                   )
                 }
               >
-                {selectedFileName || "Report.pdf"}
+                {selectedFileName || uploadedFileName}
               </span>
             )}
           </div>
