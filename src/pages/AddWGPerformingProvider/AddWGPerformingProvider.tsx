@@ -801,26 +801,39 @@ const AddWGPerformingProvider: React.FC = () => {
                 </Label>
 
                 <FileUploadButton
-                  id="license-upload"
-                  label="Upload License Files"
+                  id="malpractice-upload"
+                  label="Upload Malpractice Insurance"
                   multiple
-                  isFilePresent={formData.license_files.length > 0}
+                  required={formData.malpracticeinsureance_files.length === 0}
+                  isFilePresent={
+                    formData.malpracticeinsureance_files.length > 0
+                  }
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
                     if (!filesSelected) return;
 
                     const selectedFiles = Array.from(filesSelected);
+                    const maxSize = 10 * 1024 * 1024;
+
                     const filteredFiles = selectedFiles.filter(
                       (file) =>
-                        file.size <= 10 * 1024 * 1024 &&
-                        !files.license_files.some((f) => f.name === file.name)
+                        file.size <= maxSize &&
+                        !files.malpracticeinsureance_files.some(
+                          (existingFile) => existingFile.name === file.name
+                        )
                     );
+
+                    if (filteredFiles.length < selectedFiles.length) {
+                      setError(
+                        "Some files were larger than 10MB or were duplicates and were not added."
+                      );
+                    }
 
                     for (const file of filteredFiles) {
                       await uploadAndStoreFile(
                         file,
-                        "license_files",
-                        "license_files"
+                        "malpracticeinsureance_files",
+                        "malpracticeinsureance_files"
                       );
                     }
                   }}
