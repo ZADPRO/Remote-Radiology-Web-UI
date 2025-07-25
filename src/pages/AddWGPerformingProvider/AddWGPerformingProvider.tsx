@@ -804,7 +804,6 @@ const AddWGPerformingProvider: React.FC = () => {
                   id="license-upload"
                   label="Upload License Files"
                   multiple
-{/*                   required={formData.license_files.length === 0} */}
                   isFilePresent={formData.license_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
