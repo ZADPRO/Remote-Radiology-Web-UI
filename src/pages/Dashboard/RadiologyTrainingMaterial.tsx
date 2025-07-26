@@ -212,7 +212,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
       )}
  
       {/* Existing Training Materials */}
-      {trainingMaterial.length > 0 && (
+      {trainingMaterial?.length > 0 ? (
         <div className="space-y-2 px-6 py-6">
           <h3 className="text-sm font-semibold text-gray-700">
             Available Training Materials
@@ -252,6 +252,12 @@ const RadiologyTrainingMaterial: React.FC = () => {
               </li>
             ))}
           </ul>
+        </div>
+      ) : (
+        <div className="space-y-2 px-6 py-2">
+          <h3 className="text-sm font-semibold text-gray-700">
+            No Training Materials Available
+          </h3>
         </div>
       )}
     </DialogContent>
