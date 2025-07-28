@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { authenticationService } from "@/services/authenticationService";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import loginImg from "../../assets/Login/Login.jpg";
+import loginImg from "../../assets/Login/Login.png";
 import loginTexture from "../../assets/Login/Login-Texture.png";
 import logoNew from "../../assets/LogoNew.png";
 import { Checkbox } from "@/components/ui/checkbox";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logoNew from "../../assets/LogoNew.png";
-import loginImg from "../../assets/Login/Login.jpg";
+import loginImg from "../../assets/Login/Login.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

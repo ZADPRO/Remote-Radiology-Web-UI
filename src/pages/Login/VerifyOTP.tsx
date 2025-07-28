@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Timer from "@/components/Timer/Timer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authenticationService } from "@/services/authenticationService";
-import loginImg from "../../assets/Login/Login.jpg";
+import loginImg from "../../assets/Login/Login.png";
 import loginTexture from "../../assets/Login/Login-Texture.png";
 import { RoleList, useAuth } from "../Routes/AuthContext";
 import { tokenService } from "@/lib/tokenService";
