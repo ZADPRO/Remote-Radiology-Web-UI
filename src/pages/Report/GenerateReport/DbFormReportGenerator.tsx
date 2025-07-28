@@ -206,16 +206,19 @@ export function DbFormReportGenerator(
  
     // Final Report
     let reportText = `
-    ${getPatientAnswer(469) === "true" && rightForm}${(getPatientAnswer(469) === "true" && getPatientAnswer(260) === "true") && "<br/>"}${getPatientAnswer(260) === "true" && leftForm}
-    <br/><p>Diagnosed on ${getPatientAnswer(254)}</p>
-    ${getPatientAnswer(275) === "Yes" ? "<br/>" + receptorstatus : ``}
-    ${(
-            getPatientAnswer(284) === "Not Applicable" &&
+  ${getPatientAnswer(469) === "true" ? rightForm : ""}
+  ${(getPatientAnswer(469) === "true" && getPatientAnswer(260) === "true") ? "<br/>" : ""}
+  ${getPatientAnswer(260) === "true" ? leftForm : ""}
+  <br/><p>Diagnosed on ${getPatientAnswer(254)}</p>
+  ${getPatientAnswer(275) === "Yes" ? "<br/>" + receptorstatus : ""}
+  ${getPatientAnswer(284) === "Not Applicable" &&
             getPatientAnswer(296) === "Not Applicable" &&
             getPatientAnswer(306) === "Not Applicable"
-        ) ? `` : Procedure
+            ? ""
+            : Procedure
         }
-    `;
+`;
+ 
  
     return reportText;
 }
