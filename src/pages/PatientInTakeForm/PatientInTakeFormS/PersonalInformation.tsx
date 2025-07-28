@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import { IntakeOption } from "../PatientInTakeForm";
-import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
+import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 
 interface QuestionIds {
   fullName: number;
@@ -256,7 +256,8 @@ const PersonalInformation: React.FC<Props> = ({
             </div>
 
             <div className="w-full lg:w-1/3 flex flex-col">
-              <MultiRadioOptionalInputInline
+              <LabeledRadioWithOptionalInput
+              name="gender"
                 label="Gender"
                 required
                 questionId={questionIds.gender}
