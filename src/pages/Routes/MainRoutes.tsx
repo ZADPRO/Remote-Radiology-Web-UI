@@ -90,6 +90,7 @@ const MainRoutes: React.FC = () => {
     { path: "patientQueue", element: <PatientQueue />},
     { path: "addWgDoctor", element: <AddWGPerformingProvider />},
     { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles />}
   ];
 
   const scAdminRoutes: AppRoute[] = [

@@ -9,7 +9,7 @@ import logoNew from "../../assets/LogoNew.png";
 import { signupService } from "@/services/authenticationService";
 // import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import loginImg from "../../assets/Login/Login.jpg";
+import loginImg from "../../assets/Login/Login.png";
 import loginTexture from "../../assets/Login/Login-Texture.png"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
