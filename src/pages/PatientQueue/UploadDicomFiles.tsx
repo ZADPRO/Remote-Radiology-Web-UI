@@ -21,10 +21,15 @@ interface UploadedFile {
   side: Side;
 }
 
+interface DicomAppointmentdetails {
+  userId: number;
+  appointmentId: number;
+}
+
 const UploadDicomFiles: React.FC = () => {
   const navigate = useNavigate();
 
-  const appointmentDetails = useLocation().state;
+  const appointmentDetails: DicomAppointmentdetails = useLocation().state;
   console.log(appointmentDetails);
 
   const [files, setFiles] = useState<UploadedFile[]>([]);

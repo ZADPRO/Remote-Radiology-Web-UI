@@ -261,6 +261,8 @@ const PersonalInformation: React.FC<Props> = ({
                 label="Gender"
                 required
                 questionId={questionIds.gender}
+                optionalInputQuestionId={questionIds.genderOther}
+                showInputWhenValue="other"
                 formData={formData}
                 handleInputChange={handleInputChange}
                 options={[
@@ -268,6 +270,7 @@ const PersonalInformation: React.FC<Props> = ({
                   { label: "Male", value: "male" },
                   { label: "Transgender - Born Male", value: "transgender-born male"},
                   { label: "Transgender - Born Female", value: "transgender-born female"},
+                  { label: "Other", value: "other" }
                 ]}
               />
             </div>

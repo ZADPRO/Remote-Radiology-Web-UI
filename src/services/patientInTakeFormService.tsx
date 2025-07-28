@@ -144,4 +144,6 @@ export const appointmentService = {
     console.log(decryptedData);
     return decryptedData;
 },
+
+  
 }
