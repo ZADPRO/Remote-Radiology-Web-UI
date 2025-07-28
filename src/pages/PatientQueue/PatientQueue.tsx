@@ -265,17 +265,17 @@ const PatientQueue: React.FC = () => {
     try {
       const res = await technicianService.listAllRemarks(appointmentId);
       console.log(res);
-      if(res.status) {
+      if (res.status) {
         return res.message;
       } else {
         return [];
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const fetchPatientQueue = async () => {
     setLoading(true);
@@ -299,7 +299,11 @@ const PatientQueue: React.FC = () => {
               const { refAppointmentComplete, dicomFiles } = item;
 
               // Always filter out 'fillform'
-              if (refAppointmentComplete === "fillform" && role?.type !== "admin") return false;
+              if (
+                refAppointmentComplete === "fillform" &&
+                role?.type !== "admin"
+              )
+                return false;
 
               // Filter out 'technologistformfill' if role is not technician
               if (
@@ -313,8 +317,8 @@ const PatientQueue: React.FC = () => {
               if (
                 refAppointmentComplete === "reportformfill" &&
                 !dicomFiles &&
-                (role?.type !== "technician" &&
-                role?.type !== "admin")
+                role?.type !== "technician" &&
+                role?.type !== "admin"
               )
                 return false;
 
@@ -1003,7 +1007,7 @@ const PatientQueue: React.FC = () => {
               </span>
             );
           } else if (
-            currentUserRole === "technician" &&
+            (currentUserRole === "technician" || currentUserRole === "admin") &&
             appointmentComplete === "fillform"
           ) {
             // Form not started but technician has access and status is 'fillform'
@@ -1497,148 +1501,154 @@ const PatientQueue: React.FC = () => {
       // },
 
       {
-  id: "pendingRemarks",
-  header: () => (
-    <div className="text-center w-full font-medium">Pending Remarks</div>
-  ),
-  cell: ({ row }) => {
-    const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
+        id: "pendingRemarks",
+        header: () => (
+          <div className="text-center w-full font-medium">Pending Remarks</div>
+        ),
+        cell: ({ row }) => {
+          const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
 
-    return (
-      <Input
-        className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
-          !latestRemark ? "italic text-gray-500 text-[5px]" : ""
-        }`}
-        title={latestRemark}
-        readOnly
-        value={latestRemark || "No remarks yet"}
-      />
-    );
-  },
-}
-,
-     {
-  id: "totalRemarks",
-  header: () => (
-    <div className="text-center w-full font-medium">Remarks</div>
-  ),
-  cell: ({ row }) => {
-    const [openAdd, setOpenAdd] = React.useState(false);
-    const [openView, setOpenView] = React.useState(false);
-    const [remark, setRemark] = React.useState("");
-    const [remarksList, setRemarksList] = React.useState<Remarks[]>([]);
+          return (
+            <Input
+              className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
+                !latestRemark ? "italic text-gray-500 text-[5px]" : ""
+              }`}
+              title={latestRemark}
+              readOnly
+              value={latestRemark || "No remarks yet"}
+            />
+          );
+        },
+      },
+      {
+        id: "totalRemarks",
+        header: () => (
+          <div className="text-center w-full font-medium">Remarks</div>
+        ),
+        cell: ({ row }) => {
+          const [openAdd, setOpenAdd] = React.useState(false);
+          const [openView, setOpenView] = React.useState(false);
+          const [remark, setRemark] = React.useState("");
+          const [remarksList, setRemarksList] = React.useState<Remarks[]>([]);
 
-    const loadRemarks = async () => {
-      const res = await listAllRemarks(row.original.refAppointmentId);
-      setRemarksList(res || []);
-    };
+          const loadRemarks = async () => {
+            const res = await listAllRemarks(row.original.refAppointmentId);
+            setRemarksList(res || []);
+          };
 
-    return (
-      <div className="flex flex-col items-center px-2 gap-1">
-        <div className="flex gap-1">
-          <Button
-            variant="pinkTheme"
-            size="icon"
-            className="w-8 h-8"
-            title="Add Remark"
-            onClick={() => {
-              setRemark("");
-              setOpenAdd(true);
-            }}
-          >
-            +
-          </Button>
-
-          <Button
-            variant="greenTheme"
-            size="icon"
-            className="w-8 h-8"
-            title="View Remarks"
-            disabled={row.original.refAppointmentRemarks.length === 0}
-            onClick={() => {
-              loadRemarks();
-              setOpenView(true);
-            }}
-          >
-            <Eye />
-          </Button>
-        </div>
-
-        {/* Add Dialog */}
-        <Dialog open={openAdd} onOpenChange={setOpenAdd}>
-          <DialogContent className="sm:max-w-[400px]">
-            <DialogHeader>
-              <DialogTitle>Add Remark</DialogTitle>
-            </DialogHeader>
-            <div className="mt-4 space-y-4">
-              <Textarea
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-                placeholder="Enter new remark..."
-              />
-              <div className="flex justify-end gap-2">
-                <Button variant="secondary" onClick={() => setOpenAdd(false)}>
-                  Cancel
-                </Button>
+          return (
+            <div className="flex flex-col items-center px-2 gap-1">
+              <div className="flex gap-1">
                 <Button
                   variant="pinkTheme"
-                  onClick={async () => {
-                    await UpdateRemarks(
-                      row.original.refAppointmentId,
-                      row.original.refUserId,
-                      remark
-                    );
-                    await fetchPatientQueue();
-                    setOpenAdd(false);
+                  size="icon"
+                  className="w-8 h-8"
+                  title="Add Remark"
+                  onClick={() => {
+                    setRemark("");
+                    setOpenAdd(true);
                   }}
-                  disabled={!remark.trim()}
                 >
-                  Save
+                  +
+                </Button>
+
+                <Button
+                  variant="greenTheme"
+                  size="icon"
+                  className="w-8 h-8"
+                  title="View Remarks"
+                  disabled={row.original.refAppointmentRemarks.length === 0}
+                  onClick={() => {
+                    loadRemarks();
+                    setOpenView(true);
+                  }}
+                >
+                  <Eye />
                 </Button>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>
 
-        {/* View Dialog */}
-        <Dialog open={openView} onOpenChange={setOpenView}>
-          <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>All Remarks</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2 mt-4">
-              {remarksList.length === 0 ? (
-                <p className="text-sm text-gray-500">No remarks available.</p>
-              ) : (
-                remarksList
-                  .sort(
-                    (a, b) =>
-                      new Date(b.refRCreatedAt).getTime() -
-                      new Date(a.refRCreatedAt).getTime()
-                  )
-                  .map((r) => (
-                    <div
-                      key={r.refRId}
-                      className="p-2 border rounded bg-gray-100 text-sm"
-                    >
-                      <div className="text-gray-600 mb-1">
-                        {r.refUserCustId + " - " + new Date(r.refRCreatedAt).toLocaleString()}
-                      </div>
-                      <div className="text-black">{r.refRemarksMessage}</div>
+              {/* Add Dialog */}
+              <Dialog open={openAdd} onOpenChange={setOpenAdd}>
+                <DialogContent className="sm:max-w-[400px]">
+                  <DialogHeader>
+                    <DialogTitle>Add Remark</DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-4 space-y-4">
+                    <Textarea
+                      value={remark}
+                      onChange={(e) => setRemark(e.target.value)}
+                      placeholder="Enter new remark..."
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="secondary"
+                        onClick={() => setOpenAdd(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="pinkTheme"
+                        onClick={async () => {
+                          await UpdateRemarks(
+                            row.original.refAppointmentId,
+                            row.original.refUserId,
+                            remark
+                          );
+                          await fetchPatientQueue();
+                          setOpenAdd(false);
+                        }}
+                        disabled={!remark.trim()}
+                      >
+                        Save
+                      </Button>
                     </div>
-                  ))
-              )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* View Dialog */}
+              <Dialog open={openView} onOpenChange={setOpenView}>
+                <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>All Remarks</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2 mt-4">
+                    {remarksList.length === 0 ? (
+                      <p className="text-sm text-gray-500">
+                        No remarks available.
+                      </p>
+                    ) : (
+                      remarksList
+                        .sort(
+                          (a, b) =>
+                            new Date(b.refRCreatedAt).getTime() -
+                            new Date(a.refRCreatedAt).getTime()
+                        )
+                        .map((r) => (
+                          <div
+                            key={r.refRId}
+                            className="p-2 border rounded bg-gray-100 text-sm"
+                          >
+                            <div className="text-gray-600 mb-1">
+                              {r.refUserCustId +
+                                " - " +
+                                new Date(r.refRCreatedAt).toLocaleString()}
+                            </div>
+                            <div className="text-black">
+                              {r.refRemarksMessage}
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  },
-}
-
-
+          );
+        },
+      },
     ],
-    [navigate, staffData, selectedRowIds, ] // Add navigate to useMemo dependencies
+    [navigate, staffData, selectedRowIds] // Add navigate to useMemo dependencies
   );
 
   const permissionsMap: Record<UserRole, string[]> = {
@@ -1656,7 +1666,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     technician: [
       "select",
