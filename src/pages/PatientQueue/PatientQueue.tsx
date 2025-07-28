@@ -16,6 +16,7 @@ import {
   ArrowDown,
   XCircle,
   Download,
+  Eye,
 } from "lucide-react";
 
 import {
@@ -57,6 +58,7 @@ import {
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import {
   DicomFiles,
+  Remarks,
   TechnicianPatientQueue,
   technicianService,
 } from "@/services/technicianServices"; // Import technicianService
@@ -70,7 +72,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { reportService } from "@/services/reportService";
@@ -80,11 +81,16 @@ import { appointmentService } from "@/services/patientInTakeFormService";
 import PatientReport from "./PatientReport";
 import UserConsentWrapper from "./UserConsentWrapper";
 import { Calendar } from "@/components/calendar";
+import logoNew from "../../assets/LogoNew.png";
+import Brochure from "../Dashboard/Brochure";
+import GeneralGuidelines from "../Dashboard/GeneralGuidelines";
+import Disclaimer from "../Dashboard/Disclaimer";
 
 interface staffData {
   refUserCustId: string;
   refUserFirstName: string;
   refUserId: number;
+  refSCId: number;
 }
 
 interface StatusInfo {
@@ -126,7 +132,7 @@ const PatientQueue: React.FC = () => {
       case 4:
         return "Dc";
       default:
-        return "Not yet started";
+        return "Not Yet Started";
     }
   };
 
@@ -181,7 +187,7 @@ const PatientQueue: React.FC = () => {
           text: "Predraft",
           report: true,
           color: "#8e7cc3",
-          editAccess: ["radiologist", "admin", "scribe","wgdoctor"],
+          editAccess: ["radiologist", "admin", "scribe", "wgdoctor"],
           readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
         };
       }
@@ -192,7 +198,7 @@ const PatientQueue: React.FC = () => {
           report: true,
           color: "#3c78d8",
           editAccess: ["admin", "scribe", "radiologist", "wgdoctor"],
-          readOnlyAccess: ["scribe", "radiologist", "admin", "scadmin", "wgdoctor"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
         };
       }
 
@@ -202,7 +208,7 @@ const PatientQueue: React.FC = () => {
           report: true,
           color: "#e69138",
           editAccess: ["scribe", "admin", "codoctor", "wgdoctor"],
-          readOnlyAccess: ["scribe", "admin", "scadmin", "wgdoctor"],
+          readOnlyAccess: ["scribe", "admin", "wgdoctor"],
         };
       }
 
@@ -215,10 +221,9 @@ const PatientQueue: React.FC = () => {
           readOnlyAccess: [
             "scribe",
             "admin",
-            "scadmin",
             "technician",
             "codoctor",
-            "wgdoctor"
+            "wgdoctor",
           ],
         };
       }
@@ -236,10 +241,10 @@ const PatientQueue: React.FC = () => {
             "scadmin",
             "technician",
             "codoctor",
-            "radiologist", 
+            "radiologist",
             "wgdoctor",
             "patient",
-            "manager"
+            "manager",
           ],
         };
       }
@@ -254,6 +259,23 @@ const PatientQueue: React.FC = () => {
       readOnlyAccess: [],
     };
   };
+
+  const listAllRemarks = async (appointmentId: number) => {
+    setLoading(true);
+    try {
+      const res = await technicianService.listAllRemarks(appointmentId);
+      console.log(res);
+      if(res.status) {
+        return res.message;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const fetchPatientQueue = async () => {
     setLoading(true);
@@ -277,12 +299,13 @@ const PatientQueue: React.FC = () => {
               const { refAppointmentComplete, dicomFiles } = item;
 
               // Always filter out 'fillform'
-              if (refAppointmentComplete === "fillform") return false;
+              if (refAppointmentComplete === "fillform" && role?.type !== "admin") return false;
 
               // Filter out 'technologistformfill' if role is not technician
               if (
                 refAppointmentComplete === "technologistformfill" &&
-                role?.type !== "technician"
+                role?.type !== "technician" &&
+                role?.type !== "admin"
               )
                 return false;
 
@@ -290,7 +313,8 @@ const PatientQueue: React.FC = () => {
               if (
                 refAppointmentComplete === "reportformfill" &&
                 !dicomFiles &&
-                role?.type !== "technician"
+                (role?.type !== "technician" &&
+                role?.type !== "admin")
               )
                 return false;
 
@@ -574,7 +598,7 @@ const PatientQueue: React.FC = () => {
             >
               Scan Centre
             </span>
-            {/* {column.getCanFilter() && (
+            {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -603,7 +627,7 @@ const PatientQueue: React.FC = () => {
                   </Button>
                 </PopoverContent>
               </Popover>
-            )} */}
+            )}
           </div>
         ),
         // cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
@@ -727,7 +751,7 @@ const PatientQueue: React.FC = () => {
                   <PopoverContent className="w-64 p-2">
                     <Command>
                       <CommandGroup className="max-h-60 overflow-auto">
-                        {["S", "Da", "Db", "Dc", "Not yet started"].map(
+                        {["S", "Da", "Db", "Dc", "Not Yet Started"].map(
                           (formName) => {
                             const current =
                               (column.getFilterValue() as string[]) ?? [];
@@ -778,6 +802,8 @@ const PatientQueue: React.FC = () => {
           const tempStatus = getFormStatus(appointmentComplete);
           const formStatus = tempStatus?.patientForm;
           const userId = row.original.refUserId || user?.refUserId;
+          const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] =
+            useState<boolean>(false);
           const [isEditDialogOpen, setIsEditDialogOpen] =
             useState<boolean>(false);
 
@@ -810,7 +836,7 @@ const PatientQueue: React.FC = () => {
             statusContent = (
               <button
                 className="hover:underline cursor-pointer font-bold"
-                onClick={() => setIsEditDialogOpen(true)}
+                onClick={() => setIsEditDialogBroucherOpen(true)}
               >
                 Start
               </button>
@@ -819,8 +845,65 @@ const PatientQueue: React.FC = () => {
 
           return (
             <div className="text-center">
-              <span className="font-medium">{formName} - </span>
+              {(formName !== "Not Yet Started" || role?.type === "patient") && (
+                <span className="font-medium">{formName} - </span>
+              )}
               {statusContent}
+              <Dialog
+                open={isEditDialogBroucherOpen}
+                onOpenChange={setIsEditDialogBroucherOpen}
+              >
+                <DialogContent
+                  style={{
+                    background:
+                      "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
+                  }}
+                  className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+                >
+                  <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
+                    {/* Logo (Left) */}
+                    <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
+                      <img
+                        src={logoNew}
+                        alt="logo"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+
+                    {/* Centered Content */}
+                    <div className="flex-1 text-center">
+                      <h2 className="text-2xl font-semibold">Brochure</h2>
+                      <p className="text-sm text-gray-600 max-w-md mx-auto">
+                        EaseQT Platform
+                      </p>
+                    </div>
+
+                    {/* Spacer to balance logo width */}
+                    <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
+                  </DialogHeader>
+                  <Brochure />
+                  <h2 className="text-2xl text-center my-3 font-semibold">
+                    General Guidelines
+                  </h2>
+                  <GeneralGuidelines />
+                  <h2 className="text-2xl text-center my-3 font-semibold">
+                    Disclaimer
+                  </h2>
+                  <Disclaimer />
+                  <div className="flex w-full justify-end items-end px-10 my-10">
+                    <Button
+                      onClick={() => {
+                        setIsEditDialogBroucherOpen(false);
+                        setIsEditDialogOpen(true);
+                      }}
+                      variant="greenTheme"
+                      className="text-[#fff]"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Dialog
                 open={isEditDialogOpen}
                 onOpenChange={setIsEditDialogOpen}
@@ -924,8 +1007,11 @@ const PatientQueue: React.FC = () => {
             appointmentComplete === "fillform"
           ) {
             // Form not started but technician has access and status is 'fillform'
-            return <div className="text-muted-foreground">Not yet started</div>;
-          } else if (currentUserRole === "technician") {
+            return <div className="text-muted-foreground">Not Yet Started</div>;
+          } else if (
+            currentUserRole === "technician" ||
+            currentUserRole === "admin"
+          ) {
             // Not filled yet and technician has access
             return (
               <span>
@@ -975,7 +1061,7 @@ const PatientQueue: React.FC = () => {
           const dicomFiles = row.original.dicomFiles as DicomFiles[];
           const appointmentId = row.original.refAppointmentId;
           const userId = row.original.refUserId;
-          const isTechnician = currentUserRole === "technician";
+          const isTechnician = currentUserRole === "technician" || "admin";
 
           const leftDicom = dicomFiles?.find((f) => f.refDFSide === "Left");
           const rightDicom = dicomFiles?.find((f) => f.refDFSide === "Right");
@@ -1013,7 +1099,7 @@ const PatientQueue: React.FC = () => {
                       )
                     }
                   >
-                    <Download />({leftCount})
+                    ({leftCount})<Download />
                     <span className="sr-only">Left DICOM</span>
                   </Button>
                 ) : (
@@ -1040,7 +1126,7 @@ const PatientQueue: React.FC = () => {
                       )
                     }
                   >
-                    <Download />({rightCount})
+                    ({rightCount})<Download />
                     <span className="sr-only">Right DICOM</span>
                   </Button>
                 ) : (
@@ -1132,7 +1218,7 @@ const PatientQueue: React.FC = () => {
           const navigate = useNavigate();
           const [patientReportDialog, setPatientReportDialog] =
             useState<boolean>(false);
-          const [currentAccess, setCurrentAccess] = useState("")
+          const [currentAccess, setCurrentAccess] = useState("");
 
           const status = getStatus(row.original.refAppointmentComplete);
           const role = currentUserRole as UserRole;
@@ -1186,8 +1272,16 @@ const PatientQueue: React.FC = () => {
 
           return (
             <div className="text-center w-full">
-              {row.original.dicomFiles === null ? (
+              {!row.original.dicomFiles ||
+              row.original.dicomFiles.length === 0 ? (
                 <span>-</span>
+              ) : row.original.refAppointmentComplete === "reportformfill" ? (
+                <span
+                  onClick={handleViewClick}
+                  className="hover:underline cursor-pointer font-bold"
+                >
+                  Start
+                </span>
               ) : (
                 <span
                   onClick={handleViewClick}
@@ -1204,7 +1298,9 @@ const PatientQueue: React.FC = () => {
                     <DialogTitle>Someone is accessing this report</DialogTitle>
                   </DialogHeader>
                   <div className="text-sm text-muted-foreground">
-                    This report is being accessed by <span className="font-bold text-base">{currentAccess}</span>.
+                    This report is being accessed by{" "}
+                    <span className="font-bold text-base">{currentAccess}</span>
+                    .
                     <br />
                     You can only continue in <strong>read-only</strong> mode.
                   </div>
@@ -1359,12 +1455,18 @@ const PatientQueue: React.FC = () => {
                 <SelectContent>
                   {staffData?.length > 0 ? (
                     staffData.map((tech) => (
-                      <SelectItem
-                        key={tech.refUserId}
-                        value={String(tech.refUserId)}
-                      >
-                        {tech.refUserFirstName}
-                      </SelectItem>
+                      <>
+                        {(tech.refSCId === 0 ||
+                          tech.refSCId.toString() ===
+                            row.original.refSCId.toString()) && (
+                          <SelectItem
+                            key={tech.refUserId}
+                            value={String(tech.refUserId)}
+                          >
+                            {tech.refUserCustId}
+                          </SelectItem>
+                        )}
+                      </>
                     ))
                   ) : (
                     <div className="text-xs text-gray-400 px-4 py-2">
@@ -1377,87 +1479,166 @@ const PatientQueue: React.FC = () => {
           );
         },
       },
-      {
-        id: "changes",
-        header: () => (
-          <div className="text-center w-full font-medium m-0 p-0">Review</div>
-        ),
-        cell: ({ row }) => (
-          <div className="text-center w-full">
-            {!(
-              row.original.GetCorrectEditModel.isHandleCorrect &&
-              row.original.GetCorrectEditModel.isHandleEdited
-            ) && "-"}
-            {row.original.GetCorrectEditModel.isHandleCorrect && "C"}
-            {row.original.GetCorrectEditModel.isHandleEdited && "E"}
-          </div>
-        ),
-      },
+      // {
+      //   id: "changes",
+      //   header: () => (
+      //     <div className="text-center w-full font-medium m-0 p-0">Review</div>
+      //   ),
+      //   cell: ({ row }) => (
+      //     <div className="text-center w-full">
+      //       {!row.original.GetCorrectEditModel.isHandleCorrect &&
+      //       !row.original.GetCorrectEditModel.isHandleEdited
+      //         ? "-"
+      //         : `${
+      //             row.original.GetCorrectEditModel.isHandleCorrect ? "C" : ""
+      //           }${row.original.GetCorrectEditModel.isHandleEdited ? "E" : ""}`}
+      //     </div>
+      //   ),
+      // },
 
       {
-        id: "pendingRemarks",
-        header: () => (
-          <div className="text-center w-full font-medium">Pending Remarks</div>
-        ),
-        cell: ({ row }) => {
-          const [open, setOpen] = React.useState(false);
-          const [remark, setRemark] = React.useState(
-            row.original.refAppointmentRemarks
-          );
+  id: "pendingRemarks",
+  header: () => (
+    <div className="text-center w-full font-medium">Pending Remarks</div>
+  ),
+  cell: ({ row }) => {
+    const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
 
-          return (
-            <div className="flex justify-center">
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      {remark?.trim() ? "View" : "Add"}
-                    </Button>
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[400px]">
-                  <DialogHeader>
-                    <DialogTitle>Enter Remark</DialogTitle>
-                  </DialogHeader>
-                  <div className="mt-4 space-y-4">
-                    <Textarea
-                      value={remark}
-                      onChange={(e) => setRemark(e.target.value)}
-                      placeholder="Enter remarks..."
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="secondary"
-                        onClick={() => setOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="pinkTheme"
-                        onClick={() => {
-                          console.log(row.original.refAppointmentId);
-                          console.log(row.original.refUserId);
-                          // Save remark logic goes here
-                          UpdateRemarks(
-                            row.original.refAppointmentId,
-                            row.original.refUserId,
-                            remark
-                          );
-                          setOpen(false);
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+    return (
+      <Input
+        className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
+          !latestRemark ? "italic text-gray-500 text-[5px]" : ""
+        }`}
+        title={latestRemark}
+        readOnly
+        value={latestRemark || "No remarks yet"}
+      />
+    );
+  },
+}
+,
+     {
+  id: "totalRemarks",
+  header: () => (
+    <div className="text-center w-full font-medium">Remarks</div>
+  ),
+  cell: ({ row }) => {
+    const [openAdd, setOpenAdd] = React.useState(false);
+    const [openView, setOpenView] = React.useState(false);
+    const [remark, setRemark] = React.useState("");
+    const [remarksList, setRemarksList] = React.useState<Remarks[]>([]);
+
+    const loadRemarks = async () => {
+      const res = await listAllRemarks(row.original.refAppointmentId);
+      setRemarksList(res || []);
+    };
+
+    return (
+      <div className="flex flex-col items-center px-2 gap-1">
+        <div className="flex gap-1">
+          <Button
+            variant="pinkTheme"
+            size="icon"
+            className="w-8 h-8"
+            title="Add Remark"
+            onClick={() => {
+              setRemark("");
+              setOpenAdd(true);
+            }}
+          >
+            +
+          </Button>
+
+          <Button
+            variant="greenTheme"
+            size="icon"
+            className="w-8 h-8"
+            title="View Remarks"
+            disabled={row.original.refAppointmentRemarks.length === 0}
+            onClick={() => {
+              loadRemarks();
+              setOpenView(true);
+            }}
+          >
+            <Eye />
+          </Button>
+        </div>
+
+        {/* Add Dialog */}
+        <Dialog open={openAdd} onOpenChange={setOpenAdd}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle>Add Remark</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <Textarea
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+                placeholder="Enter new remark..."
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" onClick={() => setOpenAdd(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="pinkTheme"
+                  onClick={async () => {
+                    await UpdateRemarks(
+                      row.original.refAppointmentId,
+                      row.original.refUserId,
+                      remark
+                    );
+                    await fetchPatientQueue();
+                    setOpenAdd(false);
+                  }}
+                  disabled={!remark.trim()}
+                >
+                  Save
+                </Button>
+              </div>
             </div>
-          );
-        },
-      },
+          </DialogContent>
+        </Dialog>
+
+        {/* View Dialog */}
+        <Dialog open={openView} onOpenChange={setOpenView}>
+          <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>All Remarks</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 mt-4">
+              {remarksList.length === 0 ? (
+                <p className="text-sm text-gray-500">No remarks available.</p>
+              ) : (
+                remarksList
+                  .sort(
+                    (a, b) =>
+                      new Date(b.refRCreatedAt).getTime() -
+                      new Date(a.refRCreatedAt).getTime()
+                  )
+                  .map((r) => (
+                    <div
+                      key={r.refRId}
+                      className="p-2 border rounded bg-gray-100 text-sm"
+                    >
+                      <div className="text-gray-600 mb-1">
+                        {r.refUserCustId + " - " + new Date(r.refRCreatedAt).toLocaleString()}
+                      </div>
+                      <div className="text-black">{r.refRemarksMessage}</div>
+                    </div>
+                  ))
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  },
+}
+
+
     ],
-    [navigate, staffData, selectedRowIds] // Add navigate to useMemo dependencies
+    [navigate, staffData, selectedRowIds, ] // Add navigate to useMemo dependencies
   );
 
   const permissionsMap: Record<UserRole, string[]> = {
@@ -1475,6 +1656,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     technician: [
       "select",
@@ -1514,7 +1696,7 @@ const PatientQueue: React.FC = () => {
       "dicom",
       "report",
       "refAppointmentComplete",
-      // "assigned",
+      "assigned",
       "changes",
       "pendingRemarks",
     ],
@@ -1535,7 +1717,7 @@ const PatientQueue: React.FC = () => {
       "dicom",
       "report",
       "refAppointmentComplete",
-      // "assigned",
+      "assigned",
       "changes",
       "pendingRemarks",
     ],
@@ -1565,7 +1747,7 @@ const PatientQueue: React.FC = () => {
       "dicom",
       "report",
       "refAppointmentComplete",
-      // "assigned",
+      "assigned",
       "changes",
       "pendingRemarks",
     ],

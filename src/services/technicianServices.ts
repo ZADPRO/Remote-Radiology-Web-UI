@@ -117,6 +117,16 @@ export interface ResponseTechnicianForm {
   questionId: number;
   // file?: FileData;
 }
+
+export interface Remarks {
+  refAppointmentId: number;
+  refRCreatedAt: string;
+  refRId: number;
+  refRemarksMessage: string;
+  refUserId: number;
+  refUserCustId: string;
+}
+
 export const technicianService = {
   createNewTechnician: async (formData: NewTechnician) => {
     const token = localStorage.getItem("token");
@@ -124,6 +134,29 @@ export const technicianService = {
     const payload = encrypt(formData, token);
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/technician/new`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  listAllRemarks: async (appointmentId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      { appointmentId },
+      token
+    );
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/reportintakeform/listremark`,
       { encryptedData: payload },
       {
         headers: {
