@@ -41,7 +41,6 @@ const FamilyHistory: React.FC<Props> = ({
   questionIds,
   readOnly
 }) => {
-  console.log(formData);
 
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";

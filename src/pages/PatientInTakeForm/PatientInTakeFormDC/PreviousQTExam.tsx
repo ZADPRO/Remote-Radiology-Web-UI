@@ -6,6 +6,7 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Textarea } from "@/components/ui/textarea";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousQTImaging: number;
@@ -56,7 +57,7 @@ const PreviousQTExam: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
-              disabledDates={(date) => date > new Date()}
+              disabledDates={dateDisablers.noFuture}
               required
             />
           </div>

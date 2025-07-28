@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import { EducationalFileDetails, FileData, UploadFile } from "./commonServices";
 import axios from "axios";
 
@@ -72,7 +73,7 @@ export const managerService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   listAllWellthGreenManager: async () => {
@@ -87,7 +88,7 @@ export const managerService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   listSpecificWellthGreenManager: async (managerId: number) => {
@@ -104,7 +105,7 @@ export const managerService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   updateWellthGreenAdmin: async (formData: any) => {
@@ -123,7 +124,7 @@ export const managerService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   }
 };

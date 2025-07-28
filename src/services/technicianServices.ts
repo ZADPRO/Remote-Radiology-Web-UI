@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios, { AxiosProgressEvent } from "axios";
 import {
   FileData,
@@ -132,7 +133,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -169,7 +170,7 @@ export const technicianService = {
 
       const { data } = response;
       const decryptedData = decrypt(data.data, data.token);
-      localStorage.setItem("token", data.token);
+      tokenService.setToken(data.token);
 
       return decryptedData;
     } catch (error) {
@@ -213,7 +214,7 @@ export const technicianService = {
 
       const { data } = response;
       const decryptedData = decrypt(data.data, data.token);
-      localStorage.setItem("token", data.token);
+      tokenService.setToken(data.token);
 
       return decryptedData;
     } catch (error) {
@@ -238,7 +239,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   getSpecificTechnician: async (scanCenterId: number, userId: number) => {
@@ -260,7 +261,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   updateTechnician: async (formData: any) => {
@@ -279,7 +280,7 @@ export const technicianService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -297,7 +298,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -321,7 +322,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -345,7 +346,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -370,7 +371,7 @@ export const technicianService = {
     );
 
     const decryptData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptData);
     return decryptData;
   },
@@ -393,7 +394,7 @@ export const technicianService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   downLoadDicom: async (fileId: number) => {
@@ -414,7 +415,7 @@ export const technicianService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -464,7 +465,7 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 };

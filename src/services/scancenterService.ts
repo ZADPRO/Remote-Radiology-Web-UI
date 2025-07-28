@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 import { FileData } from "./commonServices";
 
@@ -60,7 +61,7 @@ export const scancenterService = {
     );
     console.log(res);
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
 
     return decryptedData;
   },
@@ -83,7 +84,7 @@ export const scancenterService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -103,7 +104,7 @@ export const scancenterService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -123,7 +124,7 @@ export const scancenterService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   }
 };
@@ -188,7 +189,7 @@ export const scanCenterAdminService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   getAllScanCenterAdmin: async (scanCenterId: number) => {
@@ -207,7 +208,7 @@ export const scanCenterAdminService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   getSpecificScanCenterAdmin: async (scanCenterId: number, userId: number) => {
@@ -226,7 +227,7 @@ export const scanCenterAdminService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   updateScanCenterAdmin: async (formData: any) => {
@@ -245,7 +246,7 @@ export const scanCenterAdminService = {
     );
 
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   }
 }

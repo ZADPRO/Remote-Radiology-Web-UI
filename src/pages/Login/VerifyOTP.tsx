@@ -12,6 +12,7 @@ import { authenticationService } from "@/services/authenticationService";
 import loginImg from "../../assets/Login/Login.jpg";
 import loginTexture from "../../assets/Login/Login-Texture.png";
 import { RoleList, useAuth } from "../Routes/AuthContext";
+import { tokenService } from "@/lib/tokenService";
 
 interface LoginData {
   username: string;
@@ -130,7 +131,7 @@ const VerifyOTP: React.FC = () => {
           }, 2000);
           return;
         } else {
-          localStorage.setItem("token", token);
+          tokenService.setToken(token);
         }
 
         refreshToken();

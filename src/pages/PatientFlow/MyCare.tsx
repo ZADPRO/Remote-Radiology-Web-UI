@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { dateDisablers } from "@/lib/dateUtils";
 
 const MyCare: React.FC = () => {
   const [appointmentData, setAppointmentData] = useState<AppointmentAdd>({
@@ -101,11 +102,11 @@ const MyCare: React.FC = () => {
 
           {/* Scan Code */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <Label htmlFor="scan-code" className="min-w-[120px] sm:min-w-[150px]">
+            <Label className="min-w-[120px] sm:min-w-[150px]">
               Scan Code
             </Label>
             <Input
-              id="scan-code"
+              // id="scan-code"
               type="text"
               className="flex-1"
               value={appointmentData.refSCId}
@@ -137,6 +138,7 @@ const MyCare: React.FC = () => {
                     refAppointmentDate: val?.toLocaleDateString("en-CA") || "",
                   }));
                 }}
+                disabledDates={dateDisablers.noPast}
                 required
               />
             </div>
@@ -152,7 +154,7 @@ const MyCare: React.FC = () => {
               type="submit"
               disabled={isLoading} // Disable button when loading
             >
-              {isLoading ? "Processing..." : "Proceed To Fill Form"}
+              {isLoading ? "Processing..." : "Proceed"}
             </Button>
           </div>
         </div>

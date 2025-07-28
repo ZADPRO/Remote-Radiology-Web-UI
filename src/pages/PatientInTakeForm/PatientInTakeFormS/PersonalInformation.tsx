@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import { IntakeOption } from "../PatientInTakeForm";
+import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 
 interface QuestionIds {
   fullName: number;
@@ -22,6 +23,7 @@ interface QuestionIds {
   email: number;
   age: number;
   gender: number;
+  genderOther: number;
   weight: number;
   weightType: number;
   braSize: number;
@@ -118,8 +120,6 @@ const PersonalInformation: React.FC<Props> = ({
     questionIds,
     handleInputChange,
   ]);
-
-  console.log(formData);
 
   return (
     <div className="flex flex-col h-full relative">
@@ -256,13 +256,18 @@ const PersonalInformation: React.FC<Props> = ({
             </div>
 
             <div className="w-full lg:w-1/3 flex flex-col">
-              <MultiOptionRadioGroup
+              <MultiRadioOptionalInputInline
                 label="Gender"
                 required
                 questionId={questionIds.gender}
                 formData={formData}
                 handleInputChange={handleInputChange}
-                options={[{ label: "Female", value: "female" }]}
+                options={[
+                  { label: "Female", value: "female" },
+                  { label: "Male", value: "male" },
+                  { label: "Transgender - Born Male", value: "transgender-born male"},
+                  { label: "Transgender - Born Female", value: "transgender-born female"},
+                ]}
               />
             </div>
           </div>

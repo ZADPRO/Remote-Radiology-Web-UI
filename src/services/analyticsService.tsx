@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 import { ListScanCenter } from "./scancenterService";
 
@@ -76,7 +77,7 @@ export const analyticsService = {
       ImpressionModel: ImpressionModel[];
     } = decrypt(res.data.data, res.data.token);
     console.log(decryptedData)
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -107,7 +108,7 @@ export const analyticsService = {
       ImpressionModel: ImpressionModel[];
       TotalCorrectEdit: TotalCorrectEdit[];
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData)
     return decryptedData;
   }

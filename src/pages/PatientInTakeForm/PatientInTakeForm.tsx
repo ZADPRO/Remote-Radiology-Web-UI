@@ -43,7 +43,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     }))
   ); 
 
-  // 495
+  // 496
 
   const [loading, setLoading] = useState(false);
 
@@ -73,7 +73,7 @@ const handleCloseDialog = () => setIsDialogOpen(false);
     categoryId: props.categoryId ?? locationState?.categoryId,
   };
 
-  console.log(controlData)
+  // console.log(controlData)
 
   useEffect(() => {
     if (

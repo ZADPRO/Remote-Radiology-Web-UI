@@ -67,6 +67,10 @@ import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTiss
 import { LesionsRightString } from "./Lisons/LesionsRightString";
 import { ComparisonPriorRightString } from "./ComparisonPrior/ComparisonPriorRightString";
 import { LymphNodesGenerateString } from "./GenerateReport/LymphNodes";
+import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
+import { DaFormReportGenerator } from "./GenerateReport/DaFormReportGenerator";
+import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
+import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -403,9 +407,9 @@ const Report: React.FC = () => {
     useState("");
   const [LymphNodesLeft, setLymphNodesLeft] = useState("");
 
-  const [sForm, setSForm] = useState("");
-
   const [Notes, setNotes] = useState("");
+
+  const [patientHistory, setPatientHistory] = useState("");
 
   const [syncStatus, setsyncStatus] = useState({
     breastImplant: true,
@@ -423,8 +427,6 @@ const Report: React.FC = () => {
     LymphNodesLeft: true,
     Notes: true,
     ImpressionsRecommendations: true,
-
-    sForm: true,
   });
 
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
@@ -540,7 +542,6 @@ const Report: React.FC = () => {
             LymphNodesLeft: true,
             Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
             ImpressionsRecommendations: true,
-            sForm: true,
           });
         }
 
@@ -553,6 +554,20 @@ const Report: React.FC = () => {
       setLoading(false);
     }
   };
+
+    useEffect(() => {
+    if(!responsePatientInTake) return;
+
+    if(assignData?.appointmentStatus[0].refCategoryId === 1) {
+      setPatientHistory(SFormGeneration(responsePatientInTake))
+    }else if(assignData?.appointmentStatus[0].refCategoryId === 2) {
+      setPatientHistory(DaFormReportGenerator(responsePatientInTake))
+    }  else if(assignData?.appointmentStatus[0].refCategoryId === 3) {
+      setPatientHistory(DbFormReportGenerator(responsePatientInTake))
+    } else if(assignData?.appointmentStatus[0].refCategoryId === 4) {
+      setPatientHistory(DcFormGeneration(responsePatientInTake))
+    }
+  }, [responsePatientInTake]);
 
   // const listDicomFiles = async () => {
   //   try {
@@ -1243,10 +1258,10 @@ const Report: React.FC = () => {
                       value: breastImplantRight,
                       onChange: setBreastImplantRight,
                     },
-                    sForm: {
-                      value: sForm,
-                      onChange: setSForm,
-                    },
+                    patientHistory: {
+                      value: patientHistory,
+                      onChange: setPatientHistory,
+                    }
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}

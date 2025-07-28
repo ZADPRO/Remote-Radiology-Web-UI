@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIdleLogout } from "./UseIdleLogout";
+import { tokenService } from "@/lib/tokenService";
 
 export const RoleList = [
   { type: "admin", id: 1 },
@@ -94,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(decryptData);
         const profile: UserProfile = decryptData.data;
         setUser(profile);
-        localStorage.setItem("token", res.data.token);
+        tokenService.setToken(res.data.token);
 
         const matchedRole =
           RoleList.find((r) => r.id === profile.refRTId) || null;

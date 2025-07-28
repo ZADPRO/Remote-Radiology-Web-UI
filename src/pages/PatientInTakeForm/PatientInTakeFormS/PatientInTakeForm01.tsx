@@ -88,6 +88,7 @@ useEffect(() => {
               email: 4,
               age: 5,
               gender: 6,
+              genderOther: 496,
               weight: 7,
               braSize: 8,
               pregnant: 9,
@@ -367,8 +368,8 @@ useEffect(() => {
               additionalComments: 166,
               biopsyLeft: 434,
               biopsyRight: 435,
-  biopsyRightType: 436,
-  biopsyLeftType: 437,
+              biopsyRightType: 436,
+              biopsyLeftType: 437,
             }}
           />
         );

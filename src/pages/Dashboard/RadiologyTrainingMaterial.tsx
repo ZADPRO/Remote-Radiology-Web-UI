@@ -173,6 +173,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
             </label>
             <Input
               type="file"
+              accept=".pdf"
               multiple
               onChange={handleFileChange}
               className="bg-white"

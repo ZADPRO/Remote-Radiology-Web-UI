@@ -264,7 +264,7 @@ const ViewScanCenter: React.FC = () => {
               <div className="flex flex-wrap gap-4">
                 {user?.refRTId != 3 &&
                 <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageScanCenterAdmin", {state: formData.refSCId})}>
-                  Manage Manager
+                  Manage Center Manager
                 </Button>
 }
                 

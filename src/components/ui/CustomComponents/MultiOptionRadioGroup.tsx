@@ -52,7 +52,7 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
       <div
         className={cn(
           `ml-4 flex flex-wrap gap-x-6 gap-y-1 ${
-            className ? className : "h-[auto] gap-4 sm:gap-4 sm:h-[35px]"
+            className ? className : "h-[auto] gap-4 sm:gap-4 sm:min-h-[35px]"
           } lg:gap-y-3 mt-3`,
           className
         )}

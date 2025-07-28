@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import { UploadFile } from "./commonServices";
 import { MedicalLicenseSecurity } from "./doctorService";
 import axios from "axios";
@@ -40,7 +41,7 @@ export const wgDoctorService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },

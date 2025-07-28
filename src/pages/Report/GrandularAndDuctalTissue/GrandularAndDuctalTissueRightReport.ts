@@ -66,7 +66,7 @@ export function generateGrandularAndDuctalTissueReport(
       ? `There are multiple ${benignFindings
           .join(", ")
           .toLocaleLowerCase()} noted. Otherwise, the breast tissue appears normal.`
-      : "The breast tissue appears unremarkable without benign findings.";
+      : "The breast tissue appears unremarkable.";
 
   // 2. Macrocalcifications
   const macroText = generateCalcificationText(
