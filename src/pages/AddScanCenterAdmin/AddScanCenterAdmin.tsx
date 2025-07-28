@@ -231,7 +231,7 @@ const AddScanCenterAdmin: React.FC = () => {
         }}
       >
         <h1 className="text-[#3F3F3D] uppercase font-[900] lg:pl-10 text-xl lg:text-3xl text-center lg:text-left tracking-widest">
-          Add Scan Center Admin
+          Add Scan Center Manager
         </h1>
       </div>
 

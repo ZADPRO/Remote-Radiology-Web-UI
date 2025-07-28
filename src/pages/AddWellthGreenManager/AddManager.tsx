@@ -362,6 +362,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     }));
   };
 
+  console.log(new Date())
+
   return (
     <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-15">
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
@@ -570,6 +572,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <DatePicker
             value={formData.dob ? new Date(formData.dob) : undefined}
             onChange={(val) => {
+              console.log(val?.toLocaleDateString("en-CA") || "")
               setFormData((prev) => ({
                 ...prev,
                 dob: val?.toLocaleDateString("en-CA") || "",

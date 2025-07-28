@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   noneCheckbox: number;
@@ -136,7 +137,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                           val?.toLocaleDateString("en-CA") || ""
                         )
                       }
-                      disabledDates={(date) => date > new Date()}
+                      disabledDates={dateDisablers.noFuture}
                     />
                   </div>
                   <Input

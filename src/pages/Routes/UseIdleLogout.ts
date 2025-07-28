@@ -1,21 +1,19 @@
+import { tokenService } from "@/lib/tokenService";
 import { useEffect, useRef } from "react";
 
-const expiryTime = 15 * 60 * 1000; // 15 minutes
+const REFRESH_INTERVAL = 15 * 60 * 20; // 15 minutes
 
-export const useIdleLogout = (
-  refreshToken: () => void,
-  logout: () => void
-) => {
-  const refreshCountRef = useRef(0);
+export const useIdleLogout = (refreshToken: () => void, logout: () => void) => {
   const isUserActiveRef = useRef(true);
+  const hasRefreshedOnceRef = useRef(false);
 
   const handleUserActivity = () => {
     isUserActiveRef.current = true;
-    refreshCountRef.current = 0;
+    hasRefreshedOnceRef.current = false;
   };
 
-  console.log(refreshCountRef)
 
+  console.log(isUserActiveRef, hasRefreshedOnceRef)
   useEffect(() => {
     const events = ["mousemove", "keydown", "click", "scroll"];
     events.forEach((event) =>
@@ -23,25 +21,35 @@ export const useIdleLogout = (
     );
 
     const interval = setInterval(() => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      const token = tokenService.getToken();
+      const lastUpdated = tokenService.getLastUpdated();
 
-      if (!isUserActiveRef.current) {
-        // User is idle
-        if (refreshCountRef.current >= 2) {
-          logout();
-          clearInterval(interval);
-        } else {
-          refreshToken();
-          refreshCountRef.current += 1;
-        }
-      } else {
-        // User is active - reset for next cycle
-        isUserActiveRef.current = false;
-        refreshCountRef.current = 0;
-        // Do NOT refresh token immediately here
+      if (!token || !lastUpdated) {
+        logout();
+        clearInterval(interval);
+        return;
       }
-    }, expiryTime);
+
+      const now = Date.now();
+      const timeSinceLastUpdate = now - lastUpdated;
+
+      if (isUserActiveRef.current) {
+        if (timeSinceLastUpdate >= REFRESH_INTERVAL) {
+          refreshToken();
+        }
+        isUserActiveRef.current = false;
+        hasRefreshedOnceRef.current = false;
+      } else {
+        // Inactive
+        if (!hasRefreshedOnceRef.current) {
+          refreshToken(); // 1st refresh on inactivity
+          hasRefreshedOnceRef.current = true;
+        } else {
+          logout(); // 2nd interval of inactivity
+          clearInterval(interval);
+        }
+      }
+    }, REFRESH_INTERVAL);
 
     return () => {
       clearInterval(interval);

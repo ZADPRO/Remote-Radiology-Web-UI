@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 
 export interface scancenterData {
@@ -85,7 +86,7 @@ export const invoiceServie = {
       scancenterData: scancenterData[];
       userData: userData[];
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -113,7 +114,7 @@ export const invoiceServie = {
       status: boolean;
       message: string;
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -142,7 +143,7 @@ export const invoiceServie = {
       UserData: GetUserModel[];
       UserCount: AdminOverallScanIndicatesAnalyticsModel[];
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -163,7 +164,7 @@ export const invoiceServie = {
       status: boolean;
       message: string;
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
@@ -185,7 +186,7 @@ export const invoiceServie = {
       invoiceHistory: InvoiceHistory[];
       invoiceHistoryTakenDate: TakenDate[];
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 };

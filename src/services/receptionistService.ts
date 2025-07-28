@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 
 const token = localStorage.getItem("token");
@@ -58,7 +59,7 @@ export const receptionistService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 };

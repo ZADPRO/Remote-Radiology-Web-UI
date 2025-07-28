@@ -114,7 +114,7 @@ const Administration: React.FC = () => {
         </div>
 
         {/* Scan Centre Administration */}
-        {role?.type == "admin" && (
+        {(role?.type == "admin" || role?.type == "manager") && (
         <div
           style={{
             background:

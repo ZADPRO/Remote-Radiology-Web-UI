@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 
 export interface IntakeOption {
@@ -28,7 +29,7 @@ export const patientInTakeService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
@@ -48,7 +49,7 @@ export const patientInTakeService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
@@ -66,7 +67,7 @@ export const patientInTakeService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
@@ -102,7 +103,7 @@ export const appointmentService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
@@ -120,7 +121,7 @@ export const appointmentService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
   },
@@ -139,7 +140,7 @@ export const appointmentService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
 },

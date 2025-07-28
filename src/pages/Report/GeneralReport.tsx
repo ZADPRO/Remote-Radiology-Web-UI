@@ -6,10 +6,10 @@ import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastI
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
-import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
 import { ResponseTechnicianForm } from "@/services/technicianServices";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { breastImpantRightQuestions, symmetryQuestions } from "./ReportQuestionsAssignment";
+import PatientHistory from "./PatientHistory";
 
 interface ReportQuestion {
   questionId: number;
@@ -21,7 +21,7 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
-  sForm: {
+  patientHistory: {
     value: string;
     onChange: (value: string) => void;
   }
@@ -36,7 +36,6 @@ interface RightReportProps {
   textEditor: TextEditorProps;
   syncStatus: {
     breastImplant: boolean;
-    sForm: boolean;
   };
   setsyncStatus: any;
   readOnly: boolean;
@@ -61,14 +60,6 @@ const GeneralReport: React.FC<RightReportProps> = ({
         generateBreastImplantDetailsHTML(
           reportFormData,
           breastImpantRightQuestions
-        )
-      );
-    }
-
-    if(syncStatus.sForm) {
-      textEditor.sForm.onChange(
-        SFormGeneration(
-          patientFormData
         )
       );
     }
@@ -115,6 +106,12 @@ const GeneralReport: React.FC<RightReportProps> = ({
               }
             }}
           /> */}
+
+        <PatientHistory
+          patientHistoryNotes={textEditor.patientHistory.value}
+          setPatientHistoryNotes={textEditor.patientHistory.onChange}
+        />
+
         <BreastImplantDetails
           reportFormData={reportFormData}
           handleReportInputChange={syncHandleReportChange}
@@ -183,23 +180,33 @@ const GeneralReport: React.FC<RightReportProps> = ({
               ]}
             />
 
-              {getAnswer(symmetryQuestions.symmetry) == "Asymmetry" && (
-                <div className="flex flex-col lg:flex-row lg:items-center w-full gap-2 relative">
-              <Label className="font-semibold text-base w-[12rem]">Side</Label>
-              <div className="flex items-center gap-5">
+            {getAnswer(symmetryQuestions.symmetry) == "Asymmetry" && (
+              <div className="flex flex-col lg:flex-row lg:items-center w-full gap-2 relative">
+                <Label className="font-semibold text-base w-[12rem]">
+                  Side
+                </Label>
+                <div className="flex items-center gap-5">
                   <div className="flex items-center gap-2">
-                <Checkbox2 id="symmetryLeft" checked={getAnswer(symmetryQuestions.symmetryLeft) == "true"}/>
-                <Label htmlFor="symmetryLeft">Left</Label>
+                    <Checkbox2
+                      id="symmetryLeft"
+                      checked={
+                        getAnswer(symmetryQuestions.symmetryLeft) == "true"
+                      }
+                    />
+                    <Label htmlFor="symmetryLeft">Left</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox2
+                      id="symmetryLeft"
+                      checked={
+                        getAnswer(symmetryQuestions.symmetryRight) == "true"
+                      }
+                    />
+                    <Label htmlFor="symmetryLeft">Right</Label>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Checkbox2 id="symmetryLeft" checked={getAnswer(symmetryQuestions.symmetryRight) == "true"}/>
-                <Label htmlFor="symmetryLeft">Right</Label>
-              </div>
-              </div>
-              
-            </div>
-              )}
-            
+            )}
           </div>
         </div>
       </div>

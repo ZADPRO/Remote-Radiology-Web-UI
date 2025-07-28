@@ -520,7 +520,6 @@ const EditScribe: React.FC<EditScribeProps> = ({
             <FileUploadButton
               id="license-upload"
               label="Upload License"
-              accept=".pdf"
               required={false} // Or true if this is mandatory and no file present
               isFilePresent={!!formData.refSDDrivingLicense}
               onChange={(e) => {
@@ -717,7 +716,6 @@ const EditScribe: React.FC<EditScribeProps> = ({
             <FileUploadButton
             id="edu-certs-upload"
             label="Upload Education Certificates"
-            accept=".pdf"
             multiple
             required={false}
             isFilePresent={files.education_certificate.length > 0}

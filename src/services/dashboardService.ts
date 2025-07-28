@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "@/Helper";
+import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
  
 export interface TrainingMaterial {
@@ -23,7 +24,7 @@ export const dashboardService = {
     );
     console.log(res);
     const decryptData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptData;
   },
  
@@ -43,7 +44,7 @@ export const dashboardService = {
     );
  
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
   getAllTrainingMaterials: async () => {
@@ -62,7 +63,7 @@ export const dashboardService = {
       data: TrainingMaterial[];
       status: boolean;
     } = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
  
     return decryptedData;
   },
@@ -114,7 +115,7 @@ export const dashboardService = {
     );
  
     const decryptedData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 };

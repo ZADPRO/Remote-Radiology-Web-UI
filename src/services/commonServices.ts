@@ -70,7 +70,7 @@ export const uploadService = {
     );
     console.log(res);
     const decryptData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptData;
   },
 
@@ -91,7 +91,7 @@ export const uploadService = {
     );
     console.log(res);
     const decryptData = decrypt(res.data.data, res.data.token);
-    localStorage.setItem("token", res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptData;
   }
 };

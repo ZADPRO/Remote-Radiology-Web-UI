@@ -525,7 +525,7 @@ const ManageScanCenterAdmin: React.FC = () => {
 
           {/* Add Scan Center Admin Button */}
           <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addScanCenterAdmin", {state: scanCenterId, replace: true})}>
-            <Plus /> Add Center Admin
+            <Plus /> Add Scan Center Manager
           </Button>
         </div>
 
@@ -726,7 +726,7 @@ const ManageScanCenterAdmin: React.FC = () => {
       {/* Edit Scan Center Admin Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent style={{background: "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)"}} className="h-11/12 w-[90vw] lg:w-[80vw] overflow-y-auto">
-                <DialogTitle>Edit Scan Center Admin</DialogTitle>
+                <DialogTitle>Edit Scan Center Manager</DialogTitle>
 
           {selectedCenterAdminId !== null && (
             <EditScanCenterAdmin scanCenterId={scanCenterId} scanCenterAdminId={selectedCenterAdminId} setIsEditDialogOpen={setIsEditDialogOpen} onUpdate={getAllScanCenterAdmin}/>
