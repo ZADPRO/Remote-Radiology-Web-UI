@@ -1679,6 +1679,8 @@ const PatientQueue: React.FC = () => {
       "dicom",
       "report",
       "refAppointmentComplete",
+      "pendingRemarks",
+      "totalRemarks"
     ],
     scribe: [
       "select",
@@ -1694,6 +1696,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     scadmin: [
       "select",
@@ -1709,6 +1712,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     patient: [
       "dateOfAppointment",
@@ -1730,6 +1734,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     radiologist: [
       "select",
@@ -1745,6 +1750,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     codoctor: [
       "select",
@@ -1760,6 +1766,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     manager: [
       "select",
@@ -1775,6 +1782,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
     wgdoctor: [
       "select",
@@ -1790,6 +1798,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
+      "totalRemarks"
     ],
   };
 
