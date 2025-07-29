@@ -33,21 +33,29 @@ interface Props {
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
   readOnly: boolean;
+  name?: string;
+  custId?: string;
 }
 
 const FamilyHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
+  name,
+  custId,
 }) => {
-
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
 
   return (
     <div className="flex flex-col h-full relative">
-      <FormHeader FormTitle="Family History" className="uppercase" />
+      <FormHeader
+        FormTitle="Family History"
+        className="uppercase"
+        name={name}
+        custId={custId}
+      />
 
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:py-0 lg:px-20 space-y-8 pb-10">
@@ -88,16 +96,16 @@ const FamilyHistory: React.FC<Props> = ({
               B. Which family members had breast cancer?
             </Label>
             <Input
-            value={getAnswer(questionIds.familyHistorySpecify)}
-            onChange={(e) =>
-              handleInputChange(
-                questionIds.familyHistorySpecify,
-                e.target.value
-              )
-            }
-            placeholder="Specify Who"
-            className="w-64"
-          />
+              value={getAnswer(questionIds.familyHistorySpecify)}
+              onChange={(e) =>
+                handleInputChange(
+                  questionIds.familyHistorySpecify,
+                  e.target.value
+                )
+              }
+              placeholder="Specify Who"
+              className="w-64"
+            />
           </div>
 
           <LabeledRadioWithOptionalInput
@@ -151,7 +159,9 @@ const FamilyHistory: React.FC<Props> = ({
             handleInputChange={handleInputChange}
             questionId={questionIds.maleRelativesCancer}
             optionalInputQuestionId={questionIds.maleRelativesSpecify}
-            secondaryOptionalInputQuestionId={questionIds.maleRelativesSpecifyAge}
+            secondaryOptionalInputQuestionId={
+              questionIds.maleRelativesSpecifyAge
+            }
             showInputWhenValue="Yes"
             inputPlaceholder="Specify"
             secondaryInputPlaceholder="Age"

@@ -9,7 +9,6 @@ import PatientInTakeForm03 from "./PatientInTakeFormDb/PatientInTakeForm03";
 import PatientInTakeForm04 from "./PatientInTakeFormDC/PatientInTakeForm04";
 import { SubmitDialog } from "./SubmitDialog";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-
 export interface IntakeOption {
   questionId: number;
   answer: string;
@@ -26,14 +25,28 @@ export interface PatientInTakeFormNavigationState {
   apiUpdate?: boolean;
   readOnly?: boolean;
   userId?: number;
+  name?: string;
+  custId?: string;
+  scancenterCustId?: string;
 }
 
-interface PatientInTakeFormProps extends Partial<PatientInTakeFormNavigationState> {}
+interface PatientInTakeFormProps
+  extends Partial<PatientInTakeFormNavigationState> {}
 
 export interface PatientSubmitDialogProps {
   open: boolean;
   onClose: () => void;
 }
+
+interface PatientContextType {
+  name?: string;
+  custId?: string;
+  scancenterCustId?: string;
+}
+
+export const PatientContext = React.createContext<PatientContextType | null>(
+  null
+);
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
@@ -41,7 +54,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       questionId: 1 + index,
       answer: "",
     }))
-  ); 
+  );
 
   // 496
 
@@ -55,17 +68,19 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-const handleOpenDialog = () => setIsDialogOpen(true);
-const handleCloseDialog = () => setIsDialogOpen(false);
+  const handleOpenDialog = () => setIsDialogOpen(true);
+  const handleCloseDialog = () => setIsDialogOpen(false);
 
   const navigate = useNavigate();
 
   const location = useLocation();
-  const locationState = location.state as PatientInTakeFormNavigationState | null;
+  const locationState =
+    location.state as PatientInTakeFormNavigationState | null;
 
   const controlData: PatientInTakeFormNavigationState = {
     fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,
-    fetchTechnicianForm: props.fetchTechnicianForm ?? locationState?.fetchTechnicianForm,
+    fetchTechnicianForm:
+      props.fetchTechnicianForm ?? locationState?.fetchTechnicianForm,
     appointmentId: props.appointmentId ?? locationState?.appointmentId ?? 0,
     apiUpdate: props.apiUpdate ?? locationState?.apiUpdate,
     readOnly: props.readOnly ?? locationState?.readOnly,
@@ -73,7 +88,7 @@ const handleCloseDialog = () => setIsDialogOpen(false);
     categoryId: props.categoryId ?? locationState?.categoryId,
   };
 
-  // console.log(controlData)
+  console.log(locationState);
 
   useEffect(() => {
     if (
@@ -85,10 +100,10 @@ const handleCloseDialog = () => setIsDialogOpen(false);
     }
 
     if (controlData.categoryId) {
-      if(controlData.categoryId == 1) {
-        setActiveForm(controlData.categoryId)
+      if (controlData.categoryId == 1) {
+        setActiveForm(controlData.categoryId);
       } else {
-        setActiveForm(5)
+        setActiveForm(5);
       }
     }
   }, [useLocation().state]);
@@ -116,115 +131,125 @@ const handleCloseDialog = () => setIsDialogOpen(false);
     }
   };
 
-const [isSubmitting, setIsSubmitting] = useState(false);
-const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-const handleFinalSubmit = async () => {
-  setIsSubmitting(true);
-  setSubmitError(null);
+  const handleFinalSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-  const overide =
+    const overide =
       formData.find((item) => item.questionId === 10)?.answer === "YES"
         ? false
         : true;
 
-  const payload = {
-    appointmentId: controlData.appointmentId,
-    patientId: controlData.userId,
-    answers:
-      overide == true
-        ? formData.filter((item) => item.questionId <= 13)
-        : formData,
-    categoryId: parseInt(formData.find((item) => item.questionId === 170)?.answer || "") || null,
-    overriderequest: overide,
+    const payload = {
+      appointmentId: controlData.appointmentId,
+      patientId: controlData.userId,
+      answers:
+        overide == true
+          ? formData.filter((item) => item.questionId <= 13)
+          : formData,
+      categoryId:
+        parseInt(
+          formData.find((item) => item.questionId === 170)?.answer || ""
+        ) || null,
+      overriderequest: overide,
+    };
+
+    console.log("payload", payload);
+
+    try {
+      let res;
+      if (controlData.apiUpdate) {
+        res = await patientInTakeService.updatePatientInTakeForm(payload);
+      } else {
+        res = await patientInTakeService.addPatientInTakeForm(payload);
+      }
+
+      if (res.status) {
+        navigate(-1); // go back if success
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setSubmitError("Failed to submit. Please try again later.");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  console.log("payload", payload);
-
-  try {
-    let res;
-    if (controlData.apiUpdate) {
-      res = await patientInTakeService.updatePatientInTakeForm(payload);
-    } else {
-      res = await patientInTakeService.addPatientInTakeForm(payload);
-    }
-
-    if (res.status) {
-      navigate(-1); // go back if success
-    } else {
-      setSubmitError("Something went wrong. Please try again.");
-    }
-  } catch (error) {
-    setSubmitError("Failed to submit. Please try again later.");
-    console.error(error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
 
   return (
     <div>
-      {loading && <LoadingOverlay />}
-      {activeForm == 1 && (
-        <PatientInTakeForm01
-          formData={formData}
-          setFormData={setFormData}
-          handleFormSwitch={handleFormSwitch}
-          openSubmitDialog={handleOpenDialog}
-          readOnly={controlData.readOnly ? true : false}
-        />
-      )}
+      <PatientContext.Provider
+        value={{
+          name: locationState?.name,
+          custId: locationState?.custId,
+          scancenterCustId: locationState?.scancenterCustId,
+        }}
+      >
+        {loading && <LoadingOverlay />}
+        {activeForm == 1 && (
+          <PatientInTakeForm01
+            formData={formData}
+            setFormData={setFormData}
+            handleFormSwitch={handleFormSwitch}
+            openSubmitDialog={handleOpenDialog}
+            readOnly={controlData.readOnly ? true : false}
+          />
+        )}
 
-      {activeForm == 5 && (
-        <MainInTakeForm
-          formData={formData}
-          setFormData={setFormData}
-          handleFormSwitch={handleFormSwitch}
-          controlData={controlData}
-          openSubmitDialog={handleOpenDialog}
-          readOnly={controlData.readOnly ? true : false}
-        />
-      )}
-      {activeForm == 2 && (
-        <PatientInTakeForm02
-          formData={formData}
-          setFormData={setFormData}
-          handleFormSwitch={handleFormSwitch}
-          openSubmitDialog={handleOpenDialog}
-          readOnly={controlData.readOnly ? true : false}
-        />
-      )}
+        {activeForm == 5 && (
+          <MainInTakeForm
+            formData={formData}
+            setFormData={setFormData}
+            handleFormSwitch={handleFormSwitch}
+            controlData={controlData}
+            openSubmitDialog={handleOpenDialog}
+            readOnly={controlData.readOnly ? true : false}
+          />
+        )}
+        {activeForm == 2 && (
+          <PatientInTakeForm02
+            formData={formData}
+            setFormData={setFormData}
+            handleFormSwitch={handleFormSwitch}
+            openSubmitDialog={handleOpenDialog}
+            readOnly={controlData.readOnly ? true : false}
+          />
+        )}
 
-      {activeForm == 3 && (
-        <PatientInTakeForm03
-          formData={formData}
-          setFormData={setFormData}
-          handleFormSwitch={handleFormSwitch}
-          openSubmitDialog={handleOpenDialog}
-          readOnly={controlData.readOnly ? true : false}
-        />
-      )}
+        {activeForm == 3 && (
+          <PatientInTakeForm03
+            formData={formData}
+            setFormData={setFormData}
+            handleFormSwitch={handleFormSwitch}
+            openSubmitDialog={handleOpenDialog}
+            readOnly={controlData.readOnly ? true : false}
+          />
+        )}
 
-      {activeForm == 4 && (
-        <PatientInTakeForm04
-          formData={formData}
-          setFormData={setFormData}
-          handleFormSwitch={handleFormSwitch}
-          openSubmitDialog={handleOpenDialog}
-          readOnly={controlData.readOnly ? true : false}
-        />
-      )}
+        {activeForm == 4 && (
+          <PatientInTakeForm04
+            formData={formData}
+            setFormData={setFormData}
+            handleFormSwitch={handleFormSwitch}
+            openSubmitDialog={handleOpenDialog}
+            readOnly={controlData.readOnly ? true : false}
+          />
+        )}
 
-      {!controlData.readOnly &&
-      <SubmitDialog
-        open={isDialogOpen}
-        onClose={handleCloseDialog}
-        onSubmit={handleFinalSubmit}
-        isSubmitting={isSubmitting}
-        error={submitError}
-      />
-}
+        {!controlData.readOnly && (
+          <SubmitDialog
+            open={isDialogOpen}
+            onClose={handleCloseDialog}
+            onSubmit={handleFinalSubmit}
+            isSubmitting={isSubmitting}
+            error={submitError}
+          />
+        )}
+      </PatientContext.Provider>
     </div>
   );
 };
