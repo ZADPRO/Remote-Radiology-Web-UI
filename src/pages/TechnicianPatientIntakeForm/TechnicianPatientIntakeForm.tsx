@@ -561,7 +561,7 @@ const TechnicianPatientIntakeForm: React.FC<
         <div className="uppercase w-[80%] text-center text-sm sm:text-2xl font-bold">
           Technologist Form
         </div>
-        <div className="h-18 bg-[#fff] flex flex-col items-start justify-center w-70 rounded p-3 text-xs sm:text-sm self-end">
+        <div className="h-auto bg-[#fff] flex flex-col items-start justify-start w-70 rounded px-2 py-[2px] my-1 text-xs sm:text-xs">
           <div className="capitalize flex">
             <div className="flex w-[6rem]">Patient Name</div>{" "}
             <div>: {locationState?.name}</div>
