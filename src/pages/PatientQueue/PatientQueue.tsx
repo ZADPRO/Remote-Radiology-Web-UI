@@ -826,6 +826,9 @@ const PatientQueue: React.FC = () => {
                       appointmentId: row.original.refAppointmentId,
                       userId,
                       readOnly: true,
+                      name: row.original.refUserFirstName,
+                      custId: row.original.refUserCustId,
+                      scancenterCustId: row.original.refSCCustId,
                     },
                   })
                 }
@@ -840,7 +843,9 @@ const PatientQueue: React.FC = () => {
             statusContent = (
               <button
                 className="hover:underline cursor-pointer font-bold"
-                onClick={() => setIsEditDialogBroucherOpen(true)}
+                onClick={() => {
+                  setIsEditDialogBroucherOpen(true);
+                }}
               >
                 Start
               </button>
@@ -920,6 +925,9 @@ const PatientQueue: React.FC = () => {
                         fetchFormData: false,
                         appointmentId: row.original.refAppointmentId,
                         userId,
+                        name: row.original.refUserFirstName,
+                        custId: row.original.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
                       },
                     })
                   }
@@ -998,6 +1006,9 @@ const PatientQueue: React.FC = () => {
                         appointmentId: row.original.refAppointmentId,
                         userId: row.original.refUserId,
                         readOnly: true,
+                        name: row.original.refUserFirstName,
+                        custId: row.original.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
                       },
                     })
                   }
@@ -1027,6 +1038,9 @@ const PatientQueue: React.FC = () => {
                         fetchFormData: true,
                         appointmentId: row.original.refAppointmentId,
                         userId: row.original.refUserId,
+                        name: row.original.refUserFirstName,
+                        custId: row.original.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
                       },
                     })
                   }
@@ -1150,7 +1164,13 @@ const PatientQueue: React.FC = () => {
                   className="hover:underline cursor-pointer font-bold"
                   onClick={() =>
                     navigate("../uploadDicoms", {
-                      state: { appointmentId, userId },
+                      state: {
+                        appointmentId,
+                        userId,
+                        name: row.original.refUserFirstName,
+                        custId: row.original.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
+                      },
                     })
                   }
                 >

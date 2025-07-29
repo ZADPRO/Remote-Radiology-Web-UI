@@ -1,20 +1,24 @@
 import { Label } from "@/components/ui/label";
 import { CustomRadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../../assets/LogoNew.png";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { IntakeOption, PatientInTakeFormNavigationState } from "./PatientInTakeForm";
+import {
+  IntakeOption,
+  PatientContext,
+  PatientInTakeFormNavigationState,
+} from "./PatientInTakeForm";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface Props{
+interface Props {
   formData: IntakeOption[];
   setFormData: React.Dispatch<React.SetStateAction<IntakeOption[]>>;
   handleFormSwitch: (formNumber: number) => void;
   controlData: PatientInTakeFormNavigationState;
-   openSubmitDialog: () => void;
-   readOnly: boolean;
+  openSubmitDialog: () => void;
+  readOnly: boolean;
 }
 
 const checkboxData: Record<string, { label: string; id: string }[]> = {
@@ -104,8 +108,9 @@ const intakeOptions = [
       "I'm here for a routine breast screening (first-time or annual checkup).",
     formTitle: "S. Breast QT Screening Form (No Abnormal Findings)",
     footerLabel: "S : Screening - First-time or Annual checkup",
-    headerTitle: "S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)",
-    subHeaderTitle: ""
+    headerTitle:
+      "S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)",
+    subHeaderTitle: "",
   },
   {
     id: "2",
@@ -114,8 +119,10 @@ const intakeOptions = [
       "I'm following up after an abnormal symptom or result from a previous scan.",
     formTitle: "F. Follow-up Evaluation Form (Abnormal Symptoms or Results)",
     footerLabel: "F : Follow-up after abnormal findings",
-    headerTitle: "Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)",
-    subHeaderTitle: "(For Abnormal Imaging or Clinical Findings - No Cancer Diagnosis Yet)"
+    headerTitle:
+      "Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)",
+    subHeaderTitle:
+      "(For Abnormal Imaging or Clinical Findings - No Cancer Diagnosis Yet)",
   },
   {
     id: "3",
@@ -124,8 +131,9 @@ const intakeOptions = [
       "I've been diagnosed with breast cancer or DCIS and need imaging.",
     formTitle: "D. Breast Cancer/ DCIS Assessment Form",
     footerLabel: "D : Diagnosed with Breast Cancer or DCIS",
-    headerTitle: "Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis",
-    subHeaderTitle: "(For Biopsy Confirmed DCIS or Breast Cancer Diagnosis)"
+    headerTitle:
+      "Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis",
+    subHeaderTitle: "(For Biopsy Confirmed DCIS or Breast Cancer Diagnosis)",
   },
   {
     id: "4",
@@ -134,14 +142,24 @@ const intakeOptions = [
     formTitle: "C. QT Comparison Follow-up Form",
     footerLabel: "C : Comparison with prior QT scan",
     headerTitle: "Dc. Diagnostic - Comparison to a Prior QT Scan",
-    subHeaderTitle: "(For Patients with Prior QT Exam Needing Follow-up or Doubling Time Assessment)"
+    subHeaderTitle:
+      "(For Patients with Prior QT Exam Needing Follow-up or Doubling Time Assessment)",
   },
 ];
 
-const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitch, controlData, openSubmitDialog, readOnly}) => {
+const MainInTakeForm: React.FC<Props> = ({
+  formData,
+  setFormData,
+  handleFormSwitch,
+  controlData,
+  openSubmitDialog,
+  readOnly,
+}) => {
   const [selectedOption, setSelectedOption] = useState("");
-  
+
   const [suggestedOption, setSuggestedOption] = useState("");
+
+  const patientDetails = useContext(PatientContext);
 
   useEffect(() => {
     if (controlData.apiUpdate || readOnly) {
@@ -201,42 +219,47 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
   }, []);
 
   // Step 2: When selectedOption changes, add mapped values safely
- useEffect(() => {
-  if (!selectedOption || readOnly) return;
+  useEffect(() => {
+    if (!selectedOption || readOnly) return;
 
-  setFormData((prevFormData) => {
-    const updatedFormData = [...prevFormData];
-    
-    const setOrUpdate = (qId: number, value: any) => {
-      const index = updatedFormData.findIndex((item) => item.questionId === qId);
-      if (index !== -1) {
-        updatedFormData[index] = { ...updatedFormData[index], answer: value };
-      } else {
-        updatedFormData.push({ questionId: qId, answer: value });
-      }
-    };
+    setFormData((prevFormData) => {
+      const updatedFormData = [...prevFormData];
 
-    // ✅ Set questionId: 170 with selectedOption
-    setOrUpdate(170, selectedOption);
+      const setOrUpdate = (qId: number, value: any) => {
+        const index = updatedFormData.findIndex(
+          (item) => item.questionId === qId
+        );
+        if (index !== -1) {
+          updatedFormData[index] = { ...updatedFormData[index], answer: value };
+        } else {
+          updatedFormData.push({ questionId: qId, answer: value });
+        }
+      };
 
-    // ✅ Set questionId: 485 with empty string
-    setOrUpdate(485, "");
+      // ✅ Set questionId: 170 with selectedOption
+      setOrUpdate(170, selectedOption);
 
-    // ✅ Reset all checkboxes to false
-    Object.values(checkboxData).flat().forEach((cb) => {
-      const cbId = parseInt(cb.id);
-      const idx = updatedFormData.findIndex((item) => item.questionId === cbId);
-      if (idx !== -1) {
-        updatedFormData[idx] = { ...updatedFormData[idx], answer: "false" };
-      } else {
-        updatedFormData.push({ questionId: cbId, answer: "false" });
-      }
+      // ✅ Set questionId: 485 with empty string
+      setOrUpdate(485, "");
+
+      // ✅ Reset all checkboxes to false
+      Object.values(checkboxData)
+        .flat()
+        .forEach((cb) => {
+          const cbId = parseInt(cb.id);
+          const idx = updatedFormData.findIndex(
+            (item) => item.questionId === cbId
+          );
+          if (idx !== -1) {
+            updatedFormData[idx] = { ...updatedFormData[idx], answer: "false" };
+          } else {
+            updatedFormData.push({ questionId: cbId, answer: "false" });
+          }
+        });
+
+      return updatedFormData;
     });
-
-    return updatedFormData;
-  });
-}, [selectedOption]);
-
+  }, [selectedOption]);
 
   const handleCheckboxChange = (id: string, checked: boolean) => {
     const questionId = parseInt(id);
@@ -267,6 +290,11 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
             <ArrowLeft />
             <span className="text-lg font-semibold">Back</span>
           </Button>
+          <img
+            src={logo}
+            alt="logo"
+            className="hidden lg:block h-20 w-40 pr-2 object-contain"
+          />
           <img
             src={logo}
             alt="logo"
@@ -313,8 +341,22 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
 
       {/* Right Panel */}
       <div className="w-full lg:w-1/2 lg:p-6 flex flex-col items-end lg:overflow-auto border lg:border-none border-gray-500 rounded-lg">
-        <div className="hidden lg:inline h-20 w-40 mb-4 self-end">
-          <img src={logo} alt="logo" className="w-full h-full object-contain" />
+        <div className="hidden lg:inline h-20 w-70 mb-10 self-end">
+          <div className="h-18 bg-[#fff] font-semibold flex flex-col items-start justify-center w-70 rounded p-3 my-5 text-sm self-end">
+            <div className="capitalize flex">
+              <div className="flex w-[6rem]">Patient Name</div>{" "}
+              <div>: {patientDetails?.name}</div>
+            </div>
+            <div className="capitalize flex">
+              <div className="flex w-[6rem]">Patient ID</div>{" "}
+              <div>: {patientDetails?.custId}</div>
+            </div>
+            <div className="capitalize flex">
+              <div className="flex w-[6rem]">Scan Center</div>{" "}
+              <div>: {patientDetails?.scancenterCustId}</div>
+            </div>
+            {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
+          </div>
         </div>
 
         {selectedOption && (
@@ -341,7 +383,9 @@ const MainInTakeForm: React.FC<Props> = ({formData, setFormData, handleFormSwitc
                 readOnly ? "pointer-events-none" : ""
               }`}
             >
-                          <p className="text-start text-foreground font-semibold">Kindly Check a Option to Proceed</p>
+              <p className="text-start text-foreground font-semibold">
+                Kindly Check a Option to Proceed
+              </p>
 
               {(checkboxData[selectedOption] || []).map((cb) => {
                 const isChecked =

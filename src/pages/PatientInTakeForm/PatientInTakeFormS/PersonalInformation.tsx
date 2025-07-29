@@ -43,7 +43,7 @@ const PersonalInformation: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -123,7 +123,10 @@ const PersonalInformation: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col h-full relative">
-      <FormHeader FormTitle="Personal Information" className="uppercase" />
+      <FormHeader
+        FormTitle="Personal Information"
+        className="uppercase"
+      />
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* Row 1 */}
@@ -257,7 +260,7 @@ const PersonalInformation: React.FC<Props> = ({
 
             <div className="w-full lg:w-1/3 flex flex-col">
               <LabeledRadioWithOptionalInput
-              name="gender"
+                name="gender"
                 label="Gender"
                 required
                 questionId={questionIds.gender}
@@ -268,9 +271,15 @@ const PersonalInformation: React.FC<Props> = ({
                 options={[
                   { label: "Female", value: "female" },
                   { label: "Male", value: "male" },
-                  { label: "Transgender - Born Male", value: "transgender-born male"},
-                  { label: "Transgender - Born Female", value: "transgender-born female"},
-                  { label: "Other", value: "other" }
+                  {
+                    label: "Transgender - Born Male",
+                    value: "transgender-born male",
+                  },
+                  {
+                    label: "Transgender - Born Female",
+                    value: "transgender-born female",
+                  },
+                  { label: "Other", value: "other" },
                 ]}
               />
             </div>

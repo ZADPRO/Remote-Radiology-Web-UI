@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import checkedImg from "../../../assets/checked.png";
 import BiopsyorCancer from "./BiopsyorCancer";
@@ -7,7 +7,7 @@ import Treatment from "./Treatment";
 import FutureMonitoring from "./FutureMonitoring";
 import sidebar_bg from "../../../assets/Mask_group.png";
 import logo from "../../../assets/LogoNew.png";
-import { IntakeOption } from "../PatientInTakeForm";
+import { IntakeOption, PatientContext } from "../PatientInTakeForm";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -25,7 +25,6 @@ const PatientInTakeForm03: React.FC<Props> = ({
   openSubmitDialog,
   readOnly,
 }) => {
-
   const options = [
     "Biopsy or Cancer Diagnosis Details",
     "Receptor Status",
@@ -34,6 +33,8 @@ const PatientInTakeForm03: React.FC<Props> = ({
   ];
 
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
+
+    const patientDetails = useContext(PatientContext);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -100,7 +101,7 @@ const PatientInTakeForm03: React.FC<Props> = ({
               clockpositionRight: 477,
               distancenippleStatusRight: 478,
               distancenippleRight: 479,
-              
+
               Lymph: 271,
               positivenode: 272,
               Metastasis: 273,
@@ -231,7 +232,22 @@ const PatientInTakeForm03: React.FC<Props> = ({
           <ArrowLeft />
           <span className="text-lg font-semibold">Back</span>
         </Button>
-        <img src={logo} className="h-[6vh] px-5" alt="logo" />
+        <img src={logo} className="h-[6vh] hidden sm:block px-5" alt="logo" />
+        <div className="h-14 bg-[#fff] flex flex-col items-start justify-center w-70 mr-1  rounded p-3 text-xs self-end">
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Patient Name</div>{" "}
+            <div>: {patientDetails?.name}</div>
+          </div>
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Patient ID</div>{" "}
+            <div>: {patientDetails?.custId}</div>
+          </div>
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Scan Center</div>{" "}
+            <div>: {patientDetails?.scancenterCustId}</div>
+          </div>
+          {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
+        </div>
       </div>
       <div
         className="w-full lg:w-4/12 pt-0 h-[10vh] lg:h-full bg-[#a3b1a1] lg:bg-[#A4B2A1] flex flex-row lg:flex-col justify-start overflow-y-auto hide-scrollbar"
@@ -244,16 +260,19 @@ const PatientInTakeForm03: React.FC<Props> = ({
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
-        <div className="relative hidden lg:flex flex-col justify-between py-2 pb-10">
-          <Button
-            type="button"
-            variant="link"
-            className="text-foreground flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
-            onClick={() => handleFormSwitch(5)}
-          >
-            <ArrowLeft />
-            <span className="text-lg">Back</span>
-          </Button>
+        <div className="relative hidden lg:flex flex-col justify-between py-2 pb-3">
+          <div className="flex justify-between items-center px-1">
+            <Button
+              type="button"
+              variant="link"
+              className="text-foreground flex items-center justify-start gap-2 w-fit cursor-pointer hover:underline font-semibold"
+              onClick={() => handleFormSwitch(5)}
+            >
+              <ArrowLeft />
+              <span className="text-lg">Back</span>
+            </Button>
+            <img src={logo} className="h-[6vh] my-2 pr-2" alt="logo" />
+          </div>
 
           <p className="text-base lg:text-lg text-center font-bold uppercase">
             Db Form
@@ -262,40 +281,39 @@ const PatientInTakeForm03: React.FC<Props> = ({
 
         <div className="px-0 lg:px-4 flex lg:block">
           {options.map((option) => (
-          <div
-            ref={(el) => {
-              optionRefs.current[option] = el;
-            }}
-            key={option}
-            onClick={() => {
-              readOnly && setSelectedSection(option);
-            }}
-            className={`flex gap-2 items-center ${
-              readOnly && "cursor-pointer"
-            }`}
-          >
-            {options.indexOf(option) < options.indexOf(selectedSection) && (
-              <div className="inline w-6 lg:w-6 text-white font-bold">
-                <span>
-                  <img src={checkedImg} />
-                </span>
-              </div>
-            )}
             <div
-              className={`flex-1 flex w-[180px] h-[10vh] lg:h-[8vh] text-sm px-3 lg:px-4 rounded-sm border-[#000] font-semibold
+              ref={(el) => {
+                optionRefs.current[option] = el;
+              }}
+              key={option}
+              onClick={() => {
+                readOnly && setSelectedSection(option);
+              }}
+              className={`flex gap-2 items-center ${
+                readOnly && "cursor-pointer"
+              }`}
+            >
+              {options.indexOf(option) < options.indexOf(selectedSection) && (
+                <div className="inline w-6 lg:w-6 text-white font-bold">
+                  <span>
+                    <img src={checkedImg} />
+                  </span>
+                </div>
+              )}
+              <div
+                className={`flex-1 flex w-[180px] h-[10vh] lg:h-[8vh] text-sm px-3 lg:px-4 rounded-sm border-[#000] font-semibold
               ${
                 selectedSection === option
                   ? "bg-[#f9f5ed] text-left lg:text-left lg:bg-[#F8F3EB] text-[#3F3F3D] underline lg:no-underline lg:text-[#A4B2A1]"
                   : "bg-transparent text-[#fff] lg:text-white"
               }
               justify-center lg:justify-start items-center  `}
-            >
-              <span className="w-full break-words">{option}</span>
+              >
+                <span className="w-full break-words">{option}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
-        
       </div>
 
       {/* Form Content */}
@@ -325,17 +343,19 @@ const PatientInTakeForm03: React.FC<Props> = ({
 
           {/* Submit / Next Button */}
           {/* {!isNextButtonDisabled && ( */}
-          {!(readOnly && options.indexOf(selectedSection) === options.length - 1) && (
-  <button
-    type="submit"
-    className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-  >
-    {options.indexOf(selectedSection) === options.length - 1
-      ? "Submit"
-      : "Next"}
-    <ArrowRight className="ml-2 h-4 w-4" />
-  </button>
-)}
+          {!(
+            readOnly && options.indexOf(selectedSection) === options.length - 1
+          ) && (
+            <button
+              type="submit"
+              className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+            >
+              {options.indexOf(selectedSection) === options.length - 1
+                ? "Submit"
+                : "Next"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </button>
+          )}
 
           {/* )} */}
         </div>

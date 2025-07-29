@@ -45,6 +45,9 @@ export interface TechnicianIntakeFormNavigationState {
   appointmentId: number;
   userId: number;
   readOnly?: boolean;
+  name?: string;
+  custId?: string;
+  scancenterCustId?: string;
 }
 
 interface TechnicianPatientIntakeFormProps
@@ -105,7 +108,7 @@ const TechnicianPatientIntakeForm: React.FC<
   useEffect(() => {
     const stored = localStorage.getItem("formSession");
     if (stored) {
-          setLoading(true);
+      setLoading(true);
 
       try {
         const parsed = JSON.parse(stored);
@@ -151,11 +154,17 @@ const TechnicianPatientIntakeForm: React.FC<
 
         try {
           if (controlData.fetchFormData) {
-            await handleFetchPatientForm(controlData.userId, controlData.appointmentId);
+            await handleFetchPatientForm(
+              controlData.userId,
+              controlData.appointmentId
+            );
           }
 
           if (controlData.fetchTechnicianForm) {
-            await handleFetchTechnicianForm(controlData.userId, controlData.appointmentId);
+            await handleFetchTechnicianForm(
+              controlData.userId,
+              controlData.appointmentId
+            );
           }
         } catch (error) {
           console.error("Error fetching form data:", error);
@@ -166,13 +175,13 @@ const TechnicianPatientIntakeForm: React.FC<
     };
 
     fetchData();
-  }, [location.state]); 
-  
+  }, [location.state]);
+
   useEffect(() => {
-  if (controlData?.readOnly === false) {
-    handleAssignTechnicianForm(controlData.userId, controlData.appointmentId);
-  }
-}, [controlData?.readOnly]);
+    if (controlData?.readOnly === false) {
+      handleAssignTechnicianForm(controlData.userId, controlData.appointmentId);
+    }
+  }, [controlData?.readOnly]);
 
   const handleFetchPatientForm = async (
     userID: number,
@@ -241,7 +250,7 @@ const TechnicianPatientIntakeForm: React.FC<
     }
   };
 
-   const handleAssignTechnicianForm = async (
+  const handleAssignTechnicianForm = async (
     userID: number,
     appointmentId: number
   ) => {
@@ -298,7 +307,7 @@ const TechnicianPatientIntakeForm: React.FC<
     } catch (error) {
       console.log(error);
     } finally {
-    setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -544,9 +553,28 @@ const TechnicianPatientIntakeForm: React.FC<
           backgroundBlendMode: "overlay", // optional, helps blend bg image + color
         }}
       >
-        <img src={logo} className="h-[4vh] lg:h-[8vh]" alt="logo" />
+        <img
+          src={logo}
+          className="h-[4vh] hidden sm:block lg:h-[8vh]"
+          alt="logo"
+        />
         <div className="uppercase w-[80%] text-center text-sm sm:text-2xl font-bold">
           Technologist Form
+        </div>
+        <div className="h-18 bg-[#fff] flex flex-col items-start justify-center w-70 rounded p-3 text-xs sm:text-sm self-end">
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Patient Name</div>{" "}
+            <div>: {locationState?.name}</div>
+          </div>
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Patient ID</div>{" "}
+            <div>: {locationState?.custId}</div>
+          </div>
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">Scan Center</div>{" "}
+            <div>: {locationState?.scancenterCustId}</div>
+          </div>
+          {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
         </div>
       </div>
 
@@ -563,34 +591,37 @@ const TechnicianPatientIntakeForm: React.FC<
       <div className="px-3 w-full py-2 lg:px-15 h-[80vh]">
         <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar">
           {options.map((option, index) => {
-  const selectedIndex = options.indexOf(selectedSection);
-  const isCompleted = index < selectedIndex;
+            const selectedIndex = options.indexOf(selectedSection);
+            const isCompleted = index < selectedIndex;
 
-  return (
-    <div
-      key={option}
-      ref={(el) => {
-        optionRefs.current[option] = el;
-      }}
-      onClick={() => setSelectedSection(option)}
-      className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
-        index !== options.length - 1 ? "border-r-1" : "border-r-0"
-      } border-r-[#BFB2B2] ${
-        selectedSection === option
-          ? "border-b-5 border-b-[#abb4a5]"
-          : "border-b-5 border-b-[#f9f4ed]"
-      } ${isCompleted ? "bg-[#eae0d4] border-b-5 !border-b-[#cbbfb1]" : ""}`} // ✅ light green background if completed
-    >
-      <div
-        className={`w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white`}
-      >
-        {isCompleted ? <Check size={16} /> : index + 1}
-      </div>
-      <div className="w-[150px] text-sm lg:text-sm">{option}</div>
-    </div>
-  );
-})}
-
+            return (
+              <div
+                key={option}
+                ref={(el) => {
+                  optionRefs.current[option] = el;
+                }}
+                onClick={() => setSelectedSection(option)}
+                className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
+                  index !== options.length - 1 ? "border-r-1" : "border-r-0"
+                } border-r-[#BFB2B2] ${
+                  selectedSection === option
+                    ? "border-b-5 border-b-[#abb4a5]"
+                    : "border-b-5 border-b-[#f9f4ed]"
+                } ${
+                  isCompleted
+                    ? "bg-[#eae0d4] border-b-5 !border-b-[#cbbfb1]"
+                    : ""
+                }`} // ✅ light green background if completed
+              >
+                <div
+                  className={`w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white`}
+                >
+                  {isCompleted ? <Check size={16} /> : index + 1}
+                </div>
+                <div className="w-[150px] text-sm lg:text-sm">{option}</div>
+              </div>
+            );
+          })}
         </div>
         <div className="mt-[1vh] h-[71vh] bg-[#f9f4ed] rounded-b-2xl">
           <div
