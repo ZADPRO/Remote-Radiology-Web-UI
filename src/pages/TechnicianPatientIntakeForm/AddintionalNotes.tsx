@@ -93,38 +93,8 @@ const AddintionalNotes: React.FC<Props> = ({
             Patient has filled out the correct form
           </Label>
 
-          {/* Yes / No radio for confirmation */}
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="formCorrect"
-                className="custom-radio"
-                value="false"
-                checked={getAnswer(questionIds.confirmation) !== "true"}
-                onChange={() =>
-                  handleInputChange(questionIds.confirmation, "false")
-                }
-              />
-              <span className="text-sm sm:text-base">No</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="formCorrect"
-                className="custom-radio"
-                value="true"
-                checked={getAnswer(questionIds.confirmation) === "true"}
-                onChange={() =>
-                  handleInputChange(questionIds.confirmation, "true")
-                }
-              />
-              <span className="text-sm sm:text-base">Yes</span>
-            </label>
-          </div>
-
           {/* Radio group: 167–170 */}
-          <div className="mt-2 space-y-1">
+          <div className="mt-0 space-y-1">
             {
               // Radio options: 1-4 (stored as string in answer to questionId 170)
               [
@@ -192,6 +162,37 @@ const AddintionalNotes: React.FC<Props> = ({
               })
             }
           </div>
+
+          {/* Yes / No radio for confirmation */}
+          <div className="flex mt-1 px-1 gap-6">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="formCorrect"
+                className="custom-radio"
+                value="false"
+                checked={getAnswer(questionIds.confirmation) !== "true"}
+                onChange={() =>
+                  handleInputChange(questionIds.confirmation, "false")
+                }
+              />
+              <span className="text-sm sm:text-base">No</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="formCorrect"
+                className="custom-radio"
+                value="true"
+                checked={getAnswer(questionIds.confirmation) === "true"}
+                onChange={() =>
+                  handleInputChange(questionIds.confirmation, "true")
+                }
+              />
+              <span className="text-sm sm:text-base">Yes</span>
+            </label>
+          </div>
+
         </div>
 
         {/* Additional Notes */}

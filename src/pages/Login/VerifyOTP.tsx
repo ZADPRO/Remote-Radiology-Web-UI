@@ -78,7 +78,7 @@ const VerifyOTP: React.FC = () => {
       const response = await authenticationService.loginVerify(payload);
 
       if (response.data.data.status) {
-        const { token, RoleType, PasswordStatus } = response.data.data;
+        const { token, RoleType, PasswordStatus, ScancenterId } = response.data.data;
         console.log(response);
         setIsVerifying(false);
 
@@ -126,8 +126,9 @@ const VerifyOTP: React.FC = () => {
         // If password status is true, redirect to reset password
         if (PasswordStatus) {
           setShowSuccess(true);
+          sessionStorage.setItem("resetToken", token);
           setTimeout(() => {
-            navigate("/resetPass", { state: { email: email, token: token } });
+            navigate("/resetPass", { state: { email: email, token: token, scancenterId: ScancenterId } });
           }, 2000);
           return;
         } else {

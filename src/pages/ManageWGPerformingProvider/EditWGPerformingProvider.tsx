@@ -612,14 +612,12 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 className="text-sm font-medium"
                 htmlFor="drivers-license-upload"
               >
-                Driving License <span className="text-red-500">*</span>
+                Driving License
               </Label>
 
               <FileUploadButton
                 id="drivers-license-upload"
                 label="Upload Driving License"
-                accept=".pdf"
-                required
                 isFilePresent={formData.refWGPPDrivingLicense.length > 0}
                 maxSize={5 * 1024 * 1024} // 5MB
                 setError={setError}

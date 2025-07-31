@@ -200,4 +200,29 @@ export const reportService = {
     console.log(decryptedData);
     return decryptedData;
   },
+
+  getPatientConsent: async (scancenterId: number[]) => {
+    console.log(scancenterId);
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ scancenterId: scancenterId }, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/wellgreenforms/listPatientconsent`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      RTCText: string;
+      status: boolean;
+    } = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
 };

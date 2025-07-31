@@ -398,13 +398,12 @@ const AddWGPerformingProvider: React.FC = () => {
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="drivers-license-upload">
-                  Driver's License <span className="text-red-500">*</span>
+                  Driver's License
                 </Label>
 
                 <FileUploadButton
                   id="drivers-license-upload"
                   label="Upload Driver's License"
-                  required={true}
                   isFilePresent={formData.drivers_license.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];

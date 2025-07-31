@@ -7,6 +7,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 
 interface QuestionIds {
   imageQuality: number;
+  artifactsPresent: number;
   breastDensity: number;
   fibroglandularVolume: number;
   symmetry: number;
@@ -79,7 +80,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             ]}
           />
 
-          <div className="flex ">
+          <div className="flex">
             <Label className="w-[12rem] font-semibold text-base">
               Fibroglandular Ratio
             </Label>
@@ -113,8 +114,19 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             handleInputChange={handleReportInputChange}
             options={[
               { label: "Acceptable", value: "Acceptable" },
-              { label: "Artifacts Present", value: "Artifacts Present" },
               { label: "Poor", value: "Poor" },
+            ]}
+          />
+
+          <MultiRadioOptionalInputInline
+            label="Artifacts Present"
+            labelClassname="w-[12rem]"
+            questionId={questionIds.artifactsPresent}
+            formData={reportFormData}
+            handleInputChange={handleReportInputChange}
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
             ]}
           />
         </div>

@@ -32,13 +32,13 @@ interface QuestionIds {
   denseBreasts: number;
   additionalComments: number;
   implantLeft: number;
-  implantDateLeft: number
+  implantDateLeft: number;
   implantRight: number;
   implantDateRight: number;
-  implantsRightSpecify: number,
-  implantsRightOthersSpecify: number,
-  explantsRight: number,
-  explantsDateRight: number,
+  implantsRightSpecify: number;
+  implantsRightOthersSpecify: number;
+  explantsRight: number;
+  explantsDateRight: number;
 }
 
 interface Props {
@@ -52,7 +52,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   console.log(formData);
   const getAnswer = (id: number) =>
@@ -233,74 +233,74 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                   </>
                 )}
                 {getAnswer(questionIds.breastSurgeryOthers) === "true" && (
-                <div className="flex items-center gap-6">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`other-right`}
-                            name={`position-other`} // Group radios by unique name
-                            value="Right"
-                            checked={
-                              getAnswer(
-                                questionIds.breastSurgeryOthersSpecifyDirection
-                              ) === "Right"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds.breastSurgeryOthersSpecifyDirection,
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`other-right`}>Right</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`other-left`}
-                            name={`position-other`}
-                            value="Left"
-                            checked={
-                              getAnswer(
-                                questionIds.breastSurgeryOthersSpecifyDirection
-                              ) === "Left"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds.breastSurgeryOthersSpecifyDirection,
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`other-left`}>Left</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`other-both`}
-                            name={`position-other`}
-                            value="Both"
-                            checked={
-                              getAnswer(
-                                questionIds.breastSurgeryOthersSpecifyDirection
-                              ) === "Both"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds.breastSurgeryOthersSpecifyDirection,
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`other-both`}>Both</Label>
-                        </div>
-                      </div>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={`other-right`}
+                        name={`position-other`} // Group radios by unique name
+                        value="Right"
+                        checked={
+                          getAnswer(
+                            questionIds.breastSurgeryOthersSpecifyDirection
+                          ) === "Right"
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.breastSurgeryOthersSpecifyDirection,
+                            e.target.value
+                          )
+                        }
+                        className="custom-radio"
+                        required
+                      />
+                      <Label htmlFor={`other-right`}>Right</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={`other-left`}
+                        name={`position-other`}
+                        value="Left"
+                        checked={
+                          getAnswer(
+                            questionIds.breastSurgeryOthersSpecifyDirection
+                          ) === "Left"
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.breastSurgeryOthersSpecifyDirection,
+                            e.target.value
+                          )
+                        }
+                        className="custom-radio"
+                        required
+                      />
+                      <Label htmlFor={`other-left`}>Left</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id={`other-both`}
+                        name={`position-other`}
+                        value="Both"
+                        checked={
+                          getAnswer(
+                            questionIds.breastSurgeryOthersSpecifyDirection
+                          ) === "Both"
+                        }
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.breastSurgeryOthersSpecifyDirection,
+                            e.target.value
+                          )
+                        }
+                        className="custom-radio"
+                        required
+                      />
+                      <Label htmlFor={`other-both`}>Both</Label>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -376,35 +376,39 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           })}
                           {getAnswer(questionIds.implantsSpecify) ===
                             "Other" && (
-                            <Input
-                              placeholder="Please specify"
-                              value={getAnswer(
-                                questionIds.implantsOthersSpecify
-                              )}
-                              className="w-64"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  questionIds.implantsOthersSpecify,
-                                  e.target.value
-                                )
-                              }
-                            />
-                          )}
+                              <Input
+                                placeholder="Please specify"
+                                value={getAnswer(
+                                  questionIds.implantsOthersSpecify
+                                )}
+                                className="w-64"
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    questionIds.implantsOthersSpecify,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            )}
                         </div>
 
-                        <Input
-                          placeholder="Duration in Months"
-                          className="lg:w-48"
-                          value={getAnswer(questionIds.implantDateLeft)}
-                          onChange={(e) =>
-                            handleInputChange(
-                              questionIds.implantDateLeft,
-                              e.target.value
-                            )
-                          }
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Duration"
+                            className="lg:w-38"
+                            value={getAnswer(questionIds.implantDateLeft)}
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.implantDateLeft,
+                                e.target.value
+                              )
+                            }
+                          />
 
-                        <div className="flex items-center gap-2">
+                          <Label className="text-sm font-medium">Months</Label>
+                        </div>
+
+                        <div className="flex items-center h-10 gap-2">
                           <Checkbox2
                             id="explantsLeft"
                             checked={getAnswer(questionIds.explants) === "true"}
@@ -420,25 +424,24 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           <Label htmlFor="explantsLeft">Explants</Label>
                           {getAnswer(questionIds.explants) === "true" && (
                             <div className="w-64">
-                                <DatePicker
-                              placeholder="Explants Done On"
-                              value={
-                                getAnswer(questionIds.explantsDate)
-                                  ? new Date(
+                              <DatePicker
+                                placeholder="Explants Done On"
+                                value={
+                                  getAnswer(questionIds.explantsDate)
+                                    ? new Date(
                                       getAnswer(questionIds.explantsDate)
                                     )
-                                  : undefined
-                              }
-                              onChange={(val) =>
-                                handleInputChange(
-                                  questionIds.explantsDate,
-                                  val?.toLocaleDateString("en-CA") || ""
-                                )
-                              }
-                              disabledDates={dateDisablers.noFuture}
-                            />
+                                    : undefined
+                                }
+                                onChange={(val) =>
+                                  handleInputChange(
+                                    questionIds.explantsDate,
+                                    val?.toLocaleDateString("en-CA") || ""
+                                  )
+                                }
+                                disabledDates={dateDisablers.noFuture}
+                              />
                             </div>
-                            
                           )}
                         </div>
                       </div>
@@ -497,35 +500,39 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           })}
                           {getAnswer(questionIds.implantsRightSpecify) ===
                             "Other" && (
-                            <Input
-                              placeholder="Please specify"
-                              value={getAnswer(
-                                questionIds.implantsRightOthersSpecify
-                              )}
-                              className="w-64"
-                              onChange={(e) =>
-                                handleInputChange(
-                                  questionIds.implantsRightOthersSpecify,
-                                  e.target.value
-                                )
-                              }
-                            />
-                          )}
+                              <Input
+                                placeholder="Please specify"
+                                value={getAnswer(
+                                  questionIds.implantsRightOthersSpecify
+                                )}
+                                className="w-64"
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    questionIds.implantsRightOthersSpecify,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            )}
                         </div>
 
-                        <Input
-                          placeholder="Duration in Months"
-                          className="lg:w-48"
-                          value={getAnswer(questionIds.implantDateRight)}
-                          onChange={(e) =>
-                            handleInputChange(
-                              questionIds.implantDateRight,
-                              e.target.value
-                            )
-                          }
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Duration"
+                            className="lg:w-48"
+                            value={getAnswer(questionIds.implantDateRight)}
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.implantDateRight,
+                                e.target.value
+                              )
+                            }
+                          />
+                          <Label className="text-sm font-medium">Months</Label>
+                        </div>
 
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex items-center h-10 gap-2">
                           <Checkbox2
                             id="explantsRight"
                             checked={
@@ -543,25 +550,24 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           <Label htmlFor="explantsRight">Explants</Label>
                           {getAnswer(questionIds.explantsRight) === "true" && (
                             <div className="w-64">
-                                <DatePicker
-                              placeholder="Explants Done On"
-                              value={
-                                getAnswer(questionIds.explantsDateRight)
-                                  ? new Date(
+                              <DatePicker
+                                placeholder="Explants Done On"
+                                value={
+                                  getAnswer(questionIds.explantsDateRight)
+                                    ? new Date(
                                       getAnswer(questionIds.explantsDateRight)
                                     )
-                                  : undefined
-                              }
-                              onChange={(val) =>
-                                handleInputChange(
-                                  questionIds.explantsDateRight,
-                                  val?.toLocaleDateString("en-CA") || ""
-                                )
-                              }
-                              disabledDates={dateDisablers.noFuture}
-                            />
+                                    : undefined
+                                }
+                                onChange={(val) =>
+                                  handleInputChange(
+                                    questionIds.explantsDateRight,
+                                    val?.toLocaleDateString("en-CA") || ""
+                                  )
+                                }
+                                disabledDates={dateDisablers.noFuture}
+                              />
                             </div>
-                            
                           )}
                         </div>
                       </div>

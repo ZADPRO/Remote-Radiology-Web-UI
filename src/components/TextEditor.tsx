@@ -12,6 +12,7 @@ interface TextEditorProps {
   className?: string;
   readOnly?: boolean;
   onManualEdit?: () => void;
+  height?: string;
 }
  
 // Register the table UI module
@@ -55,6 +56,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   className = "",
   readOnly,
   onManualEdit,
+  height,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
  
@@ -74,13 +76,19 @@ const TextEditor: React.FC<TextEditorProps> = ({
       editor.off("text-change", handleTextChange);
     };
   }, [onManualEdit]);
- 
+
   return (
     <div
       className={`border rounded-xl bg-background p-4 shadow-sm ${className} ${
         readOnly ? "cursor-not-allowed" : ""
       }`}
     >
+      <style>{`
+        .ql-container {
+          height: ${height ? height : "auto"};
+        }
+      `}</style>
+
       <ReactQuill
         ref={quillRef}
         value={value}

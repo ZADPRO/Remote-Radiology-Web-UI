@@ -385,14 +385,8 @@ const ComparisonPriorRight: React.FC<Props> = ({
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
             options={[
-              {
-                label: "Stable",
-                value: "stable",
-              },
               { label: "Increased", value: "increased" },
               { label: "Decreased", value: "decreased" },
-              { label: "Resolved", value: "resolved" },
-              { label: "New", value: "new" },
             ]}
           />
 

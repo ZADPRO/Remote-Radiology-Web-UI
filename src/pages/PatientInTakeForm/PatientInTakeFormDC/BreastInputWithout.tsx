@@ -88,7 +88,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
 
                   {getAnswerByQuestionId(Props.SResultRight) === "New" && (
                     <div className="flex flex-row items-center gap-2 w-full lg:w-auto">
-                      <Label className="min-w-[70px]">Duration</Label>
+                      <Label className="min-w-[70px]">Duration (Months)</Label>
                       <Input
                         placeholder="Months"
                         type="number"
@@ -136,7 +136,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
 
                   {getAnswerByQuestionId(Props.SResult) === "New" && (
                     <div className="flex flex-row items-center gap-2 w-full lg:w-auto">
-                      <Label className="min-w-[70px]">Duration</Label>
+                      <Label className="min-w-[70px]">Duration (Months)</Label>
                       <Input
                         placeholder="Months"
                         type="number"

@@ -158,7 +158,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                   )
                 }
                 disabledDates={(date) => date > new Date()}
-                required={showDetails}
+                required={getAnswer(resultId) == "Abnormal" || getAnswer(reportAvailableId) == "Available"}
               />
             </div>
           </div>

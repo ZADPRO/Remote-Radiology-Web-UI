@@ -42,7 +42,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
   inputPlaceholder = "Specify",
   secondaryInputPlaceholder = "Additional details",
   className,
-  inputWidth = "w-fit w-64",
+  inputWidth = "w-fit w-44",
   secondaryinputWidth = "w-fit w-64",
   required = false,
   optionalInputType = "input", // ✅ default to input
@@ -125,18 +125,23 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                         required
                       />
                     ) : (
-                      <Input
-                        className={cn("ml-2", inputWidth)}
-                        placeholder={inputPlaceholder}
-                        value={optionalValue}
-                        onChange={(e) =>
-                          handleInputChange(
-                            optionalInputQuestionId,
-                            e.target.value
-                          )
-                        }
-                        required
-                      />
+                      <>
+                        <Input
+                          className={cn("ml-2 mr-2", inputWidth)}
+                          placeholder={inputPlaceholder}
+                          value={optionalValue}
+                          onChange={(e) =>
+                            handleInputChange(
+                              optionalInputQuestionId,
+                              e.target.value
+                            )
+                          }
+                          required
+                        />
+                        <Label className="text-sm font-medium">
+                          {inputPlaceholder}
+                        </Label>
+                      </>
                     ))}
 
                   {secondaryOptionalInputQuestionId &&
@@ -154,18 +159,23 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                         required
                       />
                     ) : (
-                      <Input
-                        className={cn("ml-2", secondaryinputWidth)}
-                        placeholder={secondaryInputPlaceholder}
-                        value={secondaryOptionalValue}
-                        onChange={(e) =>
-                          handleInputChange(
-                            secondaryOptionalInputQuestionId,
-                            e.target.value
-                          )
-                        }
-                        required
-                      />
+                      <>
+                        <Input
+                          className={cn("ml-2 mr-2", secondaryinputWidth)}
+                          placeholder={secondaryInputPlaceholder}
+                          value={secondaryOptionalValue}
+                          onChange={(e) =>
+                            handleInputChange(
+                              secondaryOptionalInputQuestionId,
+                              e.target.value
+                            )
+                          }
+                          required
+                        />
+                        <Label className="text-sm font-medium">
+                          {secondaryInputPlaceholder}
+                        </Label>
+                      </>
                     ))}
                 </div>
               )}

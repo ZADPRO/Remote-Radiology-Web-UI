@@ -20,9 +20,11 @@ export const breastImpantRightQuestions = {
     symmetryLeft: 118,
     symmetryRight: 119,
   }
+  
   export const breastDensityandImageRightQuestions = {
   breastSelect: 110,
   imageQuality: 14,
+  artifactsPresent: 120,
   breastDensity: 15,
   fibroglandularVolume: 16,
   symmetry: 17,
@@ -86,6 +88,7 @@ export const ComparisonPriorRightQuestion = {
 
 export const breastDensityandImageLeftQuestions = {
     imageQuality: 57,
+    artifactsPresent: 121,
     breastDensity: 58,
     fibroglandularVolume: 59,
     symmetry: 60,

@@ -189,7 +189,7 @@ const BreastBiopsy: React.FC<Props> = ({
             {/* Check to Confirm Checkbox */}
             <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
               <div className="text-xs sm:text-xs font-medium">
-                Check
+                Confirm
               </div>
               <Checkbox2
                 className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
