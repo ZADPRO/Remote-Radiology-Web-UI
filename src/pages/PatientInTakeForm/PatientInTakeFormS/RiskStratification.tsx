@@ -66,8 +66,15 @@ const RiskStratification: React.FC<Props> = ({
                       here
                     </span>
                   </DialogTrigger>{" "}
-                  to open the IBIS Risk Calculator and enter the percentage
-                  score below.
+                   to open the IBIS Risk Calculator and enter your
+                   <DialogTrigger asChild>
+                    <span
+                      className="underline text-blue-600 cursor-pointer"
+                      title="Open IBIS Calculator"
+                    >
+                      your estimated
+                    </span>
+                  </DialogTrigger>{" "} score below
                 </p>
 
                 <DialogContent className="max-w-[90vw] h-[90vh] p-4">

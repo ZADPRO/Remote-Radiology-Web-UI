@@ -194,7 +194,6 @@ const Report: React.FC = () => {
     }))
   ); //current higgest question id: 116
 
-
   useEffect(() => {
     if (syncStatus.breastDensityandImageRight) {
       setBreastDensityandImageRight(
@@ -506,17 +505,23 @@ const Report: React.FC = () => {
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpressionAdditional,
           selectedRecommendationId:
-            response.appointmentStatus[0].refAppointmentRecommendationAdditional,
+            response.appointmentStatus[0]
+              .refAppointmentRecommendationAdditional,
         }));
         setShowOptional(() => ({
-          impression: response.appointmentStatus[0].refAppointmentImpressionAdditional != "",
-          recommendation: response.appointmentStatus[0].refAppointmentRecommendationAdditional != ""
-        }))
-        
+          impression:
+            response.appointmentStatus[0].refAppointmentImpressionAdditional !=
+            "",
+          recommendation:
+            response.appointmentStatus[0]
+              .refAppointmentRecommendationAdditional != "",
+        }));
+
         setCommonImpressRecomm((prev) => ({
           ...prev,
-          id: response.appointmentStatus[0].refAppointmentCommonImpressionRecommendation
-        }))
+          id: response.appointmentStatus[0]
+            .refAppointmentCommonImpressionRecommendation,
+        }));
 
         setTemplates(response.reportFormateList || []);
         setResponsePatientInTake(response.intakeFormData || []);
@@ -555,17 +560,17 @@ const Report: React.FC = () => {
     }
   };
 
-    useEffect(() => {
-    if(!responsePatientInTake) return;
+  useEffect(() => {
+    if (!responsePatientInTake) return;
 
-    if(assignData?.appointmentStatus[0].refCategoryId === 1) {
-      setPatientHistory(SFormGeneration(responsePatientInTake))
-    }else if(assignData?.appointmentStatus[0].refCategoryId === 2) {
-      setPatientHistory(DaFormReportGenerator(responsePatientInTake))
-    }  else if(assignData?.appointmentStatus[0].refCategoryId === 3) {
-      setPatientHistory(DbFormReportGenerator(responsePatientInTake))
-    } else if(assignData?.appointmentStatus[0].refCategoryId === 4) {
-      setPatientHistory(DcFormGeneration(responsePatientInTake))
+    if (assignData?.appointmentStatus[0].refCategoryId === 1) {
+      setPatientHistory(SFormGeneration(responsePatientInTake));
+    } else if (assignData?.appointmentStatus[0].refCategoryId === 2) {
+      setPatientHistory(DaFormReportGenerator(responsePatientInTake));
+    } else if (assignData?.appointmentStatus[0].refCategoryId === 3) {
+      setPatientHistory(DbFormReportGenerator(responsePatientInTake));
+    } else if (assignData?.appointmentStatus[0].refCategoryId === 4) {
+      setPatientHistory(DcFormGeneration(responsePatientInTake));
     }
   }, [responsePatientInTake]);
 
@@ -744,13 +749,14 @@ const Report: React.FC = () => {
       <div className="w-full h-[10vh] bg-[#a3b1a0] flex shadow-sm">
         {/* Main Tabs */}
         <div className="flex w-3/5 h-full">
-          <div className="w-auto">
-            <img
-              src={logo}
-              alt="logo"
-              className="w-full h-full object-contain object-center"
-            />
-          </div>
+          <div className="w-48 object-cover h-auto flex items-center justify-center px-2">
+  <img
+    src={logo}
+    alt="logo"
+    className="max-w-full max-h-full object-contain"
+  />
+</div>
+
           {[
             { label: "Patient Form", value: 1 },
             { label: "Technician Form", value: 2 },
@@ -764,8 +770,8 @@ const Report: React.FC = () => {
               }}
               className={`flex-1 flex items-center justify-center text-sm rounded-t-[2rem] border-t border-x font-semibold transition-all duration-150 relative ${
                 tab === value
-                  ? "bg-[#f8f4eb] rounded-t-[2rem] h-[90%] mt-auto shadow-md border-t"
-                  : "hover:bg-[#b8c2b5] rounded-t-[2rem] border-t"
+                  ? "bg-[#f8f4eb] rounded-t-[2rem] h-[95%] mt-auto shadow-md border-t"
+                  : "hover:bg-[#b8c2b5] rounded-t-[2rem] h-[85%] mt-auto border-t"
               }transition-colors duration-50 ease-in cursor-pointer`}
             >
               {label}
@@ -986,140 +992,138 @@ const Report: React.FC = () => {
           {/* Buttons */}
           {tab === 4 && subTab === 4 && (
             <>
-            <Button
-            variant="greenTheme"
-            className="text-xs w-full text-white px-3 py-2 mb-2 min-w-[48%]"
-            onClick={() => setLoadTemplateStatus(true)}
-            disabled={syncStatus.Notes}
-          >
-            Load Template
-          </Button>
+              <Button
+                variant="greenTheme"
+                className="text-xs w-full text-white px-3 py-2 mb-2 min-w-[48%]"
+                onClick={() => setLoadTemplateStatus(true)}
+                disabled={syncStatus.Notes}
+              >
+                Load Template
+              </Button>
 
-          <Dialog
-                    onOpenChange={setLoadTemplateStatus}
-                    open={loadTemplateStatus}
-                  >
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Load Template</DialogTitle>
-                      </DialogHeader>
+              <Dialog
+                onOpenChange={setLoadTemplateStatus}
+                open={loadTemplateStatus}
+              >
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Load Template</DialogTitle>
+                  </DialogHeader>
 
-                      <div className="flex gap-4">
-                        <Input
-                          type="text"
-                          placeholder="Search template..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="mb-3 text-xs"
-                        />
-                        <PopoverDialog
-                          open={popoverOpen}
-                          onOpenChange={setPopoverOpen}
-                        >
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <PopoverTriggerDialog asChild>
-                              <Button
-                                variant="greenTheme"
-                                className="text-xs text-white"
-                                onClick={() => setPopoverOpen(true)}
-                              >
-                                <Plus size={16} />
-                              </Button>
-                            </PopoverTriggerDialog>
-                            <PopoverContentDialog className="w-80">
-                              <div className="grid gap-4">
-                                <div className="space-y-2">
-                                  <h4 className="leading-none font-medium">
-                                    Upload New Template
-                                  </h4>
-                                </div>
-                                <form
-                                  onSubmit={(e) => {
-                                    e.preventDefault();
-                                    uploadReportFormate();
-                                  }}
-                                >
-                                  <div className="grid gap-2">
-                                    <div className="flex flex-col gap-2">
-                                      <Label htmlFor="width">Name</Label>
-                                      <Input
-                                        id="name"
-                                        className="col-span-2 h-8"
-                                        value={fileName}
-                                        onChange={(e) => {
-                                          setFilename(e.target.value);
-                                        }}
-                                        required
-                                      />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                      <Label htmlFor="width">Upload File</Label>
-                                      <Input
-                                        id="file"
-                                        type="file"
-                                        accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        className="col-span-2 h-8"
-                                        // value={fileName}
-                                        onChange={handleFileChange}
-                                        required
-                                      />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                      <Button
-                                        variant="greenTheme"
-                                        className="text-xs text-white"
-                                        type="submit"
-                                      >
-                                        {popoverLoading ? (
-                                          <Loader className="animate-spin w-4 h-4" />
-                                        ) : (
-                                          "Upload Template"
-                                        )}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-                            </PopoverContentDialog>
-                          </div>
-                        </PopoverDialog>
-                      </div>
-
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {filteredTemplates.length > 0 ? (
-                          filteredTemplates.map((data: any) => (
-                            <div
-                              key={data.refRFId}
-                              className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
-                            >
-                              <div>{data.refRFName}</div>
-                              <Button
-                                variant="greenTheme"
-                                className="text-xs text-white px-3 py-1 h-6"
-                                onClick={() => {
-                                  !loadingStatus && getTemplate(data.refRFId);
-                                }}
-                              >
-                                {loadingStatus === data.refRFId ? (
-                                  <Loader className="animate-spin w-4 h-4" />
-                                ) : (
-                                  "Load"
-                                )}
-                              </Button>
+                  <div className="flex gap-4">
+                    <Input
+                      type="text"
+                      placeholder="Search template..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="mb-3 text-xs"
+                    />
+                    <PopoverDialog
+                      open={popoverOpen}
+                      onOpenChange={setPopoverOpen}
+                    >
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <PopoverTriggerDialog asChild>
+                          <Button
+                            variant="greenTheme"
+                            className="text-xs text-white"
+                            onClick={() => setPopoverOpen(true)}
+                          >
+                            <Plus size={16} />
+                          </Button>
+                        </PopoverTriggerDialog>
+                        <PopoverContentDialog className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">
+                                Upload New Template
+                              </h4>
                             </div>
-                          ))
-                        ) : (
-                          <div className="text-center text-sm text-gray-500">
-                            No templates found.
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                uploadReportFormate();
+                              }}
+                            >
+                              <div className="grid gap-2">
+                                <div className="flex flex-col gap-2">
+                                  <Label htmlFor="width">Name</Label>
+                                  <Input
+                                    id="name"
+                                    className="col-span-2 h-8"
+                                    value={fileName}
+                                    onChange={(e) => {
+                                      setFilename(e.target.value);
+                                    }}
+                                    required
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                  <Label htmlFor="width">Upload File</Label>
+                                  <Input
+                                    id="file"
+                                    type="file"
+                                    accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    className="col-span-2 h-8"
+                                    // value={fileName}
+                                    onChange={handleFileChange}
+                                    required
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                  <Button
+                                    variant="greenTheme"
+                                    className="text-xs text-white"
+                                    type="submit"
+                                  >
+                                    {popoverLoading ? (
+                                      <Loader className="animate-spin w-4 h-4" />
+                                    ) : (
+                                      "Upload Template"
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                            </form>
                           </div>
-                        )}
+                        </PopoverContentDialog>
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                  </>
-          )
-          
-          }
+                    </PopoverDialog>
+                  </div>
+
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {filteredTemplates.length > 0 ? (
+                      filteredTemplates.map((data: any) => (
+                        <div
+                          key={data.refRFId}
+                          className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
+                        >
+                          <div>{data.refRFName}</div>
+                          <Button
+                            variant="greenTheme"
+                            className="text-xs text-white px-3 py-1 h-6"
+                            onClick={() => {
+                              !loadingStatus && getTemplate(data.refRFId);
+                            }}
+                          >
+                            {loadingStatus === data.refRFId ? (
+                              <Loader className="animate-spin w-4 h-4" />
+                            ) : (
+                              "Load"
+                            )}
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-sm text-gray-500">
+                        No templates found.
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
 
           {role?.type && (
             <div
@@ -1135,28 +1139,28 @@ const Report: React.FC = () => {
 
                   if (label === "Sign Off") {
                     setShowMailDialog(true); // open dialog
-                  } else if(status == "" && label == "Insert Signature") {
+                  } else if (status == "" && label == "Insert Signature") {
                     const date = new Date().toLocaleDateString();
-                        console.log(userDetails);
-                        const signatureRow = `
+                    console.log(userDetails);
+                    const signatureRow = `
                     <br/>
                     <h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>Dr. ${
                       userDetails.refUserFirstName
                     },</strong></h3>${
-                          userDetails.specialization
-                            ? '<h3 class="ql-align-right"><strong>' +
-                              userDetails.specialization +
-                              ",</strong></h3>"
-                            : ""
-                        }<h3 class=\"ql-align-right\"><strong><em>${date}</em></strong></h3>
+                      userDetails.specialization
+                        ? '<h3 class="ql-align-right"><strong>' +
+                          userDetails.specialization +
+                          ",</strong></h3>"
+                        : ""
+                    }<h3 class=\"ql-align-right\"><strong><em>${date}</em></strong></h3>
                           
                       `;
-                        const notesData = Notes + signatureRow;
-                        setNotes(notesData);
-                        setsyncStatus({
-                          ...syncStatus,
-                          Notes: false,
-                        });
+                    const notesData = Notes + signatureRow;
+                    setNotes(notesData);
+                    setsyncStatus({
+                      ...syncStatus,
+                      Notes: false,
+                    });
                   } else {
                     handleReportSubmit(status, editStatus); // directly call
                   }
@@ -1169,7 +1173,10 @@ const Report: React.FC = () => {
                     className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
                     onClick={handleClick}
                     disabled={!isAllowed}
-                    hidden={(label == "Insert Signature" &&  !(tab === 4 && subTab === 4))}
+                    hidden={
+                      label == "Insert Signature" &&
+                      !(tab === 4 && subTab === 4)
+                    }
                   >
                     {label}
                   </Button>
@@ -1261,7 +1268,7 @@ const Report: React.FC = () => {
                     patientHistory: {
                       value: patientHistory,
                       onChange: setPatientHistory,
-                    }
+                    },
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}

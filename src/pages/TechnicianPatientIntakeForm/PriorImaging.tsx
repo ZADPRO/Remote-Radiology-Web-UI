@@ -161,7 +161,7 @@ const PriorImaging: React.FC<Props> = ({
         </div>
         <div className="w-[20%] flex justify-center items-start pl-4">
           <div className="flex items-center gap-3">
-            {renderCheckbox("Check", symptomMainQuestionId)}
+            {renderCheckbox("Confirm", symptomMainQuestionId)}
             {!readOnly && (
             !isEditing ? (
               <div className="flex flex-col items-center gap-1 w-20">

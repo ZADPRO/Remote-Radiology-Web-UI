@@ -86,6 +86,8 @@ export const analyticsService = {
 
     const payload = encrypt({ userId, roleId, startDate: startDate, endDate: endDate }, token); 
 
+    console.log(userId, roleId, startDate, endDate)
+
      const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_USERSERVICE

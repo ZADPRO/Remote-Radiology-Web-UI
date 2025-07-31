@@ -195,7 +195,7 @@ const TechnicianPatientIntakeForm: React.FC<
       console.log(res);
 
       if (res.status) {
-        console.log(res.data.find((item: any) => item.questionId == 134));
+        console.log("------------------------?", res);
 
         setPatientFormData(res.data);
 
@@ -231,6 +231,11 @@ const TechnicianPatientIntakeForm: React.FC<
     }
   };
 
+  const [technicianData, setTechnicianData] = useState({
+    name: "",
+    custId: "",
+  });
+
   const handleFetchTechnicianForm = async (
     userID: number,
     appointmentId: number
@@ -241,6 +246,11 @@ const TechnicianPatientIntakeForm: React.FC<
         appointmentId
       );
       console.log("res", res);
+
+      setTechnicianData({
+        name: res.technicianName,
+        custId: res.technicianCustId,
+      });
 
       if (res.TechIntakeData) {
         setTechnicianFormData(res.TechIntakeData);
@@ -331,6 +341,9 @@ const TechnicianPatientIntakeForm: React.FC<
   //         handleInputChange(47, "No")
   //     }
   // }, [])
+
+  const getPatientFormAnswer = (id: number) =>
+    patientFormData?.find((q) => q.questionId === id)?.answer || "";
 
   const handleInputChange = (questionId: number, value: string) => {
     setTechnicianFormData((prev) =>
@@ -543,7 +556,7 @@ const TechnicianPatientIntakeForm: React.FC<
       {/* Sidebar */}
       {loading && <LoadingOverlay />}
       <div
-        className="flex w-full h-[10vh] px-5 sm:px-10 bg-[#abb4a5] items-center"
+        className="flex w-full h-[12vh] px-5 sm:px-10 bg-[#abb4a5] items-center"
         style={{
           backgroundImage: `url(${navbar_bg})`,
           boxShadow: "6px 4px 26.2px 5px #0000002B",
@@ -574,21 +587,36 @@ const TechnicianPatientIntakeForm: React.FC<
             <div className="flex w-[6rem]">Scan Center</div>{" "}
             <div>: {locationState?.scancenterCustId}</div>
           </div>
+          <div className="capitalize flex">
+            <div className="flex w-[6rem]">DOB</div>{" "}
+            <div>: {getPatientFormAnswer(2)}</div>
+          </div>
           {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
         </div>
       </div>
 
-      <Button
-        type="button"
-        variant="link"
-        className="self-start flex text-foreground font-semibold items-center gap-2"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft />
-        <span className="text-lg font-semibold">Back</span>
-      </Button>
+      <div className="flex justify-between">
+        <Button
+          type="button"
+          variant="link"
+          className="self-start flex text-foreground font-semibold items-center gap-2"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+          <span className="text-lg font-semibold">Back</span>
+        </Button>
 
-      <div className="px-3 w-full py-2 lg:px-15 h-[80vh]">
+        <div className="h-auto bg-[#fff] flex flex-col items-center justify-center w-auto rounded px-3 mt-1 text-xs sm:text-xs mr-3">
+          <div className="capitalize flex">
+            <div className="flex w-[4rem]">Filled By</div>{" "}
+            <div>
+              :{technicianData.name} ({technicianData.custId})
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-3 w-full py-2 lg:px-15 h-[78vh]">
         <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar">
           {options.map((option, index) => {
             const selectedIndex = options.indexOf(selectedSection);

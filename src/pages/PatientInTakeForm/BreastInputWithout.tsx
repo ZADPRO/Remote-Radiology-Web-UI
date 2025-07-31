@@ -23,6 +23,7 @@ type Props = {
   editStatus?: boolean;
   patientData?: any;
   setPatientData?: any;
+  nameLabelColor?: string;
 };
 
 const BreastInputWithout: React.FC<Props> = (Props) => {
@@ -80,7 +81,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                 }
               }}
             />
-            <Label className="font-semibold text-base">{Props.label}</Label>
+            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `text-[${Props.nameLabelColor}]` : ""}`}>{Props.label}</Label>
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
@@ -136,7 +137,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
 
                     <div className="flex items-center w-48 space-x-2">
                       <Label htmlFor="date" className="">
-                        Duration
+                        Duration (Months)
                       </Label>
                       <Input
                         name="date"
@@ -227,7 +228,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                     </div>
                     <div className="flex items-center w-48 space-x-2">
                       <Label htmlFor="date" className="">
-                        Duration
+                        Duration (Months)
                       </Label>
                       <Input
                         name="date"

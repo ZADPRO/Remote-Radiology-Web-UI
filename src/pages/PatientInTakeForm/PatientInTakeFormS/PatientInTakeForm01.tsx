@@ -46,7 +46,8 @@ const PatientInTakeForm01: React.FC<Props> = ({
     "Biopsy",
   ];
 
-  const [selectedSection, setSelectedSection] = useState<string>(options[0]);
+  const [selectedSection, setSelectedSection] =
+    useState<string>(options[0]);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
@@ -497,9 +498,8 @@ const PatientInTakeForm01: React.FC<Props> = ({
               onClick={() => {
                 readOnly && setSelectedSection(option);
               }}
-              className={`flex gap-2 items-center ${
-                readOnly && "cursor-pointer"
-              }`}
+              className={`flex gap-2 items-center ${readOnly && "cursor-pointer"
+                }`}
             >
               {options.indexOf(option) < options.indexOf(selectedSection) && (
                 <div className="inline w-6 lg:w-6 text-white font-bold">
@@ -510,11 +510,10 @@ const PatientInTakeForm01: React.FC<Props> = ({
               )}
               <div
                 className={`flex-1 flex w-[180px] h-[10vh] lg:h-[8vh] text-sm px-3 lg:px-4 rounded-sm border-[#000] font-semibold
-              ${
-                selectedSection === option
-                  ? "bg-[#f9f5ed] text-left lg:text-left lg:bg-[#F8F3EB] text-[#3F3F3D] underline lg:no-underline lg:text-[#A4B2A1]"
-                  : "bg-transparent text-[#fff] lg:text-white"
-              }
+              ${selectedSection === option
+                    ? "bg-[#f9f5ed] text-left lg:text-left lg:bg-[#F8F3EB] text-[#3F3F3D] underline lg:no-underline lg:text-[#A4B2A1]"
+                    : "bg-transparent text-[#fff] lg:text-white"
+                  }
               justify-center lg:justify-start items-center  `}
               >
                 <span className="w-full break-words">{option}</span>
@@ -554,7 +553,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
           <button
             type="submit" // Changed to type="submit" to trigger form onSubmit
             className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-            // disabled={isNextButtonDisabled}
+          // disabled={isNextButtonDisabled}
           >
             {buttonText}
             <ArrowRight className="ml-2 h-4 w-4" />

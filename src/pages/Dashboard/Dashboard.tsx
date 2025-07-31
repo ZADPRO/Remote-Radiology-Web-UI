@@ -14,14 +14,16 @@ import {
 import React, { JSX, useEffect, useState } from "react";
 import { useAuth, UserProfile } from "../Routes/AuthContext";
 import { dashboardService } from "@/services/dashboardService";
-import TechGuidelines from "../Consent/TechGuidelines";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import logoNew from "../../assets/LogoNew.png";
 import UserConsent from "../Consent/UserConsent";
 import RadiologyTrainingMaterial from "./RadiologyTrainingMaterial";
 import InvoicePopUp from "./InvoicePopUp";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import PatientInformation from "./PatientInformation";
+import PatientInformation from "./PatientBrouchure/PatientInformation";
+import ConsentForm from "./ConsentForm/ConsentForm";
+import TechGuidelineForm from "./TechGuidelines/TechGuidelineForm";
+import TechConsentForm from "./TechConsent/TechConsentForm";
 
 const Dashboard: React.FC = () => {
   const [userData, setUserData] = useState<UserProfile>();
@@ -135,33 +137,7 @@ const Dashboard: React.FC = () => {
         {
           label: "Consent Form",
           icon: <FileSignature className="w-6 h-6" />,
-          dialogContent: (
-            <DialogContent
-              style={{
-                background:
-                  "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-              }}
-              className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-            >
-              <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                  <img
-                    src={logoNew}
-                    alt="logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="flex-1 text-center">
-                  <h2 className="text-2xl font-semibold">User Consent Form</h2>
-                  <p className="text-sm text-gray-600 max-w-md mx-auto">
-                    EaseQT Platform
-                  </p>
-                </div>
-                <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-              </DialogHeader>
-              <UserConsent viewOnly staticType={"patient"} />
-            </DialogContent>
-          ),
+          dialogContent: <ConsentForm />,
           allowesUser: [
             "admin",
             "technician",
@@ -195,7 +171,7 @@ const Dashboard: React.FC = () => {
         {
           label: "Tech Guidelines",
           icon: <BookOpen className="w-6 h-6" />,
-          dialogContent: <TechGuidelines />,
+          dialogContent: <TechGuidelineForm /> ,
           allowesUser: [
             "admin",
             "technician",
@@ -210,35 +186,7 @@ const Dashboard: React.FC = () => {
         {
           label: "Consent Form",
           icon: <FileSignature className="w-6 h-6" />,
-          dialogContent: (
-            <DialogContent
-              style={{
-                background:
-                  "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-              }}
-              className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-            >
-              <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                  <img
-                    src={logoNew}
-                    alt="logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="flex-1 text-center">
-                  <h2 className="text-2xl font-semibold">
-                    Technician Consent Form
-                  </h2>
-                  <p className="text-sm text-gray-600 max-w-md mx-auto">
-                    EaseQT Platform
-                  </p>
-                </div>
-                <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-              </DialogHeader>
-              <UserConsent viewOnly staticType={"technician"} />
-            </DialogContent>
-          ),
+          dialogContent: <TechConsentForm />,
           allowesUser: [
             "admin",
             "technician",

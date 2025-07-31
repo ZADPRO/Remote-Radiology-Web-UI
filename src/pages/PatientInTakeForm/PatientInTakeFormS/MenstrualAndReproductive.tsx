@@ -51,7 +51,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
     questionId: number,
     options: string[]
   ) => (
-    <div className="flex flex-wrap h-5 items-center gap-6 ml-4">
+    <div className="flex flex-wrap items-center gap-4">
       {options.map((value) => (
         <div key={value} className="flex items-center space-x-2">
           <input
@@ -78,41 +78,52 @@ const MenstrualAndReproductive: React.FC<Props> = ({
         custId={custId}
       />
       <div className={readOnly ? "pointer-events-none" : ""}>
-        <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10 relative">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+        <div className="flex-grow overflow-y-auto px-4 py-6 sm:px-6 lg:px-20 space-y-6 pb-10 w-full">
+          {/* A */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               A. Age at first menstrual period
             </Label>
-            <Input
-              type="number"
-              value={getAnswer(questionIds.ageFirstMenstrualPeriod)}
-              onChange={(e) =>
-                handleInputChange(
-                  questionIds.ageFirstMenstrualPeriod,
-                  e.target.value
-                )
-              }
-              className="w-24 h-10 text-sm"
-              placeholder="Age"
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0">
-            <Label className="text-bold text-base w-[290px]">
-              B. Age at first live birth
-            </Label>
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2 items-center">
               <Input
                 type="number"
-                value={getAnswer(questionIds.ageLiveBirth)}
+                value={getAnswer(questionIds.ageFirstMenstrualPeriod)}
                 onChange={(e) =>
-                  handleInputChange(questionIds.ageLiveBirth, e.target.value)
+                  handleInputChange(
+                    questionIds.ageFirstMenstrualPeriod,
+                    e.target.value
+                  )
                 }
                 className="w-24 text-sm"
                 placeholder="Age"
-                disabled={getAnswer(questionIds.liveBirthApplicable) === "YES"}
               />
-              <div className="flex items-center ml-0 sm:ml-3 space-x-2">
+              <Label className="text-sm sm:text-base">Age</Label>
+            </div>
+          </div>
+
+          {/* B */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
+              B. Age at first live birth
+            </Label>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex gap-2 items-center">
+                <Input
+                  type="number"
+                  value={getAnswer(questionIds.ageLiveBirth)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      questionIds.ageLiveBirth,
+                      e.target.value
+                    )
+                  }
+                  className="w-24 text-sm"
+                  placeholder="Age"
+                  disabled={getAnswer(questionIds.liveBirthApplicable) === "YES"}
+                />
+                <Label className="text-sm sm:text-base">Age</Label>
+              </div>
+              <div className="flex items-center space-x-2">
                 <Checkbox2
                   id="liveBirthApplicable"
                   checked={getAnswer(questionIds.liveBirthApplicable) === "YES"}
@@ -123,7 +134,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                       newValue
                     );
                     if (checked) {
-                      handleInputChange(questionIds.ageLiveBirth, ""); // Clear age if N/A
+                      handleInputChange(questionIds.ageLiveBirth, "");
                     }
                   }}
                 />
@@ -132,8 +143,9 @@ const MenstrualAndReproductive: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0 ">
-            <Label className="text-bold text-base w-[290px]">
+          {/* C */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               C. Number of children
             </Label>
             <Input
@@ -147,111 +159,129 @@ const MenstrualAndReproductive: React.FC<Props> = ({
             />
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* D */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               D. Breastfeeding history
             </Label>
-            {renderRadioGroup(
-              "breastFeedingHistory",
-              questionIds.breastFeedingHistory,
-              ["No", "Yes"]
-            )}
-            {getAnswer(questionIds.breastFeedingHistory) === "Yes" && (
-              <div className="flex items-center  sm:mt-0  gap-2 ml-4">
-                <Label className="text-sm">Duration</Label>
-                <Input
-                  type="text"
-                  value={getAnswer(questionIds.breastFeedingDuration)}
-                  onChange={(e) =>
-                    handleInputChange(
-                      questionIds.breastFeedingDuration,
-                      e.target.value
-                    )
-                  }
-                  className="w-24 text-sm"
-                  placeholder="Months"
-                  required
-                />
-              </div>
-            )}
+            <div className="flex flex-col gap-3">
+              {renderRadioGroup(
+                "breastFeedingHistory",
+                questionIds.breastFeedingHistory,
+                ["No", "Yes"]
+              )}
+              {getAnswer(questionIds.breastFeedingHistory) === "Yes" && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Duration (Months)</Label>
+                  <Input
+                    type="text"
+                    value={getAnswer(questionIds.breastFeedingDuration)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.breastFeedingDuration,
+                        e.target.value
+                      )
+                    }
+                    className="w-24 text-sm"
+                    placeholder="Months"
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* E */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               E. Hormonal birth control use
             </Label>
-            {renderRadioGroup(
-              "hormoneBirthControlUse",
-              questionIds.hormoneBirthControlUse,
-              ["Never", "Current", "Past"]
-            )}
-            {getAnswer(questionIds.hormoneBirthControlUse) === "Past" && (
-              <div className="flex items-center gap-2 ml-4">
-                <Label className="text-sm">Duration</Label>
-                <Input
-                  type="text"
-                  value={getAnswer(questionIds.hormoneBirthControlUseDuration)}
-                  onChange={(e) =>
-                    handleInputChange(
-                      questionIds.hormoneBirthControlUseDuration,
-                      e.target.value
-                    )
-                  }
-                  className="w-24 text-sm"
-                  placeholder="Months"
-                  required
-                />
-              </div>
-            )}
+            <div className="flex flex-col gap-3">
+              {renderRadioGroup(
+                "hormoneBirthControlUse",
+                questionIds.hormoneBirthControlUse,
+                ["Never", "Current", "Past"]
+              )}
+              {getAnswer(questionIds.hormoneBirthControlUse) === "Past" && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Duration (Months)</Label>
+                  <Input
+                    type="text"
+                    value={getAnswer(
+                      questionIds.hormoneBirthControlUseDuration
+                    )}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.hormoneBirthControlUseDuration,
+                        e.target.value
+                      )
+                    }
+                    className="w-24 text-sm"
+                    placeholder="Months"
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* F */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               F. Hormone replacement therapy (HRT)
             </Label>
-            {renderRadioGroup("hormoneTherapy", questionIds.hormoneTherapy, [
-              "Never",
-              "Current",
-              "Past",
-            ])}
-            {getAnswer(questionIds.hormoneTherapy) === "Past" && (
-              <div className="flex items-center gap-2 ml-4">
-                <Label className="text-sm">Duration</Label>
+            <div className="flex flex-col gap-3">
+              {renderRadioGroup("hormoneTherapy", questionIds.hormoneTherapy, [
+                "Never",
+                "Current",
+                "Past",
+              ])}
+              {getAnswer(questionIds.hormoneTherapy) === "Past" && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Duration (Months)</Label>
+                  <Input
+                    type="text"
+                    value={getAnswer(questionIds.hormoneTherapyDuration)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.hormoneTherapyDuration,
+                        e.target.value
+                      )
+                    }
+                    className="w-24 text-sm"
+                    placeholder="Months"
+                    required
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* G */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
+              G. Age at menopause (if applicable)
+            </Label>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex gap-2 items-center">
                 <Input
-                  type="text"
-                  value={getAnswer(questionIds.hormoneTherapyDuration)}
+                  type="number"
+                  value={getAnswer(questionIds.ageMenopause)}
                   onChange={(e) =>
                     handleInputChange(
-                      questionIds.hormoneTherapyDuration,
+                      questionIds.ageMenopause,
                       e.target.value
                     )
                   }
                   className="w-24 text-sm"
-                  placeholder="Months"
-                  required
+                  placeholder="Age"
+                  disabled={
+                    getAnswer(questionIds.ageMenopauseApplicable) === "YES"
+                  }
                 />
+                <Label className="text-sm sm:text-base">Age</Label>
               </div>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0">
-            <Label className="text-bold text-base w-[290px]">
-              G. Age at menopause (if applicable)
-            </Label>
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                value={getAnswer(questionIds.ageMenopause)}
-                onChange={(e) =>
-                  handleInputChange(questionIds.ageMenopause, e.target.value)
-                }
-                className="w-24 text-sm"
-                placeholder="Age"
-                disabled={
-                  getAnswer(questionIds.ageMenopauseApplicable) === "YES"
-                }
-              />
-              <div className="flex items-center ml-0 sm:ml-3 space-x-2">
+              <div className="flex items-center space-x-2">
                 <Checkbox2
                   id="ageMenopauseApplicable"
                   checked={
@@ -264,7 +294,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                       newValue
                     );
                     if (checked) {
-                      handleInputChange(questionIds.ageMenopause, ""); // Clear age if N/A
+                      handleInputChange(questionIds.ageMenopause, "");
                     }
                   }}
                 />
@@ -273,65 +303,75 @@ const MenstrualAndReproductive: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* H */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               H. Are you Lactating / Nursing now?
             </Label>
-            {renderRadioGroup("lactating", questionIds.lactating, [
-              "No",
-              "Yes",
-            ])}
-            {getAnswer(questionIds.lactating) === "Yes" && (
-              <div className="flex items-center gap-2 ml-4">
-                <Label className="text-sm">Duration</Label>
-                <Input
-                  type="text"
-                  placeholder="Months"
-                  value={getAnswer(questionIds.lactatingDuration)}
-                  onChange={(e) =>
-                    handleInputChange(
-                      questionIds.lactatingDuration,
-                      e.target.value
-                    )
-                  }
-                  className="w-24 text-sm"
-                  required
-                />
-              </div>
-            )}
+            <div className="flex flex-col gap-3">
+              {renderRadioGroup("lactating", questionIds.lactating, [
+                "No",
+                "Yes",
+              ])}
+              {getAnswer(questionIds.lactating) === "Yes" && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Duration (Months)</Label>
+                  <Input
+                    type="text"
+                    value={getAnswer(questionIds.lactatingDuration)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.lactatingDuration,
+                        e.target.value
+                      )
+                    }
+                    className="w-24 text-sm"
+                    placeholder="Months"
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* I */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               I. Are you Pregnant now?
             </Label>
-            {renderRadioGroup("pregnant", questionIds.pregnant, ["No", "Yes"])}
-            {getAnswer(questionIds.pregnant) === "Yes" && (
-              <div className="flex items-center gap-2 ml-4">
-                <Label className="text-sm">Duration</Label>
-                <Input
-                  type="text"
-                  placeholder="Months"
-                  value={getAnswer(questionIds.pregnantDuration)}
-                  onChange={(e) =>
-                    handleInputChange(
-                      questionIds.pregnantDuration,
-                      e.target.value
-                    )
-                  }
-                  className="w-24 text-sm"
-                  required
-                />
-              </div>
-            )}
+            <div className="flex flex-col gap-3">
+              {renderRadioGroup("pregnant", questionIds.pregnant, [
+                "No",
+                "Yes",
+              ])}
+              {getAnswer(questionIds.pregnant) === "Yes" && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Duration (Months)</Label>
+                  <Input
+                    type="text"
+                    value={getAnswer(questionIds.pregnantDuration)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.pregnantDuration,
+                        e.target.value
+                      )
+                    }
+                    className="w-24 text-sm"
+                    placeholder="Months"
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center h-[auto] md:min-h-[40px] gap-4 md:gap-0">
-            <Label className="text-bold text-base w-[290px]">
+          {/* J */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <Label className="font-medium text-sm sm:text-base w-full sm:w-[290px]">
               J. Others / Additional Comments
             </Label>
             <Textarea
-              className="w-full lg:w-64"
+              className="w-full sm:w-2/3"
               value={getAnswer(questionIds.additionalComments)}
               onChange={(e) =>
                 handleInputChange(

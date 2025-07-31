@@ -163,7 +163,7 @@ const getSymptomText = () => {
 };
 
 
-  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman with ${ibisScore} IBIS Tyrer-Cuzic and ${auriaResult.toLocaleLowerCase()} AURIA breast cancer test${mutationSpecify ? ` having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? "on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo == "Yes" ? ` with ${getSurgeryText()} surgery done` : ""}.<br/>`
+  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman with IBIS Tyrer-Cuzic score of ${ibisScore} and ${auriaResult.toLocaleLowerCase()} AURIA breast cancer test${mutationSpecify ? ` having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? "on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo == "Yes" ? ` with ${getSurgeryText()} surgery done` : ""}.<br/>`
 
   if (previousBiopsy.previousBiopsy) {
   const isAbnormal = previousBiopsy.biopsyResults === "Yes";

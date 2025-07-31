@@ -98,7 +98,7 @@ const Analytics: React.FC = () => {
     | "turnaroundTime";
 
   const accessMap: Record<AccessKey, UserRole[]> = {
-    userselect: ["admin", "manager"],
+    userselect: ["admin", "manager", "scadmin"],
     scancenterselect: ["admin", "manager"],
     totalCorrect: ["radiologist", "wgdoctor"],
     totalEdit: ["radiologist", "wgdoctor"],
@@ -138,7 +138,7 @@ const Analytics: React.FC = () => {
     }
 
     // ✅ If admin/manager and a user is selected, check ONLY tempRole
-    if (["admin", "manager"].includes(role.type) && userSelectedValue) {
+    if (["admin", "manager", "scadmin"].includes(role.type) && userSelectedValue) {
       const tempRoleType = tempRole?.type as UserRole | undefined;
 
       // If tempRole exists, base access ONLY on it
@@ -226,20 +226,25 @@ const Analytics: React.FC = () => {
       role?.id === undefined
     )
       return;
-    setUserSelectedValue(null);
-    setCenterSelectedValue(null);
-    setTempRole({ id: 0, type: "" });
+    // setTempRole({ id: 0, type: "" });
     setTatStats([]);
 
     if (["admin", "manager", "scadmin"].includes(role.type)) {
-      fetchOverallScanCenter(user.refSCId);
+      if(userSelectedValue) {
+        setCenterSelectedValue(null);
+      fetchAnalyticsPeruser(userSelectedValue ? userSelectedValue : user.refUserId, tempRole.id ? tempRole.id : role?.id);
+      } else {
+        setUserSelectedValue(null);
+      fetchOverallScanCenter((centerSelectedValue || centerSelectedValue == 0) ? Number(centerSelectedValue) : user.refSCId);
+      }
     } else {
-      fetchAnalyticsPeruser(user.refUserId, role?.id);
+      setCenterSelectedValue(null);
+      fetchAnalyticsPeruser(userSelectedValue ? userSelectedValue : user.refUserId, role?.id);
     }
   }, [dateRange]);
 
   useEffect(() => {
-    centerSelectedValue && fetchOverallScanCenter(Number(centerSelectedValue));
+    (centerSelectedValue || centerSelectedValue == 0) && fetchOverallScanCenter(Number(centerSelectedValue));
   }, [centerSelectedValue]);
 
   useEffect(() => {

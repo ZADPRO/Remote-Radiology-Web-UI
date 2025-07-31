@@ -190,8 +190,8 @@ const UploadDicomFiles: React.FC = () => {
     const sideFiles = files.filter((f) => f.side === side);
 
     return (
-      <div className="w-full lg:w-1/2 flex flex-col items-center mb-6 lg:mb-0">
-        <h1 className="text-lg sm:text-xl font-semibold mb-4">{label}</h1>
+      <div className="w-full lg:w-1/2 flex flex-col items-center lg:mb-0">
+        <h1 className="text-lg sm:text-xl font-semibold">{label}</h1>
 
         <div className="overflow-auto w-full p-3 sm:p-4 border rounded-md">
           <div className="flex gap-2 sm:gap-3 items-start">
@@ -292,7 +292,7 @@ const UploadDicomFiles: React.FC = () => {
   return (
     <div className="bg-radial-greeting-02 mx-auto my-2 py-2 rounded w-[95%] sm:w-[90%] h-[95%] flex flex-col">
       {loading && <LoadingOverlay />}
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-col lg:flex-row">
         <Button
           type="button"
           variant="link"
@@ -302,7 +302,7 @@ const UploadDicomFiles: React.FC = () => {
           <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-base sm:text-lg font-semibold">Back</span>
         </Button>
-        <div className="h-18 bg-[#fff] flex flex-col items-start justify-center w-70 rounded p-3 mr-3 text-xs sm:text-sm self-end">
+        <div className="h-18 bg-[#fff] flex flex-col items-start justify-center w-full lg:w-70 rounded p-3 mr-3 text-xs sm:text-sm lg:self-end">
           <div className="capitalize flex">
             <div className="flex w-[6rem]">Patient Name</div>{" "}
             <div>: {locationState?.name}</div>
@@ -322,10 +322,11 @@ const UploadDicomFiles: React.FC = () => {
       <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">
         Dicom
       </h1>
+      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Stay on this page until the process is complete</p>
 
       {/* This wrapper scrolls */}
-      <div className="flex-1 overflow-auto p-0 sm:p-5 m-1 sm:m-2 lg:shadow">
-        <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-0 sm:p-5">
+      <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2 lg:shadow">
+        <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-5 lg:p-0">
           {renderUploadSection("Left", "Left")}
           {renderUploadSection("Right", "Right")}
         </div>

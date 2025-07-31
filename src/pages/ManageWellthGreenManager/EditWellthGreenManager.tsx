@@ -420,12 +420,11 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* Driver's License */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm" htmlFor="license-upload">
-              Driver's License <span className="text-red-500">*</span>
+              Driver's License
             </Label>
             <FileUploadButton
               id="license-upload"
               label="Upload License"
-              required={false} // Or true if this is mandatory and no file present
               isFilePresent={!!formData.refMDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];

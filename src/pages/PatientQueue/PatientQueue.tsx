@@ -79,12 +79,10 @@ import { useAuth, UserRole } from "../Routes/AuthContext";
 import { downloadAllDicom, handleAllDownloadDicom } from "@/lib/commonUtlis";
 import { appointmentService } from "@/services/patientInTakeFormService";
 import PatientReport from "./PatientReport";
-import UserConsentWrapper from "./UserConsentWrapper";
 import { Calendar } from "@/components/calendar";
-import logoNew from "../../assets/LogoNew.png";
-import Brochure from "../Dashboard/Brochure";
-import GeneralGuidelines from "../Dashboard/GeneralGuidelines";
-import Disclaimer from "../Dashboard/Disclaimer";
+import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
+import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface staffData {
   refUserCustId: string;
@@ -434,6 +432,8 @@ const PatientQueue: React.FC = () => {
     }
   };
 
+  console.log(selectedRowIds)
+
   const columns = useMemo<ColumnDef<TechnicianPatientQueue>[]>(
     () => [
       {
@@ -682,6 +682,53 @@ const PatientQueue: React.FC = () => {
         ),
         enableColumnFilter: true,
       },
+      // {
+      //   accessorKey: "consentView",
+      //   id: "consentView",
+      //   header: ({ column }) => (
+      //     <div className="flex items-center justify-center gap-1">
+      //       <span
+      //         className="cursor-pointer font-semibold "
+      //         onClick={column.getToggleSortingHandler()}
+      //       >
+      //         Consent
+      //       </span>
+      //     </div>
+      //   ),
+      //   cell: ({row}) => {
+      //     const [consentDialog, setConsentDialog] = useState<boolean>(false);
+
+      //     let appointmentIds:number[] = [];
+
+      //     const handleViewClick = (appointmentId: number) => {
+      //       appointmentIds.push(appointmentId);
+      //       console.log(appointmentIds)
+      //       setConsentDialog(true);
+      //     }
+      //     console.log(appointmentIds);
+          
+          
+      //     return (
+      //       <div>
+      //         <div
+      //           className="hover:underline cursor-pointer font-bold"
+      //           onClick={() => handleViewClick(row.original.refAppointmentId)}
+      //         >
+      //           View
+      //         </div>
+      //         {consentDialog &&
+      //         <Dialog open={consentDialog} onOpenChange={setConsentDialog}>
+      //           <PatientConsentDialog
+      //             appointmentIds={appointmentIds}
+      //             patientConsentDialog={consentDialog}
+      //           />
+      //         </Dialog>
+      //   }
+      //       </div>
+      //     );
+      //   }, 
+      //   enableColumnFilter: true,
+      // },
       {
         // Changed from refSCId to refUserCustId for PatientQueue
         accessorKey: "refUserCustId",
@@ -826,8 +873,8 @@ const PatientQueue: React.FC = () => {
                       appointmentId: row.original.refAppointmentId,
                       userId,
                       readOnly: true,
-                      name: row.original.refUserFirstName,
-                      custId: row.original.refUserCustId,
+                      name: row.original.refUserFirstName ?? user?.refUserFirstName,
+                      custId: row.original.refUserCustId ?? user?.refUserCustId,
                       scancenterCustId: row.original.refSCCustId,
                     },
                   })
@@ -858,66 +905,43 @@ const PatientQueue: React.FC = () => {
                 <span className="font-medium">{formName} - </span>
               )}
               {statusContent}
-              <Dialog
-                open={isEditDialogBroucherOpen}
-                onOpenChange={setIsEditDialogBroucherOpen}
-              >
-                <DialogContent
-                  style={{
-                    background:
-                      "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-                  }}
-                  className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+              {isEditDialogBroucherOpen && (
+                <Dialog
+                  open={isEditDialogBroucherOpen}
+                  onOpenChange={setIsEditDialogBroucherOpen}
                 >
-                  <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                    {/* Logo (Left) */}
-                    <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                      <img
-                        src={logoNew}
-                        alt="logo"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
+                  <PatientInformation
+                    onNext={() => {
+                      setIsEditDialogBroucherOpen(false);
+                      setIsEditDialogOpen(true);
+                    }}
+                    scId={row.original.refSCId}
+                  />
+                </Dialog>
+              )}
 
-                    {/* Centered Content */}
-                    <div className="flex-1 text-center">
-                      <h2 className="text-2xl font-semibold">Brochure</h2>
-                      <p className="text-sm text-gray-600 max-w-md mx-auto">
-                        EaseQT Platform
-                      </p>
-                    </div>
-
-                    {/* Spacer to balance logo width */}
-                    <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-                  </DialogHeader>
-                  <Brochure />
-                  <h2 className="text-2xl text-center my-3 font-semibold">
-                    General Guidelines
-                  </h2>
-                  <GeneralGuidelines />
-                  <h2 className="text-2xl text-center my-3 font-semibold">
-                    Disclaimer
-                  </h2>
-                  <Disclaimer />
-                  <div className="flex w-full justify-end items-end px-10 my-10">
-                    <Button
-                      onClick={() => {
-                        setIsEditDialogBroucherOpen(false);
-                        setIsEditDialogOpen(true);
-                      }}
-                      variant="greenTheme"
-                      className="text-[#fff]"
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              {isEditDialogOpen && (
               <Dialog
                 open={isEditDialogOpen}
                 onOpenChange={setIsEditDialogOpen}
               >
-                <UserConsentWrapper
+                <ConsentForm
+                  onSubmit={(consent) =>
+                    navigate("/patientInTakeForm", {
+                      state: {
+                        fetchFormData: false,
+                        appointmentId: row.original.refAppointmentId,
+                        userId,
+                        name: row.original.refUserFirstName ?? user?.refUserFirstName,
+                      custId: row.original.refUserCustId ?? user?.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
+                        consent: consent,
+                      },
+                    })
+                  }
+                  scId={row.original.refSCId}
+                />
+                {/* <UserConsentWrapper
                   setEditingDialogOpen={setIsEditDialogOpen}
                   onSubmit={() =>
                     navigate("/patientInTakeForm", {
@@ -931,8 +955,9 @@ const PatientQueue: React.FC = () => {
                       },
                     })
                   }
-                />
+                /> */}
               </Dialog>
+              )}
             </div>
           );
         },
@@ -1529,14 +1554,22 @@ const PatientQueue: React.FC = () => {
           const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
 
           return (
-            <Input
-              className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
-                !latestRemark ? "italic text-gray-500 text-[5px]" : ""
-              }`}
-              title={latestRemark}
-              readOnly
-              value={latestRemark || "No remarks yet"}
-            />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild disabled={!latestRemark}>
+                  <Input
+                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
+                      !latestRemark ? "italic text-gray-500 text-[5px]" : ""
+                    }`}
+                    readOnly
+                    value={latestRemark || "No remarks yet"}
+                  />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs" side="bottom">
+                  {latestRemark || "No remarks yet"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           );
         },
       },
@@ -1678,6 +1711,7 @@ const PatientQueue: React.FC = () => {
       "refUserFirstName",
       "patientId",
       "refSCCustId",
+      "consentView",
       "patientFormAndStatus",
       "technicianForm",
       "dicom",
@@ -1794,6 +1828,7 @@ const PatientQueue: React.FC = () => {
       "refUserFirstName",
       "patientId",
       "refSCCustId",
+      "consentView",
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
@@ -1868,19 +1903,6 @@ const PatientQueue: React.FC = () => {
       <div className="w-11/12 h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:p-6 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
-          <Input
-            placeholder="Search all columns..."
-            value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="w-full"
-          />
-          <Button
-            variant="outline"
-            onClick={clearAllFilters}
-            className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600"
-          >
-            <XCircle className="h-4 w-4" /> Clear All Filters
-          </Button>
           <Button
             onClick={async () => {
               setLoading(true);
@@ -1894,6 +1916,21 @@ const PatientQueue: React.FC = () => {
             <Download className="h-4 w-4" />
             Download Dicom
           </Button>
+           <Button
+            variant="outline"
+            onClick={clearAllFilters}
+            className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600"
+          >
+            <XCircle className="h-4 w-4" /> Clear All Filters
+          </Button>
+          <Input
+            placeholder="Search all columns..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="w-full"
+          />
+         
+          
         </div>
 
         {/* Table Container */}
@@ -1911,7 +1948,7 @@ const PatientQueue: React.FC = () => {
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className="py-1 text-left tracking-wider border text-[11px] 2xl:text-base p-0"
+                      className="py-1 text-left tracking-wider border text-[11px] 2xl:text-sm p-0"
                       style={{
                         width: header.getSize(),
                         minWidth:

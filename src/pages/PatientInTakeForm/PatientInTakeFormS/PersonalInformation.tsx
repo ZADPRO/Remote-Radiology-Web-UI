@@ -15,6 +15,7 @@ import {
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import { IntakeOption } from "../PatientInTakeForm";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
+import { useAuth } from "@/pages/Routes/AuthContext";
 
 interface QuestionIds {
   fullName: number;
@@ -59,6 +60,16 @@ const PersonalInformation: React.FC<Props> = ({
     { label: "G", value: "G" },
     { label: "H", value: "H" },
   ];
+
+  const {user} = useAuth();
+
+  useEffect(() => {
+    if (!formData || formData.length === 0 || !user) return;
+
+    getAnswer(questionIds.fullName) == "" && handleInputChange(questionIds.fullName, user?.refUserFirstName);
+    getAnswer(questionIds.email) == "" && handleInputChange(questionIds.email, user?.refCODOEmail);
+    user?.refCODOPhoneNo1 && getAnswer(questionIds.phone) == "" && handleInputChange(questionIds.phone, user?.refCODOPhoneNo1);
+  }, []);
 
   useEffect(() => {
     const ageStr = getAnswer(questionIds.age);
@@ -145,6 +156,7 @@ const PersonalInformation: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.fullName, e.target.value)
                 }
+                readOnly
                 required
               />
             </div>
@@ -209,6 +221,7 @@ const PersonalInformation: React.FC<Props> = ({
                     const numericValue = e.target.value.replace(/\D/g, ""); // Remove non-digits
                     handleInputChange(questionIds.phone, numericValue);
                   }}
+                  readOnly
                   required
                 />
               </div>
@@ -229,6 +242,7 @@ const PersonalInformation: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.email, e.target.value)
                 }
+                readOnly
                 required
               />
             </div>

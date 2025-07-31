@@ -28,6 +28,7 @@ export interface PatientInTakeFormNavigationState {
   name?: string;
   custId?: string;
   scancenterCustId?: string;
+  consent?: string;
 }
 
 interface PatientInTakeFormProps
@@ -86,6 +87,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     readOnly: props.readOnly ?? locationState?.readOnly,
     userId: props.userId ?? locationState?.userId,
     categoryId: props.categoryId ?? locationState?.categoryId,
+    consent: props.consent ?? locationState?.consent ?? "",
   };
 
   console.log(locationState);
@@ -155,6 +157,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           formData.find((item) => item.questionId === 170)?.answer || ""
         ) || null,
       overriderequest: overide,
+      consent: controlData.consent,
     };
 
     console.log("payload", payload);

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   currentRec: number;
@@ -132,7 +133,7 @@ const MonitoringFollow: React.FC<Props> = ({
                   val?.toLocaleDateString("en-CA") || ""
                 )
               }
-              disabledDates={(date) => date > new Date()}
+              disabledDates={dateDisablers.noPast}
             />
           </div>
         </div>

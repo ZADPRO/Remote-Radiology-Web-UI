@@ -12,11 +12,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import UserConsent from "../Consent/UserConsent";
 import { useAuth } from "../Routes/AuthContext";
+import TechConsentForm from "../Dashboard/TechConsent/TechConsentForm";
 
 const ResetPassword: React.FC = () => {
   const location = useLocation();
   const email = (location.state as { email?: string })?.email || "";
   const token = (location.state as { token?: string })?.token || "";
+  const scancenterId = (location.state as { scancenterId?: number })?.scancenterId || 0;
 
   const [passwordRules, setPasswordRules] = useState({
     minLength: false,
@@ -33,7 +35,7 @@ const ResetPassword: React.FC = () => {
   const { role, refreshToken } = useAuth();
   const navigate = useNavigate();
 
-  // const [loading, setLoading] = useState(false);
+  const [consent, setConsent] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -87,6 +89,7 @@ const ResetPassword: React.FC = () => {
       setErrorMessage("");
       const response = await authenticationService.resetPassword({
         password: formData.newPassword, 
+        consent: consent
       }, token);
       console.log(response);
       if (response.status) {
@@ -271,7 +274,10 @@ const ResetPassword: React.FC = () => {
       </div>
 
       <Dialog open={isEditDialogOpen}>
-        <DialogContent
+        {role?.type == "technician" ? (
+          <TechConsentForm scId={scancenterId} onSubmit={(consent) => consent && setConsent(consent)} setDialogOpen={setIsEditDialogOpen}/>
+        ) : (
+           <DialogContent
           style={{
             background:
               "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
@@ -302,6 +308,8 @@ const ResetPassword: React.FC = () => {
 
           <UserConsent setEditingDialogOpen={setIsEditDialogOpen}/>
         </DialogContent>
+        )}
+       
       </Dialog>
     </div>
   );

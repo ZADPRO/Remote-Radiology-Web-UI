@@ -591,13 +591,12 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
               className="text-sm font-medium"
               htmlFor="drivers-license-upload"
             >
-              Driving License <span className="text-red-500">*</span>
+              Driving License
             </Label>
 
              <FileUploadButton
               id="license-upload"
               label="Upload License"
-              required={false} // Or true if this is mandatory and no file present
               isFilePresent={!!formData.refTDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];

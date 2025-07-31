@@ -88,6 +88,9 @@ const FamilyHistory: React.FC<Props> = ({
                 placeholder="Age"
                 required
               />
+              <Label className="text-sm font-medium">
+               Age
+              </Label>
             </div>
           )}
 

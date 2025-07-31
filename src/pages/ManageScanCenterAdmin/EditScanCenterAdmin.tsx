@@ -530,13 +530,12 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium" htmlFor="drivers-license-upload">
-                Drivers License <span className="text-red-500">*</span>
+                Drivers License
               </Label>
 
                <FileUploadButton
               id="license-upload"
               label="Upload License"
-              required={false} // Or true if this is mandatory and no file present
               isFilePresent={!!formData.refRDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];
