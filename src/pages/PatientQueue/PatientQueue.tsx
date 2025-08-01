@@ -83,6 +83,7 @@ import { Calendar } from "@/components/calendar";
 import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
 import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import PatientConsentDialog from "./PatientConsentDialog";
 
 interface staffData {
   refUserCustId: string;
@@ -111,6 +112,9 @@ const PatientQueue: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
+
+  const [consentDialogOpen, setConsentDialogOpen] = useState(false);
+  const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<number[]>([]);
 
   const currentUserRole = useAuth().role?.type;
   const currentUser = useAuth().user?.refUserId;
@@ -682,53 +686,36 @@ const PatientQueue: React.FC = () => {
         ),
         enableColumnFilter: true,
       },
-      // {
-      //   accessorKey: "consentView",
-      //   id: "consentView",
-      //   header: ({ column }) => (
-      //     <div className="flex items-center justify-center gap-1">
-      //       <span
-      //         className="cursor-pointer font-semibold "
-      //         onClick={column.getToggleSortingHandler()}
-      //       >
-      //         Consent
-      //       </span>
-      //     </div>
-      //   ),
-      //   cell: ({row}) => {
-      //     const [consentDialog, setConsentDialog] = useState<boolean>(false);
+      {
+        accessorKey: "consentView",
+        id: "consentView",
+        header: ({ column }) => (
+          <div className="flex items-center justify-center gap-1">
+            <span
+              className="cursor-pointer font-semibold "
+              onClick={column.getToggleSortingHandler()}
+            >
+              Consent
+            </span>
+          </div>
+        ),
+        cell: ({ row }) => {
+    const appointmentId = row.original.refAppointmentId;
 
-      //     let appointmentIds:number[] = [];
-
-      //     const handleViewClick = (appointmentId: number) => {
-      //       appointmentIds.push(appointmentId);
-      //       console.log(appointmentIds)
-      //       setConsentDialog(true);
-      //     }
-      //     console.log(appointmentIds);
-          
-          
-      //     return (
-      //       <div>
-      //         <div
-      //           className="hover:underline cursor-pointer font-bold"
-      //           onClick={() => handleViewClick(row.original.refAppointmentId)}
-      //         >
-      //           View
-      //         </div>
-      //         {consentDialog &&
-      //         <Dialog open={consentDialog} onOpenChange={setConsentDialog}>
-      //           <PatientConsentDialog
-      //             appointmentIds={appointmentIds}
-      //             patientConsentDialog={consentDialog}
-      //           />
-      //         </Dialog>
-      //   }
-      //       </div>
-      //     );
-      //   }, 
-      //   enableColumnFilter: true,
-      // },
+    return (
+      <div
+        className="hover:underline cursor-pointer font-bold text-center"
+        onClick={() => {
+          setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
+          setConsentDialogOpen(true);                // ✅ open dialog
+        }}
+      >
+        View
+      </div>
+    );
+  }, 
+        enableColumnFilter: true,
+      },
       {
         // Changed from refSCId to refUserCustId for PatientQueue
         accessorKey: "refUserCustId",
@@ -2129,6 +2116,14 @@ const PatientQueue: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={consentDialogOpen} onOpenChange={setConsentDialogOpen}>
+  <PatientConsentDialog
+    appointmentIds={selectedAppointmentIds}
+    patientConsentDialog={consentDialogOpen}
+  />
+</Dialog>
+
     </div>
   );
 };

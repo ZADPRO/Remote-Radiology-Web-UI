@@ -574,25 +574,6 @@ const TechnicianPatientIntakeForm: React.FC<
         <div className="uppercase w-[80%] text-center text-sm sm:text-2xl font-bold">
           Technologist Form
         </div>
-        <div className="h-auto bg-[#fff] flex flex-col items-start justify-start w-70 rounded px-2 py-[2px] my-1 text-xs sm:text-xs">
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient Name</div>{" "}
-            <div>: {locationState?.name}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient ID</div>{" "}
-            <div>: {locationState?.custId}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Scan Center</div>{" "}
-            <div>: {locationState?.scancenterCustId}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">DOB</div>{" "}
-            <div>: {getPatientFormAnswer(2)}</div>
-          </div>
-          {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
-        </div>
       </div>
 
       <div className="flex justify-between">
@@ -606,97 +587,119 @@ const TechnicianPatientIntakeForm: React.FC<
           <span className="text-lg font-semibold">Back</span>
         </Button>
 
-        <div className="h-auto bg-[#fff] flex flex-col items-center justify-center w-auto rounded px-3 mt-1 text-xs sm:text-xs mr-3">
+        {controlData.readOnly && <div className="h-auto bg-[#fff] flex flex-col items-center justify-center w-auto rounded px-3 mt-1 text-xs sm:text-xs mr-3">
           <div className="capitalize flex">
             <div className="flex w-[4rem]">Filled By</div>{" "}
             <div>
               :{technicianData.name} ({technicianData.custId})
             </div>
           </div>
-        </div>
+        </div>}
       </div>
 
-      <div className="px-3 w-full py-2 lg:px-15 h-[78vh]">
-        <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar">
-          {options.map((option, index) => {
-            const selectedIndex = options.indexOf(selectedSection);
-            const isCompleted = index < selectedIndex;
+       {/* Patient Info Grid */}
+<div className="bg-white lg:w-fit w-11/12 rounded px-4 py-2 lg:mx-15 mx-auto my-1 grid grid-cols-1 sm:grid-cols-2 gap-2 space-x-6 text-xs sm:text-sm">
+    <div className="flex gap-1">
+      <div className="font-medium">Patient Name</div>
+      <div>: {locationState?.name}</div>
+    </div>
+    <div className="flex gap-1">
+      <div className="font-medium">Patient ID</div>
+      <div>: {locationState?.custId}</div>
+    </div>
+    <div className="flex gap-1">
+      <div className="font-medium">Scan Center</div>
+      <div>: {locationState?.scancenterCustId}</div>
+    </div>
+    <div className="flex gap-1">
+      <div className="font-medium">DOB</div>
+      <div>: {getPatientFormAnswer(2)}</div>
+    </div>
+  </div>
 
-            return (
-              <div
-                key={option}
-                ref={(el) => {
-                  optionRefs.current[option] = el;
-                }}
-                onClick={() => setSelectedSection(option)}
-                className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
-                  index !== options.length - 1 ? "border-r-1" : "border-r-0"
-                } border-r-[#BFB2B2] ${
-                  selectedSection === option
-                    ? "border-b-5 border-b-[#abb4a5]"
-                    : "border-b-5 border-b-[#f9f4ed]"
-                } ${
-                  isCompleted
-                    ? "bg-[#eae0d4] border-b-5 !border-b-[#cbbfb1]"
-                    : ""
-                }`} // ✅ light green background if completed
-              >
-                <div
-                  className={`w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white`}
-                >
-                  {isCompleted ? <Check size={16} /> : index + 1}
-                </div>
-                <div className="w-[150px] text-sm lg:text-sm">{option}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="mt-[1vh] h-[71vh] bg-[#f9f4ed] rounded-b-2xl">
+<div className="px-3 w-full py-2 lg:px-15 flex flex-col min-h-0 h-full">
+  {/* Tabs Header */}
+  <div className="bg-[#f9f4ed] w-full h-[8vh] rounded-sm flex overflow-x-auto hide-scrollbar shrink-0">
+    {options.map((option, index) => {
+      const selectedIndex = options.indexOf(selectedSection);
+      const isCompleted = index < selectedIndex;
+
+      return (
+        <div
+          key={option}
+          ref={(el) => {
+            optionRefs.current[option] = el;
+          }}
+          onClick={() => setSelectedSection(option)}
+          className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
+            index !== options.length - 1 ? "border-r-1" : "border-r-0"
+          } border-r-[#BFB2B2] ${
+            selectedSection === option
+              ? "border-b-5 border-b-[#abb4a5]"
+              : "border-b-5 border-b-[#f9f4ed]"
+          } ${
+            isCompleted
+              ? "bg-[#eae0d4] border-b-5 !border-b-[#cbbfb1]"
+              : ""
+          }`}
+        >
           <div
-            className={`h-[65vh] px-5 lg:p-5
-              `}
+            className="w-[30px] lg:w-8 h-[30px] lg:h-8 bg-[#abb4a5] text-sm lg:text-xl flex justify-center items-center rounded-full text-white"
           >
-            {renderSectionComponent()}
+            {isCompleted ? <Check size={16} /> : index + 1}
           </div>
-          <div className="h-[6vh] w-full">
-            {/* Navigation Buttons */}
-            <div className="h-[5vh] shrink-0 flex items-center justify-between py-4 mt-2 lg:mt-0">
-              {/* Back Button */}
-              <button
-                type="button"
-                className="flex items-center justify-center text-base font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-                onClick={() => {
-                  const currentIndex = options.indexOf(selectedSection);
-                  if (currentIndex === 0) {
-                    navigate(-1);
-                  } else {
-                    setSelectedSection(options[currentIndex - 1]);
-                  }
-                }}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </button>
-
-              {!(
-                options.indexOf(selectedSection) === options.length - 1 &&
-                controlData.readOnly
-              ) && (
-                <button
-                  type="submit"
-                  className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-                  // disabled={isNextButtonDisabled}
-                >
-                  {options.indexOf(selectedSection) === options.length - 1
-                    ? "Submit"
-                    : "Next"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
-              )}
-            </div>
-          </div>
+          <div className="w-[150px] text-sm lg:text-sm">{option}</div>
         </div>
+      );
+    })}
+  </div>
+
+  {/* Content and Footer */}
+  <div className="flex flex-col flex-1 min-h-0 bg-[#f9f4ed] mt-2 rounded-b-2xl">
+    {/* Scrollable Form Section */}
+    <div className="overflow-y-auto px-5 lg:p-5 flex-1 hide-scrollbar">
+      {renderSectionComponent()}
+    </div>
+
+    {/* Footer Buttons */}
+    <div className="shrink-0 h-[5vh] w-full">
+      <div className="h-full flex items-center justify-between py-4 mt-2 lg:mt-0">
+        <button
+          type="button"
+          className="flex items-center justify-center text-base font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+          onClick={() => {
+            const currentIndex = options.indexOf(selectedSection);
+            if (currentIndex === 0) {
+              navigate(-1);
+            } else {
+              setSelectedSection(options[currentIndex - 1]);
+            }
+          }}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </button>
+
+        {!(
+          options.indexOf(selectedSection) === options.length - 1 &&
+          controlData.readOnly
+        ) && (
+          <button
+            type="submit"
+            className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+          >
+            {options.indexOf(selectedSection) === options.length - 1
+              ? "Submit"
+              : "Next"}
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </button>
+        )}
       </div>
+    </div>
+  </div>
+</div>
+
+
       <div className=" h-[8vh] flex items-end justify-center pb-1 text-sm">
         Copyright © Wellthgreen
       </div>

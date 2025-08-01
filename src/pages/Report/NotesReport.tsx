@@ -137,80 +137,71 @@ const NotesReport: React.FC<Props> = ({
   useEffect(() => {
     if (syncStatus.Notes) {
       setNotes(`
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                <tr>
-                    <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${name}</td>
-                    <td style="border: 1px solid #000; padding: 4px;"><strong>STUDY</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${new Date(
-                      studyTime
-                    )
-                      .toISOString()
-                      .slice(0, 16)
-                      .replace("T", " ")}</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid #000; padding: 4px;"><strong>AGE/GENDER</strong></td>
-                                    <td style="border: 1px solid #000; padding: 4px;">${age} / ${gender}</td>
-                                    <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${ScancenterCode}</td>
-                </tr>
-                <tr>
-                <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${
-                      patientDetails.refUserCustId
-                    }</td>
-                    <td style="border: 1px solid #000; padding: 4px;"><strong>REPORT</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${AppointmentDate}</td>
-                    
-                </tr>
-            </table>
-            <br/>
-            <br/>
-            <h2><strong>QT ULTRASOUND BILATERAL BREAST IMAGING</strong></h2>
-            <br/>
-            <p><b>TECHNIQUE</b>: Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2 . The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
-            <br/>
-            <div><b>BREAST IMPLANTS:</b><br/>${textEditor.breastImplant.value}</div>
-            <br/>
-            <p><b>RIGHT BREAST FINDINGS:</b></p>
-            <br/>
-            ${breastDensityRight ? `<p><b>BREAST DENSITY & IMAGE QUALITY:</b><br />
-            ${textEditor.breastDensityandImageRight.value}</p><br/>` : ``}
-            ${nippleAreolaRight ? `<p><b>NIPPLE, AREOLA & SKIN:</b><br/>${
-              textEditor.nippleAreolaSkinRight.value
-            }</p><br/>` : ``}
-            ${glandularRight ? `<p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            ${textEditor.grandularAndDuctalTissueRight.value}<br/>` : ``}
-            ${lessionsRight ? `<p><b>LESIONS:</b></p>
-            ${textEditor.LesionsRight.value}<br/>` : ``}
-            ${lymphRight ? `<p><b>LYMPH NODES:</b></p>
-            ${textEditor.LymphNodesRight.value}<br/><br/>` : ``}
-            ${comparisonRight ? `<p><b>COMPARISON TO PRIOR STUDIES:</b></p>
-            ${textEditor.ComparisonPrior.value}<br/>` : ``}
-            <p><b>LEFT BREAST FINDINGS:</b></p><br>
-            ${breastDensityLeft ? `<p><b>BREAST DENSITY & IMAGE QUALITY:</b><br/>${
-              textEditor.breastDensityandImageLeft.value
-            }</p><br/>` : ``}
-            ${nippleAreolaLeft ? `<p><b>NIPPLE, AREOLA & SKIN:</b></br>${
-              textEditor.nippleAreolaSkinLeft.value
-            }</p><br/>` : ``}
-            ${glandularLeft ? `<p><b>GLANDULAR AND DUCTAL TISSUE:</b></p>
-            ${textEditor.grandularAndDuctalTissueLeft.value}<br/>` : ``}
-            ${lessionsLeft ? `<p><b>LESIONS:</b></p>
-            ${textEditor.LesionsLeft.value}<br/>` : ``}
-            ${lymphLeft ? `<p><b>LYMPH NODES:</b></p>
-            ${textEditor.LymphNodesLeft.value}<br/>` : ``}
-            ${comparisonLeft ? `p><b>COMPARISON TO PRIOR STUDIES:</b></p><br/>
-            ${textEditor.ComparisonPriorLeft.value}<br/>` : ``}
-            <p><b>IMPRESSION:</b></p>
-            ${textEditor.ImpressionText.value}<br/>${textEditor.OptionalImpressionText.value}<br/><br />
-            <p><b>RECOMMENDATION:</b></p>
-            ${textEditor.RecommendationText.value}<br/>${textEditor.OptionalRecommendationText.value}<br/></br/>
-            <p><b>COMMON:</b></p>
-            ${textEditor.CommonImpresRecommText.value}
-            <br/>
-            `);
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${name}</td>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>STUDY</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${new Date(studyTime).toISOString().slice(0, 16).replace("T", " ")}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>AGE/GENDER</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${age} / ${gender}</td>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${ScancenterCode}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${patientDetails.refUserCustId}</td>
+        <td style="border: 1px solid #000; padding: 4px;"><strong>REPORT</strong></td>
+        <td style="border: 1px solid #000; padding: 4px;">${AppointmentDate}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br /><br />
+
+  <h2><strong>QT ULTRASOUND BILATERAL BREAST IMAGING</strong></h2>
+
+  <br />
+
+  <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2. The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
+
+  <br />
+  <div><strong>BREAST IMPLANTS:</strong><br />${textEditor.breastImplant.value}</div>
+  <br />
+
+  <p><strong>RIGHT BREAST FINDINGS:</strong></p><br />
+
+  ${breastDensityRight ? `<p><strong>BREAST DENSITY & IMAGE QUALITY:</strong><br />${textEditor.breastDensityandImageRight.value}</p><br />` : ``}
+  ${nippleAreolaRight ? `<p><strong>NIPPLE, AREOLA & SKIN:</strong><br />${textEditor.nippleAreolaSkinRight.value}</p><br />` : ``}
+  ${glandularRight ? `<p><strong>GLANDULAR AND DUCTAL TISSUE:</strong><br />${textEditor.grandularAndDuctalTissueRight.value}</p><br />` : ``}
+  ${lessionsRight ? `<p><strong>LESIONS:</strong><br />${textEditor.LesionsRight.value}</p><br />` : ``}
+  ${lymphRight ? `<p><strong>LYMPH NODES:</strong><br />${textEditor.LymphNodesRight.value}</p><br />` : ``}
+  ${comparisonRight ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPrior.value}</p><br />` : ``}
+
+  <p><strong>LEFT BREAST FINDINGS:</strong></p><br />
+
+  ${breastDensityLeft ? `<p><strong>BREAST DENSITY & IMAGE QUALITY:</strong><br />${textEditor.breastDensityandImageLeft.value}</p><br />` : ``}
+  ${nippleAreolaLeft ? `<p><strong>NIPPLE, AREOLA & SKIN:</strong><br />${textEditor.nippleAreolaSkinLeft.value}</p><br />` : ``}
+  ${glandularLeft ? `<p><strong>GLANDULAR AND DUCTAL TISSUE:</strong><br />${textEditor.grandularAndDuctalTissueLeft.value}</p><br />` : ``}
+  ${lessionsLeft ? `<p><strong>LESIONS:</strong><br />${textEditor.LesionsLeft.value}</p><br />` : ``}
+  ${lymphLeft ? `<p><strong>LYMPH NODES:</strong><br />${textEditor.LymphNodesLeft.value}</p><br />` : ``}
+  ${comparisonLeft ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPriorLeft.value}</p><br />` : ``}
+
+  <p><strong>IMPRESSION:</strong><br />
+  ${textEditor.ImpressionText.value}<br />
+  ${textEditor.OptionalImpressionText.value}</p><br />
+
+  <p><strong>RECOMMENDATION:</strong><br />
+  ${textEditor.RecommendationText.value}<br />
+  ${textEditor.OptionalRecommendationText.value}</p><br />
+
+  <br />
+  <i>${textEditor.CommonImpresRecommText.value}</i>
+`);
+
     }
   }, [reportFormData, syncStatus]);
 
