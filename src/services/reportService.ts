@@ -217,10 +217,7 @@ export const reportService = {
         },
       }
     );
-    const decryptedData: {
-      RTCText: string;
-      status: boolean;
-    } = decrypt(res.data.data, res.data.token);
+    const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;

@@ -317,10 +317,14 @@ const BreastInput: React.FC<Props> = (Props) => {
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-                      getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) == ""
-                    }
+  Props.label === "Breast pain"
+    ? getAnswerByQuestionId(Props.OtherInputQId) === "" &&
+      (getAnswerByQuestionId(Props.RQID) === "" || getAnswerByQuestionId(Props.LQID) === "")
+    : getAnswerByQuestionId(Props.RQID) === "" &&
+      getAnswerByQuestionId(Props.LQID) === "" &&
+      getAnswerByQuestionId(Props.OtherInputQId) === ""
+}
+
                   />
                 </div>
 
@@ -430,10 +434,14 @@ const BreastInput: React.FC<Props> = (Props) => {
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-                      getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) == ""
-                    }
+  Props.label === "Breast pain"
+    ? getAnswerByQuestionId(Props.OtherInputQId) === "" &&
+      (getAnswerByQuestionId(Props.RQID) === "" || getAnswerByQuestionId(Props.LQID) === "")
+    : getAnswerByQuestionId(Props.RQID) === "" &&
+      getAnswerByQuestionId(Props.LQID) === "" &&
+      getAnswerByQuestionId(Props.OtherInputQId) === ""
+}
+
                   />
                 </div>
 
@@ -446,7 +454,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.RQID) != ""}
+                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.LQID) != ""}
                   />
                 </div>
 
