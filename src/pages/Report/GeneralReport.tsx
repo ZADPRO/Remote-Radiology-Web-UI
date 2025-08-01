@@ -149,7 +149,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
               if (syncStatus.breastImplant) {
                 setsyncStatus({
                   ...syncStatus,
-                  breastImplantRight: false,
+                  breastImplant: false,
                 });
               }
             }}
