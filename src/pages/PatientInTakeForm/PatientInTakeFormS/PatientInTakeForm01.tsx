@@ -46,7 +46,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
     "Biopsy",
   ];
 
-  const [selectedSection, setSelectedSection] = useState<string>(options[1]);
+  const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
