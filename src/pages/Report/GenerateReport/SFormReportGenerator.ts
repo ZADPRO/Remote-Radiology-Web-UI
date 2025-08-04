@@ -87,7 +87,6 @@ export function SFormGeneration(
       surgeryText = surgeries.join(", ");
     }
   }
-  console.log(surgeryText);
 
   return surgeryText;
 };

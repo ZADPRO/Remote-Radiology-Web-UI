@@ -301,7 +301,7 @@ const BreastSymptoms: React.FC<Props> = ({
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              Remainder
+              Reminder
             </DialogTitle>
           </DialogHeader>
           <div className="py-6">

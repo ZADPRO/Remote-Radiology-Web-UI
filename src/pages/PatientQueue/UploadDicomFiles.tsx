@@ -3,11 +3,15 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { technicianService } from "@/services/technicianServices";
 import { AxiosProgressEvent } from "axios";
-import { ArrowLeft, CloudUpload, Trash2, Upload } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { ArrowLeft, CloudUpload, Download, Trash2, Upload } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dicomFile from "../../assets/Patient-InTake Form/Dicomfile_img.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import DragAndDropUploadBox from "@/components/ui/CustomComponents/DragAndDropFileUpload";
+import { reportService } from "@/services/reportService";
+import { DicomFile } from "../Report/DicomList";
+import { downloadDicom, removeDicom } from "@/lib/commonUtlis";
 
 type Side = "Left" | "Right";
 
@@ -48,14 +52,17 @@ const UploadDicomFiles: React.FC = () => {
     Right: "",
   });
 
+    const [dicomFiles, setDicomFiles] = useState<DicomFile[]>([]);
+  
+
   const [finalError, setFinalError] = useState<string>("");
 
   console.log(files);
 
-  const fileInputRefs = {
-    Left: useRef<HTMLInputElement | null>(null),
-    Right: useRef<HTMLInputElement | null>(null),
-  };
+  // const fileInputRefs = {
+  //   Left: useRef<HTMLInputElement | null>(null),
+  //   Right: useRef<HTMLInputElement | null>(null),
+  // };
 
   const errorRefs = {
     Left: useRef<HTMLInputElement | null>(null),
@@ -71,9 +78,9 @@ const UploadDicomFiles: React.FC = () => {
     );
   };
 
-  const handleFileClick = (side: Side) => {
-    fileInputRefs[side].current?.click();
-  };
+  // const handleFileClick = (side: Side) => {
+  //   fileInputRefs[side].current?.click();
+  // };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>, side: Side) => {
     const selectedFiles = Array.from(e.target.files || []);
@@ -186,12 +193,51 @@ const UploadDicomFiles: React.FC = () => {
     }
   };
 
+  const handleListDicom = async() => {
+    setLoading(true);
+     try {
+          const payload = {
+            patientId: appointmentDetails?.userId,
+            appointmentId: appointmentDetails.appointmentId,
+          };
+          console.log(payload);
+    
+          const res = await reportService.listDicoms(payload);
+          console.log(res);
+    
+          if (res.status) {
+            setDicomFiles(res.DicomData);
+          }
+        } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handleListDicom();
+  }, []);
+
+  console.log(dicomFiles)
+
   const renderUploadSection = (side: Side, label: string) => {
     const sideFiles = files.filter((f) => f.side === side);
+
+  
+    const handleFilesSelected = (
+  files: FileList,
+  side: Side
+) => {
+  // You can wrap your existing handleUpload logic here.
+  const event = { target: { files } } as React.ChangeEvent<HTMLInputElement>;
+  handleUpload(event, side);
+};
 
     return (
       <div className="w-full lg:w-1/2 flex flex-col items-center lg:mb-0">
         <h1 className="text-lg sm:text-xl font-semibold">{label}</h1>
+        
 
         <div className="overflow-auto w-full p-3 sm:p-4 border rounded-md">
           <div className="flex gap-2 sm:gap-3 items-start">
@@ -208,28 +254,15 @@ const UploadDicomFiles: React.FC = () => {
 
           <Separator className="my-3 sm:my-4" />
 
-          <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 sm:p-6 text-center shadow-sm">
-            <Upload className="mx-auto text-gray-500" size={28} />
-            <p className="text-xs sm:text-sm text-gray-700 mt-2">
-              Choose a file or drag & drop it here
-            </p>
-            {/* <p className="text-xs text-gray-500">ZIP files</p> */}
-            <Button
-              type="button"
-              className="mt-3 sm:mt-4 bg-[#ABB4A5] hover:bg-[#8e9787] text-sm px-4 py-2"
-              onClick={() => handleFileClick(side)}
-            >
-              Browse File
-            </Button>
-            <input
-              ref={fileInputRefs[side]}
-              type="file"
-              multiple
-              // accept=".zip,.dcm,.dicom"
-              className="hidden"
-              onChange={(e) => handleUpload(e, side)}
-            />
-          </div>
+          <DragAndDropUploadBox
+            icon={Upload}
+            buttonLabel="Browse File"
+            side={side}
+            onFilesSelected={(e) => {
+              handleFilesSelected(e, side);
+            }}
+            // fileInputRef={fileInputRefs[side]} // Only if you want to use your refs
+          />
 
           {error[side] && (
             <div
@@ -284,6 +317,61 @@ const UploadDicomFiles: React.FC = () => {
               </div>
             ))}
           </div>
+
+          <Separator className="my-4"/>
+
+          <div className="shadow-md p-4">
+            <h1>Uploaded Files</h1>
+          {dicomFiles?.filter((file) => file.Side === side).length === 0 || dicomFiles.length === 0 ? (
+            <div className="text-center text-sm text-gray-400 py-8">
+              No files uploaded
+            </div>
+          ) : (
+            dicomFiles?.map((file, index) => (
+              <>
+                {file.Side === side && (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center border-b py-3 px-2 rounded bg-[#f8f3eb] hover:bg-[#fffaf0] transition"
+                  >
+                    <div className="flex flex-col text-sm">
+                      <span className="text-gray-500">{file.FileName}</span>
+                      <span className="font-medium text-gray-800">
+                        {file.Side}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                    <Download
+                      onClick={() => {
+                        downloadDicom(file.DFId, file.FileName);
+                      }}
+                      size={16}
+                      className="text-gray-600 cursor-pointer hover:bg-accent"
+                    />
+
+                    <Trash2 
+                    size={16}
+                      className="text-red-600 cursor-pointer hover:bg-accent"
+                      onClick={async() => {
+                        setLoading(true)
+                        try {
+                          await removeDicom([file.DFId]);
+                          handleListDicom();
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                    />
+                    </div>
+                    
+                  </div>
+                )}
+              </>
+            ))
+          )}
+          </div>
+            
         </div>
       </div>
     );
@@ -325,7 +413,7 @@ const UploadDicomFiles: React.FC = () => {
       <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Stay on this page until the process is complete</p>
 
       {/* This wrapper scrolls */}
-      <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2 lg:shadow">
+      <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2">
         <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-5 lg:p-0">
           {renderUploadSection("Left", "Left")}
           {renderUploadSection("Right", "Right")}
@@ -338,6 +426,7 @@ const UploadDicomFiles: React.FC = () => {
           variant="pinkTheme"
           onClick={handleSaveDicom}
           className="w-full sm:w-auto mx-4 sm:mx-0"
+          disabled={files.some((file) => file.status !== "completed")}
         >
           Submit
         </Button>

@@ -100,7 +100,8 @@ type Props = {
   ScancenterCode: string;
   studyTime: string;
   patientDetails: any;
-  readOnly?: boolean
+  readOnly?: boolean;
+  patientHistory: string;
 };
 
 const NotesReport: React.FC<Props> = ({
@@ -117,7 +118,8 @@ const NotesReport: React.FC<Props> = ({
   ScancenterCode,
   studyTime,
   patientDetails,
-  readOnly
+  readOnly,
+  patientHistory,
 }) => {
     const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
     const breastDensityRight = getAnswer(breastDensityandImageRightQuestions.breastSelect) == "Present" ? true : false;
@@ -143,7 +145,7 @@ const NotesReport: React.FC<Props> = ({
         <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
         <td style="border: 1px solid #000; padding: 4px;">${name}</td>
         <td style="border: 1px solid #000; padding: 4px;"><strong>STUDY</strong></td>
-        <td style="border: 1px solid #000; padding: 4px;">${new Date(studyTime).toISOString().slice(0, 16).replace("T", " ")}</td>
+        <td style="border: 1px solid #000; padding: 4px;">${studyTime && new Date(studyTime).toISOString().slice(0, 16).replace("T", " ")}</td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 4px;"><strong>AGE/GENDER</strong></td>
@@ -160,9 +162,13 @@ const NotesReport: React.FC<Props> = ({
     </tbody>
   </table>
 
-  <br /><br />
+  <br/>
 
-  <h2><strong>QT ULTRASOUND BILATERAL BREAST IMAGING</strong></h2>
+  ${patientHistory}
+
+  <br/>
+
+  <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
 
   <br />
 

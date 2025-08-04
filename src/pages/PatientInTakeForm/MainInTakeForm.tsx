@@ -278,7 +278,7 @@ const MainInTakeForm: React.FC<Props> = ({
     //  <div className={readOnly ? "pointer-events-none" : ""}>
     <div className="flex flex-col gap-3 h-dvh lg:flex-row w-full p-5 lg:p-0 bg-gradient-to-b from-[#EED2CF] to-[#FEEEED] overflow-y-auto">
       {/* Left Panel */}
-      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col lg:justify-between gap-2 lg:min-h-screen">
+      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col lg:justify-between gap-2 lg:min-h-screen overflow-y-auto">
         {/* Back Button at Top */}
         <div className="flex items-center justify-between">
           <Button
@@ -290,7 +290,10 @@ const MainInTakeForm: React.FC<Props> = ({
             <ArrowLeft />
             <span className="text-lg font-semibold">Back</span>
           </Button>
-          <img
+          {
+            !patientDetails?.reportview && (
+              <>
+              <img
             src={logo}
             alt="logo"
             className="hidden lg:block h-20 w-40 pr-2 object-contain"
@@ -300,17 +303,20 @@ const MainInTakeForm: React.FC<Props> = ({
             alt="logo"
             className="lg:hidden h-20 w-40 object-contain"
           />
+              </>
+            )
+          }
         </div>
 
         {/* Content Centered Vertically */}
-        <div className="flex-grow flex justify-center items-center lg:px-4">
-          <div className="w-full lg:p-6">
+        <div className="flex-grow flexs-center lg:px-4">
+          <div className="w-full h-full  lg:p-6">
             <h1 className="text-3xl lg:text-3xl font-semibold lg:mb-6 text-start lg:text-center">
               Please confirm the reason why you are having this QT scan
             </h1>
 
             <RadioGroup
-              className={`flex flex-col gap-2 lg:gap-5 ${
+              className={`flex flex-col w-full gap-2 lg:gap-5 ${
                 readOnly ? "pointer-events-none" : ""
               }`}
               value={selectedOption}
@@ -341,7 +347,9 @@ const MainInTakeForm: React.FC<Props> = ({
 
       {/* Right Panel */}
       <div className="w-full lg:w-1/2 lg:p-6 flex flex-col items-end lg:overflow-auto border lg:border-none border-gray-500 rounded-lg">
-        <div className="hidden lg:inline h-20 w-70 mb-10 self-end">
+        {
+          !patientDetails?.reportview && (
+            <div className="hidden lg:inline h-20 w-70 mb-10 self-end">
           <div className="h-18 bg-[#fff] font-semibold flex flex-col items-start justify-center w-70 rounded p-3 my-5 text-sm self-end">
             <div className="capitalize flex">
               <div className="flex w-[6rem]">Patient Name</div>{" "}
@@ -358,6 +366,8 @@ const MainInTakeForm: React.FC<Props> = ({
             {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
           </div>
         </div>
+          )
+        }
 
         {selectedOption && (
           <div className="w-full">

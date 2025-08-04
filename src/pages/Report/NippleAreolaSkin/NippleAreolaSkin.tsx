@@ -52,8 +52,6 @@ const NippleAreolaSkin: React.FC<Props> = ({
 
   }, []);
 
-  console.log(patientFormData)
-
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
   const getPatientAnswer = (id: number) => patientFormData.find((q) => q.questionId === id)?.answer || "";

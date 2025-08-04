@@ -149,7 +149,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         }}
                         required={
                           getAnswerByQuestionId(Props.RQID) == "true" &&
-                          getAnswerByQuestionId(Props.SDateRight) != ""
+                          getAnswerByQuestionId(Props.SDateRight) == ""
                         }
                       />
                     </div>
@@ -240,7 +240,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         }}
                         required={
                           getAnswerByQuestionId(Props.LQID) == "true" &&
-                          getAnswerByQuestionId(Props.SDate) != ""
+                          getAnswerByQuestionId(Props.SDate) == ""
                         }
                       />
                     </div>

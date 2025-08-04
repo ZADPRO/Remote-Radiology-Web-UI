@@ -93,102 +93,102 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Dashboard",
         path: "/admin/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Administration",
         path: "/admin/administration",
-        icon: <Settings2 className="w-4 h-4" />,
+        icon: <Settings2 className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/admin/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/admin/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     scadmin: [
       {
         label: "Dashboard",
         path: "/scadmin/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Administration",
         path: `/scadmin/administration/${user?.refSCId}`,
-        icon: <Settings2 className="w-4 h-4" />,
+        icon: <Settings2 className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/scadmin/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/scadmin/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     technician: [
       {
         label: "Dashboard",
         path: "/technician/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/technician/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/technician/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     radiologist: [
       {
         label: "Dashboard",
         path: "/radiologist/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/radiologist/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/radiologist/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     scribe: [
       {
         label: "Dashboard",
         path: "/scribe/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/scribe/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/scribe/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     patient: [
       {
         label: "Home",
         path: "/patient/myCare",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "My Reports",
@@ -205,73 +205,73 @@ const MasterAdmin: React.FC = () => {
       {
         label: "Dashboard",
         path: "/manager/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Administration",
         path: "/manager/administration",
-        icon: <Settings2 className="w-4 h-4" />,
+        icon: <Settings2 className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/manager/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/manager/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     doctor: [
       {
         label: "Dashboard",
         path: "/doctor/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/doctor/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/doctor/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     codoctor: [
       {
         label: "Dashboard",
         path: "/codoctor/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/codoctor/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/codoctor/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     wgdoctor: [
       {
         label: "Dashboard",
         path: "/wgdoctor/dashboard",
-        icon: <img src={dashboard} className="w-4 h-4" />,
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Patient Queue",
         path: "/wgdoctor/patientQueue",
-        icon: <PersonStanding className="w-4 h-4" />,
+        icon: <PersonStanding className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
         label: "Analytics",
         path: "/wgdoctor/analytics",
-        icon: <ChartPie className="w-4 h-4" />,
+        icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
   };

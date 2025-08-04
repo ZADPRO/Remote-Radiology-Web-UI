@@ -29,6 +29,7 @@ export interface PatientInTakeFormNavigationState {
   custId?: string;
   scancenterCustId?: string;
   consent?: string;
+  reportview?: boolean;
 }
 
 interface PatientInTakeFormProps
@@ -43,6 +44,7 @@ interface PatientContextType {
   name?: string;
   custId?: string;
   scancenterCustId?: string;
+  reportview?: boolean;
 }
 
 export const PatientContext = React.createContext<PatientContextType | null>(
@@ -57,7 +59,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     }))
   );
 
-  // 496
+  // 498
 
   const [loading, setLoading] = useState(false);
 
@@ -88,6 +90,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     userId: props.userId ?? locationState?.userId,
     categoryId: props.categoryId ?? locationState?.categoryId,
     consent: props.consent ?? locationState?.consent ?? "",
+    reportview: props.reportview ?? locationState?.reportview,
   };
 
   console.log(locationState);
@@ -190,6 +193,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           name: locationState?.name,
           custId: locationState?.custId,
           scancenterCustId: locationState?.scancenterCustId,
+          reportview: props.reportview,
         }}
       >
         {loading && <LoadingOverlay />}

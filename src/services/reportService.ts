@@ -33,6 +33,11 @@ export interface ReportHistoryData {
   refRHHandleStatus: string;
 }
 
+export interface FinalPatientReport {
+  refAppointmentId: number;
+  refRTCText: string;
+}
+
 export const reportService = {
   checkAccess: async (appointmentId: number) => {
     const token = localStorage.getItem("token");
@@ -177,9 +182,10 @@ export const reportService = {
     return decryptedData;
   },
 
-   getPatientReport: async (id: number, appintmentId: number) => {
+   getPatientReport: async (appintmentId: number[]) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({ id: id, appintmentId: appintmentId }, token);
+    console.log(appintmentId);
+    const payload = encrypt({ appintmentId }, token);
 
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE
@@ -193,7 +199,7 @@ export const reportService = {
       }
     );
     const decryptedData: {
-      RTCText: string;
+      data: FinalPatientReport[];
       status: boolean;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
@@ -201,14 +207,14 @@ export const reportService = {
     return decryptedData;
   },
 
-  getPatientConsent: async (scancenterId: number[]) => {
-    console.log(scancenterId);
+  getPatientConsent: async (appintmentId: number[]) => {
+    console.log(appintmentId);
     const token = localStorage.getItem("token");
-    const payload = encrypt({ scancenterId: scancenterId }, token);
+    const payload = encrypt({ appintmentId: appintmentId }, token);
 
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE
-      }/wellgreenforms/listPatientconsent`,
+      }/intakeform/getConsentData`,
       { encryptedData: payload },
       {
         headers: {
@@ -217,6 +223,31 @@ export const reportService = {
         },
       }
     );
+    const decryptedData: {
+      data: {refAppointmentConsent: string, refAppointmentId: number}[],
+      status: boolean;
+    } = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  sendMailPatienteport: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/sendMail`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     console.log(decryptedData);

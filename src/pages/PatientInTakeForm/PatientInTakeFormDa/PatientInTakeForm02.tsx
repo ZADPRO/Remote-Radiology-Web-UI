@@ -208,22 +208,31 @@ const PatientInTakeForm02: React.FC<Props> = ({
           <ArrowLeft />
           <span className="text-lg font-semibold">Back</span>
         </Button>
-        <img src={logo} className="h-[6vh] hidden sm:block px-5" alt="logo" />
-        <div className="h-14 bg-[#fff] flex flex-col items-start justify-center w-70 mr-1  rounded p-3 text-xs self-end">
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient Name</div>{" "}
-            <div>: {patientDetails?.name}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient ID</div>{" "}
-            <div>: {patientDetails?.custId}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Scan Center</div>{" "}
-            <div>: {patientDetails?.scancenterCustId}</div>
-          </div>
-          {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
-        </div>
+        {!patientDetails?.reportview && (
+          <>
+            <img
+              src={logo}
+              className="h-[6vh] hidden sm:block px-5"
+              alt="logo"
+            />
+
+            <div className="h-14 bg-[#fff] flex flex-col items-start justify-center w-70 mr-1  rounded p-3 text-xs self-end">
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient Name</div>{" "}
+                <div>: {patientDetails?.name}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient ID</div>{" "}
+                <div>: {patientDetails?.custId}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Scan Center</div>{" "}
+                <div>: {patientDetails?.scancenterCustId}</div>
+              </div>
+              {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
+            </div>
+          </>
+        )}
       </div>
       <div
         className="w-full lg:w-4/12 pt-0 h-[10vh] lg:h-full bg-[#a3b1a1] lg:bg-[#A4B2A1] flex flex-row lg:flex-col justify-start overflow-y-auto hide-scrollbar"
@@ -247,7 +256,9 @@ const PatientInTakeForm02: React.FC<Props> = ({
               <ArrowLeft />
               <span className="text-lg">Back</span>
             </Button>
-            <img src={logo} className="h-[6vh] my-2 pr-2" alt="logo" />
+            {!patientDetails?.reportview && (
+              <img src={logo} className="h-[6vh] my-2 pr-2" alt="logo" />
+            )}
           </div>
 
           <p className="text-base lg:text-lg text-center font-bold uppercase">

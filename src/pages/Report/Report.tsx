@@ -81,6 +81,7 @@ export interface ReportQuestion {
 interface AssignReportResponse {
   appointmentStatus: AppointmentStatus[];
   reportHistoryData: ReportHistoryData[];
+  easeQTReportAccess: boolean;
 }
 
 interface TextEditorContent {
@@ -116,7 +117,7 @@ interface ReportStage {
 const Report: React.FC = () => {
   const [tab, setTab] = useState<number>(4);
 
-  const [subTab, setSubTab] = useState<number>(1);
+  const [subTab, setSubTab] = useState<number>(4);
 
   const [loading, setLoading] = useState(false);
 
@@ -187,6 +188,7 @@ const Report: React.FC = () => {
     setShowDialog(false);
     navigate(-1);
   };
+  
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
     Array.from({ length: 200 }, (_, index) => ({
       questionId: 1 + index,
@@ -466,6 +468,17 @@ const Report: React.FC = () => {
     text: "",
   });
 
+  const accessibleTabs = [1, 2, 3, 5]; // Tabs requiring access
+const finalTab = 4; // Final Report is always accessible
+
+// Only check easeQTReportAccess for restricted roles
+
+const isTabAccessible = (value: number) => {
+  return (
+    value === finalTab || (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
+  );
+};
+
   const handleAssignUser = async () => {
     setLoading(true);
     try {
@@ -476,6 +489,7 @@ const Report: React.FC = () => {
         reportIntakeFormData: ReportQuestion[];
         reportTextContentData: TextEditorContent[];
         technicianIntakeFormData: ResponseTechnicianForm[];
+        easeQTReportAccess: boolean;
         reportFormateList: any;
         userDeatils: any;
         patientDetails: any;
@@ -492,6 +506,7 @@ const Report: React.FC = () => {
         setAssignData({
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [],
+          easeQTReportAccess: response.easeQTReportAccess,
         });
         setMainImpressionRecommendation((prev) => ({
           ...prev,
@@ -563,14 +578,30 @@ const Report: React.FC = () => {
   useEffect(() => {
     if (!responsePatientInTake) return;
 
-    if (assignData?.appointmentStatus[0].refCategoryId === 1) {
-      setPatientHistory(SFormGeneration(responsePatientInTake));
-    } else if (assignData?.appointmentStatus[0].refCategoryId === 2) {
-      setPatientHistory(DaFormReportGenerator(responsePatientInTake));
+    const getAnswer = (id: number) =>
+      responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
+    let reason = `
+  <div><strong>REASON: </strong>
+    ${getAnswer(11)}</div>
+    `;
+
+    // if (assignData?.appointmentStatus[0].refCategoryId === 1) {
+    setPatientHistory(
+      (reason += "<br/>" + SFormGeneration(responsePatientInTake))
+    );
+    // } else
+    if (assignData?.appointmentStatus[0].refCategoryId === 2) {
+      setPatientHistory(
+        (reason += "<br/><br/>" + DaFormReportGenerator(responsePatientInTake))
+      );
     } else if (assignData?.appointmentStatus[0].refCategoryId === 3) {
-      setPatientHistory(DbFormReportGenerator(responsePatientInTake));
+      setPatientHistory(
+        (reason += "<br/><br/>" + DbFormReportGenerator(responsePatientInTake))
+      );
     } else if (assignData?.appointmentStatus[0].refCategoryId === 4) {
-      setPatientHistory(DcFormGeneration(responsePatientInTake));
+      setPatientHistory(
+        (reason += "<br/><br/>" + DcFormGeneration(responsePatientInTake))
+      );
     }
   }, [responsePatientInTake]);
 
@@ -750,12 +781,12 @@ const Report: React.FC = () => {
         {/* Main Tabs */}
         <div className="flex w-3/5 h-full">
           <div className="w-48 object-cover h-auto flex items-center justify-center px-2">
-  <img
-    src={logo}
-    alt="logo"
-    className="max-w-full max-h-full object-contain"
-  />
-</div>
+            <img
+              src={logo}
+              alt="logo"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
 
           {[
             { label: "Patient Form", value: 1 },
@@ -781,27 +812,34 @@ const Report: React.FC = () => {
 
         {/* Report Sub-Tabs */}
         <div className="flex w-2/5 h-full items-center justify-around px-2">
-          {tab === 4 &&
-            [
-              { label: "General", value: 1 },
-              { label: "Right", value: 2 },
-              { label: "Left", value: 3 },
-              { label: "Impression", value: 5 },
-              { label: "Final Report", value: 4 },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                onClick={() => setSubTab(value)}
-                className={`flex-1 text-xs text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
-                  subTab === value
-                    ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                    : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
-                }`}
-              >
-                {label}
-              </div>
-            ))}
+  {tab === 4 &&
+    [
+      { label: "General", value: 1 },
+      { label: "Right", value: 2 },
+      { label: "Left", value: 3 },
+      { label: "Impression", value: 5 },
+      { label: "Final Report", value: 4 },
+    ].map(({ label, value }) => {
+      const accessible = isTabAccessible(value);
+    console.log(isTabAccessible(value));
+      return (
+        accessible && <div
+          key={label}
+          onClick={() => accessible && setSubTab(value)}
+          className={`flex-1 max-w-xl text-xs text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+            accessible
+              ? subTab === value
+                ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+              : "border-[#e0e0e0] text-gray-400 cursor-not-allowed bg-gray-100"
+          }`}
+        >
+          {label}
         </div>
+      );
+    })}
+</div>
+
       </div>
 
       <div className="flex w-full">
@@ -1233,6 +1271,7 @@ const Report: React.FC = () => {
               appointmentId={stateData.appointmentId}
               userId={stateData.userId}
               readOnly={true}
+              reportview={true}
             />
           )}
 
@@ -1243,6 +1282,7 @@ const Report: React.FC = () => {
               appointmentId={stateData.appointmentId}
               userId={stateData.userId}
               readOnly={true}
+              reportview={true}
             />
           )}
           {tab === 3 && (
@@ -1464,6 +1504,7 @@ const Report: React.FC = () => {
                   }
                   patientDetails={patientDetails}
                   readOnly={stateData.readOnly ? true : false}
+                  patientHistory={patientHistory}
                 />
               ) : (
                 subTab === 5 && (

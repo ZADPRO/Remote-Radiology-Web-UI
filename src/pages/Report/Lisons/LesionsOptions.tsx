@@ -178,7 +178,7 @@ const LesionsOptions: React.FC<Props> = ({
                               Location - Level
                             </Label>
                             <div className="flex flex-wrap gap-3">
-                              {["Coronal Level", "Axial", "Sagital"].map(
+                              {["Coronal Level", "Axial", "Sagital", "Unknown"].map(
                                 (level, i) => (
                                   <div
                                     key={level}
@@ -318,7 +318,7 @@ const LesionsOptions: React.FC<Props> = ({
                             Shape
                           </Label>
                           <div className="flex flex-wrap gap-3">
-                            {["Round", "Oval", "Irregular"].map((shape, i) => (
+                            {["Round", "Oval", "Irregular", "Unknown"].map((shape, i) => (
                               <div
                                 key={shape}
                                 className="flex items-center gap-2"
@@ -359,6 +359,7 @@ const LesionsOptions: React.FC<Props> = ({
                             {[
                               { label: "Heterogenous", value: "heterogenous" },
                               { label: "Homogenous", value: "homogenous" },
+                              { label: "Unknown", value: "unknown"}
                             ].map((item, i) => (
                               <div
                                 key={item.value}
@@ -405,6 +406,7 @@ const LesionsOptions: React.FC<Props> = ({
                               "Spiculated",
                               "Angular",
                               "Irregular",
+                              "Unknown"
                             ].map((m, i) => (
                               <div key={m} className="flex items-center gap-2">
                                 <input
@@ -445,6 +447,7 @@ const LesionsOptions: React.FC<Props> = ({
                               "Isoechoic",
                               "Hyperechoic",
                               "Complex",
+                              "Unknown"
                             ].map((d, i) => (
                               <div key={d} className="flex items-center gap-2">
                                 <input
@@ -508,6 +511,7 @@ const LesionsOptions: React.FC<Props> = ({
                             {[
                               { label: "Present", value: "present" },
                               { label: "Not present", value: "not present" },
+                              { label: "Unknown", value: "unknown"}
                             ].map((item, i) => (
                               <div
                                 key={item.value}
