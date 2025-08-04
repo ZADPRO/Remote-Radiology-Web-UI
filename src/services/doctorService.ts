@@ -89,6 +89,7 @@ export interface ListSpecificPerformingProvider {
   refUserId: number;
   refUserProfileImg: string;
   refUserStatus: boolean;
+  refDDEaseQTReportAccess: boolean
 }
 
 export interface ListAllCoDoctor {
@@ -133,6 +134,7 @@ export interface ListSpecificCoDoctor {
   refUserId: number;
   refUserProfileImg: string;
   refUserStatus: boolean;
+  refCDEaseQTReportAccess: boolean
 }
 
 export const doctorService = {

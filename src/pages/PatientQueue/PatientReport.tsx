@@ -25,8 +25,8 @@ const PatientReport: React.FC<PatientReportProps> = ({
   const fetchPatientReport = async () => {
     try {
       setLoading(true);
-      const res = await reportService.getPatientReport(userId, appointmentId);
-      setPatientReport(res.RTCText);
+      const res = await reportService.getPatientReport([appointmentId]);
+      setPatientReport(res.data[0].refRTCText);
     } catch (error) {
       console.log(error);
     } finally {

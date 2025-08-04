@@ -1,5 +1,6 @@
-import { encrypt } from "@/Helper";
+import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
+import { tokenService } from "./tokenService";
 
 export function downloadDocumentFile(
   base64Data: string,
@@ -182,3 +183,26 @@ export const handleAllDownloadDicom = async (selectedRowIds: number[]) => {
     }
   }
 };
+
+export const removeDicom = async (refDFId: number[]) => {
+  const token = localStorage.getItem("token");
+  console.log(refDFId);
+  
+    const payload = encrypt({ refDFId: refDFId }, token);
+ 
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/deleteDicom`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+ 
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+}

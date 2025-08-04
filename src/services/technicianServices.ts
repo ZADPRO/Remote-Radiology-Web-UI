@@ -104,6 +104,7 @@ export interface TechnicianPatientQueue {
   refAppointmentAssignedUserId: number;
   refUserId: number;
   refAppointmentRemarks: string;
+  refAppointmentMailSendStatus: string;
   dicomFiles: DicomFiles[];
   GetCorrectEditModel: {
     isHandleCorrect: boolean,

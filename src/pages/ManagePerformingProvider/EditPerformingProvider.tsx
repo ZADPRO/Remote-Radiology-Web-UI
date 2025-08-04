@@ -16,6 +16,7 @@ import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { doctorService, ListSpecificPerformingProvider } from "@/services/doctorService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { Switch } from "@/components/ui/switch";
 
 // Define the props interface for EditPerformingProvider
 interface EditPerformingProviderProps {
@@ -101,6 +102,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
   refUserId: 0,
   refUserProfileImg: "",
   refUserStatus: false,
+  refDDEaseQTReportAccess: false
 });
 
 
@@ -279,6 +281,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         license_files: tempLicenses,
         malpracticeinsureance_files: tempMalpractice,
         digital_signature:  formData.digital_signature,
+        easeQTReportAccess: formData.refDDEaseQTReportAccess
       };
       console.log("payload",payload);
       const res = await doctorService.updatePerformingProvider(payload);
@@ -510,6 +513,30 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="self-start mt-2 w-full">
+              <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                <div>
+                  <Label className="font-semibold text-base">
+                    Ease QT 10/10 Report Access
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Toggle to enable access
+                  </p>
+                </div>
+                <Switch
+                  id="qtAccess"
+                  className="cursor-pointer"
+                  checked={formData.refDDEaseQTReportAccess}
+                  onCheckedChange={(checked: boolean) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      refDDEaseQTReportAccess: checked,
+                    }))
+                  }
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -612,10 +639,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                   }
                   disabled
                 >
-                  <SelectTrigger
-                    disabled
-                    className="bg-white"
-                  >
+                  <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
@@ -673,25 +697,25 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               </Label>
 
               <FileUploadButton
-              id="license-upload"
-              label="Upload License"
-              isFilePresent={!!formData.drivers_license}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  if (file.size > 5 * 1024 * 1024) {
-                    setError("File must be less than 5MB.");
-                    return;
-                  }
+                id="license-upload"
+                label="Upload License"
+                isFilePresent={!!formData.drivers_license}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("File must be less than 5MB.");
+                      return;
+                    }
 
-                  handleSingleFileUpload({
-                    file,
-                    fieldName: "drivers_license",
-                    tempFileKey: "drivers_license",
-                  });
-                }
-              }}
-            />
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "drivers_license",
+                      tempFileKey: "drivers_license",
+                    });
+                  }
+                }}
+              />
 
               {/* Show uploaded or existing Driving License file */}
               {files.drivers_license ? (

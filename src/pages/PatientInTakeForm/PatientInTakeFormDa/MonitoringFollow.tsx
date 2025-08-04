@@ -2,9 +2,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
-import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
-import { dateDisablers } from "@/lib/dateUtils";
 
 interface QuestionIds {
   currentRec: number;
@@ -121,7 +119,20 @@ const MonitoringFollow: React.FC<Props> = ({
             B. Next appointment date:
           </Label>
           <div className="w-45 ml-4 lg:ml-0">
-            <DatePicker
+            <Input
+                      type="text"
+                      value={getAnswer(questionIds.nextappointment)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          questionIds.nextappointment,
+                          e.target.value
+                        )
+                      }
+                      required
+                      placeholder="Specify Timeframe"
+                      className="w-64 text-sm"
+                    />
+            {/* <DatePicker
               value={
                 getAnswer(questionIds.nextappointment)
                   ? new Date(getAnswer(questionIds.nextappointment))
@@ -134,7 +145,7 @@ const MonitoringFollow: React.FC<Props> = ({
                 )
               }
               disabledDates={dateDisablers.noPast}
-            />
+            /> */}
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { reportService } from "@/services/reportService";
 import { Download } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-type DicomFile = {
+export type DicomFile = {
   AppointmentId: number;
   CreatedAt: string; // ISO date string
   CreatedBy: number;

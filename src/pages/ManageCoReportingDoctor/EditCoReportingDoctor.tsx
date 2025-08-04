@@ -16,6 +16,7 @@ import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { doctorService, ListSpecificCoDoctor } from "@/services/doctorService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { Switch } from "@/components/ui/switch";
 
 
 // Define the props interface for EditCoReportingDoctor
@@ -102,6 +103,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
   refUserId: 0,
   refUserProfileImg: "",
   refUserStatus: false,
+  refCDEaseQTReportAccess: false
 });
 
 
@@ -240,6 +242,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
         license_files: tempLicenses,
         malpracticeinsureance_files: tempMalpractice,
         digital_signature:  formData.digital_signature,
+        easeQTReportAccess: formData.refCDEaseQTReportAccess
       };
       console.log("payload",payload);
       const res = await doctorService.updateCoDoctor(payload);
@@ -467,6 +470,30 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="self-start mt-2 w-full">
+                          <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                            <div>
+                              <Label className="font-semibold text-base">
+                                Ease QT 10/10 Report Access
+                              </Label>
+                              <p className="text-sm text-muted-foreground">
+                                Toggle to enable access
+                              </p>
+                            </div>
+                            <Switch
+                              id="qtAccess"
+                              className="cursor-pointer"
+                              checked={formData.refCDEaseQTReportAccess}
+                              onCheckedChange={(checked: boolean) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  refCDEaseQTReportAccess: checked,
+                                }))
+                              }
+                            />
+                          </div>
+                        </div>
           </div>
         </div>
 

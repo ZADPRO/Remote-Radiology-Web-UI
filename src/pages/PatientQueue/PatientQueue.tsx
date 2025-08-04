@@ -82,8 +82,15 @@ import PatientReport from "./PatientReport";
 import { Calendar } from "@/components/calendar";
 import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
 import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import PatientConsentDialog from "./PatientConsentDialog";
+import SendMailDialog from "./SendMailDialog";
+import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 
 interface staffData {
   refUserCustId: string;
@@ -114,7 +121,9 @@ const PatientQueue: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
 
   const [consentDialogOpen, setConsentDialogOpen] = useState(false);
-  const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<number[]>([]);
+  const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<
+    number[]
+  >([]);
 
   const currentUserRole = useAuth().role?.type;
   const currentUser = useAuth().user?.refUserId;
@@ -436,7 +445,49 @@ const PatientQueue: React.FC = () => {
     }
   };
 
-  console.log(selectedRowIds)
+  console.log(selectedRowIds);
+
+  const handleAllReportsDownload = async () => {
+    try {
+          setLoading(true);
+          console.log(selectedRowIds);
+          const res = await reportService.getPatientReport(selectedRowIds);
+          console.log(res);
+
+          if (res.status) {
+            res.data?.map((reportData) => {
+            const tempData = patientQueue.find(item => item.refAppointmentId == reportData.refAppointmentId);
+
+             downloadReportsPdf(reportData.refRTCText, `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_FinalReport`);
+          })
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+  };
+
+  const handleAllConsentDownload = async () => {
+    try {
+          setLoading(true);
+          console.log(selectedRowIds);
+          const res = await reportService.getPatientConsent(selectedRowIds);
+          console.log(res);
+
+          if (res.status) {
+            res.data?.map((reportData) => {
+            const tempData = patientQueue.find(item => item.refAppointmentId == reportData.refAppointmentId);
+
+             downloadReportsPdf(reportData.refAppointmentConsent, `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_Consent`);
+          })
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+  };
 
   const columns = useMemo<ColumnDef<TechnicianPatientQueue>[]>(
     () => [
@@ -700,20 +751,20 @@ const PatientQueue: React.FC = () => {
           </div>
         ),
         cell: ({ row }) => {
-    const appointmentId = row.original.refAppointmentId;
+          const appointmentId = row.original.refAppointmentId;
 
-    return (
-      <div
-        className="hover:underline cursor-pointer font-bold text-center"
-        onClick={() => {
-          setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
-          setConsentDialogOpen(true);                // ✅ open dialog
-        }}
-      >
-        View
-      </div>
-    );
-  }, 
+          return (
+            <div
+              className="hover:underline cursor-pointer font-bold text-center"
+              onClick={() => {
+                setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
+                setConsentDialogOpen(true); // ✅ open dialog
+              }}
+            >
+              View
+            </div>
+          );
+        },
         enableColumnFilter: true,
       },
       {
@@ -860,7 +911,8 @@ const PatientQueue: React.FC = () => {
                       appointmentId: row.original.refAppointmentId,
                       userId,
                       readOnly: true,
-                      name: row.original.refUserFirstName ?? user?.refUserFirstName,
+                      name:
+                        row.original.refUserFirstName ?? user?.refUserFirstName,
                       custId: row.original.refUserCustId ?? user?.refUserCustId,
                       scancenterCustId: row.original.refSCCustId,
                     },
@@ -908,27 +960,30 @@ const PatientQueue: React.FC = () => {
               )}
 
               {isEditDialogOpen && (
-              <Dialog
-                open={isEditDialogOpen}
-                onOpenChange={setIsEditDialogOpen}
-              >
-                <ConsentForm
-                  onSubmit={(consent) =>
-                    navigate("/patientInTakeForm", {
-                      state: {
-                        fetchFormData: false,
-                        appointmentId: row.original.refAppointmentId,
-                        userId,
-                        name: row.original.refUserFirstName ?? user?.refUserFirstName,
-                      custId: row.original.refUserCustId ?? user?.refUserCustId,
-                        scancenterCustId: row.original.refSCCustId,
-                        consent: consent,
-                      },
-                    })
-                  }
-                  scId={row.original.refSCId}
-                />
-                {/* <UserConsentWrapper
+                <Dialog
+                  open={isEditDialogOpen}
+                  onOpenChange={setIsEditDialogOpen}
+                >
+                  <ConsentForm
+                    onSubmit={(consent) =>
+                      navigate("/patientInTakeForm", {
+                        state: {
+                          fetchFormData: false,
+                          appointmentId: row.original.refAppointmentId,
+                          userId,
+                          name:
+                            row.original.refUserFirstName ??
+                            user?.refUserFirstName,
+                          custId:
+                            row.original.refUserCustId ?? user?.refUserCustId,
+                          scancenterCustId: row.original.refSCCustId,
+                          consent: consent,
+                        },
+                      })
+                    }
+                    scId={row.original.refSCId}
+                  />
+                  {/* <UserConsentWrapper
                   setEditingDialogOpen={setIsEditDialogOpen}
                   onSubmit={() =>
                     navigate("/patientInTakeForm", {
@@ -943,7 +998,7 @@ const PatientQueue: React.FC = () => {
                     })
                   }
                 /> */}
-              </Dialog>
+                </Dialog>
               )}
             </div>
           );
@@ -1091,7 +1146,7 @@ const PatientQueue: React.FC = () => {
           const dicomFiles = row.original.dicomFiles as DicomFiles[];
           const appointmentId = row.original.refAppointmentId;
           const userId = row.original.refUserId;
-          const isTechnician = currentUserRole === "technician" || "admin";
+          // const isTechnician = currentUserRole === "technician" || "admin";
 
           const leftDicom = dicomFiles?.find((f) => f.refDFSide === "Left");
           const rightDicom = dicomFiles?.find((f) => f.refDFSide === "Right");
@@ -1165,6 +1220,60 @@ const PatientQueue: React.FC = () => {
               </div>
             );
           }
+          // if (
+          //   isTechnician &&
+          //   !hasDicom &&
+          //   row.original.refAppointmentComplete === "reportformfill"
+          // ) {
+          //   return (
+          //     <div className="text-center w-full">
+          //       <button
+          //         className="hover:underline cursor-pointer font-bold"
+          //         onClick={() =>
+          //           navigate("../uploadDicoms", {
+          //             state: {
+          //               appointmentId,
+          //               userId,
+          //               name: row.original.refUserFirstName,
+          //               custId: row.original.refUserCustId,
+          //               scancenterCustId: row.original.refSCCustId,
+          //             },
+          //           })
+          //         }
+          //       >
+          //         Upload DICOM
+          //       </button>
+          //     </div>
+          //   );
+          // }
+
+          if (!hasDicom) {
+            return (
+              <div className="text-muted-foreground text-center text-xs w-full">
+                Not Uploaded
+              </div>
+            );
+          }
+
+          return <div className="text-center w-full">-</div>;
+        },
+      },
+      {
+        id: "dicomFull",
+        header: () => (
+          <div className="flex flex-col items-center w-full">DICOM</div>
+        ),
+        cell: ({ row }) => {
+          const dicomFiles = row.original.dicomFiles as DicomFiles[];
+          const appointmentId = row.original.refAppointmentId;
+          const userId = row.original.refUserId;
+          const isTechnician = currentUserRole === "technician" || "admin";
+
+          const leftDicom = dicomFiles?.find((f) => f.refDFSide === "Left");
+          const rightDicom = dicomFiles?.find((f) => f.refDFSide === "Right");
+
+          const hasDicom = leftDicom || rightDicom;
+
           if (
             isTechnician &&
             !hasDicom &&
@@ -1173,7 +1282,7 @@ const PatientQueue: React.FC = () => {
             return (
               <div className="text-center w-full">
                 <button
-                  className="hover:underline cursor-pointer font-bold"
+                  className="hover:underline cursor-pointer text-xs font-bold"
                   onClick={() =>
                     navigate("../uploadDicoms", {
                       state: {
@@ -1190,17 +1299,30 @@ const PatientQueue: React.FC = () => {
                 </button>
               </div>
             );
-          }
-
-          if (!hasDicom) {
+          } else if (isTechnician && hasDicom) {
             return (
-              <div className="text-muted-foreground text-center w-full">
-                Not Uploaded
+              <div className="text-center w-full">
+                <button
+                  className="hover:underline cursor-pointer text-xs font-bold"
+                  onClick={() =>
+                    navigate("../uploadDicoms", {
+                      state: {
+                        appointmentId,
+                        userId,
+                        name: row.original.refUserFirstName,
+                        custId: row.original.refUserCustId,
+                        scancenterCustId: row.original.refSCCustId,
+                      },
+                    })
+                  }
+                >
+                  View DICOM
+                </button>
               </div>
             );
+          } else {
+            return <div className="text-center w-full">-</div>;
           }
-
-          return <div className="text-center w-full">-</div>;
         },
       },
       {
@@ -1457,6 +1579,93 @@ const PatientQueue: React.FC = () => {
           );
         },
       },
+
+      {
+        id: "patientReportMail",
+        header: () => (
+          <div className="flex items-center justify-center gap-1">
+            Report Delivery
+            {/* <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="hover:bg-transparent hover:text-gray-200 !p-0"
+                >
+                  <Filter />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-40 p-2">
+                {["Filled", "Not Filled"].map((option) => {
+                  const value = option === "Filled" ? "filled" : "notFilled";
+                  return (
+                    <div
+                      key={value}
+                      className="flex items-center gap-2 cursor-pointer py-1"
+                      onClick={() =>
+                        column.setFilterValue(
+                          column.getFilterValue() === value ? undefined : value
+                        )
+                      }
+                    >
+                      <Checkbox2 checked={column.getFilterValue() === value} />
+                      <span>{option}</span>
+                    </div>
+                  );
+                })}
+                <Button
+                  variant="ghost"
+                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                  onClick={() => column.setFilterValue(undefined)}
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span>Clear</span>
+                </Button>
+              </PopoverContent>
+            </Popover> */}
+          </div>
+        ),
+        cell: ({ row }) => {
+  const [showMailDialog, setShowMailDialog] = useState(false);
+
+  const isSignedOff =
+    row.original.refAppointmentComplete?.toLowerCase() === "signed off";
+
+  const hasMailSent = row.original.refAppointmentMailSendStatus !== "";
+
+  return (
+    <>
+      {hasMailSent || isSignedOff ? (
+        <button
+          className="hover:underline cursor-pointer text-xs font-bold"
+          onClick={() => setShowMailDialog(true)}
+        >
+          {hasMailSent ? "Resend Mail" : "Send Mail"}
+        </button>
+      ) : (
+        <div className="text-center text-gray-400">-</div>
+      )}
+
+      {showMailDialog && (
+        <SendMailDialog
+          appointmentId={row.original.refAppointmentId}
+          patientId={row.original.refUserId}
+          showMailDialog={showMailDialog}
+          setShowMailDialog={setShowMailDialog}
+          handleRefreshData={fetchPatientQueue}
+        />
+      )}
+    </>
+  );
+}
+,
+        enableColumnFilter: true,
+        filterFn: (row, _columnId, value) => {
+          const tempStatus = getFormStatus(row.original.refAppointmentComplete);
+          const filled = tempStatus?.technicianForm === true;
+          return value === "filled" ? filled : !filled;
+        },
+      },
+
       {
         id: "assigned",
         header: () => <div className="text-center w-full">Assigned</div>,
@@ -1545,7 +1754,8 @@ const PatientQueue: React.FC = () => {
               <Tooltip>
                 <TooltipTrigger asChild disabled={!latestRemark}>
                   <Input
-                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate ${
+                    tabIndex={-1}
+                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
                       !latestRemark ? "italic text-gray-500 text-[5px]" : ""
                     }`}
                     readOnly
@@ -1702,8 +1912,10 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm",
       "dicom",
+      "dicomFull",
       "report",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",
@@ -1718,10 +1930,11 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // Start/View logic handled in cell
       "dicom",
+      "dicomFull",
       "report",
       "refAppointmentComplete",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     scribe: [
       "select",
@@ -1737,7 +1950,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     scadmin: [
       "select",
@@ -1745,15 +1958,17 @@ const PatientQueue: React.FC = () => {
       "refUserFirstName",
       "patientId",
       "refSCCustId",
+      "consentView",
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
       "report",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     patient: [
       "dateOfAppointment",
@@ -1775,7 +1990,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     radiologist: [
       "select",
@@ -1791,7 +2006,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     codoctor: [
       "select",
@@ -1807,7 +2022,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     manager: [
       "select",
@@ -1824,7 +2039,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
     wgdoctor: [
       "select",
@@ -1840,7 +2055,7 @@ const PatientQueue: React.FC = () => {
       "assigned",
       "changes",
       "pendingRemarks",
-      "totalRemarks"
+      "totalRemarks",
     ],
   };
 
@@ -1887,26 +2102,54 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
-      <div className="w-11/12 h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:p-6 rounded-lg">
+      <div className="w-11/12 h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:py-6 lg:px-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button
             onClick={async () => {
               setLoading(true);
               await handleAllDownloadDicom(selectedRowIds);
               setLoading(false);
             }}
-            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa]"
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
             hidden={role?.type == "patient"}
           >
             <Download className="h-4 w-4" />
             Download Dicom
           </Button>
-           <Button
+
+          <Button
+            onClick={async () => {
+              setLoading(true);
+              await handleAllReportsDownload();
+              setLoading(false);
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
+            disabled={selectedRowIds.length === 0}
+          >
+            <Download className="h-4 w-4" />
+            Download Final Reports
+          </Button>
+
+          <Button
+            onClick={async () => {
+              setLoading(true);
+              await handleAllConsentDownload();
+              setLoading(false);
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
+            disabled={selectedRowIds.length === 0}
+            hidden={role?.type !== "admin" && role?.type !== "scadmin"}
+          >
+            <Download className="h-4 w-4" />
+            Download Patient Consent
+          </Button>
+
+          <Button
             variant="outline"
             onClick={clearAllFilters}
-            className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600"
+            className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600 w-full lg:w-auto"
           >
             <XCircle className="h-4 w-4" /> Clear All Filters
           </Button>
@@ -1916,8 +2159,6 @@ const PatientQueue: React.FC = () => {
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="w-full"
           />
-         
-          
         </div>
 
         {/* Table Container */}
@@ -2118,12 +2359,11 @@ const PatientQueue: React.FC = () => {
       </div>
 
       <Dialog open={consentDialogOpen} onOpenChange={setConsentDialogOpen}>
-  <PatientConsentDialog
-    appointmentIds={selectedAppointmentIds}
-    patientConsentDialog={consentDialogOpen}
-  />
-</Dialog>
-
+        <PatientConsentDialog
+          appointmentIds={selectedAppointmentIds}
+          patientConsentDialog={consentDialogOpen}
+        />
+      </Dialog>
     </div>
   );
 };

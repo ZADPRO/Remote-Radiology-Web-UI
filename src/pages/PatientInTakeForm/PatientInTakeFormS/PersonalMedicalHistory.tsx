@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { dateDisablers } from "@/lib/dateUtils";
+import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -29,6 +30,7 @@ interface QuestionIds {
   implantsOthersSpecify: number;
   explants: number;
   explantsDate: number;
+  explantsDateKnown: number;
   denseBreasts: number;
   additionalComments: number;
   implantLeft: number;
@@ -39,6 +41,7 @@ interface QuestionIds {
   implantsRightOthersSpecify: number;
   explantsRight: number;
   explantsDateRight: number;
+  explantsDateRightKnown: number;
 }
 
 interface Props {
@@ -325,6 +328,25 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                   <div className="space-y-4">
                     <Label className="text-sm font-medium">If Yes,</Label>
 
+                    {/* Both Checkbox */}
+                     {/* <div className="flex items-center gap-4 mt-4">
+                      <Checkbox2
+    id="implantBoth"
+    checked={
+      getAnswer(questionIds.implantLeft) === "true" &&
+      getAnswer(questionIds.implantRight) === "true"
+    }
+    onCheckedChange={(checked) => {
+      const value = checked ? "true" : "false";
+      handleInputChange(questionIds.implantLeft, value);
+      handleInputChange(questionIds.implantRight, value);
+    }}
+  />
+  <Label htmlFor="implantBoth">Both</Label>
+                    </div>
+                    
+                    <div className="border-b-2 border-b-gray-300 w-1/3"></div> */}
+
                     {/* Left Checkbox */}
                     <div className="flex items-center gap-4">
                       <Checkbox2
@@ -376,20 +398,20 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           })}
                           {getAnswer(questionIds.implantsSpecify) ===
                             "Other" && (
-                              <Input
-                                placeholder="Please specify"
-                                value={getAnswer(
-                                  questionIds.implantsOthersSpecify
-                                )}
-                                className="w-64"
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.implantsOthersSpecify,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            )}
+                            <Input
+                              placeholder="Please specify"
+                              value={getAnswer(
+                                questionIds.implantsOthersSpecify
+                              )}
+                              className="w-64"
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds.implantsOthersSpecify,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          )}
                         </div>
 
                         <div className="flex gap-2">
@@ -408,40 +430,60 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           <Label className="text-sm font-medium">Months</Label>
                         </div>
 
-                        <div className="flex items-center h-10 gap-2">
-                          <Checkbox2
-                            id="explantsLeft"
-                            checked={getAnswer(questionIds.explants) === "true"}
-                            onCheckedChange={() =>
-                              handleInputChange(
-                                questionIds.explants,
-                                getAnswer(questionIds.explants) === "true"
-                                  ? "false"
-                                  : "true"
-                              )
-                            }
-                          />
-                          <Label htmlFor="explantsLeft">Explants</Label>
-                          {getAnswer(questionIds.explants) === "true" && (
-                            <div className="w-64">
-                              <DatePicker
-                                placeholder="Explants Done On"
-                                value={
-                                  getAnswer(questionIds.explantsDate)
-                                    ? new Date(
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <MultiRadioOptionalInputInline
+                              label="Explants"
+                              questionId={questionIds.explants}
+                              formData={formData}
+                              handleInputChange={handleInputChange}
+                              options={[
+                                { label: "No", value: "No" },
+                                { label: "Yes", value: "Yes" },
+                              ]}
+                              className="w-auto"
+                            />
+                          </div>
+
+                          {getAnswer(questionIds.explants) === "Yes" && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <MultiRadioOptionalInputInline
+                                  label="Is the date known?"
+                                  questionId={questionIds.explantsDateKnown}
+                                  formData={formData}
+                                  handleInputChange={handleInputChange}
+                                  options={[
+                                    { label: "No", value: "No" },
+                                    { label: "Yes", value: "Yes" },
+                                  ]}
+                                  className="w-auto"
+                                />
+                              </div>
+
+                              {getAnswer(questionIds.explantsDateKnown) ===
+                                "Yes" && (
+                                <div className="w-64">
+                                  <DatePicker
+                                    placeholder="Explants Done On"
+                                    value={
                                       getAnswer(questionIds.explantsDate)
-                                    )
-                                    : undefined
-                                }
-                                onChange={(val) =>
-                                  handleInputChange(
-                                    questionIds.explantsDate,
-                                    val?.toLocaleDateString("en-CA") || ""
-                                  )
-                                }
-                                disabledDates={dateDisablers.noFuture}
-                              />
-                            </div>
+                                        ? new Date(
+                                            getAnswer(questionIds.explantsDate)
+                                          )
+                                        : undefined
+                                    }
+                                    onChange={(val) =>
+                                      handleInputChange(
+                                        questionIds.explantsDate,
+                                        val?.toLocaleDateString("en-CA") || ""
+                                      )
+                                    }
+                                    disabledDates={dateDisablers.noFuture}
+                                  />
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -500,20 +542,20 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           })}
                           {getAnswer(questionIds.implantsRightSpecify) ===
                             "Other" && (
-                              <Input
-                                placeholder="Please specify"
-                                value={getAnswer(
-                                  questionIds.implantsRightOthersSpecify
-                                )}
-                                className="w-64"
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.implantsRightOthersSpecify,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            )}
+                            <Input
+                              placeholder="Please specify"
+                              value={getAnswer(
+                                questionIds.implantsRightOthersSpecify
+                              )}
+                              className="w-64"
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds.implantsRightOthersSpecify,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          )}
                         </div>
 
                         <div className="flex gap-2">
@@ -531,42 +573,56 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           <Label className="text-sm font-medium">Months</Label>
                         </div>
 
-
-                        <div className="flex items-center h-10 gap-2">
-                          <Checkbox2
-                            id="explantsRight"
-                            checked={
-                              getAnswer(questionIds.explantsRight) === "true"
-                            }
-                            onCheckedChange={() =>
-                              handleInputChange(
-                                questionIds.explantsRight,
-                                getAnswer(questionIds.explantsRight) === "true"
-                                  ? "false"
-                                  : "true"
-                              )
-                            }
+                        <div className="flex flex-col items-center gap-2">
+                          <MultiRadioOptionalInputInline
+                            label="Explants"
+                            questionId={questionIds.explantsRight}
+                            formData={formData}
+                            handleInputChange={handleInputChange}
+                            options={[
+                              { label: "No", value: "No" },
+                              { label: "Yes", value: "Yes" },
+                            ]}
+                            className="w-auto"
                           />
-                          <Label htmlFor="explantsRight">Explants</Label>
-                          {getAnswer(questionIds.explantsRight) === "true" && (
-                            <div className="w-64">
-                              <DatePicker
-                                placeholder="Explants Done On"
-                                value={
-                                  getAnswer(questionIds.explantsDateRight)
-                                    ? new Date(
-                                      getAnswer(questionIds.explantsDateRight)
-                                    )
-                                    : undefined
-                                }
-                                onChange={(val) =>
-                                  handleInputChange(
-                                    questionIds.explantsDateRight,
-                                    val?.toLocaleDateString("en-CA") || ""
-                                  )
-                                }
-                                disabledDates={dateDisablers.noFuture}
+                          {getAnswer(questionIds.explantsRight) === "Yes" && (
+                            <div className="flex flex-col gap-2 w-full">
+                              <MultiRadioOptionalInputInline
+                                label="Is the date known?"
+                                questionId={questionIds.explantsDateRightKnown}
+                                formData={formData}
+                                handleInputChange={handleInputChange}
+                                options={[
+                                  { label: "No", value: "No" },
+                                  { label: "Yes", value: "Yes" },
+                                ]}
+                                className="w-auto"
                               />
+
+                              {getAnswer(questionIds.explantsDateRightKnown) ===
+                                "Yes" && (
+                                <div className="w-64">
+                                  <DatePicker
+                                    placeholder="Explants Done On"
+                                    value={
+                                      getAnswer(questionIds.explantsDateRight)
+                                        ? new Date(
+                                            getAnswer(
+                                              questionIds.explantsDateRight
+                                            )
+                                          )
+                                        : undefined
+                                    }
+                                    onChange={(val) =>
+                                      handleInputChange(
+                                        questionIds.explantsDateRight,
+                                        val?.toLocaleDateString("en-CA") || ""
+                                      )
+                                    }
+                                    disabledDates={dateDisablers.noFuture}
+                                  />
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>

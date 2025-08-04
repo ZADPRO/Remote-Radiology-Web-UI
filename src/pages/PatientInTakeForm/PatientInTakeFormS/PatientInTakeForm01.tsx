@@ -46,8 +46,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
     "Biopsy",
   ];
 
-  const [selectedSection, setSelectedSection] =
-    useState<string>(options[0]);
+  const [selectedSection, setSelectedSection] = useState<string>(options[5]);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
@@ -232,6 +231,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               implantsOthersSpecify: 81,
               explants: 83,
               explantsDate: 84,
+              explantsDateKnown: 497,
               denseBreasts: 85,
               additionalComments: 86,
               implantLeft: 423,
@@ -242,6 +242,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               implantsRightOthersSpecify: 169,
               explantsRight: 294,
               explantsDateRight: 295,
+              explantsDateRightKnown: 498
             }}
           />
         );
@@ -441,22 +442,32 @@ const PatientInTakeForm01: React.FC<Props> = ({
           <ArrowLeft />
           <span className="text-lg font-semibold">Back</span>
         </Button>
-        <img src={logo} className="h-[6vh] hidden sm:block px-5" alt="logo" />
-        <div className="h-14 bg-[#fff] flex flex-col items-start justify-center w-70 mr-1  rounded p-3 text-xs self-end">
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient Name</div>{" "}
-            <div>: {patientDetails?.name}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Patient ID</div>{" "}
-            <div>: {patientDetails?.custId}</div>
-          </div>
-          <div className="capitalize flex">
-            <div className="flex w-[6rem]">Scan Center</div>{" "}
-            <div>: {patientDetails?.scancenterCustId}</div>
-          </div>
-          {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
-        </div>
+
+        {!patientDetails?.reportview && (
+          <>
+            <img
+              src={logo}
+              className="h-[6vh] hidden sm:block px-5"
+              alt="logo"
+            />
+
+            <div className="h-14 bg-[#fff] flex flex-col items-start justify-center w-70 mr-1  rounded p-3 text-xs self-end">
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient Name</div>{" "}
+                <div>: {patientDetails?.name}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient ID</div>{" "}
+                <div>: {patientDetails?.custId}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Scan Center</div>{" "}
+                <div>: {patientDetails?.scancenterCustId}</div>
+              </div>
+              {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
+            </div>
+          </>
+        )}
       </div>
       <div
         className="w-full lg:w-4/12 pt-0 h-[10vh] lg:h-full bg-[#a3b1a1] lg:bg-[#A4B2A1] flex flex-row lg:flex-col justify-start overflow-y-auto hide-scrollbar"
@@ -480,7 +491,9 @@ const PatientInTakeForm01: React.FC<Props> = ({
               <ArrowLeft />
               <span className="text-lg">Back</span>
             </Button>
-            <img src={logo} className="h-[6vh] my-2 pr-2" alt="logo" />
+            {!patientDetails?.reportview && (
+              <img src={logo} className="h-[6vh] my-2 pr-2" alt="logo" />
+            )}
           </div>
 
           <p className="text-base mt-4 lg:text-lg text-center font-bold uppercase">
@@ -498,8 +511,9 @@ const PatientInTakeForm01: React.FC<Props> = ({
               onClick={() => {
                 readOnly && setSelectedSection(option);
               }}
-              className={`flex gap-2 items-center ${readOnly && "cursor-pointer"
-                }`}
+              className={`flex gap-2 items-center ${
+                readOnly && "cursor-pointer"
+              }`}
             >
               {options.indexOf(option) < options.indexOf(selectedSection) && (
                 <div className="inline w-6 lg:w-6 text-white font-bold">
@@ -510,10 +524,11 @@ const PatientInTakeForm01: React.FC<Props> = ({
               )}
               <div
                 className={`flex-1 flex w-[180px] h-[10vh] lg:h-[8vh] text-sm px-3 lg:px-4 rounded-sm border-[#000] font-semibold
-              ${selectedSection === option
-                    ? "bg-[#f9f5ed] text-left lg:text-left lg:bg-[#F8F3EB] text-[#3F3F3D] underline lg:no-underline lg:text-[#A4B2A1]"
-                    : "bg-transparent text-[#fff] lg:text-white"
-                  }
+              ${
+                selectedSection === option
+                  ? "bg-[#f9f5ed] text-left lg:text-left lg:bg-[#F8F3EB] text-[#3F3F3D] underline lg:no-underline lg:text-[#A4B2A1]"
+                  : "bg-transparent text-[#fff] lg:text-white"
+              }
               justify-center lg:justify-start items-center  `}
               >
                 <span className="w-full break-words">{option}</span>
@@ -553,7 +568,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
           <button
             type="submit" // Changed to type="submit" to trigger form onSubmit
             className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
-          // disabled={isNextButtonDisabled}
+            // disabled={isNextButtonDisabled}
           >
             {buttonText}
             <ArrowRight className="ml-2 h-4 w-4" />
