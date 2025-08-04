@@ -2127,6 +2127,7 @@ const PatientQueue: React.FC = () => {
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
+            hidden={role?.type == "patient"}
           >
             <Download className="h-4 w-4" />
             Download Final Reports
