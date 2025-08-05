@@ -105,6 +105,7 @@ const AddRadiologist: React.FC = () => {
     fieldName: keyof NewRadiologist;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -338,7 +339,7 @@ const AddRadiologist: React.FC = () => {
                   id="aadhar-upload"
                   label="Upload Aadhar"
                   required={true}
-                  isFilePresent={formData.aadhar.length > 0}
+                  isFilePresent={formData.aadhar?.length > 0}
                   maxSize={5 * 1024 * 1024} // 5MB
                   setError={setError}
                   onValidFile={(file) => {
@@ -374,7 +375,7 @@ const AddRadiologist: React.FC = () => {
                 <FileUploadButton
                   id="drivers-license-upload"
                   label="Upload Driver's License"
-                  isFilePresent={formData.drivers_license.length > 0}
+                  isFilePresent={formData.drivers_license?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -482,9 +483,9 @@ const AddRadiologist: React.FC = () => {
 
                 <FileUploadButton
                   id="pan-upload"
-                  label="Upload Pan"
+                  label="Upload PAN"
                   required={true}
-                  isFilePresent={formData.pan.length > 0}
+                  isFilePresent={formData.pan?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -567,30 +568,46 @@ const AddRadiologist: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
-                <Label className="text-sm" htmlFor="license-upload">
+                <Label className="text-sm" htmlFor="medical-license-upload">
                   Upload License <span className="text-red-500">*</span>
                 </Label>
 
                 <FileUploadButton
-                  id="drivers-license-upload"
-                  label="Upload Driver's License"
-                  required={true}
-                  isFilePresent={formData.drivers_license.length > 0}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+                  id="medical-license-upload"
+                  label="Upload License"
+                  multiple
+                  required={formData.license_files.length === 0}
+                  isFilePresent={
+                    formData.license_files.length > 0
+                  }
+                  onChange={async (e) => {
+                    const filesSelected = e.target.files;
+                    if (!filesSelected) return;
 
-                    const maxSize = 5 * 1024 * 1024;
-                    if (file.size > maxSize) {
-                      setError("Driver's license file must be less than 5MB.");
-                      return;
+                    const selectedFiles = Array.from(filesSelected);
+                    const maxSize = 10 * 1024 * 1024;
+
+                    const filteredFiles = selectedFiles.filter(
+                      (file) =>
+                        file.size <= maxSize &&
+                        !files.license_files.some(
+                          (existingFile) => existingFile.name === file.name
+                        )
+                    );
+
+                    if (filteredFiles.length < selectedFiles.length) {
+                      setError(
+                        "Some files were larger than 10MB or were duplicates and were not added."
+                      );
                     }
 
-                    handleSingleFileUpload({
-                      file,
-                      fieldName: "drivers_license",
-                      tempFileKey: "drivers_license",
-                    });
+                    for (const file of filteredFiles) {
+                      await uploadAndStoreFile(
+                        file,
+                        "license_files",
+                        "license_files"
+                      );
+                    }
                   }}
                 />
 
@@ -606,7 +623,10 @@ const AddRadiologist: React.FC = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            handleRemoveMultiFile("license_files", index)
+                            handleRemoveMultiFile(
+                              "license_files",
+                              index
+                            )
                           }
                           className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
                         >
@@ -932,7 +952,6 @@ const AddRadiologist: React.FC = () => {
     }
   };
 
-  console.log(files);
 
   return (
     <form

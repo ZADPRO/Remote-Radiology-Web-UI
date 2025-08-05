@@ -321,6 +321,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     fieldName: keyof NewManager;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -410,7 +411,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             id="aadhar-upload"
             label="Upload Aadhar"
             required={true}
-            isFilePresent={formData.aadhar.length > 0}
+            isFilePresent={formData.aadhar?.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -420,7 +421,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 setError("Aadhar file must be less than 5MB.");
                 return;
               }
-
+              setError("");
               handleSingleFileUpload({
                 file,
                 fieldName: "aadhar",
@@ -453,7 +454,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <FileUploadButton
             id="drivers-license-upload"
             label="Upload Driver's License"
-            isFilePresent={formData.drivers_license.length > 0}
+            isFilePresent={formData.drivers_license?.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -588,9 +589,9 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
 
           <FileUploadButton
             id="pan-upload"
-            label="Upload Pan"
+            label="Upload PAN"
             required={true}
-            isFilePresent={formData.pan.length > 0}
+            isFilePresent={formData.pan?.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -668,6 +669,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
     setFormData: React.Dispatch<React.SetStateAction<NewManager>>,
     uploadFn = uploadService.uploadFile // optional, default upload function
   ): Promise<void> => {
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -728,7 +730,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             label="Upload Certificates"
             multiple
             required
-            isFilePresent={formData.education_certificate.length > 0}
+            isFilePresent={formData.education_certificate?.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;
               if (!filesSelected) return;
