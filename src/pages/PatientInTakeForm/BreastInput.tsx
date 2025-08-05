@@ -317,10 +317,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-  Props.label === "Breast pain"
-    ? getAnswerByQuestionId(Props.OtherInputQId) === "" &&
-      (getAnswerByQuestionId(Props.RQID) === "" || getAnswerByQuestionId(Props.LQID) === "")
-    : getAnswerByQuestionId(Props.RQID) === "" &&
+getAnswerByQuestionId(Props.RQID) === "" &&
       getAnswerByQuestionId(Props.LQID) === "" &&
       getAnswerByQuestionId(Props.OtherInputQId) === ""
 }
@@ -434,10 +431,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-  Props.label === "Breast pain"
-    ? getAnswerByQuestionId(Props.OtherInputQId) === "" &&
-      (getAnswerByQuestionId(Props.RQID) === "" || getAnswerByQuestionId(Props.LQID) === "")
-    : getAnswerByQuestionId(Props.RQID) === "" &&
+  getAnswerByQuestionId(Props.RQID) === "" &&
       getAnswerByQuestionId(Props.LQID) === "" &&
       getAnswerByQuestionId(Props.OtherInputQId) === ""
 }
