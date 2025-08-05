@@ -206,7 +206,7 @@ const UploadDicomFiles: React.FC = () => {
           console.log(res);
     
           if (res.status) {
-            setDicomFiles(res.DicomData);
+            setDicomFiles(res.DicomData || []);
           }
         } catch (error) {
       console.log(error);
@@ -410,7 +410,7 @@ const UploadDicomFiles: React.FC = () => {
       <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">
         Dicom
       </h1>
-      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Stay on this page until the process is complete</p>
+      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Please stay on this page and submit until upload process says completed</p>
 
       {/* This wrapper scrolls */}
       <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2">
