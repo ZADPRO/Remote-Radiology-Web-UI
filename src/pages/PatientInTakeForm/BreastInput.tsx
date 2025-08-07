@@ -295,7 +295,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                 }
               }}
             />
-            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `text-[${Props.nameLabelColor}]` : ""}`}>{Props.label}</Label>
+            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `${Props.nameLabelColor}` : ""}`}>{Props.label}</Label>
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">

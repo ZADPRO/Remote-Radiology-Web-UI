@@ -320,8 +320,6 @@ const renderBiRadsSection = (
   );
 };
 
-
-
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="ABNORMAL FINDINGS" className="uppercase" />
@@ -369,7 +367,6 @@ const renderBiRadsSection = (
               "Ultrasound",
               "MRI",
               "Other",
-              "None",
             ].map((option) => {
               const selectedOptions = JSON.parse(
                 getAnswer(questionIds.support) || "[]"
@@ -585,7 +582,7 @@ const renderBiRadsSection = (
                     )
                   }
                 />
-                <div className="font-semibold text-base w-57.5">Other</div>
+                <Label className="w-57.5">Other</Label>
               </div>
               {getAnswer(questionIds.typeabnormalitother) === "true" && (
                 <Input

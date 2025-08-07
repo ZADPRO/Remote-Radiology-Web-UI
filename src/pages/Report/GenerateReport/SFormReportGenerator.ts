@@ -3,7 +3,8 @@ import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/Technic
 export function SFormGeneration(
   patientInTakeForm: ResponsePatientForm[]
 ): string {
-    // console.log("SFORM", patientInTakeForm);
+  console.log("########### Hi I am S Form", patientInTakeForm)
+  // console.log("SFORM", patientInTakeForm);
   const getPatientAnswer = (id: number) =>
     patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
   let reportText = "";
@@ -57,134 +58,193 @@ export function SFormGeneration(
     nipplePain: getPatientAnswer(111),
     nipplePainRight: getPatientAnswer(112),
     nipplePainLeft: getPatientAnswer(113),
+    nipplePosition: getPatientAnswer(104),
+    nipplePositionRight: getPatientAnswer(431),
+    nipplePositionDetails: getPatientAnswer(105),
+    nipplePositionRightDetails: getPatientAnswer(117),
   }
 
   const getSurgeryText = () => {
-  let surgeryText = "";
-  const {
-    previousSurgeryYesNo,
-    mastectomy,
-    lumpectomy,
-    cystAspiration,
-    breastReconstruction,
-    augmentation,
-    breastSurgeryOthers,
-    breastSurgeryOthersSpecify,
-  } = previousSurgery;
+    let surgeryText = "";
+    const {
+      previousSurgeryYesNo,
+      mastectomy,
+      lumpectomy,
+      cystAspiration,
+      breastReconstruction,
+      augmentation,
+      breastSurgeryOthers,
+      breastSurgeryOthersSpecify,
+    } = previousSurgery;
 
-  if (previousSurgeryYesNo === "Yes") {
-    const surgeries: string[] = [];
-    
-    if (mastectomy === "true") surgeries.push("mastectomy");
-    if (lumpectomy === "true") surgeries.push("lumpectomy");
-    if (cystAspiration === "true") surgeries.push("cyst aspiration");
-    if (breastReconstruction === "true") surgeries.push("breast reconstruction");
-    if (augmentation === "true") surgeries.push("augmentation");
-    if (breastSurgeryOthers === "true" && breastSurgeryOthersSpecify)
-      surgeries.push(breastSurgeryOthersSpecify);
+    if (previousSurgeryYesNo === "Yes") {
+      const surgeries: string[] = [];
 
-    if (surgeries.length > 0) {
-      surgeryText = surgeries.join(", ");
+      if (mastectomy === "true") surgeries.push("mastectomy");
+      if (lumpectomy === "true") surgeries.push("lumpectomy");
+      if (cystAspiration === "true") surgeries.push("cyst aspiration");
+      if (breastReconstruction === "true") surgeries.push("breast reconstruction");
+      if (augmentation === "true") surgeries.push("augmentation");
+      if (breastSurgeryOthers === "true" && breastSurgeryOthersSpecify)
+        surgeries.push(breastSurgeryOthersSpecify);
+
+      if (surgeries.length > 0) {
+        surgeryText = surgeries.join(", ");
+      }
     }
-  }
 
-  return surgeryText;
-};
+    return surgeryText;
+  };
 
-function formatClockLabels(input: string): string {
+  function formatClockLabels(input: string): string {
     if (!input.trim()) return "";
- 
+
     return input
       .split(",")
       .map((item) => item.trim())
       .filter((item) => item !== "")
       .map(Number)
       .filter((n) => !isNaN(n))
-      .map((num) => (num === 0 ? "Nipple" : `${num}'o Clock`)) // ← added condition
+      .map((num) => (num === 0 ? "nipple" : `${num}'o Clock`)) // ← added condition
       .join(", ");
   }
-  
-const getSymptomText = () => {
-  const {
-    lumpOrThick,
-    lumpLeft,
-    lumpRight,
-    breastPain,
-    breastPainLeft,
-    breastPainRight,
-    nippleDischarge,
-    nippleLeft,
-    nippleRight,
-    nipplePain,
-    nipplePainLeft,
-    nipplePainRight,
-  } = breastSymptoms;
 
-  const symptoms: string[] = [];
+  const getSymptomText = () => {
+    const {
+      lumpOrThick,
+      lumpLeft,
+      lumpRight,
+      breastPain,
+      breastPainLeft,
+      breastPainRight,
+      nippleDischarge,
+      nippleLeft,
+      nippleRight,
+      nipplePain,
+      nipplePainLeft,
+      nipplePainRight,
+    } = breastSymptoms;
 
-  // Lump/Thickening
-  if (lumpOrThick === "true") {
-    const lumpParts: string[] = [];
-    if (lumpLeft?.trim()) lumpParts.push(`left at ${formatClockLabels(lumpLeft)}`);
-    if (lumpRight?.trim()) lumpParts.push(`right at ${formatClockLabels(lumpRight)}`);
-    symptoms.push(`&nbsp;&nbsp;&nbspLump or thickening${lumpParts.length > 0 ? ` in ${lumpParts.join(" and ")}` : ""}`);
-  }
+    const symptoms: string[] = [];
 
-  // Pain
-  if (breastPain === "true") {
-    const painParts: string[] = [];
-    if (breastPainLeft?.trim()) painParts.push(`left at ${formatClockLabels(breastPainLeft)}`);
-    if (breastPainRight?.trim()) painParts.push(`right at ${formatClockLabels(breastPainRight)}`);
-    symptoms.push(`&nbsp;&nbsp;&nbspPain${painParts.length > 0 ? ` in ${painParts.join(" and ")}` : ""}`);
-  }
+    // Lump/Thickening
+    if (lumpOrThick === "true") {
+      const lumpParts: string[] = [];
+      if (lumpLeft?.trim()) lumpParts.push(`left at ${formatClockLabels(lumpLeft)}`);
+      if (lumpRight?.trim()) lumpParts.push(`right at ${formatClockLabels(lumpRight)}`);
+      symptoms.push(`Lump or thickening${lumpParts.length > 0 ? ` in ${lumpParts.join(" and ")}` : ""}`);
+    }
 
-  // Nipple Changes
+    // Pain
+    if (breastPain === "true") {
+      const painParts: string[] = [];
+      if (breastPainLeft?.trim()) painParts.push(`left at ${formatClockLabels(breastPainLeft)}`);
+      if (breastPainRight?.trim()) painParts.push(`right at ${formatClockLabels(breastPainRight)}`);
+      symptoms.push(`Pain${painParts.length > 0 ? ` in ${painParts.join(" and ")}` : ""}`);
+    }
+
+    // Nipple Changes
     if (nipplePain === "true") {
       const sides: string[] = [];
-      if (nipplePainLeft === "true") sides.push("left");
-      if (nipplePainRight === "true") sides.push("right");
+      if (nipplePainLeft === "true") sides.push("left " + (breastSymptoms.nipplePosition.toLocaleLowerCase() === "inverted" ? breastSymptoms.nipplePosition.toLocaleLowerCase() : breastSymptoms.nipplePositionDetails.toLocaleLowerCase()));
+      if (nipplePainRight === "true") sides.push("right" + (breastSymptoms.nipplePositionRight.toLocaleLowerCase() === "inverted" ? breastSymptoms.nipplePositionRight.toLocaleLowerCase() : breastSymptoms.nipplePositionRightDetails.toLocaleLowerCase()));
       symptoms.push(
-        `&nbsp;&nbsp;&nbspNipple changes${sides.length > 0 ? ` in ${sides.join(" and ")}` : ""}`
+        `Nipple changes${sides.length > 0 ? ` in ${sides.join(" and ")}` : ""}`
       );
     }
 
-  // Nipple Discharge
-  if (nippleDischarge === "true") {
+    // Nipple Discharge
+    if (nippleDischarge === "true") {
       const sides: string[] = [];
       if (nippleLeft === "true") sides.push("left");
       if (nippleRight === "true") sides.push("right");
       symptoms.push(
-        `&nbsp;&nbsp;&nbspNipple discharge${sides.length > 0 ? ` in ${sides.join(" and ")}` : ""}`
+        `Nipple discharge${sides.length > 0 ? ` in ${sides.join(" and ")}` : ""}`
       );
     }
 
-  return symptoms.length > 0 ? symptoms.join("<br/>") : "No breast symptoms reported";
-};
+    return symptoms.length > 0 ? symptoms.join(": ") : "Asymptomatic";
+  };
 
 
-  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman with IBIS Tyrer-Cuzic score of ${ibisScore} and ${auriaResult.toLocaleLowerCase()} AURIA breast cancer test${mutationSpecify ? ` having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? "on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo == "Yes" ? ` with ${getSurgeryText()} surgery done` : ""}.<br/>`
+  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman with IBIS Tyrer-Cuzic score of ${ibisScore}% and ${auriaResult.toLocaleLowerCase()} AURIA breast cancer test${mutationSpecify ? ` having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? "on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo == "Yes" ? ` with ${getSurgeryText()} surgery done` : ""}. `
 
   if (previousBiopsy.previousBiopsy) {
-  const isAbnormal = previousBiopsy.biopsyResults === "Yes";
-  reportText += `Biopsy: <br/>Result: ${isAbnormal ? "Abnormal" : "Normal"}`;
+    const isAbnormal = previousBiopsy.biopsyResults === "Yes";
+    reportText += `<br/>Biopsy - Result: ${isAbnormal ? "Abnormal" : "Normal"}`;
 
-  if (isAbnormal) {
-    reportText += `<br/>&nbsp;&nbsp;&nbspLeft: ${
-      previousBiopsy.biopsyLeft === "true"
+    if (isAbnormal) {
+      reportText += `&nbsp;&nbsp;&nbspLeft: ${previousBiopsy.biopsyLeft === "true"
         ? previousBiopsy.biopsyLeftType
         : "-"
-    }<br/>&nbsp;&nbsp;&nbspRight: ${
-      previousBiopsy.biopsyRight === "true"
-        ? previousBiopsy.biopsyRightType
-        : "-"
-    }`;
+        }&nbsp;&nbsp;&nbspRight: ${previousBiopsy.biopsyRight === "true"
+          ? previousBiopsy.biopsyRightType
+          : "-"
+        }`;
+    }
+
+    // reportText += `, `; // Only one trailing break after all
   }
 
-  reportText += `<br/>`; // Only one trailing break after all
-}
 
+  reportText += `<br/>Symptoms: ${getSymptomText()}<br/>`
 
-  reportText += `Symptoms:</br>${getSymptomText()}`
+  // reportText += `<p><strong>Previous Imaging:</strong></p>`
+  if (getPatientAnswer(124) === "Yes") {
+    reportText += `<p>Thermogram`
+    if (getPatientAnswer(499) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(125)}`
+    }
+    reportText += ` shows ${getPatientAnswer(126).toLowerCase()} results. The report is ${getPatientAnswer(127).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(129) === "Yes") {
+    reportText += `<p>Mammogram`
+    if (getPatientAnswer(500) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(130)}`
+    }
+    reportText += ` shows ${getPatientAnswer(131).toLowerCase()} results. The report is ${getPatientAnswer(132).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(134) === "Yes") {
+    reportText += `<p>Breast ultrasound / HERscan`
+    if (getPatientAnswer(501) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(135)}`
+    }
+    reportText += ` shows ${getPatientAnswer(136).toLowerCase()} results. The report is ${getPatientAnswer(137).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(139) === "Yes") {
+    reportText += `<p>Breast MRI`
+    if (getPatientAnswer(502) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(140)}`
+    }
+    reportText += ` shows ${getPatientAnswer(141).toLowerCase()} results. The report is ${getPatientAnswer(142).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(144) === "Yes") {
+    reportText += `<p>PET/CT Scan`
+    if (getPatientAnswer(503) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(145)}`
+    }
+    reportText += ` shows ${getPatientAnswer(146).toLowerCase()} results. The report is ${getPatientAnswer(147).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(149) === "Yes") {
+    reportText += `<p>QT Imaging`
+    if (getPatientAnswer(504) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(150)}`
+    }
+    reportText += ` shows ${getPatientAnswer(151).toLowerCase()} results. The report is ${getPatientAnswer(152).toLowerCase()}.</p>`
+  }
+
+  if (getPatientAnswer(154) === "Yes") {
+    reportText += `<p>Other imaging or scans (like bone scans, scintimammography, etc)`
+    if (getPatientAnswer(505) === "Known") {
+      reportText += ` taken on ${getPatientAnswer(155)}`
+    }
+    reportText += ` shows ${getPatientAnswer(156).toLowerCase()} results. The report is ${getPatientAnswer(157).toLowerCase()}.</p>`
+  }
 
   return reportText.trim();
 }

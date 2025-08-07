@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
 interface IntakeOption {
   questionId: number;
@@ -223,7 +224,7 @@ const BreastSymptoms: React.FC<Props> = ({
             {getPatientFormAnswer(symptomMainQuestionId) === "true" &&
               CommentsQuestionId && (
                 <div
-                  className={`flex gap-1 ml-[21%] w-90 mb-2 ${
+                  className={`flex gap-1 lg:ml-[21%] w-90 mb-2 ${
                     symptomKey === "lymph" && "mt-4"
                   }`}
                 >
@@ -315,7 +316,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 className="w-full bg-[#abb4a5] hover:bg-[#abb4a5]"
                 onClick={() => setAlert(false)}
               >
-                Understood
+                Ok
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -343,6 +344,104 @@ const BreastSymptoms: React.FC<Props> = ({
         <div className="space-y-2">
           {getPatientFormAnswer(87) === "Yes" && (
             <>
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInputWithout
+                    technician={true}
+                    label="Deformity / Asymmetry"
+                    checkStatusQId={questionIds.deformity}
+                    RQID={questionIds.deformityRight}
+                    LQID={questionIds.deformityLeft}
+                    SDate={questionIds.deformityDuration}
+                    SDateRight={questionIds.deformityDurationRight}
+                    biggerSide={questionIds.deformityBig}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                    nameLabelColor="text-[#42a202]"
+                  />
+                  {getAnswer(questionIds.deformity) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.additionalComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.additionalComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Scar and Sore - Technician Only */}
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInput
+                    technician={true}
+                    label="Scar"
+                    checkStatusQId={questionIds.scar}
+                    RQID={questionIds.scarRight}
+                    LQID={questionIds.scarLeft}
+                    SDate={questionIds.scarDuration}
+                    SDateRight={questionIds.scarDurationRight}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                    nameLabelColor="text-[#42a202]"
+                  />
+                  {getAnswer(questionIds.scar) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.scarComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.scarComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
+              </div>
+
+              <div className="flex flex-col lg:flex-row w-full items-center">
+                <div className="w-full relative">
+                  <BreastInput
+                    technician={true}
+                    label="Sore"
+                    checkStatusQId={questionIds.sore}
+                    RQID={questionIds.soreRight}
+                    LQID={questionIds.soreLeft}
+                    SDate={questionIds.soreDuration}
+                    SDateRight={questionIds.soreDurationRight}
+                    data={technicianFormData}
+                    setData={setTechnicianFormData}
+                     nameLabelColor="text-[#42a202]"
+                  />
+                  {getAnswer(questionIds.sore) === "true" && (
+                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
+                      <Textarea
+                        placeholder="Additional Comments"
+                        value={getAnswer(questionIds.soreComments)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.soreComments,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
+              </div>
+
+              <Separator />
               
               {/* Use renderSymptomWithVerification for other symptoms */}
               {renderSymptomWithVerification(
@@ -385,6 +484,8 @@ const BreastSymptoms: React.FC<Props> = ({
                   OtherInputQId={98}
                   data={patientFormData}
                   setData={setPatientFormData}
+                  skinChangesType={486}
+                skinChangesTypeRight={487}
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["skin"]}
@@ -480,9 +581,9 @@ const BreastSymptoms: React.FC<Props> = ({
                   RQID={117}
                   LQID={118}
                   SDate={119}
-                  SDateRight={432}
+                  Size={432}
                   Location={120}
-                  LocationRight={433}
+                  LocationOther={433}
                   OtherInputQId={121}
                   data={patientFormData}
                   setData={setPatientFormData}
@@ -493,103 +594,6 @@ const BreastSymptoms: React.FC<Props> = ({
                 questionIds.lymphnodesComments
               )}
 
-              <div className="flex flex-col lg:flex-row w-full items-center">
-                <div className="w-full relative">
-                  <BreastInputWithout
-                    technician={true}
-                    label="Deformity / Asymmetry"
-                    checkStatusQId={questionIds.deformity}
-                    RQID={questionIds.deformityRight}
-                    LQID={questionIds.deformityLeft}
-                    SDate={questionIds.deformityDuration}
-                    SDateRight={questionIds.deformityDurationRight}
-                    biggerSide={questionIds.deformityBig}
-                    data={technicianFormData}
-                    setData={setTechnicianFormData}
-                    nameLabelColor="#abb4a5"
-                  />
-                  {getAnswer(questionIds.deformity) === "true" && (
-                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
-                      <Textarea
-                        placeholder="Additional Comments"
-                        value={getAnswer(questionIds.additionalComments)}
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.additionalComments,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
-              </div>
-
-              {/* Scar and Sore - Technician Only */}
-              <div className="flex flex-col lg:flex-row w-full items-center">
-                <div className="w-full relative">
-                  <BreastInput
-                    technician={true}
-                    label="Scar"
-                    checkStatusQId={questionIds.scar}
-                    RQID={questionIds.scarRight}
-                    LQID={questionIds.scarLeft}
-                    SDate={questionIds.scarDuration}
-                    SDateRight={questionIds.scarDurationRight}
-                    data={technicianFormData}
-                    setData={setTechnicianFormData}
-                    nameLabelColor="#abb4a5"
-                  />
-                  {getAnswer(questionIds.scar) === "true" && (
-                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
-                      <Textarea
-                        placeholder="Additional Comments"
-                        value={getAnswer(questionIds.scarComments)}
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.scarComments,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
-              </div>
-
-              <div className="flex flex-col lg:flex-row w-full items-center">
-                <div className="w-full relative">
-                  <BreastInput
-                    technician={true}
-                    label="Sore"
-                    checkStatusQId={questionIds.sore}
-                    RQID={questionIds.soreRight}
-                    LQID={questionIds.soreLeft}
-                    SDate={questionIds.soreDuration}
-                    SDateRight={questionIds.soreDurationRight}
-                    data={technicianFormData}
-                    setData={setTechnicianFormData}
-                     nameLabelColor="#abb4a5"
-                  />
-                  {getAnswer(questionIds.sore) === "true" && (
-                    <div className="flex gap-1 ml-[21%] w-90 mb-2">
-                      <Textarea
-                        placeholder="Additional Comments"
-                        value={getAnswer(questionIds.soreComments)}
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.soreComments,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className="lg:w-[20%] w-full flex justify-end lg:justify-center items-end lg:items-start pl-4"></div>
-              </div>
               {/* Lymph Node Swelling - with verification */}
               
             </>

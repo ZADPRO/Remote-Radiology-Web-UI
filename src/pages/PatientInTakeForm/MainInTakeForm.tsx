@@ -168,6 +168,7 @@ const MainInTakeForm: React.FC<Props> = ({
         : setSelectedOption(
             formData.find((item) => item.questionId === 170)?.answer || ""
           );
+          
     } else {
       // Suggestion logic
       let suggestion = "";
@@ -278,7 +279,7 @@ const MainInTakeForm: React.FC<Props> = ({
     //  <div className={readOnly ? "pointer-events-none" : ""}>
     <div className="flex flex-col gap-3 h-dvh lg:flex-row w-full p-5 lg:p-0 bg-gradient-to-b from-[#EED2CF] to-[#FEEEED] overflow-y-auto">
       {/* Left Panel */}
-      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col lg:justify-between gap-2 lg:min-h-screen overflow-y-auto">
+      <div className="lg:bg-[#A4B2A1] w-full lg:w-1/2 lg:shadow-[6px_4px_26.2px_5px_#0000002B] flex flex-col lg:justify-between gap-2 h-auto lg:min-h-screen lg:overflow-y-auto">
         {/* Back Button at Top */}
         <div className="flex items-center justify-between">
           <Button

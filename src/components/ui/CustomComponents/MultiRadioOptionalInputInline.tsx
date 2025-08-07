@@ -46,7 +46,7 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
     : "";
 
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center w-full gap-2 relative">
+    <div className="flex flex-col lg:flex-row lg:items-center gap-2 relative">
       {label && (
         <Label className={cn("font-semibold text-base flex flex-wrap lg:items-center", labelClassname)}>
           <span>

@@ -539,7 +539,7 @@ const ManageWGPerformingProvider: React.FC = () => {
 
           {/* Add Radiologist Button */}
           <Button
-            className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5"
+            className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:min-w-1/5 lg:w-fit"
             onClick={() => navigate("../addWgDoctor")}
           >
             <Plus /> Add Performing Provider

@@ -2,12 +2,18 @@ import DatePicker from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AppointmentAdd, appointmentService } from "@/services/patientInTakeFormService";
+import {
+  AppointmentAdd,
+  appointmentService,
+} from "@/services/patientInTakeFormService";
 import React, { useState } from "react";
 import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { dateDisablers } from "@/lib/dateUtils";
+// import { Dialog } from "@/components/ui/dialog";
+// import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
+// import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
 
 const MyCare: React.FC = () => {
   const [appointmentData, setAppointmentData] = useState<AppointmentAdd>({
@@ -16,6 +22,9 @@ const MyCare: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] = useState<boolean>(false);
+  // const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -41,12 +50,14 @@ const MyCare: React.FC = () => {
         navigate("../medicalHistory");
       } else {
         // Assuming 'res.message' contains the error message from the API
-        const errorMessage = res.message || "Failed to add appointment. Please try again.";
+        const errorMessage =
+          res.message || "Failed to add appointment. Please try again.";
         setError(errorMessage);
       }
     } catch (err) {
       console.error("Error adding appointment:", err);
-      const errorMessage = "An unexpected error occurred. Please try again later.";
+      const errorMessage =
+        "An unexpected error occurred. Please try again later.";
       setError(errorMessage);
     } finally {
       setIsLoading(false); // Set loading to false when submission finishes (success or failure)
@@ -54,7 +65,7 @@ const MyCare: React.FC = () => {
   };
 
   return (
-<div className="max-w-6xl mx-auto py-6 mb-5 lg:h-[90vh] px-4 lg:px-0 lg:py-10">
+    <div className="max-w-6xl mx-auto py-6 mb-5 lg:h-[90vh] px-4 lg:px-0 lg:py-10">
       {/* Greeting Section */}
       <div>
         <div className="flex items-center gap-2 text-gray-600 text-sm">
@@ -79,10 +90,17 @@ const MyCare: React.FC = () => {
         {/* <h1 className="font-bold text-4xl leading-tight tracking-wide sm:text-5xl lg:text-6xl lg:leading-[108%]">
           Gentle Care Confident Screening
         </h1> */}
-<p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-  <strong className="font-semibold text-lg text-gray-900">QT (Quantitative Transmission) Imaging</strong>, also known as Breast Acoustic CT, is a cutting-edge technology for breast cancer screening. Utilizing advanced sound-wave imaging, it generates a 3D reconstruction of the breast in minutes. This revolutionary method provides a safe, comfortable, fast, radiation-free, and highly efficient alternative to traditional breast imaging techniques.
-</p>
-
+        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+          <strong className="font-semibold text-lg text-gray-900">
+            QT (Quantitative Transmission) Imaging
+          </strong>
+          , also known as Breast Acoustic CT, is a cutting-edge technology for
+          breast cancer screening. Utilizing advanced sound-wave imaging, it
+          generates a 3D reconstruction of the breast in minutes. This
+          revolutionary method provides a safe, comfortable, fast,
+          radiation-free, and highly efficient alternative to traditional breast
+          imaging techniques.
+        </p>
       </div>
 
       {/* Appointment Form and Image Section */}
@@ -102,9 +120,7 @@ const MyCare: React.FC = () => {
 
           {/* Scan Code */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <Label className="min-w-[120px] sm:min-w-[150px]">
-              Scan Code
-            </Label>
+            <Label className="min-w-[120px] sm:min-w-[150px]">Scan Code</Label>
             <Input
               // id="scan-code"
               type="text"
@@ -122,7 +138,10 @@ const MyCare: React.FC = () => {
 
           {/* Date of Appointment */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <Label htmlFor="appointment-date" className="min-w-[120px] sm:min-w-[150px]">
+            <Label
+              htmlFor="appointment-date"
+              className="min-w-[120px] sm:min-w-[150px]"
+            >
               Date of Appointment
             </Label>
             <div className="flex-1">
@@ -169,6 +188,42 @@ const MyCare: React.FC = () => {
           />
         </div>
       </form>
+
+      {/* {isEditDialogBroucherOpen && (
+        <Dialog
+          open={isEditDialogBroucherOpen}
+          onOpenChange={setIsEditDialogBroucherOpen}
+        >
+          <PatientInformation
+            onNext={() => {
+              setIsEditDialogBroucherOpen(false);
+              setIsEditDialogOpen(true);
+            }}
+            scId={row.original.refSCId}
+          />
+        </Dialog>
+      )}
+
+      {isEditDialogOpen && (
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <ConsentForm
+            onSubmit={(consent) =>
+              navigate("/patientInTakeForm", {
+                state: {
+                  fetchFormData: false,
+                  appointmentId: row.original.refAppointmentId,
+                  user: user?.refUserId,
+                  name: user?.refUserFirstName,
+                  custId: user?.refUserCustId,
+                  scancenterCustId: row.original.refSCCustId,
+                  consent: consent,
+                },
+              })
+            }
+            scId={row.original.refSCId}
+          />
+        </Dialog>
+      )} */}
     </div>
   );
 };

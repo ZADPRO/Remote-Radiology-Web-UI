@@ -17,7 +17,7 @@ export function generateRightBreastReportText(
 
   const imageQuality = getAnswer(questionIds.imageQuality);
 
-  if(imageQuality == "") return "";
+  if (imageQuality == "") return "";
   const breastDensity = getAnswer(questionIds.breastDensity);
   const fibroglandularVolume = getAnswer(questionIds.fibroglandularVolume);
   const symmetry = getAnswer(questionIds.symmetry);
@@ -28,11 +28,11 @@ export function generateRightBreastReportText(
   let reportText = "";
 
   const imageQualityText = () => {
-    if(imageQuality == "Poor") return "Suboptimal";
-    else if(imageQuality == "Acceptable") return "Good";
+    if (imageQuality == "Suboptimal") return "suboptimal";
+    else if (imageQuality == "Acceptable") return "acceptable";
     else return "";
   }
-  
+
   reportText = `It's Image quality is ${imageQualityText().toLowerCase()}${artifactsPresent == "Yes" ? " with artifacts present" : ""}.\n`;
   reportText += `The breast is ${breastDensity.toLowerCase()} with a fibroglandular ratio of ${fibroglandularVolume.toLowerCase()}% and shows ${symmetry.toLowerCase()}.\n`;
 

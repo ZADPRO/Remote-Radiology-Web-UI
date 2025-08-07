@@ -125,25 +125,23 @@ export function DaFormReportGenerator(
   const leftbirads = getPatientAnswer(233).toLowerCase() === "other" ? getPatientAnswer(234) : getPatientAnswer(233)
  
   const clipmarker = getPatientAnswer(235).toLowerCase() === "yes" ? "clip marker " + getPatientAnswer(236) : "no clip marker"
-  const MagneticImplants = getPatientAnswer(237).toLowerCase() === "yes" ? getPatientAnswer(238) : "no"
+  const MagneticImplants = getPatientAnswer(237).toLowerCase() === "yes" ? getPatientAnswer(238) : "No"
  
   const leftsize = getPatientAnswer(230).toLowerCase() === "known" ? getPatientAnswer(231) + "" + (getPatientAnswer(232) || 'mm') : getPatientAnswer(230).toLowerCase() === "unknown" && "unknown"
  
- 
-  //Right Da Form
-  let rightForm = `
-  ${typeofab} of ${rightsize} detected by ${methodofdetection} in right breast at ${rightQuadrant} in ${rightclockpostion}
-  at ${rightdistancefromnipple} from nipple. BIRADS: ${rightbirads}, ${clipmarker} at ${rightQuadrant} in ${rightclockpostion}
-  at ${rightdistancefromnipple} from nipple. Magenetic implants: ${MagneticImplants}
-  `;
- 
-  // Left Da Form
-  let LeftForm = `<p>
-  ${typeofab} of ${leftsize} detected by ${methodofdetection} in left breast at ${LeftQuadrant} in ${Leftclockpostion}
-  at ${leftdistancefromnipple} from nipple. BIRADS: ${leftbirads}, ${clipmarker} at ${LeftQuadrant} in ${Leftclockpostion}
-  at ${leftdistancefromnipple} from nipple. Magenetic implants: ${MagneticImplants}
-  <p/>
-  `;
+  // Right Form
+let rightForm = `
+  ${typeofab !== "unknown" ? `${typeofab}` : ""} ${rightsize !== "unknown" ? `of ${rightsize}` : ""}
+  ${methodofdetection !== "unknown" ? `detected by ${methodofdetection}` : ""}${rightQuadrant !== "unknown" ? ` in right breast at ${rightQuadrant}` : ""}${rightclockpostion !== "unknown" ? ` in ${rightclockpostion}` : ""}${rightdistancefromnipple !== "unknown" ? ` at ${rightdistancefromnipple} from nipple.` : ""} ${rightbirads !== "unknown" ? `BIRADS: ${rightbirads},` : ""} ${clipmarker} ${rightQuadrant !== "unknown" ? `in right breast at ${rightQuadrant}` : ""}${rightclockpostion !== "unknown" ? ` in ${rightclockpostion}` : ""}${rightdistancefromnipple !== "unknown" ? ` at ${rightdistancefromnipple} from nipple.` : ""}. Magenetic implants: ${MagneticImplants}
+`;
+
+// Left Form
+let LeftForm = `<p>
+  ${typeofab !== "unknown" ? `${typeofab}` : ""} ${leftsize !== "unknown" ? `of ${leftsize}` : ""}
+  ${methodofdetection !== "unknown" ? `detected by ${methodofdetection}` : ""}${LeftQuadrant !== "unknown" ? ` in left breast at ${LeftQuadrant}` : ""}${Leftclockpostion !== "unknown" ? ` in ${Leftclockpostion}` : ""}${leftdistancefromnipple !== "unknown" ? ` at ${leftdistancefromnipple} from nipple.` : ""} ${leftbirads !== "unknown" ? `BIRADS: ${leftbirads},` : ""} ${clipmarker} ${LeftQuadrant !== "unknown" ? `in left breast at ${LeftQuadrant}` : ""}${Leftclockpostion !== "unknown" ? ` in ${Leftclockpostion}` : ""}${leftdistancefromnipple !== "unknown" ? ` at ${leftdistancefromnipple} from nipple.` : ""} 
+  Magenetic implants: ${MagneticImplants}
+<p/>`;
+
  
   // Final String
   let reportText = `
@@ -152,6 +150,44 @@ export function DaFormReportGenerator(
   ${getPatientAnswer(219) === "true" ? LeftForm : ""}
 `;
  
+
+  // Biopsy
+
+ const generateBiopsyReport = (getAnswer: (id: number) => string): string => {
+  const biopsyPerformed = getAnswer(239).toLowerCase();
+  if (biopsyPerformed !== "yes") return "No biopsy was performed.";
+
+  const date = getAnswer(240);
+  const type = getAnswer(241).toLowerCase();
+  const guidance = getAnswer(242).toLowerCase();
+  const result = getAnswer(243).toLowerCase();
+  const pathology = getAnswer(247);
+  
+  const benignOther = getAnswer(244);
+  const atypicalOther = getAnswer(245);
+  const highRiskOther = getAnswer(246);
+
+  let resultDetail = "";
+  switch (result) {
+    case "benign":
+      resultDetail = benignOther ? ` (details: ${benignOther})` : "";
+      break;
+    case "atypical":
+      resultDetail = atypicalOther ? ` (details: ${atypicalOther})` : "";
+      break;
+    case "high-risk lesion":
+      resultDetail = highRiskOther ? ` (details: ${highRiskOther})` : "";
+      break;
+    default:
+      resultDetail = "";
+  }
+
+  return `<br/>A ${type.toLowerCase() == "unknown" ? "biopsy" : type.toLowerCase()} was performed on ${date}${guidance.toLowerCase() == "unknown" ? "" : ` using ${guidance.toLowerCase()} guidance method`}. The biopsy ${result.toLowerCase() == "unknown" ? "result was unknown" : `resulted in ${result.toLowerCase()}${resultDetail}`}. Pathology recommendations: ${pathology || "Not specified"}.`;
+
+};
+
+  reportText += "<br/>" + generateBiopsyReport(getPatientAnswer);
+
   //Return Final String
   return reportText;
 }

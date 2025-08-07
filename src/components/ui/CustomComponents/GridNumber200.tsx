@@ -36,7 +36,7 @@ const GridNumber200: React.FC<GridNumberSelectorPopoverProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className={cn("w-28", className)}>
-          {value ? `${value}%` : "Select %"}
+          {value ? `${value}` : "Select"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-2 h-[400px] overflow-y-auto w-auto lg:w-[780px]">

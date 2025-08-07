@@ -20,42 +20,49 @@ interface IntakeOption {
 
 interface patientQuestionIds {
   thermogramYesNo: number;
+  thermogramDateKnown: number;
   thermogramDate: number;
   thermogramResult: number;
   thermogramReportAvailable: number;
   thermogramReportDetails: number;
 
   mammogramYesNo: number;
+  mammogramDateKnown: number;
   mammogramDate: number;
   mammogramResult: number;
   mammogramReportAvailable: number;
   mammogramReportDetails: number;
 
   breastUltrasoundYesNo: number;
+  breastUltrasoundDateKnown: number;
   breastUltrasoundDate: number;
   breastUltrasoundResult: number;
   breastUltrasoundReportAvailable: number;
   breastUltrasoundReportDetails: number;
 
   breastMRIYesNo: number;
+  breastMRIDateKnown: number;
   breastMRIDate: number;
   breastMRIResult: number;
   breastMRIReportAvailable: number;
   breastMRIReportDetails: number;
 
   petctYesNo: number;
+  petctDateKnown: number;
   petctDate: number;
   petctResult: number;
   petctReportAvailable: number;
   petctReportDetails: number;
 
   qtImagingYesNo: number;
+  qtimageDateKnown: number;
   qtimageDate: number;
   qtimageResult: number;
   qtimageReportAvailable: number;
   qtimageReportDetails: number;
 
   otherImagingYesNo: number;
+  otherImagingDateKnown: number;
   otherImagingDate: number;
   otherImagingResult: number;
   otherImagingReportAvailable: number;
@@ -79,6 +86,7 @@ interface ImagingSectionProps {
   label: string;
   idPrefix: string;
   yesNoId: number;
+  dateKnownId: number;
   dateId: number;
   resultId: number;
   reportAvailableId: number;
@@ -213,6 +221,7 @@ const PriorImaging: React.FC<Props> = ({
   label,
   idPrefix,
   yesNoId,
+  dateKnownId,
   dateId,
   resultId,
   reportAvailableId,
@@ -262,104 +271,116 @@ const PriorImaging: React.FC<Props> = ({
 
   return (
     <div className="space-y-4">
-      <p className="font-semibold text-base">
-        {label} <span className="text-red-500">*</span>
-      </p>
-
-      {/* First line: YES/NO + DATE + RESULT */}
-      <div className="flex flex-wrap items-center gap-6">
-        {/* YES/NO */}
-        <div className="flex items-center gap-4">
-          {["No", "Yes"].map((val) => (
-            <label key={val} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name={`${idPrefix}-yesno`}
-                value={val}
-                checked={getAnswer(yesNoId) === val}
-                onChange={() => handleInputChange(yesNoId, val)}
-                className="custom-radio"
-                disabled={editStatus}
-                required
-              />
-              <span>{val}</span>
-            </label>
-          ))}
-        </div>
-
-        {/* Date */}
-        {showDetails && (
-          <div className="flex items-center gap-2">
-            <Label className="text-sm font-medium">DATE</Label>
-            <div className="w-48">
-              <DatePicker
-                value={
-                  getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
-                }
-                onChange={(val) =>
-                  handleInputChange(
-                    dateId,
-                    val?.toLocaleDateString("en-CA") || ""
-                  )
-                }
-                required={showDetails}
-                disabled={editStatus}
-              />
+          <p className="font-semibold text-base">
+            {label} <span className="text-red-500">*</span>
+          </p>
+    
+          {/* First line: YES/NO + DATE + RESULT */}
+          <div className="flex flex-col items-start gap-6">
+            {/* YES/NO */}
+            <div className="flex items-center gap-4">
+              {["No", "Yes"].map((val) => (
+                <label key={val} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name={`${idPrefix}-yesno`}
+                    value={val}
+                    checked={getAnswer(yesNoId) === val}
+                    onChange={() => handleInputChange(yesNoId, val)}
+                    className="custom-radio"
+                    required
+                  />
+                  <span>{val}</span>
+                </label>
+              ))}
             </div>
+    
+            {/* RESULT */}
+            {showDetails && (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <Label className="text-sm font-medium lg:w-40">RESULT</Label>
+                {["Normal", "Abnormal", "Unknown"].map((val) => (
+                  <label key={val} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`${idPrefix}-result`}
+                      value={val}
+                      checked={getAnswer(resultId) === val}
+                      onChange={() => handleInputChange(resultId, val)}
+                      className="custom-radio"
+                      required={showDetails}
+                    />
+                    <span>{val}</span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-
-        {/* RESULT */}
-        {showDetails && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <Label className="text-sm font-medium">RESULT</Label>
-            {["Normal", "Abnormal", "Unknown"].map((val) => (
-              <label key={val} className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name={`${idPrefix}-result`}
-                  value={val}
-                  checked={getAnswer(resultId) === val}
-                  onChange={() => handleInputChange(resultId, val)}
-                  className="custom-radio"
-                  disabled={editStatus}
-                  required={showDetails}
-                />
-                <span>{val}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Second line: Report Available? */}
-      {showDetails && (
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-4">
-            <Label className="text-sm font-medium">REPORT AVAILABLE?</Label>
-            {["Not Available", "Available"].map((val) => (
-              <label key={val} className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name={`${idPrefix}-report`}
-                  value={val}
-                  checked={getAnswer(reportAvailableId) === val}
-                  onChange={() => handleInputChange(reportAvailableId, val)}
-                  className="custom-radio"
-                  disabled={editStatus}
-                  required={showDetails}
-                />
-                <span>{val}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Upload */}
-      {showUpload && (
-        <>
-          <span className="text-sm text-muted-foreground">
+    
+          {/* Second line: Report Available? */}
+          {showDetails && (
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                <Label className="text-sm font-medium lg:w-40">REPORT AVAILABLE?</Label>
+                {["Not Available", "Available"].map((val) => (
+                  <label key={val} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`${idPrefix}-report`}
+                      value={val}
+                      checked={getAnswer(reportAvailableId) === val}
+                      onChange={() => handleInputChange(reportAvailableId, val)}
+                      className="custom-radio"
+                      required={showDetails}
+                    />
+                    <span>{val}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+    
+          {/* Upload */}
+          {showUpload && (
+            <>
+              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 min-h-9">
+                <Label className="text-sm font-medium uppercase lg:w-40">SCAN DATE?</Label>
+                {["Unknown", "Known"].map((val) => (
+                  <label key={val} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`${idPrefix}-report-date`}
+                      value={val}
+                      checked={getAnswer(dateKnownId) === val}
+                      onChange={() => handleInputChange(dateKnownId, val)}
+                      className="custom-radio"
+                      required={showDetails}
+                    />
+                    <span>{val}</span>
+                  </label>
+                ))}
+                {getAnswer(dateKnownId) === "Known" && (
+                  <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium">DATE</Label>
+                <div className="w-48">
+                  <DatePicker
+                    value={
+                      getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
+                    }
+                    onChange={(val) =>
+                      handleInputChange(
+                        dateId,
+                        val?.toLocaleDateString("en-CA") || ""
+                      )
+                    }
+                    disabledDates={(date) => date > new Date()}
+                    required={getAnswer(reportAvailableId) == "Available"}
+                  />
+                </div>
+              </div>
+                )}
+              </div>
+              <span className="text-sm text-muted-foreground">
             Please Upload the Report
           </span>
           <div className="flex items-center gap-3">
@@ -388,9 +409,9 @@ const PriorImaging: React.FC<Props> = ({
               </span>
             )}
           </div>
-        </>
-      )}
-    </div>
+            </>
+          )}
+        </div>
   );
 };
 
@@ -403,6 +424,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "A. Thermogram",
       idPrefix: "thermogram",
       yesNoId: questionIds.thermogramYesNo,
+      dateKnownId: questionIds.thermogramDateKnown,
       dateId: questionIds.thermogramDate,
       resultId: questionIds.thermogramResult,
       reportAvailableId: questionIds.thermogramReportAvailable,
@@ -412,6 +434,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "B. Mammogram",
       idPrefix: "mammogram",
       yesNoId: questionIds.mammogramYesNo,
+      dateKnownId: questionIds.mammogramDateKnown,
       dateId: questionIds.mammogramDate,
       resultId: questionIds.mammogramResult,
       reportAvailableId: questionIds.mammogramReportAvailable,
@@ -421,6 +444,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "C. Breast Ultrasound / HERscan",
       idPrefix: "ultrasound",
       yesNoId: questionIds.breastUltrasoundYesNo,
+      dateKnownId: questionIds.breastUltrasoundDateKnown,
       dateId: questionIds.breastUltrasoundDate,
       resultId: questionIds.breastUltrasoundResult,
       reportAvailableId: questionIds.breastUltrasoundReportAvailable,
@@ -430,6 +454,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "D. Breast MRI",
       idPrefix: "mri",
       yesNoId: questionIds.breastMRIYesNo,
+      dateKnownId: questionIds.breastMRIDateKnown,
       dateId: questionIds.breastMRIDate,
       resultId: questionIds.breastMRIResult,
       reportAvailableId: questionIds.breastMRIReportAvailable,
@@ -439,6 +464,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "E. PET/CT Scan",
       idPrefix: "petct",
       yesNoId: questionIds.petctYesNo,
+      dateKnownId: questionIds.petctDateKnown,
       dateId: questionIds.petctDate,
       resultId: questionIds.petctResult,
       reportAvailableId: questionIds.petctReportAvailable,
@@ -448,6 +474,7 @@ const PriorImaging: React.FC<Props> = ({
       label: "F. QT Imaging",
       idPrefix: "qt",
       yesNoId: questionIds.qtImagingYesNo,
+      dateKnownId: questionIds.qtimageDateKnown,
       dateId: questionIds.qtimageDate,
       resultId: questionIds.qtimageResult,
       reportAvailableId: questionIds.qtimageReportAvailable,
@@ -458,6 +485,7 @@ const PriorImaging: React.FC<Props> = ({
         "G. Other Imaging or Scans ( Like Bone scans, Scintimammography, etc)",
       idPrefix: "otherscan",
       yesNoId: questionIds.otherImagingYesNo,
+      dateKnownId: questionIds.otherImagingDateKnown,
       dateId: questionIds.otherImagingDate,
       resultId: questionIds.otherImagingResult,
       reportAvailableId: questionIds.otherImagingReportAvailable,

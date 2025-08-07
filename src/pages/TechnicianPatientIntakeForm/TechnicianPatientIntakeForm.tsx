@@ -288,6 +288,9 @@ const TechnicianPatientIntakeForm: React.FC<
         apiUpdate: true,
         appointmentId: controlData.appointmentId,
         userId: controlData.userId,
+        name: locationState?.name,
+        custId: locationState?.custId,
+        scancenterCustId: locationState?.scancenterCustId,
       },
     });
   };
@@ -486,44 +489,50 @@ const TechnicianPatientIntakeForm: React.FC<
             setPatientFormData={setPatientFormData}
             auditData={auditData}
             questionIds={{
-              //patientFormQuestions
               thermogramYesNo: 124,
               thermogramDate: 125,
+              thermogramDateKnown: 499,
               thermogramResult: 126,
               thermogramReportAvailable: 127,
               thermogramReportDetails: 128,
 
               mammogramYesNo: 129,
+              mammogramDateKnown: 500,
               mammogramDate: 130,
               mammogramResult: 131,
               mammogramReportAvailable: 132,
               mammogramReportDetails: 133,
 
               breastUltrasoundYesNo: 134,
+              breastUltrasoundDateKnown: 501,
               breastUltrasoundDate: 135,
               breastUltrasoundResult: 136,
               breastUltrasoundReportAvailable: 137,
               breastUltrasoundReportDetails: 138,
 
               breastMRIYesNo: 139,
+              breastMRIDateKnown: 502,
               breastMRIDate: 140,
               breastMRIResult: 141,
               breastMRIReportAvailable: 142,
               breastMRIReportDetails: 143,
 
               petctYesNo: 144,
+              petctDateKnown: 503,
               petctDate: 145,
               petctResult: 146,
               petctReportAvailable: 147,
               petctReportDetails: 148,
 
               qtImagingYesNo: 149,
+              qtimageDateKnown: 504,
               qtimageDate: 150,
               qtimageResult: 151,
               qtimageReportAvailable: 152,
               qtimageReportDetails: 153,
 
               otherImagingYesNo: 154,
+              otherImagingDateKnown: 505,
               otherImagingDate: 155,
               otherImagingResult: 156,
               otherImagingReportAvailable: 157,
@@ -706,9 +715,9 @@ const TechnicianPatientIntakeForm: React.FC<
         </div>
       </div>
 
-      <div className=" h-[8vh] flex items-end justify-center pb-1 text-sm">
+      {/* <div className=" h-[8vh] flex items-end justify-center pb-1 text-sm">
         Copyright © Wellthgreen
-      </div>
+      </div> */}
     </form>
   );
 };

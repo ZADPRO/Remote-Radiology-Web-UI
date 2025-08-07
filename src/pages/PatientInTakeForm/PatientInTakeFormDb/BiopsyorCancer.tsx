@@ -227,7 +227,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
         {/*B. Interest in support resources*/}
         <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-bold text-base">
+          <Label className="font-semibold text-base">
             B. Type of diagnosis <span className="text-red-500">*</span>{" "}
           </Label>
           <div className="flex flex-col gap-5">
@@ -286,7 +286,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
         {/*C. Grade*/}
         <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-bold text-base">C. Grade</Label>
+          <Label className="font-semibold text-base">C. Grade</Label>
           <div className="flex flex-row flex-wrap gap-5">
             {["1", "2", "3", "Unknown"].map((option) => (
               <div
@@ -315,7 +315,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
         {/*D. Stage*/}
         <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-bold text-base">D. Stage</Label>
+          <Label className="font-semibold text-base">D. Stage</Label>
           <div className="flex flex-row flex-wrap gap-5">
             {["0", "I", "II", "III", "IV", "Unknown"].map((option) => (
               <div
@@ -361,7 +361,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
         {/*F.Location of cancer*/}
         <div className="flex flex-col gap-4 -mt-2">
-          <Label className="font-bold text-base">F. Location of cancer</Label>
+          <Label className="font-semibold text-base">F. Location of cancer</Label>
           {/* a. Breast */}
           <div className="ml-4">
             {/* <Label className="font-semibold text-base mb-2">a. Breast</Label> */}

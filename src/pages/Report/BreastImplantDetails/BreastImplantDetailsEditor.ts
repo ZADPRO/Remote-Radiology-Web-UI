@@ -53,24 +53,22 @@ export function generateBreastImplantDetailsHTML(
      html += ` implant`;
   }
 
-  html += ` with ${position.toLowerCase()} in position, with speed of sound consistent with ${material == "Other"? `${material.toLowerCase()} - ${materialOther}` : material.toLowerCase()}. `;
+  html += ` which are ${position.toLowerCase()} in position, with speed of sound consistent with ${material == "Other"? `${materialOther}` : material.toLowerCase()}. `;
 
   if (displacement.length > 0) {
     if (displacement !== "None") {
       html += `The displacement is noted in ${
         displacement === "Both" ? "both sides" : `${displacement.toLowerCase()} side`
       }. `;
-    } else {
-      html += `The displacement is not noted. `;
-    }
+    } 
   }
 
   if (contracture !== "None") {
-    html += `There is a ${contracture.toLowerCase()} contracture noted. `;
+    html += `There is ${contracture.toLowerCase()} contracture noted. `;
   }
 
   if (rupture === "Present") {
-    html += `There is a rupture in ${ruptureLocation.toLowerCase()} of ${ruptureType.toLowerCase()} type.`;
+    html += `There is rupture in ${ruptureLocation.toLowerCase()} of ${ruptureType.toLowerCase()} type.`;
   }
 
   html += `</span>`;

@@ -17,6 +17,7 @@ import { ArrowLeft, Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "../Routes/AuthContext";
 
 type Props = {};
 
@@ -27,6 +28,8 @@ const NewInvoice: React.FC<Props> = () => {
   const { type, id, date } = location.state || {};
 
   const [loading, setLoading] = useState(false);
+
+  const {role} = useAuth();
 
   const [input, setInput] = useState({
     refSCId: 0,
@@ -92,7 +95,7 @@ const NewInvoice: React.FC<Props> = () => {
               "0"
             )}`
           );
-          console.log(startDate, endDate);
+          console.log(startDate, endDate, res);
           if (type === "1") {
             setInput((prev) => ({
               ...prev,
@@ -145,6 +148,8 @@ const NewInvoice: React.FC<Props> = () => {
       [name]: value,
     }));
   };
+
+  console.log(input)
 
   const handleSubmitInvoice = () => {
     setLoading(true);
@@ -452,34 +457,34 @@ const NewInvoice: React.FC<Props> = () => {
                   <div className="w-full flex flex-col gap-1 sm:gap-2">
                     <p className="text-xs sm:text-sm font-bold">Quantity</p>
                     <Input
-                      type="text"
+                      type="number"
                       value={input.quantity}
                       name="quantity"
                       onChange={handleInputChanges}
                       required
                       placeholder="Quantity"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      readOnly
+                      readOnly={!(role?.type == "admin")}
                     />
                   </div>
                   <div className="w-full flex flex-col gap-1 sm:gap-2">
                     <p className="text-xs sm:text-sm font-bold">Amount (INR)</p>
                     <Input
-                      type="text"
+                      type="number"
                       value={input.amount}
                       name="amount"
                       onChange={handleInputChanges}
                       required
                       placeholder="Amount"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      readOnly
+                      readOnly={!(role?.type == "admin")}
                     />
                   </div>
                 </div>
                 <div className="py-3 sm:py-4 lg:py-5 px-3 sm:px-4 flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-6">
                   <div className="text-lg sm:text-xl font-bold">Total</div>
                   <div className="text-lg sm:text-xl font-bold">
-                    {input.total}/-
+                    {input.amount * input.quantity}/-
                   </div>
                 </div>
               </div>

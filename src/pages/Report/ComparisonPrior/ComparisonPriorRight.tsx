@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { ReportQuestion } from "../Report";
 import { Label } from "@/components/ui/label";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
+import DatePicker from "@/components/date-picker";
 
 interface QuestionIds {
   ComparisonPriorRight: number;
@@ -30,7 +30,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
   reportFormData,
   handleReportInputChange,
   label,
-  side
+  side,
 }) => {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
@@ -59,6 +59,21 @@ const ComparisonPriorRight: React.FC<Props> = ({
         ])
       );
   }, []);
+
+  function formatDateString(date?: Date): string {
+    if (!date) return ""; // or throw error, depending on your use case
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
+  function parseDDMMYYYYToDate(dateStr: string): Date {
+    const [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day); // month is 0-based
+  }
 
   return (
     <div className="w-full">
@@ -95,7 +110,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
               }
             >
               <Label className="font-semibold text-base w-full lg:w-50 flex flex-wrap lg:items-center">
-                <span>Lesion Comparision Table</span>
+                <span>Comparision Table</span>
               </Label>
               <Button
                 className="bg-[#a4b2a1] hover:bg-[#a4b2a1]"
@@ -111,6 +126,12 @@ const ComparisonPriorRight: React.FC<Props> = ({
                     locationcposition: string;
                     locationpclock: string;
                     locationpposition: string;
+                    previous: string;
+                    lesionStatus: string;
+                    doublingtimedate1: string;
+                    doublingtimedate2: string;
+                    vol1: string;
+                    vol2: string;
                   }[] = [];
 
                   try {
@@ -134,6 +155,12 @@ const ComparisonPriorRight: React.FC<Props> = ({
                       locationcposition: "",
                       locationpclock: "",
                       locationpposition: "",
+                      previous: "",
+                      lesionStatus: "",
+                      doublingtimedate1: "",
+                      doublingtimedate2: "",
+                      vol1: "",
+                      vol2: "",
                     },
                   ];
                   handleReportInputChange(
@@ -176,7 +203,8 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               rowSpan={4}
                               className="px-4 py-2 border font-bold bg-[#fdf8f6]"
                             >
-                              {side === "Right" ? "R" : "L"}{index + 1}
+                              {side === "Right" ? "R" : "L"}
+                              {index + 1}
                             </td>
                             <td className="px-4 py-2 border">Size (Mm)</td>
                             <td className="px-4 py-2 border">
@@ -357,6 +385,164 @@ const ComparisonPriorRight: React.FC<Props> = ({
                       </table>
                     </div>
                   </div>
+                  <div className="flex flex-col lg:flex-row lg:items-center w-full">
+                    <Label className="font-semibold w-[250px] text-base">
+                      Previous
+                    </Label>
+
+                    <div className="flex flex-wrap w-full gap-3 items-center">
+                      {["benign", "lesions"].map((option) => (
+                        <label
+                          key={option}
+                          className="flex items-center gap-2 min-h-10"
+                        >
+                          <input
+                            type="radio"
+                            name={`questionPrevious1${index}`}
+                            value={option}
+                            checked={data.previous === option}
+                            onChange={(e) => {
+                              const updated = [...dataArray];
+                              updated[index].previous = e.target.value;
+                              handleReportInputChange(
+                                questionIds.LesionCompTable,
+                                JSON.stringify(updated)
+                              );
+                            }}
+                            className="custom-radio"
+                          />
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col lg:flex-row lg:items-center w-full">
+                    <Label className="font-semibold w-[250px] text-base">
+                      Finding Status
+                    </Label>
+                    <div className="flex w-full flex-wrap gap-3 items-center">
+                      {[
+                        "interval increase",
+                        "interval decrease",
+                        "stable",
+                        "resolved",
+                      ].map((option) => (
+                        <label
+                          key={option}
+                          className="flex items-center gap-2 min-h-10"
+                        >
+                          <input
+                            type="radio"
+                            name={`questionfindings1${index}`}
+                            value={option}
+                            checked={data.lesionStatus === option}
+                            onChange={(e) => {
+                              const updated = [...dataArray];
+                              updated[index].lesionStatus = e.target.value;
+                              handleReportInputChange(
+                                questionIds.LesionCompTable,
+                                JSON.stringify(updated)
+                              );
+                            }}
+                            className="custom-radio"
+                          />
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col lg:flex-row lg:items-start w-full gap-2">
+                    <Label className="font-semibold w-[250px] text-base">
+                      Doubling Time
+                    </Label>
+
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full">
+                      {/* Date 1 */}
+                      <div className="flex flex-col sm:flex-row items-center gap-2 min-h-10">
+                        <span className="w-20 text-sm">Date 1</span>
+                        <DatePicker
+                          value={
+                            data.doublingtimedate1
+                              ? parseDDMMYYYYToDate(data.doublingtimedate1)
+                              : undefined
+                          }
+                          onChange={(e) => {
+                            const updated = [...dataArray];
+                            updated[index].doublingtimedate1 =
+                              formatDateString(e);
+                            handleReportInputChange(
+                              questionIds.LesionCompTable,
+                              JSON.stringify(updated)
+                            );
+                          }}
+                          disabledDates={(date) => date > new Date()}
+                          required
+                        />
+                      </div>
+
+                      {/* Date 2 */}
+                      <div className="flex flex-col sm:flex-row items-center gap-2 min-h-10">
+                        <span className="w-20 text-sm">Date 2</span>
+                        <DatePicker
+                          value={
+                            data.doublingtimedate2
+                              ? parseDDMMYYYYToDate(data.doublingtimedate2)
+                              : undefined
+                          }
+                          onChange={(e) => {
+                            const updated = [...dataArray];
+                            updated[index].doublingtimedate2 =
+                              formatDateString(e);
+                            handleReportInputChange(
+                              questionIds.LesionCompTable,
+                              JSON.stringify(updated)
+                            );
+                          }}
+                          disabledDates={(date) => date > new Date()}
+                          required
+                        />
+                      </div>
+
+                      {/* Volume Inputs */}
+                      <div className="flex flex-wrap items-center gap-4 min-h-10">
+                        {/* Vol 1 */}
+                        <div className="flex items-center gap-2">
+                          <span className="w-14 text-sm">Vol 1</span>
+                          <Input
+                            type="number"
+                            className="w-20 h-8 text-sm text-center"
+                            value={data.vol1}
+                            onChange={(e) => {
+                              const updated = [...dataArray];
+                              updated[index].vol1 = e.target.value;
+                              handleReportInputChange(
+                                questionIds.LesionCompTable,
+                                JSON.stringify(updated)
+                              );
+                            }}
+                          />
+                        </div>
+
+                        {/* Vol 2 */}
+                        <div className="flex items-center gap-2">
+                          <span className="w-14 text-sm">Vol 2</span>
+                          <Input
+                            type="number"
+                            className="w-20 h-8 text-sm text-center"
+                            value={data.vol2}
+                            onChange={(e) => {
+                              const updated = [...dataArray];
+                              updated[index].vol2 = e.target.value;
+                              handleReportInputChange(
+                                questionIds.LesionCompTable,
+                                JSON.stringify(updated)
+                              );
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="w-[10%] flex justify-center items-center">
                   <Trash
@@ -374,8 +560,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
             ));
           })()}
 
-
-          <MultiRadioOptionalInputInline
+          {/* <MultiRadioOptionalInputInline
             label="Findings Status"
             labelClassname="w-[12rem]"
             questionId={questionIds.FindingStatus}
@@ -426,7 +611,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                 }}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
