@@ -3,11 +3,9 @@ import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import DatePicker from "@/components/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
-import { dateDisablers } from "@/lib/dateUtils";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 
 interface QuestionIds {
@@ -329,7 +327,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                     <Label className="text-sm font-medium">If Yes,</Label>
 
                     {/* Both Checkbox */}
-                     {/* <div className="flex items-center gap-4 mt-4">
+                    {/* <div className="flex items-center gap-4 mt-4">
                       <Checkbox2
     id="implantBoth"
     checked={
@@ -359,6 +357,13 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               ? "false"
                               : "true"
                           )
+                        }
+                        required={
+                          getAnswer(questionIds.implants) === "Yes" &&
+                          ((getAnswer(questionIds.implantLeft) === "true" &&
+                            getAnswer(questionIds.implantRight) === "true") ||
+                            (getAnswer(questionIds.implantLeft) !== "true" &&
+                              getAnswer(questionIds.implantRight) !== "true"))
                         }
                       />
                       <Label htmlFor="implantLeft">Left</Label>
@@ -391,6 +396,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       e.target.value
                                     )
                                   }
+                                  required
                                 />
                                 <Label htmlFor={id}>{value}</Label>
                               </div>
@@ -425,9 +431,10 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 e.target.value
                               )
                             }
+                            required
                           />
 
-                          <Label className="text-sm font-medium">Months</Label>
+                          <Label className="text-sm font-medium">Years</Label>
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -446,8 +453,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           </div>
 
                           {getAnswer(questionIds.explants) === "Yes" && (
-                            <>
-                              <div className="flex items-center gap-2">
+                              <div className="flex flex-wrap gap-1 lg:gap-4 w-full">
                                 <MultiRadioOptionalInputInline
                                   label="Is the date known?"
                                   questionId={questionIds.explantsDateKnown}
@@ -459,31 +465,29 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   ]}
                                   className="w-auto"
                                 />
-                              </div>
 
-                              {getAnswer(questionIds.explantsDateKnown) ===
+                                {getAnswer(questionIds.explantsDateKnown) ===
                                 "Yes" && (
-                                <div className="w-64">
-                                  <DatePicker
-                                    placeholder="Explants Done On"
-                                    value={
-                                      getAnswer(questionIds.explantsDate)
-                                        ? new Date(
-                                            getAnswer(questionIds.explantsDate)
-                                          )
-                                        : undefined
-                                    }
-                                    onChange={(val) =>
+                                <div className="flex gap-2">
+                                  <Input
+                                    placeholder="Duration"
+                                    className="lg:w-38"
+                                    value={getAnswer(questionIds.explantsDate)}
+                                    onChange={(e) =>
                                       handleInputChange(
                                         questionIds.explantsDate,
-                                        val?.toLocaleDateString("en-CA") || ""
+                                        e.target.value
                                       )
                                     }
-                                    disabledDates={dateDisablers.noFuture}
+                                    required
                                   />
+
+                                  <Label className="text-sm font-medium">
+                                    Years
+                                  </Label>
                                 </div>
                               )}
-                            </>
+                              </div>
                           )}
                         </div>
                       </div>
@@ -502,6 +506,13 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               ? "false"
                               : "true"
                           )
+                        }
+                        required={
+                          getAnswer(questionIds.implants) === "Yes" &&
+                          ((getAnswer(questionIds.implantLeft) === "true" &&
+                            getAnswer(questionIds.implantRight) === "true") ||
+                            (getAnswer(questionIds.implantLeft) !== "true" &&
+                              getAnswer(questionIds.implantRight) !== "true"))
                         }
                       />
                       <Label htmlFor="implantRight">Right</Label>
@@ -535,6 +546,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       e.target.value
                                     )
                                   }
+                                  required
                                 />
                                 <Label htmlFor={id}>{value}</Label>
                               </div>
@@ -561,7 +573,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                         <div className="flex gap-2">
                           <Input
                             placeholder="Duration"
-                            className="lg:w-48"
+                            className="lg:w-38"
                             value={getAnswer(questionIds.implantDateRight)}
                             onChange={(e) =>
                               handleInputChange(
@@ -570,10 +582,10 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               )
                             }
                           />
-                          <Label className="text-sm font-medium">Months</Label>
+                          <Label className="text-sm font-medium">Years</Label>
                         </div>
 
-                        <div className="flex flex-col items-center gap-2">
+                        <div className="flex flex-col gap-2">
                           <MultiRadioOptionalInputInline
                             label="Explants"
                             questionId={questionIds.explantsRight}
@@ -586,7 +598,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             className="w-auto"
                           />
                           {getAnswer(questionIds.explantsRight) === "Yes" && (
-                            <div className="flex flex-col gap-2 w-full">
+                            <div className="flex flex-wrap gap-1 lg:gap-4 w-full">
                               <MultiRadioOptionalInputInline
                                 label="Is the date known?"
                                 questionId={questionIds.explantsDateRightKnown}
@@ -601,26 +613,23 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
                               {getAnswer(questionIds.explantsDateRightKnown) ===
                                 "Yes" && (
-                                <div className="w-64">
-                                  <DatePicker
-                                    placeholder="Explants Done On"
-                                    value={
-                                      getAnswer(questionIds.explantsDateRight)
-                                        ? new Date(
-                                            getAnswer(
-                                              questionIds.explantsDateRight
-                                            )
-                                          )
-                                        : undefined
-                                    }
-                                    onChange={(val) =>
+                                <div className="flex gap-2">
+                                  <Input
+                                    placeholder="Duration"
+                                    className="lg:w-38"
+                                    value={getAnswer(questionIds.explantsDateRight)}
+                                    onChange={(e) =>
                                       handleInputChange(
                                         questionIds.explantsDateRight,
-                                        val?.toLocaleDateString("en-CA") || ""
+                                        e.target.value
                                       )
                                     }
-                                    disabledDates={dateDisablers.noFuture}
+                                    required
                                   />
+
+                                  <Label className="text-sm font-medium">
+                                    Years
+                                  </Label>
                                 </div>
                               )}
                             </div>

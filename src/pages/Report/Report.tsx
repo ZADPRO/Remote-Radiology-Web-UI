@@ -51,6 +51,7 @@ import { generateRightBreastReportText } from "./BreastDensityandImageQuality/Br
 import {
   breastDensityandImageLeftQuestions,
   breastDensityandImageRightQuestions,
+  breastImpantRightQuestions,
   ComparisonPriorLeftQuestion,
   ComparisonPriorRightQuestion,
   grandularAndDuctalTissueLeftQuestions,
@@ -61,6 +62,7 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
   nippleAreolaSkinRightQuestions,
+  symmetryQuestions,
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
@@ -71,6 +73,7 @@ import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
 import { DaFormReportGenerator } from "./GenerateReport/DaFormReportGenerator";
 import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
 import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
+import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -112,6 +115,11 @@ interface ReportStage {
   label: ReportStageLabel;
   editStatus: boolean;
   status: string;
+}
+
+export interface FileData {
+  base64Data: string;
+  contentType: string;
 }
 
 const Report: React.FC = () => {
@@ -188,13 +196,31 @@ const Report: React.FC = () => {
     setShowDialog(false);
     navigate(-1);
   };
-  
+
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
     Array.from({ length: 200 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
   ); //current higgest question id: 116
+
+   const [syncStatus, setsyncStatus] = useState({
+    breastImplant: true,
+    breastDensityandImageRight: true,
+    nippleAreolaSkinRight: true,
+    LesionsRight: true,
+    ComparisonPrior: true,
+    grandularAndDuctalTissueRight: true,
+    LymphNodesRight: true,
+    breastDensityandImageLeft: true,
+    nippleAreolaSkinLeft: true,
+    LesionsLeft: true,
+    ComparisonPriorLeft: true,
+    grandularAndDuctalTissueLeft: true,
+    LymphNodesLeft: true,
+    Notes: true,
+    ImpressionsRecommendations: true,
+  });
 
   useEffect(() => {
     if (syncStatus.breastDensityandImageRight) {
@@ -300,7 +326,7 @@ const Report: React.FC = () => {
         )
       );
     }
-  }, [reportFormData]);
+  }, [reportFormData, syncStatus]);
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
@@ -412,23 +438,7 @@ const Report: React.FC = () => {
 
   const [patientHistory, setPatientHistory] = useState("");
 
-  const [syncStatus, setsyncStatus] = useState({
-    breastImplant: true,
-    breastDensityandImageRight: true,
-    nippleAreolaSkinRight: true,
-    LesionsRight: true,
-    ComparisonPrior: true,
-    grandularAndDuctalTissueRight: true,
-    LymphNodesRight: true,
-    breastDensityandImageLeft: true,
-    nippleAreolaSkinLeft: true,
-    LesionsLeft: true,
-    ComparisonPriorLeft: true,
-    grandularAndDuctalTissueLeft: true,
-    LymphNodesLeft: true,
-    Notes: true,
-    ImpressionsRecommendations: true,
-  });
+ 
 
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
     null
@@ -443,6 +453,10 @@ const Report: React.FC = () => {
       selectedRecommendationId: "",
       impressionText: "",
       recommendationText: "",
+      selectedImpressionIdRight: "",
+      selectedRecommendationIdRight: "",
+      impressionTextRight: "",
+      recommendationTextRight: "",
     });
 
   const [
@@ -453,31 +467,45 @@ const Report: React.FC = () => {
     selectedRecommendationId: "",
     impressionText: "",
     recommendationText: "",
+    selectedImpressionIdRight: "",
+    selectedRecommendationIdRight: "",
+    impressionTextRight: "",
+    recommendationTextRight: "",
   });
 
   const [showOptional, setShowOptional] = useState({
     impression: false,
     recommendation: false,
+    impressionRight: false,
+    recommendationRight: false,
   });
 
   const [commonImpressRecomm, setCommonImpressRecomm] = useState<{
     id: string;
     text: string;
+    idRight: string;
+    textRight: string;
   }>({
     id: "",
     text: "",
+    idRight: "",
+    textRight: "",
   });
 
   const accessibleTabs = [1, 2, 3, 5]; // Tabs requiring access
-const finalTab = 4; // Final Report is always accessible
+  const finalTab = 4; // Final Report is always accessible
 
-// Only check easeQTReportAccess for restricted roles
+  // Only check easeQTReportAccess for restricted roles
 
-const isTabAccessible = (value: number) => {
-  return (
-    value === finalTab || (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
-  );
-};
+  const isTabAccessible = (value: number) => {
+    return (
+      value === finalTab ||
+      (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
+    );
+  };
+
+  const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
+  const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -494,26 +522,36 @@ const isTabAccessible = (value: number) => {
         userDeatils: any;
         patientDetails: any;
         status: boolean;
+        ScanCenterImg: FileData;
+        ScancenterAddress: string;
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
         stateData.readOnly
       );
 
-      console.log(response);
+      console.log(response.appointmentStatus);
 
       if (response.status) {
+        setScanCenterImg(response.ScanCenterImg);
+        setScanCenterAddress(response.ScancenterAddress);
+        // setScanCenterImg(response.ScanCenterImg);
         setAssignData({
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [],
           easeQTReportAccess: response.easeQTReportAccess,
         });
+
         setMainImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpression,
           selectedRecommendationId:
             response.appointmentStatus[0].refAppointmentRecommendation,
+          selectedImpressionIdRight:
+            response.appointmentStatus[0].refAppointmentImpressionRight,
+          selectedRecommendationIdRight:
+            response.appointmentStatus[0].refAppointmentRecommendationRight,
         }));
         setOptionalImpressionRecommendation((prev) => ({
           ...prev,
@@ -522,6 +560,12 @@ const isTabAccessible = (value: number) => {
           selectedRecommendationId:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditional,
+          selectedImpressionIdRight:
+            response.appointmentStatus[0]
+              .refAppointmentImpressionAdditionalRight,
+          selectedRecommendationIdRight:
+            response.appointmentStatus[0]
+              .refAppointmentRecommendationAdditionalRight,
         }));
         setShowOptional(() => ({
           impression:
@@ -530,12 +574,21 @@ const isTabAccessible = (value: number) => {
           recommendation:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditional != "",
+          impressionRight:
+            response.appointmentStatus[0]
+              .refAppointmentRecommendationAdditionalRight != "",
+          recommendationRight:
+            response.appointmentStatus[0]
+              .refAppointmentRecommendationAdditionalRight != "",
         }));
 
         setCommonImpressRecomm((prev) => ({
           ...prev,
           id: response.appointmentStatus[0]
             .refAppointmentCommonImpressionRecommendation,
+          idRight:
+            response.appointmentStatus[0]
+              .refAppointmentCommonImpressionRecommendationRight,
         }));
 
         setTemplates(response.reportFormateList || []);
@@ -564,7 +617,6 @@ const isTabAccessible = (value: number) => {
             ImpressionsRecommendations: true,
           });
         }
-
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
       }
@@ -575,53 +627,181 @@ const isTabAccessible = (value: number) => {
     }
   };
 
-  useEffect(() => {
-    if (!responsePatientInTake) return;
+  const getTechnicianAnswer = (id: number) =>
+    technicianForm.find((q) => q.questionId === id)?.answer || "";
 
-    const getAnswer = (id: number) =>
-      responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
-    let reason = `
-  <div><strong>REASON: </strong>
-    ${getAnswer(11)}</div>
-    `;
+  const ReportResetAll = () => {
+    const previousAnswer1 = getreportAnswer(1); // ❗Grab before reset
 
-    // if (assignData?.appointmentStatus[0].refCategoryId === 1) {
-    setPatientHistory(
-      (reason += "<br/>" + SFormGeneration(responsePatientInTake))
+    let newFormData = Array.from({ length: 200 }, (_, index) => ({
+      questionId: index + 1,
+      answer: "",
+    }));
+
+    const specificAnswers: Record<number, string> = {
+      117:
+        getTechnicianAnswer(19) === "true"
+          ? "Asymmetry"
+          : "Symmetrical size and shape",
+      118: getTechnicianAnswer(21),
+      119: getTechnicianAnswer(22),
+      1: previousAnswer1 === "" || "Present" ? "Present" : "",
+      // 2:
+      //   getreportAnswer(2) === "" || "Bilateral Similar"
+      //     ? "Bilateral Similar"
+      //     : "",
+      // 3: getreportAnswer(3) === "" || "Subpectoral" ? "Subpectoral" : "",
+      // 4: getreportAnswer(4) === "" || getAnswer(80) ? getAnswer(80) : "",
+      5: getreportAnswer(5) === "" || "None" ? "None" : "",
+      6: getreportAnswer(6) === "" || "None" ? "None" : "",
+      9: getreportAnswer(9) === "" || "Absent" ? "Absent" : "",
+      116: getreportAnswer(116) === "" || getAnswer(81) ? getAnswer(81) : "",
+      110: getreportAnswer(110) === "" || "Present" ? "Present" : "",
+      14: getreportAnswer(14) === "" || "Acceptable" ? "Acceptable" : "",
+      15:
+        getreportAnswer(15) === "" || "Heterogeneously Dense"
+          ? "Heterogeneously Dense"
+          : "",
+      17: getreportAnswer(17) === "" || "Symmetry" ? "Symmetry" : "",
+      111: getreportAnswer(111) === "" || "Present" ? "Present" : "",
+      19: getreportAnswer(19) === "" || "Normal" ? "Normal" : "",
+      21: getreportAnswer(21) === "" || "Absent" ? "Absent" : "",
+      23: getreportAnswer(23) === "" || "Normal" ? "Normal" : "",
+      18:
+        getreportAnswer(18) === "" ||
+        getAnswer("Right" === "Right" ? 112 : 113) ||
+        "Absent"
+          ? getAnswer("Right" === "Right" ? 112 : 113) || "Absent"
+          : "",
+      112: getreportAnswer(112) === "" || "Present" ? "Present" : "",
+      25: getreportAnswer(25) === "" || "Normal" ? "Normal" : "",
+      26: getreportAnswer(26) === "" || "Absent" ? "Absent" : "",
+      27: getreportAnswer(27) === "" || "Absent" ? "Absent" : "",
+      28: getreportAnswer(28) === "" || "Absent" ? "Absent" : "",
+      29: getreportAnswer(29) === "" || "Absent" ? "Absent" : "",
+      32: getreportAnswer(32) === "" || "Absent" ? "Absent" : "",
+      34: getreportAnswer(34) === "" || "Absent" ? "Absent" : "",
+
+      113: getreportAnswer(113) === "" || "Present" ? "Present" : "",
+      57: getreportAnswer(57) === "" || "Acceptable" ? "Acceptable" : "",
+      58:
+        getreportAnswer(58) === "" || "Heterogeneously Dense"
+          ? "Heterogeneously Dense"
+          : "",
+      60: getreportAnswer(60) === "" || "Symmetry" ? "Symmetry" : "",
+      114: getreportAnswer(114) === "" || "Present" ? "Present" : "",
+      63: getreportAnswer(63) === "" || "Normal" ? "Normal" : "",
+      65: getreportAnswer(65) === "" || "Absent" ? "Absent" : "",
+      67: getreportAnswer(67) === "" || "Normal" ? "Normal" : "",
+      61:
+        getreportAnswer(61) === "" || getAnswer(113) || "Absent"
+          ? getAnswer(113) || "Absent"
+          : "",
+      115: getreportAnswer(115) === "" || "Present" ? "Present" : "",
+      69: getreportAnswer(69) === "" || "Normal" ? "Normal" : "",
+      70: getreportAnswer(70) === "" || "Absent" ? "Absent" : "",
+      71: getreportAnswer(71) === "" || "Absent" ? "Absent" : "",
+      72: getreportAnswer(72) === "" || "Absent" ? "Absent" : "",
+      73: getreportAnswer(73) === "" || "Absent" ? "Absent" : "",
+      76: getreportAnswer(76) === "" || "Absent" ? "Absent" : "",
+      78: getreportAnswer(78) === "" || "Absent" ? "Absent" : "",
+    };
+
+    newFormData = newFormData.map((q) =>
+      specificAnswers[q.questionId]
+        ? { ...q, answer: specificAnswers[q.questionId] }
+        : q
     );
-    // } else
-    if (assignData?.appointmentStatus[0].refCategoryId === 2) {
-      setPatientHistory(
-        (reason += "<br/><br/>" + DaFormReportGenerator(responsePatientInTake))
-      );
-    } else if (assignData?.appointmentStatus[0].refCategoryId === 3) {
-      setPatientHistory(
-        (reason += "<br/><br/>" + DbFormReportGenerator(responsePatientInTake))
-      );
-    } else if (assignData?.appointmentStatus[0].refCategoryId === 4) {
-      setPatientHistory(
-        (reason += "<br/><br/>" + DcFormGeneration(responsePatientInTake))
-      );
-    }
+
+    setMainImpressionRecommendation({
+      selectedImpressionId: "",
+      selectedRecommendationId: "",
+      impressionText: "",
+      recommendationText: "",
+      selectedImpressionIdRight: "",
+      selectedRecommendationIdRight: "",
+      impressionTextRight: "",
+      recommendationTextRight: "",
+    });
+
+    setOptionalImpressionRecommendation({
+      selectedImpressionId: "",
+      selectedRecommendationId: "",
+      impressionText: "",
+      recommendationText: "",
+      selectedImpressionIdRight: "",
+      selectedRecommendationIdRight: "",
+      impressionTextRight: "",
+      recommendationTextRight: "",
+    });
+
+    setShowOptional({
+      impression: false,
+      recommendation: false,
+      impressionRight: false,
+      recommendationRight: false,
+    });
+
+    setCommonImpressRecomm({
+      id: "",
+      text: "",
+      idRight: "",
+      textRight: "",
+    });
+
+    setReportFormData(newFormData);
+
+    console.log(getreportAnswer(1));
+  };
+
+  useEffect(() => {
+    const generatePatientHistory = async () => {
+      if (!responsePatientInTake) return;
+
+      const getAnswer = (id: number) =>
+        responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
+
+      let reason = `<p><strong>HISTORY : </strong></p>`;
+      reason += await SFormGeneration(responsePatientInTake);
+
+      const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
+
+      if (categoryId === 1) {
+        reason += `<div><h3><strong>Indications: </strong></h3>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getAnswer(11)}</div>
+      `;
+        reason += `<p><strong>Patient Form:</strong> S Form</p>`;
+      } else if (categoryId === 2) {
+        reason += "" + (await DaFormReportGenerator(responsePatientInTake));
+        reason += ` <div><h3><strong>Indications: </strong></h3>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getAnswer(11)}</div>
+      `;
+        reason += `<p><strong>Patient Form:</strong> Da Form</p>`;
+      } else if (categoryId === 3) {
+        reason += await DbFormReportGenerator(responsePatientInTake);
+        reason += `
+        <div><h3><strong>Indications: </strong></h3>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getAnswer(11)}</div>
+      `;
+        reason += `<p><strong>Patient Form:</strong> Db Form</p>`;
+      } else if (categoryId === 4) {
+        reason += await DcFormGeneration(responsePatientInTake);
+        reason += `
+        <div><h3><strong>Indications: </strong></h3>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getAnswer(11)}</div>
+      `;
+        reason += `<p><strong>Patient Form:</strong> Dc Form</p>`;
+      }
+
+      await setPatientHistory(reason);
+    };
+
+    generatePatientHistory();
   }, [responsePatientInTake]);
-
-  // const listDicomFiles = async () => {
-  //   try {
-  //     const res = await technicianService.listDicom(
-  //       stateData.appointmentId,
-  //       stateData.userId
-  //     );
-  //     console.log(res);
-
-  //     if (res.status) {
-  //       setDicomFiles(res.message);
-  //     } else {
-  //       console.log(res.message);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const uploadReportFormate = async () => {
     setPopoverLoading(true);
@@ -666,40 +846,45 @@ const isTabAccessible = (value: number) => {
       if (response.status) {
         setNotes(
           `
+          <div>
+   <div style="text-align: right;">
+  ${
+    ScanCenterImg?.base64Data
+      ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="100" height="100"/>`
+      : ""
+  }
+</div>
+      </div>
            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+           <tbody>
                 <tr>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${getAnswer(
                       1
                     )}</td>
-                    <td style="border: 1px solid #000; padding: 4px;"><strong>STUDY</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${new Date(
-                      assignData?.reportHistoryData[
-                        assignData?.reportHistoryData.length - 1
-                      ].refRHHandleStartTime.toString() || ""
-                    )
-                      .toISOString()
-                      .slice(0, 16)
-                      .replace("T", " ")}</td>
+                    <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
+                    <td style="border: 1px solid #000; padding: 4px;">${getAnswer(
+                      2
+                    )}</td>
                                 </tr>
                                 <tr>
-                                    <td style="border: 1px solid #000; padding: 4px;"><strong>AGE/GENDER</strong></td>
-                                    <td style="border: 1px solid #000; padding: 4px;">${getAnswer(
-                                      5
-                                    )} / ${
-            getAnswer(6) === "female" ? "F" : getAnswer(5)
-          }</td>
+                                    <td style="border: 1px solid #000; padding: 4px;"><strong>AGE / GENDER</strong></td>
+                                    <td style="border: 1px solid #000; padding: 4px;"> ${
+                                      getAnswer(6) === "female"
+                                        ? "F"
+                                        : getAnswer(5)
+                                    } / ${getAnswer(5)}</td>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refSCCustId
-                    }</td>
+                    }, ${ScanCenterAddress}</td>
                 </tr>
                 <tr>
                 <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       patientDetails.refUserCustId
                     }</td>
-                    <td style="border: 1px solid #000; padding: 4px;"><strong>REPORT</strong></td>
+                    <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refAppointmentDate
                         ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
@@ -708,8 +893,62 @@ const isTabAccessible = (value: number) => {
                     
                 </tr>
             </table>
+           <br/>
+  
+  <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
+  
+  <br/>
+
+  ${patientHistory}
+
+  <br />
+
+  <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2. The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
+
+    <br />
+    
+            ` +
+            response.message[0].refRFText +
+            `
             <br/>
-            ` + response.message[0].refRFText
+             <h3><strong>RIGHT BREAST:</strong></h3>
+  <p><strong>IMPRESSION:</strong></p>
+  <p>${mainImpressionRecommendation.impressionTextRight}</p>
+ <p> ${optionalImpressionRecommendation.impressionTextRight}</p><br />
+
+  <p><strong>RECOMMENDATION:</strong></p>
+ <p> ${mainImpressionRecommendation.recommendationTextRight}</p>
+  <p>${optionalImpressionRecommendation.recommendationTextRight}</p>
+
+  <br />
+  <p><i>${commonImpressRecomm.textRight}</i></p>
+
+  <br/>
+  <br/>
+
+    <h3><strong>LEFT BREAST:</strong></h3>
+  <p><strong>IMPRESSION:</strong></p>
+  <p>${mainImpressionRecommendation.impressionText}</p>
+ <p> ${optionalImpressionRecommendation.impressionText}</p><br />
+
+  <p><strong>RECOMMENDATION:</strong></p>
+ <p> ${mainImpressionRecommendation.recommendationText}</p>
+  <p>${optionalImpressionRecommendation.recommendationText}</p>
+
+  <br />
+  <p><i>${commonImpressRecomm.text}</i></p>
+  <br/>
+  <strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
+  <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
+  <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
+  <i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Scars, dense breast tissue, and breast implants can obscure masses and other findings. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the QT Imaging Center where you receive your scan and discussed with your doctor. Even if the doctor reading the QT scan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QT scan findings. Consultation with the doctor reading your QT scan is also available if requested. </p></i>
+  <i><p>The QT Ultrasound Breast Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.” FDA 510k K162372 and K220933 
+  The QT Ultrasound Breast Scanner Model 2000A satisfies the requirements of the Certification Mark of the ECM [CE Mark Certification of the European Union] – No. 0P210730.QTUTQ02” and is ISO 90001 and ISO 13485 compliant. 
+  </p></i>
+  <i><p>QT’s first blinded trial: Malik B, Iuanow E, Klock J. An Exploratory Multi-reader, Multicase Study Comparing Transmission Ultrasound to Mammography on Recall Rates and Detection Rates for Breast Cancer Lesions. Academic Radiology February 2021. https://www.sciencedirect.com/science/article/pii/S1076633220306462 ; https://doi.org/10.1016/j.acra.2020.11.011 </p></i>
+  <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
+
+            `
         );
         setLoadTemplateStatus(false);
       }
@@ -718,6 +957,48 @@ const isTabAccessible = (value: number) => {
     }
     setLoadingStatus(0);
   };
+
+  useEffect(() => {
+      if (
+        !reportFormData ||
+        reportFormData.length === 0 ||
+        !technicianForm ||
+        technicianForm.length === 0
+      )
+        return;
+      if (technicianForm.length > 0) {
+        getAnswer(symmetryQuestions.symmetry) == "" &&
+          handleReportInputChange(
+            symmetryQuestions.symmetry,
+            getTechnicianAnswer(19) == "true"
+              ? "Asymmetry"
+              : "Symmetrical size and shape"
+          );
+        getAnswer(symmetryQuestions.symmetryLeft) == "" &&
+          handleReportInputChange(
+            symmetryQuestions.symmetryLeft,
+            getTechnicianAnswer(21)
+          );
+        getAnswer(symmetryQuestions.symmetryRight) == "" &&
+          handleReportInputChange(
+            symmetryQuestions.symmetryRight,
+            getTechnicianAnswer(22)
+          );
+      }
+    }, [technicianForm]);
+
+    useEffect(() => {
+        if (syncStatus.breastImplant) {
+         setBreastImplantRight(
+            generateBreastImplantDetailsHTML(
+              reportFormData,
+              breastImpantRightQuestions
+            )
+          );
+        }
+
+        
+      }, [reportFormData, syncStatus]);
 
   useEffect(() => {
     handleAssignUser();
@@ -750,6 +1031,14 @@ const isTabAccessible = (value: number) => {
         recommendationaddtional:
           optionalImpressionRecommendation.selectedRecommendationId,
         commonImpressionRecommendation: commonImpressRecomm.id,
+        impressionRight: mainImpressionRecommendation.selectedImpressionIdRight,
+        recommendationRight:
+          mainImpressionRecommendation.selectedRecommendationIdRight,
+        impressionaddtionalRight:
+          optionalImpressionRecommendation.selectedImpressionIdRight,
+        recommendationaddtionalRight:
+          optionalImpressionRecommendation.selectedRecommendationIdRight,
+        commonImpressionRecommendationRight: commonImpressRecomm.idRight,
         editStatus: editStatus,
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
@@ -773,6 +1062,9 @@ const isTabAccessible = (value: number) => {
 
   const getAnswer = (id: number) =>
     responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
+
+  const getreportAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -812,34 +1104,35 @@ const isTabAccessible = (value: number) => {
 
         {/* Report Sub-Tabs */}
         <div className="flex w-2/5 h-full items-center justify-around px-2">
-  {tab === 4 &&
-    [
-      { label: "General", value: 1 },
-      { label: "Right", value: 2 },
-      { label: "Left", value: 3 },
-      { label: "Impression", value: 5 },
-      { label: "Final Report", value: 4 },
-    ].map(({ label, value }) => {
-      const accessible = isTabAccessible(value);
-    console.log(isTabAccessible(value));
-      return (
-        accessible && <div
-          key={label}
-          onClick={() => accessible && setSubTab(value)}
-          className={`flex-1 max-w-xl text-xs text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
-            accessible
-              ? subTab === value
-                ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
-              : "border-[#e0e0e0] text-gray-400 cursor-not-allowed bg-gray-100"
-          }`}
-        >
-          {label}
+          {tab === 4 &&
+            [
+              { label: "General", value: 1 },
+              { label: "Right", value: 2 },
+              { label: "Left", value: 3 },
+              { label: "Impression", value: 5 },
+              { label: "Final Report", value: 4 },
+            ].map(({ label, value }) => {
+              const accessible = isTabAccessible(value);
+              console.log(isTabAccessible(value));
+              return (
+                accessible && (
+                  <div
+                    key={label}
+                    onClick={() => accessible && setSubTab(value)}
+                    className={`flex-1 max-w-xl text-xs text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                      accessible
+                        ? subTab === value
+                          ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                          : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                        : "border-[#e0e0e0] text-gray-400 cursor-not-allowed bg-gray-100"
+                    }`}
+                  >
+                    {label}
+                  </div>
+                )
+              );
+            })}
         </div>
-      );
-    })}
-</div>
-
       </div>
 
       <div className="flex w-full">
@@ -864,9 +1157,9 @@ const isTabAccessible = (value: number) => {
             </div>
 
             <div className="text-sm">
-              Gender & Age:{" "}
-              <span className="font-semibold capitalize">{getAnswer(6)}</span> /{" "}
-              <span className="font-semibold">{getAnswer(5)}</span>
+              Age & Gender:{" "}
+              <span className="font-semibold">{getAnswer(5)}</span> /{" "}
+              <span className="font-semibold capitalize">{getAnswer(6)}</span>
             </div>
 
             <div className="text-sm">
@@ -1169,6 +1462,20 @@ const isTabAccessible = (value: number) => {
                 location?.readOnly ? "pointer-events-none" : ""
               }`}
             >
+              <Button
+                // key={index}
+                variant="greenTheme"
+                className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                onClick={ReportResetAll}
+                // disabled={!isAllowed}
+                // hidden={
+                //   label == "Insert Signature" &&
+                //   !(tab === 4 && subTab === 4)
+                // }
+              >
+                Reset to Default
+              </Button>
+
               {reportStages.map(({ label, editStatus, status }, index) => {
                 const isAllowed = stageRoleMap[label]?.includes(role?.type);
 
@@ -1180,19 +1487,14 @@ const isTabAccessible = (value: number) => {
                   } else if (status == "" && label == "Insert Signature") {
                     const date = new Date().toLocaleDateString();
                     console.log(userDetails);
-                    const signatureRow = `
-                    <br/>
-                    <h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>Dr. ${
+                    const signatureRow = `<br/><h3 class="ql-align-right"><strong>Electronically signed by Dr. ${
                       userDetails.refUserFirstName
-                    },</strong></h3>${
+                    },${
                       userDetails.specialization
-                        ? '<h3 class="ql-align-right"><strong>' +
-                          userDetails.specialization +
-                          ",</strong></h3>"
+                        ? "" + userDetails.specialization + ""
                         : ""
-                    }<h3 class=\"ql-align-right\"><strong><em>${date}</em></strong></h3>
-                          
-                      `;
+                    } on <em>${date}</em></strong></h3>`;
+
                     const notesData = Notes + signatureRow;
                     setNotes(notesData);
                     setsyncStatus({
@@ -1385,127 +1687,174 @@ const isTabAccessible = (value: number) => {
                   readOnly={stateData.readOnly ? true : false}
                 />
               ) : subTab === 4 ? (
-                <NotesReport
-                  reportFormData={reportFormData}
-                  textEditor={{
-                    breastImplant: {
-                      value: breastImplantRight,
-                      onChange: setBreastImplantRight,
-                    },
-                    breastDensityandImageRight: {
-                      value: breastDensityandImageRight,
-                      onChange: setBreastDensityandImageRight,
-                    },
-                    nippleAreolaSkinRight: {
-                      value: nippleAreolaSkinRight,
-                      onChange: setNippleAreolaSkinRight,
-                    },
-                    LesionsRight: {
-                      value: LesionsRight,
-                      onChange: setLesionsRight,
-                    },
-                    ComparisonPrior: {
-                      value: ComparisonPrior,
-                      onChange: setComparisonPrior,
-                    },
-                    grandularAndDuctalTissueRight: {
-                      value: grandularAndDuctalTissueRight,
-                      onChange: setGrandularAndDuctalTissueRight,
-                    },
-                    LymphNodesRight: {
-                      value: LymphNodesRight,
-                      onChange: setLymphNodesRight,
-                    },
-                    breastDensityandImageLeft: {
-                      value: breastDensityandImageLeft,
-                      onChange: setBreastDensityandImageLeft,
-                    },
-                    nippleAreolaSkinLeft: {
-                      value: nippleAreolaSkinLeft,
-                      onChange: setNippleAreolaSkinLeft,
-                    },
-                    LesionsLeft: {
-                      value: LesionsLeft,
-                      onChange: setLesionsLeft,
-                    },
-                    ComparisonPriorLeft: {
-                      value: ComparisonPriorLeft,
-                      onChange: setComparisonPriorLeft,
-                    },
-                    grandularAndDuctalTissueLeft: {
-                      value: grandularAndDuctalTissueLeft,
-                      onChange: setGrandularAndDuctalTissueLeft,
-                    },
-                    LymphNodesLeft: {
-                      value: LymphNodesLeft,
-                      onChange: setLymphNodesLeft,
-                    },
-                    ImpressionText: {
-                      value: mainImpressionRecommendation.impressionText,
-                      onChange: (text: string) =>
-                        setMainImpressionRecommendation((prev) => ({
-                          ...prev,
-                          impressionText: text,
-                        })),
-                    },
-                    OptionalImpressionText: {
-                      value: optionalImpressionRecommendation.impressionText,
-                      onChange: (text: string) =>
-                        setOptionalImpressionRecommendation((prev) => ({
-                          ...prev,
-                          impressionText: text,
-                        })),
-                    },
-                    RecommendationText: {
-                      value: mainImpressionRecommendation.recommendationText,
-                      onChange: (text: string) =>
-                        setMainImpressionRecommendation((prev) => ({
-                          ...prev,
-                          recommendationText: text,
-                        })),
-                    },
-                    OptionalRecommendationText: {
-                      value:
-                        optionalImpressionRecommendation.recommendationText,
-                      onChange: (text: string) =>
-                        setOptionalImpressionRecommendation((prev) => ({
-                          ...prev,
-                          recommendationText: text,
-                        })),
-                    },
-                    CommonImpresRecommText: {
-                      value: commonImpressRecomm.text,
-                      onChange: (text: string) =>
-                        setCommonImpressRecomm((prev) => ({
-                          ...prev,
-                          text: text,
-                        })),
-                    },
-                  }}
-                  syncStatus={syncStatus}
-                  setsyncStatus={setsyncStatus}
-                  Notes={Notes}
-                  setNotes={setNotes}
-                  name={getAnswer(1)}
-                  gender={getAnswer(6) === "female" ? "F" : getAnswer(5)}
-                  age={getAnswer(5)}
-                  studyTime={
-                    assignData?.reportHistoryData[
-                      assignData?.reportHistoryData.length - 1
-                    ].refRHHandleStartTime.toString() || ""
-                  }
-                  AppointmentDate={
-                    assignData?.appointmentStatus[0]?.refAppointmentDate
-                      ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
-                      : ""
-                  }
-                  ScancenterCode={
-                    assignData?.appointmentStatus[0]?.refSCCustId || ""
-                  }
-                  patientDetails={patientDetails}
-                  readOnly={stateData.readOnly ? true : false}
-                  patientHistory={patientHistory}
-                />
+                <>
+                  <NotesReport
+                    reportFormData={reportFormData}
+                    responsePatientInTake={responsePatientInTake}
+                    textEditor={{
+                      breastImplant: {
+                        value: breastImplantRight,
+                        onChange: setBreastImplantRight,
+                      },
+                      breastDensityandImageRight: {
+                        value: breastDensityandImageRight,
+                        onChange: setBreastDensityandImageRight,
+                      },
+                      nippleAreolaSkinRight: {
+                        value: nippleAreolaSkinRight,
+                        onChange: setNippleAreolaSkinRight,
+                      },
+                      LesionsRight: {
+                        value: LesionsRight,
+                        onChange: setLesionsRight,
+                      },
+                      ComparisonPrior: {
+                        value: ComparisonPrior,
+                        onChange: setComparisonPrior,
+                      },
+                      grandularAndDuctalTissueRight: {
+                        value: grandularAndDuctalTissueRight,
+                        onChange: setGrandularAndDuctalTissueRight,
+                      },
+                      LymphNodesRight: {
+                        value: LymphNodesRight,
+                        onChange: setLymphNodesRight,
+                      },
+                      breastDensityandImageLeft: {
+                        value: breastDensityandImageLeft,
+                        onChange: setBreastDensityandImageLeft,
+                      },
+                      nippleAreolaSkinLeft: {
+                        value: nippleAreolaSkinLeft,
+                        onChange: setNippleAreolaSkinLeft,
+                      },
+                      LesionsLeft: {
+                        value: LesionsLeft,
+                        onChange: setLesionsLeft,
+                      },
+                      ComparisonPriorLeft: {
+                        value: ComparisonPriorLeft,
+                        onChange: setComparisonPriorLeft,
+                      },
+                      grandularAndDuctalTissueLeft: {
+                        value: grandularAndDuctalTissueLeft,
+                        onChange: setGrandularAndDuctalTissueLeft,
+                      },
+                      LymphNodesLeft: {
+                        value: LymphNodesLeft,
+                        onChange: setLymphNodesLeft,
+                      },
+                      ImpressionText: {
+                        value: mainImpressionRecommendation.impressionText,
+                        onChange: (text: string) =>
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            impressionText: text,
+                          })),
+                      },
+                      ImpressionTextRight: {
+                        value: mainImpressionRecommendation.impressionTextRight,
+                        onChange: (text: string) =>
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            impressionTextRight: text,
+                          })),
+                      },
+                      OptionalImpressionText: {
+                        value: optionalImpressionRecommendation.impressionText,
+                        onChange: (text: string) =>
+                          setOptionalImpressionRecommendation((prev) => ({
+                            ...prev,
+                            impressionText: text,
+                          })),
+                      },
+                      OptionalImpressionTextRight: {
+                        value:
+                          optionalImpressionRecommendation.impressionTextRight,
+                        onChange: (text: string) =>
+                          setOptionalImpressionRecommendation((prev) => ({
+                            ...prev,
+                            impressionTextRight: text,
+                          })),
+                      },
+                      RecommendationText: {
+                        value: mainImpressionRecommendation.recommendationText,
+                        onChange: (text: string) =>
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            recommendationText: text,
+                          })),
+                      },
+                      RecommendationTextRight: {
+                        value:
+                          mainImpressionRecommendation.recommendationTextRight,
+                        onChange: (text: string) =>
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            recommendationTextRight: text,
+                          })),
+                      },
+                      OptionalRecommendationText: {
+                        value:
+                          optionalImpressionRecommendation.recommendationText,
+                        onChange: (text: string) =>
+                          setOptionalImpressionRecommendation((prev) => ({
+                            ...prev,
+                            recommendationText: text,
+                          })),
+                      },
+                      OptionalRecommendationTextRight: {
+                        value:
+                          optionalImpressionRecommendation.recommendationTextRight,
+                        onChange: (text: string) =>
+                          setOptionalImpressionRecommendation((prev) => ({
+                            ...prev,
+                            recommendationTextRight: text,
+                          })),
+                      },
+                      CommonImpresRecommText: {
+                        value: commonImpressRecomm.text,
+                        onChange: (text: string) =>
+                          setCommonImpressRecomm((prev) => ({
+                            ...prev,
+                            text: text,
+                          })),
+                      },
+                      CommonImpresRecommTextRight: {
+                        value: commonImpressRecomm.textRight,
+                        onChange: (text: string) =>
+                          setCommonImpressRecomm((prev) => ({
+                            ...prev,
+                            text: text,
+                          })),
+                      },
+                    }}
+                    syncStatus={syncStatus}
+                    setsyncStatus={setsyncStatus}
+                    Notes={Notes}
+                    setNotes={setNotes}
+                    name={getAnswer(1)}
+                    gender={getAnswer(6) === "female" ? "F" : getAnswer(5)}
+                    age={getAnswer(5)}
+                    studyTime={getAnswer(2)}
+                    ScancenterAddress={ScanCenterAddress}
+                    AppointmentDate={
+                      assignData?.appointmentStatus[0]?.refAppointmentDate
+                        ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
+                        : ""
+                    }
+                    ScancenterCode={
+                      assignData?.appointmentStatus[0]?.refSCCustId || ""
+                    }
+                    //  ScancenterAddress={
+                    //   assignData?.appointmentStatus[0]?.refSCCustId || ""
+                    // }
+                    patientDetails={patientDetails}
+                    readOnly={stateData.readOnly ? true : false}
+                    patientHistory={patientHistory}
+                    ScanCenterImg={ScanCenterImg}
+                  />
+                </>
               ) : (
                 subTab === 5 && (
                   <Impression

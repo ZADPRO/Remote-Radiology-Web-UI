@@ -35,9 +35,10 @@ const BreastImplantDetails: React.FC<Props> = ({
   handleReportInputChange,
   patientFormData,
 }) => {
-
-  const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
-  const getPatientAnswer = (id: number) => patientFormData.find((q) => q.questionId === id)?.answer || "";
+  const getAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
+  const getPatientAnswer = (id: number) =>
+    patientFormData.find((q) => q.questionId === id)?.answer || "";
 
   useEffect(() => {
     if (!patientFormData || patientFormData.length === 0) return;
@@ -45,20 +46,20 @@ const BreastImplantDetails: React.FC<Props> = ({
     getAnswer(questionIds.breastImplants) === "" &&
       handleReportInputChange(questionIds.breastImplants, "Present");
 
-    getAnswer(questionIds.implantConfiguration) === "" &&
-      handleReportInputChange(
-        questionIds.implantConfiguration,
-        "Bilateral Similar"
-      );
+    // getAnswer(questionIds.implantConfiguration) === "" &&
+    //   handleReportInputChange(
+    //     questionIds.implantConfiguration,
+    //     "Bilateral Similar"
+    //   );
 
-    getAnswer(questionIds.implantPositon) === "" &&
-      handleReportInputChange(questionIds.implantPositon, "Subpectoral");
+    // getAnswer(questionIds.implantPositon) === "" &&
+    //   handleReportInputChange(questionIds.implantPositon, "Subpectoral");
 
-    getAnswer(questionIds.implantMaterial) === "" &&
-      handleReportInputChange(
-        questionIds.implantMaterial,
-        getPatientAnswer(80)
-      );
+    // getAnswer(questionIds.implantMaterial) === "" &&
+    //   handleReportInputChange(
+    //     questionIds.implantMaterial,
+    //     getPatientAnswer(80)
+    //   );
 
     getAnswer(questionIds.displacement) === "" &&
       handleReportInputChange(questionIds.displacement, "None");
@@ -78,10 +79,10 @@ const BreastImplantDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full">
-     <Label
-          className="font-semibold text-2xl flex flex-wrap lg:items-center"
-          style={{ wordSpacing: "0.2em" }}
-        >
+      <Label
+        className="font-semibold text-2xl flex flex-wrap lg:items-center"
+        style={{ wordSpacing: "0.2em" }}
+      >
         B. BREAST IMPLANT DETAILS
       </Label>
 
@@ -135,8 +136,8 @@ const BreastImplantDetails: React.FC<Props> = ({
               labelClassname="w-[12rem]"
               questionId={questionIds.implantMaterial}
               optionalInputQuestionId={questionIds.implantMaterialOther}
-                  showOptionalForValue="Other"
-                  optionalInputWidth="w-60"
+              showOptionalForValue="Other"
+              optionalInputWidth="w-60"
               formData={reportFormData}
               handleInputChange={handleReportInputChange}
               options={[
@@ -167,10 +168,10 @@ const BreastImplantDetails: React.FC<Props> = ({
               formData={reportFormData}
               handleInputChange={handleReportInputChange}
               options={[
+                { label: "Left", value: "Left" },
+                { label: "Right", value: "Right" },
+                { label: "Both", value: "Both" },
                 { label: "None", value: "None" },
-                { label: "Mild", value: "Mild" },
-                { label: "Moderate", value: "Moderate" },
-                { label: "Severe", value: "Severe" },
               ]}
             />
 
@@ -236,7 +237,7 @@ const BreastImplantDetails: React.FC<Props> = ({
                   ]}
                   className="h-auto"
                 />
-{/* 
+                {/* 
                 <MultiRadioOptionalInputInline
                   label="2. Rupture Signs"
                   labelClassname="w-[10rem] font-normal"

@@ -81,7 +81,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                 }
               }}
             />
-            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `text-[${Props.nameLabelColor}]` : ""}`}>{Props.label}</Label>
+            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `${Props.nameLabelColor}` : ""}`}>{Props.label}</Label>
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
@@ -94,25 +94,6 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                       }
                       className="flex justify-end items-center space-x-5"
                     >
-                      {Props.label == "Deformity / Asymmetry" && (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="biggerRight"
-                            value="Right"
-                            className="custom-radio"
-                            checked={
-                              getAnswerByQuestionId(Props.biggerSide) ===
-                              "Right"
-                            }
-                            onChange={() =>
-                              Props.biggerSide &&
-                              updateAnswer(Props.biggerSide, "Right")
-                            }
-                          />
-                          <Label>Bigger Side</Label>
-                        </div>
-                      )}
                       <Label>R</Label>
 
                       <Checkbox2
@@ -133,25 +114,26 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           !["true"].includes(getAnswerByQuestionId(Props.LQID))
                         }
                       />
-                    </div>
 
-                    <div className="flex items-center w-48 space-x-2">
-                      <Label htmlFor="date" className="">
-                        Duration (Months)
-                      </Label>
-                      <Input
-                        name="date"
-                        type="number"
-                        placeholder="Months"
-                        value={getAnswerByQuestionId(Props.SDateRight)}
-                        onChange={(e) => {
-                          updateAnswer(Props.SDateRight, e.target.value);
-                        }}
-                        required={
-                          getAnswerByQuestionId(Props.RQID) == "true" &&
-                          getAnswerByQuestionId(Props.SDateRight) == ""
-                        }
-                      />
+                      {Props.label == "Deformity / Asymmetry" && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="biggerRight"
+                            value="Right"
+                            className="custom-radio"
+                            checked={
+                              getAnswerByQuestionId(Props.biggerSide) ===
+                              "Right"
+                            }
+                            onChange={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "Right")
+                            }
+                          />
+                          <Label>Bigger Side</Label>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-start gap-2">
@@ -178,6 +160,25 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           />
                         )}
                     </div>
+
+                    <div className="flex items-center w-48 space-x-2">
+                      <Label htmlFor="date" className="">
+                        Duration (Months)
+                      </Label>
+                      <Input
+                        name="date"
+                        type="number"
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDateRight)}
+                        onChange={(e) => {
+                          updateAnswer(Props.SDateRight, e.target.value);
+                        }}
+                        required={
+                          getAnswerByQuestionId(Props.RQID) == "true" &&
+                          getAnswerByQuestionId(Props.SDateRight) == ""
+                        }
+                      />
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -187,24 +188,6 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                       }
                       className="flex justify-end items-end space-x-5"
                     >
-                      {Props.label == "Deformity / Asymmetry" && (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="biggerLeft"
-                            value="Left"
-                            className="custom-radio"
-                            checked={
-                              getAnswerByQuestionId(Props.biggerSide) === "Left"
-                            }
-                            onChange={() =>
-                              Props.biggerSide &&
-                              updateAnswer(Props.biggerSide, "Left")
-                            }
-                          />
-                          <Label>Bigger Side</Label>
-                        </div>
-                      )}
                       <Label>L</Label>
 
                       <Checkbox2
@@ -225,24 +208,24 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           !["true"].includes(getAnswerByQuestionId(Props.LQID))
                         }
                       />
-                    </div>
-                    <div className="flex items-center w-48 space-x-2">
-                      <Label htmlFor="date" className="">
-                        Duration (Months)
-                      </Label>
-                      <Input
-                        name="date"
-                        type="number"
-                        placeholder="Months"
-                        value={getAnswerByQuestionId(Props.SDate)}
-                        onChange={(e) => {
-                          updateAnswer(Props.SDate, e.target.value);
-                        }}
-                        required={
-                          getAnswerByQuestionId(Props.LQID) == "true" &&
-                          getAnswerByQuestionId(Props.SDate) == ""
-                        }
-                      />
+                      {Props.label == "Deformity / Asymmetry" && (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="biggerLeft"
+                            value="Left"
+                            className="custom-radio"
+                            checked={
+                              getAnswerByQuestionId(Props.biggerSide) === "Left"
+                            }
+                            onChange={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "Left")
+                            }
+                          />
+                          <Label>Bigger Side</Label>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-start gap-2">
@@ -268,6 +251,25 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             required
                           />
                         )}
+                    </div>
+                    
+                    <div className="flex items-center w-48 space-x-2">
+                      <Label htmlFor="date" className="">
+                        Duration (Months)
+                      </Label>
+                      <Input
+                        name="date"
+                        type="number"
+                        placeholder="Months"
+                        value={getAnswerByQuestionId(Props.SDate)}
+                        onChange={(e) => {
+                          updateAnswer(Props.SDate, e.target.value);
+                        }}
+                        required={
+                          getAnswerByQuestionId(Props.LQID) == "true" &&
+                          getAnswerByQuestionId(Props.SDate) == ""
+                        }
+                      />
                     </div>
                   </div>
                 </div>

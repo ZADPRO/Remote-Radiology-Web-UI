@@ -3,9 +3,8 @@ import { ReportQuestion } from "../Report";
 import { Label } from "@/components/ui/label";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
-import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 
 interface QuestionIds {
@@ -49,7 +48,7 @@ const LymphNodesRight: React.FC<Props> = ({
         ])
       );
     getAnswer(questionIds.axillarynodes) === "" &&
-      handleReportInputChange(questionIds.axillarynodes, "Benign Morphology");
+      handleReportInputChange(questionIds.axillarynodes, "benign morphology");
     getAnswer(questionIds.ClipsPresentStatus) === "" &&
       handleReportInputChange(questionIds.ClipsPresentStatus, "Present");
   }, []);
@@ -150,7 +149,7 @@ const LymphNodesRight: React.FC<Props> = ({
                           {[
                             {
                               label: "Benign Morphology",
-                              value: "Benign Morphology",
+                              value: "benign morphology",
                             },
                             { label: "Enlarged", value: "enlarged" },
                             {
@@ -201,7 +200,7 @@ const LymphNodesRight: React.FC<Props> = ({
                           <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                             Location - Clock Position
                           </Label>
-                          <div className="w-full">
+                          <div className="w-full flex gap-3 items-center">
                             <SingleBreastPositionPicker
                               value={data.position}
                               onChange={(e) => {
@@ -214,6 +213,22 @@ const LymphNodesRight: React.FC<Props> = ({
                               }}
                               singleSelect={true}
                             />
+                            {data.position.length > 0 && (
+                                  <X
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].position = "";
+                                      handleReportInputChange(
+                                        questionIds.IntramammaryDatar,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    width={13}
+                                    height={13}
+                                    color="red"
+                                  />
+                                )}
                           </div>
                         </div>
 
@@ -233,6 +248,7 @@ const LymphNodesRight: React.FC<Props> = ({
                                 },
                                 { label: "Axial", value: "Axial" },
                                 { label: "Sagital", value: "Sagital" },
+                                { label: "Unknown", value: "unknown" },
                               ].map((item, indexVal) => (
                                 <div
                                   key={item.value}
@@ -297,6 +313,22 @@ const LymphNodesRight: React.FC<Props> = ({
                                     );
                                   }}
                                 />
+                                {data.levelpercentage.length > 0 && (
+                                  <X
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].levelpercentage = "";
+                                      handleReportInputChange(
+                                        questionIds.IntramammaryDatar,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    width={13}
+                                    height={13}
+                                    color="red"
+                                  />
+                                )}
                               </div>
                             )}
                           </div>
@@ -325,29 +357,59 @@ const LymphNodesRight: React.FC<Props> = ({
           </div>
 
           <div>
-            <MultiRadioOptionalInputInline
-              label={axilaryLabel}
-              labelClassname="w-[12rem]"
-              questionId={questionIds.axillarynodes}
-              optionalInputQuestionId={questionIds.axillarynodes}
-              showOptionalForValue="Other"
-              optionalInputWidth="w-60" // 👈 Control width of input
-              formData={reportFormData}
-              handleInputChange={handleReportInputChange}
-              options={[
-                {
-                  label: "Benign Morphology",
-                  value: "Benign Morphology",
-                },
-                { label: "Enlarged", value: "enlarged" },
-                { label: "Loss of Fatty Hilum", value: "loss of fatty hilum" },
-                {
-                  label: "Suspicious Morphology",
-                  value: "suspicious morphology",
-                },
-                { label: "Not Visualized", value: "not visualized" },
-              ]}
-            />
+            <div className="flex flex-col gap-2 min-h-[40px]">
+              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center ">
+                <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                  {axilaryLabel}
+                </Label>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    {
+                      label: "Benign Morphology",
+                      value: "benign morphology",
+                    },
+                    { label: "Enlarged", value: "enlarged" },
+                    {
+                      label: "Loss of Fatty Hilum",
+                      value: "loss of fatty hilum",
+                    },
+                    {
+                      label: "Suspicious Morphology",
+                      value: "suspicious morphology",
+                    },
+                    { label: "Not Visualized", value: "not visualized" },
+                  ].map((item, indexVal) => (
+                    <div
+                      key={item.value}
+                      className="flex items-center gap-2 min-h-[32px]"
+                    >
+                      <input
+                        type="radio"
+                        id={`Level-${questionIds.IntramammaryDatar}-${questionIds.axillarynodes}-${indexVal}`}
+                        name={`levelquestion-${questionIds.IntramammaryDatar}-${questionIds.axillarynodes}`}
+                        value={item.value}
+                        checked={
+                          getAnswer(questionIds.axillarynodes) === item.value
+                        }
+                        onChange={(e) =>
+                          handleReportInputChange(
+                            questionIds.axillarynodes,
+                            e.target.value
+                          )
+                        }
+                        required
+                        className="custom-radio"
+                      />
+                      <Label
+                        htmlFor={`Level-${questionIds.IntramammaryDatar}-${questionIds.axillarynodes}-${indexVal}`}
+                      >
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div>
@@ -433,7 +495,7 @@ const LymphNodesRight: React.FC<Props> = ({
                           <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                             Location - Clock Position
                           </Label>
-                          <div className="w-full">
+                          <div className="w-full flex gap-3 items-center">
                             <SingleBreastPositionPicker
                               value={data.position}
                               onChange={(e) => {
@@ -446,6 +508,22 @@ const LymphNodesRight: React.FC<Props> = ({
                               }}
                               singleSelect={true}
                             />
+                            {data.position.length > 0 && (
+                              <X
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  const updated = [...dataArray];
+                                  updated[index].position = "";
+                                  handleReportInputChange(
+                                    questionIds.ClipsPresentdata,
+                                    JSON.stringify(updated)
+                                  );
+                                }}
+                                width={13}
+                                height={13}
+                                color="red"
+                              />
+                            )}
                           </div>
                         </div>
 
@@ -463,6 +541,7 @@ const LymphNodesRight: React.FC<Props> = ({
                                 },
                                 { label: "Axial", value: "Axial" },
                                 { label: "Sagital", value: "Sagital" },
+                                { label: "Unknown", value: "unknown" },
                               ].map((item, indexVal) => (
                                 <div
                                   key={item.value}
@@ -527,6 +606,22 @@ const LymphNodesRight: React.FC<Props> = ({
                                     );
                                   }}
                                 />
+                                {data.levelpercentage.length > 0 && (
+                                  <X
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].levelpercentage = "";
+                                      handleReportInputChange(
+                                        questionIds.ClipsPresentdata,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    width={13}
+                                    height={13}
+                                    color="red"
+                                  />
+                                )}
                               </div>
                             )}
                           </div>

@@ -391,7 +391,7 @@ const AddTechnician: React.FC = () => {
                 <FileUploadButton
                   id="drivers-license-upload"
                   label="Upload Driver's License"
-                  isFilePresent={formData.drivers_license.length > 0}
+                  isFilePresent={formData.drivers_license?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;

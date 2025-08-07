@@ -53,13 +53,13 @@ export const PatientContext = React.createContext<PatientContextType | null>(
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 500 }, (_, index) => ({
+    Array.from({ length: 510 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
   );
 
-  // 498
+  // 506
 
   const [loading, setLoading] = useState(false);
 
@@ -126,9 +126,25 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       console.log(res);
 
       if (res.status) {
-        setFormData(res.data);
-        console.log(res.data);
-      }
+  if (controlData.apiUpdate && controlData.categoryId) {
+    console.log("Before update:", res.data);
+
+    const updatedData = res.data.map((item: any) =>
+      item.questionId === 170
+        ? { ...item, answer: String(controlData.categoryId) }
+        : item
+    );
+
+    console.log("After update:", updatedData.find((item: any) => item.questionId === 170));
+    setFormData(updatedData);
+
+  } else {
+    setFormData(res.data);
+  }
+
+  console.log("Final formData:", res.data);
+}
+
     } catch (error) {
       console.log(error);
     } finally {

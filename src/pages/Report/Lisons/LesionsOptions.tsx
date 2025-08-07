@@ -3,7 +3,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import React from "react";
 import { ReportQuestion } from "../Report";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
@@ -155,7 +155,7 @@ const LesionsOptions: React.FC<Props> = ({
                           <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                             Location - Clock Position
                           </Label>
-                          <div className="w-full">
+                          <div className="w-full flex gap-3 items-center">
                             <SingleBreastPositionPicker
                               value={data.locationclockposition}
                               onChange={(e) => {
@@ -168,6 +168,22 @@ const LesionsOptions: React.FC<Props> = ({
                               }}
                               singleSelect={true}
                             />
+                            {data.locationclockposition.length > 0 && (
+                              <X
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  const updated = [...dataArray];
+                                  updated[index].locationclockposition = "";
+                                  handleReportInputChange(
+                                    DataQId,
+                                    JSON.stringify(updated)
+                                  );
+                                }}
+                                width={13}
+                                height={13}
+                                color="red"
+                              />
+                            )}
                           </div>
                         </div>
 
@@ -177,38 +193,41 @@ const LesionsOptions: React.FC<Props> = ({
                             <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                               Location - Level
                             </Label>
-                            <div className="flex flex-wrap gap-3">
-                              {["Coronal Level", "Axial", "Sagital", "Unknown"].map(
-                                (level, i) => (
-                                  <div
-                                    key={level}
-                                    className="flex items-center gap-2"
+                            <div className="flex flex-wrap items-center gap-3">
+                              {[
+                                "Coronal Level",
+                                "Axial",
+                                "Sagital",
+                                "Unknown",
+                              ].map((level, i) => (
+                                <div
+                                  key={level}
+                                  className="flex items-center gap-2"
+                                >
+                                  <input
+                                    type="radio"
+                                    id={`Level-${mainQId}-${index}-${i}`}
+                                    name={`levelquestion-${mainQId}-${index}`}
+                                    value={level}
+                                    checked={data.locationLevel === level}
+                                    onChange={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].locationLevel = level;
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    required
+                                    className="custom-radio"
+                                  />
+                                  <Label
+                                    htmlFor={`Level-${mainQId}-${index}-${i}`}
                                   >
-                                    <input
-                                      type="radio"
-                                      id={`Level-${mainQId}-${index}-${i}`}
-                                      name={`levelquestion-${mainQId}-${index}`}
-                                      value={level}
-                                      checked={data.locationLevel === level}
-                                      onChange={() => {
-                                        const updated = [...dataArray];
-                                        updated[index].locationLevel = level;
-                                        handleReportInputChange(
-                                          DataQId,
-                                          JSON.stringify(updated)
-                                        );
-                                      }}
-                                      required
-                                      className="custom-radio"
-                                    />
-                                    <Label
-                                      htmlFor={`Level-${mainQId}-${index}-${i}`}
-                                    >
-                                      {level}
-                                    </Label>
-                                  </div>
-                                )
-                              )}
+                                    {level}
+                                  </Label>
+                                </div>
+                              ))}
                             </div>
                           </div>
                           {["Sagital", "Axial", "Coronal Level"].includes(
@@ -242,6 +261,22 @@ const LesionsOptions: React.FC<Props> = ({
                                   );
                                 }}
                               />
+                              {data.locationLevelPercentage.length > 0 && (
+                                <X
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    const updated = [...dataArray];
+                                    updated[index].locationLevelPercentage = "";
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  width={13}
+                                  height={13}
+                                  color="red"
+                                />
+                              )}
                             </div>
                           )}
                         </div>
@@ -318,35 +353,38 @@ const LesionsOptions: React.FC<Props> = ({
                             Shape
                           </Label>
                           <div className="flex flex-wrap gap-3">
-                            {["Round", "Oval", "Irregular", "Unknown"].map((shape, i) => (
-                              <div
-                                key={shape}
-                                className="flex items-center gap-2"
-                              >
-                                <input
-                                  type="radio"
-                                  id={`Shape-${mainQId}-${index}-${i}`}
-                                  name={`shapequestion-${mainQId}-${index}`}
-                                  value={shape.toLowerCase()}
-                                  checked={data.Shape === shape.toLowerCase()}
-                                  onChange={() => {
-                                    const updated = [...dataArray];
-                                    updated[index].Shape = shape.toLowerCase();
-                                    handleReportInputChange(
-                                      DataQId,
-                                      JSON.stringify(updated)
-                                    );
-                                  }}
-                                  required
-                                  className="custom-radio"
-                                />
-                                <Label
-                                  htmlFor={`Shape-${mainQId}-${index}-${i}`}
+                            {["Round", "Oval", "Irregular", "Unknown"].map(
+                              (shape, i) => (
+                                <div
+                                  key={shape}
+                                  className="flex items-center gap-2"
                                 >
-                                  {shape}
-                                </Label>
-                              </div>
-                            ))}
+                                  <input
+                                    type="radio"
+                                    id={`Shape-${mainQId}-${index}-${i}`}
+                                    name={`shapequestion-${mainQId}-${index}`}
+                                    value={shape.toLowerCase()}
+                                    checked={data.Shape === shape.toLowerCase()}
+                                    onChange={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].Shape =
+                                        shape.toLowerCase();
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    required
+                                    className="custom-radio"
+                                  />
+                                  <Label
+                                    htmlFor={`Shape-${mainQId}-${index}-${i}`}
+                                  >
+                                    {shape}
+                                  </Label>
+                                </div>
+                              )
+                            )}
                           </div>
                         </div>
 
@@ -359,7 +397,7 @@ const LesionsOptions: React.FC<Props> = ({
                             {[
                               { label: "Heterogenous", value: "heterogenous" },
                               { label: "Homogenous", value: "homogenous" },
-                              { label: "Unknown", value: "unknown"}
+                              { label: "Unknown", value: "unknown" },
                             ].map((item, i) => (
                               <div
                                 key={item.value}
@@ -393,7 +431,7 @@ const LesionsOptions: React.FC<Props> = ({
                         </div>
 
                         {/* 7. Margins */}
-                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                        <div className="flex flex-col mt-3 mb-6 lg:flex-row gap-4 lg:items-center">
                           <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                             Margins
                           </Label>
@@ -406,7 +444,7 @@ const LesionsOptions: React.FC<Props> = ({
                               "Spiculated",
                               "Angular",
                               "Irregular",
-                              "Unknown"
+                              "Unknown",
                             ].map((m, i) => (
                               <div key={m} className="flex items-center gap-2">
                                 <input
@@ -445,9 +483,11 @@ const LesionsOptions: React.FC<Props> = ({
                             {[
                               "Hypoechoic",
                               "Isoechoic",
-                              "Hyperechoic",
-                              "Complex",
-                              "Unknown"
+                              "Anechoic",
+                              "Mixed",
+                              // "Hyperechoic",
+                              // "Complex",
+                              "Unknown",
                             ].map((d, i) => (
                               <div key={d} className="flex items-center gap-2">
                                 <input
@@ -511,7 +551,6 @@ const LesionsOptions: React.FC<Props> = ({
                             {[
                               { label: "Present", value: "present" },
                               { label: "Not present", value: "not present" },
-                              { label: "Unknown", value: "unknown"}
                             ].map((item, i) => (
                               <div
                                 key={item.value}

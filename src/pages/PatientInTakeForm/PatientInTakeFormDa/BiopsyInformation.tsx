@@ -59,7 +59,7 @@ const BiopsyInformation: React.FC<Props> = ({
             {/* B. If yes, date of biopsy */}
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
               <Label className="font-semibold text-base">
-                B. If yes, date of biopsy
+                B. If yes, date of biopsy <span className="text-red-500">*</span>
               </Label>
               {/* <Input
                                     className="w-64"
@@ -110,6 +110,7 @@ const BiopsyInformation: React.FC<Props> = ({
                 },
                 { label: "Unknown", value: "Unknown" },
               ]}
+              required
             />
 
             {/* D. Guidance method */}
@@ -126,12 +127,13 @@ const BiopsyInformation: React.FC<Props> = ({
                 { label: "Palpation-guided", value: "Palpation-guided" },
                 { label: "Unknown", value: "Unknown" },
               ]}
+              required
             />
 
             {/*E. Biopsy results*/}
             <div className="flex -mt-2 flex-col gap-4">
-              <Label className="font-bold text-base">E. Biopsy results</Label>
-              <div className="flex flex-col gap-5">
+              <Label className="font-bold text-base">E. Biopsy results <span className="text-red-500">*</span></Label>
+              <div className="flex flex-col">
                 {[
                   "Benign",
                   "Atypical",
@@ -142,7 +144,7 @@ const BiopsyInformation: React.FC<Props> = ({
                 ].map((option) => (
                   <div
                     key={option}
-                    className="ml-4 flex items-start flex-col lg:flex-row h-[auto] lg:h-[20px]"
+                    className="ml-4 flex items-start gap-2 lg:items-center flex-col lg:flex-row h-[auto] lg:min-h-[40px]"
                   >
                     <div className="flex space-x-2 ">
                       <input
@@ -155,6 +157,7 @@ const BiopsyInformation: React.FC<Props> = ({
                         }
                         className="custom-radio"
                         id={option === "Other" ? "SupportOther" : option}
+                        required
                       />
                       <Label
                         htmlFor={option === "Other" ? "SupportOther" : option}
@@ -176,7 +179,7 @@ const BiopsyInformation: React.FC<Props> = ({
                             }
                             required
                             placeholder="Specify"
-                            className="w-64 text-sm mt-3 lg:mt-0"
+                            className="w-64 text-sm"
                           />
                         )
                       : option === "Atypical"
@@ -192,7 +195,7 @@ const BiopsyInformation: React.FC<Props> = ({
                             }
                             required
                             placeholder="Specify"
-                            className="w-64 text-sm mt-3 lg:mt-0"
+                            className="w-64 text-sm"
                           />
                         )
                       : option === "High-risk lesion" &&
@@ -209,7 +212,7 @@ const BiopsyInformation: React.FC<Props> = ({
                             }
                             required
                             placeholder="Specify"
-                            className="w-64 text-sm mt-3 lg:mt-0"
+                            className="w-64 text-sm"
                           />
                         )}
                   </div>

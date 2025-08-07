@@ -27,16 +27,23 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
   handleReportInputChange,
   label,
 }) => {
-
-  const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
+  const getAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
 
   useEffect(() => {
     if (!reportFormData || reportFormData.length === 0) return;
-    getAnswer(questionIds.breastSelect) === "" && handleReportInputChange(questionIds.breastSelect, "Present");
-    getAnswer(questionIds.imageQuality) === "" && handleReportInputChange(questionIds.imageQuality, "Acceptable");
-    getAnswer(questionIds.breastDensity) === "" && handleReportInputChange(questionIds.breastDensity, "Heterogeneously Dense");
-    getAnswer(questionIds.symmetry) === "" && handleReportInputChange(questionIds.symmetry, "Symmetry");
-  }, [])
+    getAnswer(questionIds.breastSelect) === "" &&
+      handleReportInputChange(questionIds.breastSelect, "Present");
+    getAnswer(questionIds.imageQuality) === "" &&
+      handleReportInputChange(questionIds.imageQuality, "Acceptable");
+    getAnswer(questionIds.breastDensity) === "" &&
+      handleReportInputChange(
+        questionIds.breastDensity,
+        "Heterogeneously Dense"
+      );
+    getAnswer(questionIds.symmetry) === "" &&
+      handleReportInputChange(questionIds.symmetry, "Symmetry");
+  }, []);
 
   return (
     <div className="w-full">
@@ -70,13 +77,13 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
             options={[
-              { label: "Mostly Fatty", value: "Mostly Fatty" },
-              { label: "Scattered Density", value: "Scattered Density" },
+              { label: "MF", value: "Mostly Fatty" },
+              { label: "SD", value: "Scattered Density" },
               {
-                label: "Heterogeneously Dense",
+                label: "HD",
                 value: "Heterogeneously Dense",
               },
-              { label: "Very Dense", value: "Very Dense" },
+              { label: "VD", value: "Very Dense" },
             ]}
           />
 
@@ -86,7 +93,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             </Label>
             <GridNumberSelectorPopover
               questionId={questionIds.fibroglandularVolume}
-                value={getAnswer(questionIds.fibroglandularVolume)} // <- from saved data
+              value={getAnswer(questionIds.fibroglandularVolume)} // <- from saved data
               handleInputChange={handleReportInputChange}
             />
           </div>
@@ -114,7 +121,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             handleInputChange={handleReportInputChange}
             options={[
               { label: "Acceptable", value: "Acceptable" },
-              { label: "Poor", value: "Poor" },
+              { label: "Suboptimal", value: "Suboptimal" },
             ]}
           />
 

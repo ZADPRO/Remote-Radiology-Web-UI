@@ -32,6 +32,8 @@ export function LymphNodesGenerateString(
     }
     else if(level == "Sagital") {
         return "M"
+    }else{
+      return ""
     }
   };
 
@@ -46,7 +48,7 @@ export function LymphNodesGenerateString(
       }[];
 
       const sentences = intramammaryList.map((entry) =>
-        `There is ${entry.locationLevel} intramammary lymph node identified located ${entry.position}'o clock at ${entry.level.toLocaleLowerCase()} ${levelState(entry.level)}-${entry.levelpercentage}.`
+        `There is ${entry.locationLevel || ""} intramammary lymph node identified${entry.position ? `${entry.position === "0" ? " at the nipple" : " at the "+entry.position+"'o Clock"}` : ""}${entry.level && entry.level !== "unknown" ? ` on the ${entry.level.toLowerCase()}, ${levelState(entry.level).toUpperCase()}${entry.levelpercentage}` : ``}.`
       );
 
       result += sentences.join(" ") + " ";
@@ -56,19 +58,21 @@ export function LymphNodesGenerateString(
   }
 
   // --- Axillary Nodes
-  result += `The ${directionText.toLowerCase()} axillary nodes appear ${axillarynodes.toLowerCase()}. `;
+  result += `The ${directionText.toLowerCase()} axillary nodes appear ${axillarynodes}. `;
 
   // --- Clips
   if (clips.length > 0) {
+
+    console.log(clipsDataRaw)
     try {
-      const clipsList = JSON.parse(clipsDataRaw) as {
+      const clipsList = clipsDataRaw ? JSON.parse(clipsDataRaw) as {
         position: string;
         level: string;
         levelpercentage?: string;
-      }[];
+      }[] : [];
 
       const clipSentences = clipsList.map((clip) =>
-        `Clips are ${clips.toLowerCase()} within the examined breast tissue ${clip.position}'o clock located at ${clip.level} ${levelState(clip.level)}-${clip.levelpercentage}.`
+        `Clips are ${clips.toLowerCase()} within the examined breast tissue${clip.position ? `${clip.position === "0" ? " nipple" : " "+clip.position + "'o clock"}` : ``}${clip.level && clip.level !== "unknown" ? ` located at ${clip.level.toLocaleLowerCase()} ${levelState(clip.level).toUpperCase()}${clip.levelpercentage}` : ``}.`
       );
 
       result += clipSentences.join(" ");
@@ -76,8 +80,6 @@ export function LymphNodesGenerateString(
       console.error("Invalid JSON for ClipsPresentdata", e);
     }
   }
-
-  console.log("Eee", clipsDataRaw)
 
   return result.trim();
 }

@@ -196,7 +196,6 @@ export function DbFormReportGenerator(
  
     //Procedure
     const Procedure = `
-    <br/>
     <p>
     Procedure ${surgery}
     ${Neoadjuvant}
@@ -206,10 +205,10 @@ export function DbFormReportGenerator(
  
     // Final Report
     let reportText = `
-  ${getPatientAnswer(469) === "true" ? rightForm : ""}
-  ${(getPatientAnswer(469) === "true" && getPatientAnswer(260) === "true") ? "<br/>" : ""}
+  <br/><p>Biopsy/cancer diagnosis on ${getPatientAnswer(254)}</p>
+   ${getPatientAnswer(469) === "true" ? rightForm : ""}
+  ${(getPatientAnswer(469) === "true" && getPatientAnswer(260) === "true") ? "" : ""}
   ${getPatientAnswer(260) === "true" ? leftForm : ""}
-  <br/><p>Diagnosed on ${getPatientAnswer(254)}</p>
   ${getPatientAnswer(275) === "Yes" ? "<br/>" + receptorstatus : ""}
   ${getPatientAnswer(284) === "Not Applicable" &&
             getPatientAnswer(296) === "Not Applicable" &&

@@ -10,6 +10,7 @@ interface QuestionIds {
   calcifiedScarList: number;
   ductalProminence: number;
   ductalProminenceList: number;
+  grandularAndDuctalTissue: number;
 }
 
 export function generateGrandularAndDuctalTissueReport(
@@ -18,6 +19,8 @@ export function generateGrandularAndDuctalTissueReport(
 ): string {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
+
+  const glandularandductal = getAnswer(questionIds.grandularAndDuctalTissue);
 
   const benignMicroCysts = getAnswer(questionIds.benignMicroCysts);
   const benignCapsular = getAnswer(questionIds.benignCapsular);
@@ -52,33 +55,36 @@ export function generateGrandularAndDuctalTissueReport(
     ductalList[0]?.level ||
     "";
 
+    //glandularandductal
+    const glandularandductaltext = (glandularandductal === "Normal") ? "<p>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.</p>" : "";
+
   // 1. Benign Findings
   const benignFindings: string[] = [];
   if (benignMicroCysts === "Present")
     benignFindings.push("benign microcysts");
   if (benignCapsular === "Present")
-    benignFindings.push("benign capsular microcalcification");
+    benignFindings.push("benign capsular microcalcifications");
   if (benignFibronodular === "Present")
-    benignFindings.push("benign fibronodular density");
+    benignFindings.push("benign fibronodular densities");
 
   const benignText =
     benignFindings.length > 0
       ? `There are multiple ${benignFindings
-          .join(", ")
-          .toLocaleLowerCase()} noted. Otherwise, the breast tissue appears normal.`
+        .join(", ")
+        .toLocaleLowerCase()} noted. Otherwise, the breast tissue appears normal.`
       : "The breast tissue appears unremarkable.";
 
   // 2. Macrocalcifications
   const macroText = generateCalcificationText(
     macroList,
-    "macrocalcification",
+    "calcification",
     true
   );
 
   // 3. Microcalcifications
   const microText = generateCalcificationText(
     microList,
-    "microcalcification",
+    "calcification",
     true
   );
 
@@ -91,17 +97,17 @@ export function generateGrandularAndDuctalTissueReport(
   // 5. Ductal Prominence
   const ductalText =
     ductalProminence === "Present" && ductalList.length > 0
-      ? `There is ductal prominence ${ductalList
-          .map((d) => d.type)
-          .join(" and ")
-          .toLocaleLowerCase()} noted at ${
-          clock && level
-            ? `${clock} o'clock in coronal location P${level}.`
-            : ""
-        }`
+      ? `There is ductal prominence with ${ductalList
+        .map((d) => d.type)
+        .join(" and ")
+        .toLocaleLowerCase()} noted at ${clock && level
+        ? `${clock} o'clock in coronal location P${level}.`
+        : ""
+      }`
       : "";
 
   return `
+  ${glandularandductaltext}
     <p><b>Benign Findings</b></p>
     <p>${benignText}</p>
 ${macroText && `<p><b>Calcifications</b></p>`}
@@ -117,6 +123,7 @@ function generateCalcificationText(
   label: string,
   showDistribution: boolean
 ): string {
+
   if (!list.length) return "";
 
   return list
@@ -128,7 +135,7 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There is ${type.toLowerCase()} ${label} noted `;
+      const base = `There is ${type.toLowerCase() === "other" ? item.otherText: type.toLowerCase()} ${label} noted `;
       const distText =
         showDistribution && distribution
           ? `with ${distribution.toLowerCase()} distribution`

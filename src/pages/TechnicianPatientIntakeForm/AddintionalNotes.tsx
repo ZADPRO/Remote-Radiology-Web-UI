@@ -102,21 +102,25 @@ const AddintionalNotes: React.FC<Props> = ({
                   id: "1",
                   label:
                     "S. Breast QT Screening Form (First-time or Annual checkup – No Abnormal Findings)",
+                  color: "#741b47"  // Dark magenta
                 },
                 {
                   id: "2",
                   label:
                     "Da. Breast QT Diagnostic Evaluation Form (Abnormal result from a previous scan / abnormal symptoms)",
+                  color: "#366091" // dark blue
                 },
                 {
                   id: "3",
                   label:
                     "Db. Breast QT Diagnostic Health Form (Biopsy proven DCIS/Cancer Diagnosis)",
+                  color: "#4f6228", // green
                 },
                 {
                   id: "4",
                   label:
                     "Dc. Breast QT Diagnostic Follow-up Form (Previous QT Comparison)",
+                  color: "#984806", // dark orange
                 },
               ].map((item) => {
                 const isSelected =
@@ -130,8 +134,9 @@ const AddintionalNotes: React.FC<Props> = ({
                 return (
                   <label
                     key={item.id}
+                     style={{color: item.color}}
                     className={cn(
-                      "flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm sm:text-base p-1 rounded-md w-full",
+                      "flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm sm:text-base font-semibold p-1 rounded-md w-full",
                       isSelected && isDisabled
                         ? "bg-[#f0fdf4] border border-green-400"
                         : ""

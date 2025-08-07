@@ -32,7 +32,6 @@ const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
   const signatureRow = `<br/><h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>${
                       user?.refUserFirstName
                     },</strong></h3><h3 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h3>`;
-console.log(patientConsent + signatureRow);
 
   const listConsent = async () => {
     setLoading(true);

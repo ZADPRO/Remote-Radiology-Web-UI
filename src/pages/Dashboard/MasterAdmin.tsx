@@ -15,7 +15,6 @@ import { useAuth } from "../Routes/AuthContext";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import RadiologistProfile from "../Profile/RadiologistProfile";
@@ -28,18 +27,10 @@ import WellthGreenAdminProfile from "../Profile/WellthGreenAdminProfile";
 import dashboard from "../../assets/Administration/Dashboard.png";
 import medicalHistory from "../../assets/Administration/MedicalHistory.png";
 import PatientBrochure from "../../assets/Administration/PatientBrochure.png";
-import Brochure from "./Brochure";
-import Disclaimer from "./Disclaimer";
-import GeneralGuidelines from "./GeneralGuidelines";
-import UserConsent from "../Consent/UserConsent";
-import logoNew from "../../assets/LogoNew.png";
 import PatientProfile from "../Profile/PatientProfile";
 import WGPerformingProvider from "../Profile/WGPerformingProvider";
-// import {
-//   HiChartPie,
-//   HiUser,
-//   HiShoppingBag,
-// } from "react-icons/hi";
+import PatientInformation from "./PatientBrouchure/PatientInformation";
+import ConsentForm from "./ConsentForm/ConsentForm";
 
 const MasterAdmin: React.FC = () => {
   const navigate = useNavigate();
@@ -197,7 +188,7 @@ const MasterAdmin: React.FC = () => {
       },
       {
         label: "Patient Info",
-        path: "/patient/dashboard",
+        path: "/patient/myCare",
         icon: <img src={PatientBrochure} className="w-5 h-5" />,
       },
     ],
@@ -322,46 +313,7 @@ const MasterAdmin: React.FC = () => {
                         setBrochureMobileMenu(false);
                         setBrochureMenuopen(true);
                         setActiveDialogContent(
-                          <DialogContent
-                            style={{
-                              background:
-                                "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-                            }}
-                            className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-                          >
-                            <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                              {/* Logo (Left) */}
-                              <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                                <img
-                                  src={logoNew}
-                                  alt="logo"
-                                  className="w-full h-full object-contain"
-                                />
-                              </div>
-
-                              {/* Centered Content */}
-                              <div className="flex-1 text-center">
-                                <h2 className="text-2xl font-semibold">
-                                  Brochure
-                                </h2>
-                                <p className="text-sm text-gray-600 max-w-md mx-auto">
-                                  EaseQT Platform
-                                </p>
-                              </div>
-
-                              {/* Spacer to balance logo width */}
-                              <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-                            </DialogHeader>
-                            <Brochure />
-                            <h2 className="text-2xl text-center my-3 font-semibold">
-                              General Guidelines
-                            </h2>
-                            <GeneralGuidelines />
-                            <h2 className="text-2xl text-center my-3 font-semibold">
-                              Disclaimer
-                            </h2>
-                            <Disclaimer />
-                          </DialogContent>
+                          <PatientInformation scId={user?.refSCId} />
                         );
                       }}
                     >
@@ -393,39 +345,7 @@ const MasterAdmin: React.FC = () => {
                         setBrochureMobileMenu(false);
                         setBrochureMenuopen(true);
                         setActiveDialogContent(
-                          <DialogContent
-                            style={{
-                              background:
-                                "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-                            }}
-                            className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-                          >
-                            <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                              {/* Logo (Left) */}
-                              <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                                <img
-                                  src={logoNew}
-                                  alt="logo"
-                                  className="w-full h-full object-contain"
-                                />
-                              </div>
-
-                              {/* Centered Content */}
-                              <div className="flex-1 text-center">
-                                <h2 className="text-2xl font-semibold">
-                                  User Consent Form
-                                </h2>
-                                <p className="text-sm text-gray-600 max-w-md mx-auto">
-                                  EaseQT Platform
-                                </p>
-                              </div>
-
-                              {/* Spacer to balance logo width */}
-                              <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-                            </DialogHeader>
-
-                            <UserConsent viewOnly />
-                          </DialogContent>
+                          <ConsentForm scId={user?.refSCId} />
                         );
                       }}
                     >
@@ -499,46 +419,7 @@ const MasterAdmin: React.FC = () => {
                             setBrochureMenu(false);
                             setBrochureMenuopen(true);
                             setActiveDialogContent(
-                              <DialogContent
-                                style={{
-                                  background:
-                                    "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-                                }}
-                                className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-                              >
-                                <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                                  {/* Logo (Left) */}
-                                  <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                                    <img
-                                      src={logoNew}
-                                      alt="logo"
-                                      className="w-full h-full object-contain"
-                                    />
-                                  </div>
-
-                                  {/* Centered Content */}
-                                  <div className="flex-1 text-center">
-                                    <h2 className="text-2xl font-semibold">
-                                      Brochure
-                                    </h2>
-                                    <p className="text-sm text-gray-600 max-w-md mx-auto">
-                                      EaseQT Platform
-                                    </p>
-                                  </div>
-
-                                  {/* Spacer to balance logo width */}
-                                  <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-                                </DialogHeader>
-                                <Brochure />
-                                <h2 className="text-2xl text-center my-3 font-semibold">
-                                  General Guidelines
-                                </h2>
-                                <GeneralGuidelines />
-                                <h2 className="text-2xl text-center my-3 font-semibold">
-                                  Disclaimer
-                                </h2>
-                                <Disclaimer />
-                              </DialogContent>
+                              <PatientInformation scId={user?.refSCId} />
                             );
                           }}
                         >
@@ -570,39 +451,7 @@ const MasterAdmin: React.FC = () => {
                             setBrochureMenu(false);
                             setBrochureMenuopen(true);
                             setActiveDialogContent(
-                              <DialogContent
-                                style={{
-                                  background:
-                                    "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-                                }}
-                                className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-                              >
-                                <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-                                  {/* Logo (Left) */}
-                                  <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-                                    <img
-                                      src={logoNew}
-                                      alt="logo"
-                                      className="w-full h-full object-contain"
-                                    />
-                                  </div>
-
-                                  {/* Centered Content */}
-                                  <div className="flex-1 text-center">
-                                    <h2 className="text-2xl font-semibold">
-                                      User Consent Form
-                                    </h2>
-                                    <p className="text-sm text-gray-600 max-w-md mx-auto">
-                                      EaseQT Platform
-                                    </p>
-                                  </div>
-
-                                  {/* Spacer to balance logo width */}
-                                  <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-                                </DialogHeader>
-
-                                <UserConsent viewOnly />
-                              </DialogContent>
+                              <ConsentForm scId={user?.refSCId} />
                             );
                           }}
                         >
@@ -691,8 +540,10 @@ const MasterAdmin: React.FC = () => {
                         ? "WellthGreen Scribe"
                         : user?.refRTId === 8
                         ? "Scan Center Co-Reporting Doctor"
-                        : user?.refRTId === 9 ? "WellthGreen Manager" : 
-                        user?.refRTId === 10 && "WellthGreen Performing Provider"}
+                        : user?.refRTId === 9
+                        ? "WellthGreen Manager"
+                        : user?.refRTId === 10 &&
+                          "WellthGreen Performing Provider"}
                     </span>
                   </div>
                 </div>

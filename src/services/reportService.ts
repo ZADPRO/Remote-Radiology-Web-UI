@@ -15,12 +15,18 @@ export interface AppointmentStatus {
   refSCCustId: string;
   refSCId: number;
   refSCName: string;
+  refSCAddress: string;
   refUserId: number;
   refAppointmentImpression: string;
   refAppointmentRecommendation: string;
   refAppointmentImpressionAdditional: string;
   refAppointmentRecommendationAdditional: string;
   refAppointmentCommonImpressionRecommendation: string;
+  refAppointmentImpressionRight: string;
+  refAppointmentRecommendationRight: string;
+  refAppointmentImpressionAdditionalRight: string;
+  refAppointmentRecommendationAdditionalRight: string;
+  refAppointmentCommonImpressionRecommendationRight: string;
 }
 
 export interface ReportHistoryData {
@@ -134,7 +140,7 @@ export const reportService = {
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    console.log(decryptedData);
+    console.log(decryptedData+"________________________________???");
     return decryptedData;
   },
 
@@ -182,7 +188,7 @@ export const reportService = {
     return decryptedData;
   },
 
-   getPatientReport: async (appintmentId: number[]) => {
+  getPatientReport: async (appintmentId: number[]) => {
     const token = localStorage.getItem("token");
     console.log(appintmentId);
     const payload = encrypt({ appintmentId }, token);
@@ -224,7 +230,7 @@ export const reportService = {
       }
     );
     const decryptedData: {
-      data: {refAppointmentConsent: string, refAppointmentId: number}[],
+      data: { refAppointmentConsent: string, refAppointmentId: number }[],
       status: boolean;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);

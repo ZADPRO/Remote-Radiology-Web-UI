@@ -17,6 +17,10 @@ interface QuestionIds {
   HypertrophicDatar: number;
   Otherstr: number;
   OtherDatar: number;
+  fibronodulardensitystr: number;
+  fibronodulardensityDatar: number;
+  multipleCystsstr: number;
+  multipleCystsDatar: number;
 }
 
 interface Props {
@@ -99,6 +103,22 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Hypertrophic Tissue with Microcysts"}
             mainQId={questionIds.Hypertrophicstr}
             DataQId={questionIds.HypertrophicDatar}
+          />
+
+          <LesionsOptions
+            reportFormData={reportFormData}
+            handleReportInputChange={handleReportInputChange}
+            LabelVal={"Fibronodular Density"}
+            mainQId={questionIds.fibronodulardensitystr}
+            DataQId={questionIds.fibronodulardensityDatar}
+          />
+
+          <LesionsOptions
+            reportFormData={reportFormData}
+            handleReportInputChange={handleReportInputChange}
+            LabelVal={"Multiple Cysts"}
+            mainQId={questionIds.multipleCystsstr}
+            DataQId={questionIds.multipleCystsDatar}
           />
 
           {/* <LesionsOptionsOther

@@ -152,7 +152,7 @@ const NippleAreolaSkin: React.FC<Props> = ({
                 label: "Normal",
                 value: "Normal",
               },
-              { label: "Abnormal", value: "Abnormal" },
+              { label: "Architectural Distortion", value: "Architectural Distortion" },
               { label: "Other", value: "Other" },
             ]}
           />

@@ -118,6 +118,7 @@ const BreastBiopsy: React.FC<Props> = ({
             }
             className="custom-radio"
             disabled={!isEditable}
+            required
           />
           <Label htmlFor={`${name}-${value.toLowerCase()}`}>{value}</Label>
         </div>
@@ -138,6 +139,7 @@ const BreastBiopsy: React.FC<Props> = ({
           )
         }
         disabled={!isEditable}
+        required={getPatientAnswer(434) != "true" && getPatientAnswer(435) != "true"}
       />
       <div className="text-sm sm:text-base font-medium">{label}</div>
     </div>
@@ -303,6 +305,7 @@ const BreastBiopsy: React.FC<Props> = ({
                           value: "Malignant",
                         },
                       ]}
+                      required
                     />
                   )}
                 </div>
@@ -355,6 +358,7 @@ const BreastBiopsy: React.FC<Props> = ({
                         handleFileChange(e, 165);
                       }}
                       // disabled={editStatus}
+                      required
                     />
                     Upload File
                   </label>

@@ -65,10 +65,10 @@ const FutureMonitoring: React.FC<Props> = ({
           />
         </div>
 
-        <div className="ml-4 relative">
+        <div className="relative">
           {/* B.Under care of specialist */}
           <TwoOptionRadioGroup
-            label="B.Under care of specialist"
+            label="B. Under care of specialist"
             questionId={questionIds.Undercare}
             formData={formData}
             handleInputChange={handleInputChange}

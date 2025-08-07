@@ -9,42 +9,49 @@ import { downloadDocumentFile } from "@/lib/commonUtlis";
 
 interface QuestionIds {
   thermogramYesNo: number;
+  thermogramDateKnown: number;
   thermogramDate: number;
   thermogramResult: number;
   thermogramReportAvailable: number;
   thermogramReportDetails: number;
 
   mammogramYesNo: number;
+  mammogramDateKnown: number;
   mammogramDate: number;
   mammogramResult: number;
   mammogramReportAvailable: number;
   mammogramReportDetails: number;
 
   breastUltrasoundYesNo: number;
+  breastUltrasoundDateKnown: number;
   breastUltrasoundDate: number;
   breastUltrasoundResult: number;
   breastUltrasoundReportAvailable: number;
   breastUltrasoundReportDetails: number;
 
   breastMRIYesNo: number;
+  breastMRIDateKnown: number;
   breastMRIDate: number;
   breastMRIResult: number;
   breastMRIReportAvailable: number;
   breastMRIReportDetails: number;
 
   petctYesNo: number;
+  petctDateKnown: number;
   petctDate: number;
   petctResult: number;
   petctReportAvailable: number;
   petctReportDetails: number;
 
   qtImagingYesNo: number;
+  qtimageDateKnown: number;
   qtimageDate: number;
   qtimageResult: number;
   qtimageReportAvailable: number;
   qtimageReportDetails: number;
 
   otherImagingYesNo: number;
+  otherImagingDateKnown: number;
   otherImagingDate: number;
   otherImagingResult: number;
   otherImagingReportAvailable: number;
@@ -64,6 +71,7 @@ interface ImagingSectionProps {
   label: string;
   idPrefix: string;
   yesNoId: number;
+  dateKnownId: number;
   dateId: number;
   resultId: number;
   reportAvailableId: number;
@@ -76,6 +84,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
   label,
   idPrefix,
   yesNoId,
+  dateKnownId,
   dateId,
   resultId,
   reportAvailableId,
@@ -123,7 +132,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
       </p>
 
       {/* First line: YES/NO + DATE + RESULT */}
-      <div className="flex flex-wrap items-center gap-6">
+      <div className="flex flex-col items-start gap-6">
         {/* YES/NO */}
         <div className="flex items-center gap-4">
           {["No", "Yes"].map((val) => (
@@ -142,32 +151,10 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
           ))}
         </div>
 
-        {/* Date */}
-        {showDetails && (
-          <div className="flex items-center gap-2">
-            <Label className="text-sm font-medium">DATE</Label>
-            <div className="w-48">
-              <DatePicker
-                value={
-                  getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
-                }
-                onChange={(val) =>
-                  handleInputChange(
-                    dateId,
-                    val?.toLocaleDateString("en-CA") || ""
-                  )
-                }
-                disabledDates={(date) => date > new Date()}
-                required={getAnswer(resultId) == "Abnormal" || getAnswer(reportAvailableId) == "Available"}
-              />
-            </div>
-          </div>
-        )}
-
         {/* RESULT */}
         {showDetails && (
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <Label className="text-sm font-medium">RESULT</Label>
+            <Label className="text-sm font-medium lg:w-40">RESULT</Label>
             {["Normal", "Abnormal", "Unknown"].map((val) => (
               <label key={val} className="flex items-center space-x-2">
                 <input
@@ -186,11 +173,51 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
         )}
       </div>
 
+      {showDetails && (
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 min-h-9">
+            <Label className="text-sm font-medium uppercase lg:w-40">SCAN DATE?</Label>
+            {["Unknown", "Known"].map((val) => (
+              <label key={val} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name={`${idPrefix}-report-date`}
+                  value={val}
+                  checked={getAnswer(dateKnownId) === val}
+                  onChange={() => handleInputChange(dateKnownId, val)}
+                  className="custom-radio"
+                  required={showDetails}
+                />
+                <span>{val}</span>
+              </label>
+            ))}
+            {getAnswer(dateKnownId) === "Known" && (
+              <div className="flex items-center gap-2">
+            <Label className="text-sm font-medium">DATE</Label>
+            <div className="w-48">
+              <DatePicker
+                value={
+                  getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
+                }
+                onChange={(val) =>
+                  handleInputChange(
+                    dateId,
+                    val?.toLocaleDateString("en-CA") || ""
+                  )
+                }
+                disabledDates={(date) => date > new Date()}
+                required={getAnswer(reportAvailableId) == "Available"}
+              />
+            </div>
+          </div>
+            )}
+          </div>
+      )}
+
       {/* Second line: Report Available? */}
       {showDetails && (
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-            <Label className="text-sm font-medium">REPORT AVAILABLE?</Label>
+            <Label className="text-sm font-medium lg:w-40">REPORT AVAILABLE?</Label>
             {["Not Available", "Available"].map((val) => (
               <label key={val} className="flex items-center space-x-2">
                 <input
@@ -263,6 +290,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "A. Thermogram",
       idPrefix: "thermogram",
       yesNoId: questionIds.thermogramYesNo,
+      dateKnownId: questionIds.thermogramDateKnown,
       dateId: questionIds.thermogramDate,
       resultId: questionIds.thermogramResult,
       reportAvailableId: questionIds.thermogramReportAvailable,
@@ -272,6 +300,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "B. Mammogram",
       idPrefix: "mammogram",
       yesNoId: questionIds.mammogramYesNo,
+      dateKnownId: questionIds.mammogramDateKnown,
       dateId: questionIds.mammogramDate,
       resultId: questionIds.mammogramResult,
       reportAvailableId: questionIds.mammogramReportAvailable,
@@ -281,6 +310,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "C. Breast Ultrasound / HERscan",
       idPrefix: "ultrasound",
       yesNoId: questionIds.breastUltrasoundYesNo,
+      dateKnownId: questionIds.breastUltrasoundDateKnown,
       dateId: questionIds.breastUltrasoundDate,
       resultId: questionIds.breastUltrasoundResult,
       reportAvailableId: questionIds.breastUltrasoundReportAvailable,
@@ -290,6 +320,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "D. Breast MRI",
       idPrefix: "mri",
       yesNoId: questionIds.breastMRIYesNo,
+      dateKnownId: questionIds.breastMRIDateKnown,
       dateId: questionIds.breastMRIDate,
       resultId: questionIds.breastMRIResult,
       reportAvailableId: questionIds.breastMRIReportAvailable,
@@ -299,6 +330,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "E. PET/CT Scan",
       idPrefix: "petct",
       yesNoId: questionIds.petctYesNo,
+      dateKnownId: questionIds.petctDateKnown,
       dateId: questionIds.petctDate,
       resultId: questionIds.petctResult,
       reportAvailableId: questionIds.petctReportAvailable,
@@ -308,6 +340,7 @@ const PreviousImaging: React.FC<Props> = ({
       label: "F. QT Imaging",
       idPrefix: "qt",
       yesNoId: questionIds.qtImagingYesNo,
+      dateKnownId: questionIds.qtimageDateKnown,
       dateId: questionIds.qtimageDate,
       resultId: questionIds.qtimageResult,
       reportAvailableId: questionIds.qtimageReportAvailable,
@@ -318,6 +351,7 @@ const PreviousImaging: React.FC<Props> = ({
         "G. Other Imaging or Scans ( Like Bone scans, Scintimammography, etc)",
       idPrefix: "otherscan",
       yesNoId: questionIds.otherImagingYesNo,
+      dateKnownId: questionIds.otherImagingDateKnown,
       dateId: questionIds.otherImagingDate,
       resultId: questionIds.otherImagingResult,
       reportAvailableId: questionIds.otherImagingReportAvailable,

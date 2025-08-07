@@ -62,9 +62,9 @@ interface QuestionIds {
   lymphNodesRight: number;
   lymphNodesLeft: number;
   lymphNodesDate: number;
-  lymphNodesDateRight: number;
+  lymphSize: number;
   lymphNodesLocation: number;
-  lymphNodesLocationRight: number;
+  lymphNodesLocationOther: number;
   lymphNodesDetails: number;
   others: number;
   othersDetails: number;
@@ -196,9 +196,9 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 RQID={Props.questionIds.lymphNodesRight}
                 LQID={Props.questionIds.lymphNodesLeft}
                 SDate={Props.questionIds.lymphNodesDate}
-                SDateRight={Props.questionIds.lymphNodesDateRight}
+                Size={Props.questionIds.lymphSize}
                 Location={Props.questionIds.lymphNodesLocation}
-                LocationRight={Props.questionIds.lymphNodesLocationRight}
+                LocationOther={Props.questionIds.lymphNodesLocationOther}
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.lymphNodesDetails}

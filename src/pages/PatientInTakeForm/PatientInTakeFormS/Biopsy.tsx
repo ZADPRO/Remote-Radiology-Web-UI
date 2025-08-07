@@ -121,7 +121,7 @@ const Biopsy: React.FC<Props> = ({
               {/* Date */}
               {showBiopsyDetails && (
                 <div className="flex items-center gap-2">
-                  <div className="w-36">
+                  <div>
                     <DatePicker
                       value={
                         getAnswer(questionIds.previousBiopsyDate)
@@ -180,6 +180,7 @@ const Biopsy: React.FC<Props> = ({
                 inputPlaceholder="Details"
                 optionalInputType="textarea"
                 required={showBiopsyDetails}
+                optionalInputRequired={false}
               />
               <div className="space-y-4 pl-4 py-4">
   {/* Left Biopsy Section */}

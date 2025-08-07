@@ -83,7 +83,6 @@ const RightReport: React.FC<RightReportProps> = ({
       ...syncStatus,
       breastDensityandImageRight: true,
     });
-    console.log("www", questionId, value)
   }
 
   if (isNippleAreolaRight) {

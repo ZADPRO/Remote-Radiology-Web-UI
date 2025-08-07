@@ -245,7 +245,9 @@ const MainRoutes: React.FC = () => {
           /> */}
           <Route
             path="technicianpatientintakeform"
-            element={<TechnicianPatientIntakeForm />}
+            element={<RoleProtectedRoute allowedRoles={["technician", "admin", "scadmin", "wgdoctor", "manager", "radiologist", "scribe", "codoctor", "doctor"]}>
+              <TechnicianPatientIntakeForm />
+            </RoleProtectedRoute>}
           />
 
           <Route path="/invoiceGenerate" element={<NewInvoice />}/>

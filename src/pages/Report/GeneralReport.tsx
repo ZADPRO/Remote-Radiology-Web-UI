@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import BreastImplantDetails from "./BreastImplantDetails/BreastImplantDetails";
 import TextEditor from "@/components/TextEditor";
-import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
+// import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
 // import { Button } from "@/components/ui/button";
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { ResponseTechnicianForm } from "@/services/technicianServices";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { breastImpantRightQuestions, symmetryQuestions } from "./ReportQuestionsAssignment";
+import {
+  breastImpantRightQuestions,
+  symmetryQuestions,
+} from "./ReportQuestionsAssignment";
 import PatientHistory from "./PatientHistory";
 
 interface ReportQuestion {
@@ -24,7 +27,7 @@ interface TextEditorProps {
   patientHistory: {
     value: string;
     onChange: (value: string) => void;
-  }
+  };
 }
 
 interface RightReportProps {
@@ -50,46 +53,33 @@ const GeneralReport: React.FC<RightReportProps> = ({
   textEditor,
   syncStatus,
   setsyncStatus,
-  readOnly
+  readOnly,
 }) => {
   
 
-  useEffect(() => {
-    if (syncStatus.breastImplant) {
-      textEditor.breastImplant.onChange(
-        generateBreastImplantDetailsHTML(
-          reportFormData,
-          breastImpantRightQuestions
-        )
-      );
-    }
-  }, [reportFormData, syncStatus]);
-
   const syncHandleReportChange = (questionId: number, value: string) => {
-    const isBreastDensityRight = Object.values(breastImpantRightQuestions).includes(questionId);
+    const isBreastDensityRight = Object.values(
+      breastImpantRightQuestions
+    ).includes(questionId);
 
-    if(isBreastDensityRight) {
+    if (isBreastDensityRight) {
       setsyncStatus({
-      ...syncStatus,
-      breastImplantRight: true,
-    });
+        ...syncStatus,
+        breastImplant: true,
+      });
     }
     handleReportInputChange(questionId, value);
-  }
-  const getAnswer = (id: number) => reportFormData.find((q) => q.questionId === id)?.answer || "";
+  };
 
-    const getTechnicianAnswer = (id: number) => technicianFormData.find((q) => q.questionId === id)?.answer || "";
+  const getAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-    console.log(getTechnicianAnswer(22))
+  const getTechnicianAnswer = (id: number) =>
+    technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
-  useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0 || !technicianFormData || technicianFormData.length === 0) return;
-    if(technicianFormData.length > 0) {
-    getAnswer(symmetryQuestions.symmetry) == "" && handleReportInputChange(symmetryQuestions.symmetry, getTechnicianAnswer(19) == "true" ? "Asymmetry" : "Symmetrical size and shape");
-    getAnswer(symmetryQuestions.symmetryLeft) == "" && handleReportInputChange(symmetryQuestions.symmetryLeft, getTechnicianAnswer(21));
-    getAnswer(symmetryQuestions.symmetryRight) == "" && handleReportInputChange(symmetryQuestions.symmetryRight, getTechnicianAnswer(22));
-    }
-  }, [technicianFormData]);
+  console.log(getTechnicianAnswer(22));
+
+  
 
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
@@ -192,6 +182,14 @@ const GeneralReport: React.FC<RightReportProps> = ({
                       checked={
                         getAnswer(symmetryQuestions.symmetryLeft) == "true"
                       }
+                      onClick={() =>
+                        syncHandleReportChange(
+                          symmetryQuestions.symmetryLeft,
+                          getAnswer(symmetryQuestions.symmetryLeft) === "true"
+                            ? ""
+                            : "true"
+                        )
+                      }
                     />
                     <Label htmlFor="symmetryLeft">Left</Label>
                   </div>
@@ -200,6 +198,14 @@ const GeneralReport: React.FC<RightReportProps> = ({
                       id="symmetryLeft"
                       checked={
                         getAnswer(symmetryQuestions.symmetryRight) == "true"
+                      }
+                      onClick={() =>
+                        syncHandleReportChange(
+                          symmetryQuestions.symmetryRight,
+                          getAnswer(symmetryQuestions.symmetryRight) === "true"
+                            ? ""
+                            : "true"
+                        )
                       }
                     />
                     <Label htmlFor="symmetryLeft">Right</Label>

@@ -37,16 +37,16 @@ const PatientInTakeForm01: React.FC<Props> = ({
   const options = [
     "Personal Information",
     "Risk Stratification",
+    "Current Breast Symptoms",
+    "Previous Imaging in past 3 years",
+    "Biopsy",
     "Menstrual and Reproductive History",
     "Family History",
     "Lifestyle Factors",
     "Personal Medical History",
-    "Current Breast Symptoms",
-    "Previous Imaging in past 3 years",
-    "Biopsy",
   ];
 
-  const [selectedSection, setSelectedSection] = useState<string>(options[0]);
+  const [selectedSection, setSelectedSection] = useState<string>(options[4]);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
@@ -298,9 +298,9 @@ const PatientInTakeForm01: React.FC<Props> = ({
               lymphNodesRight: 117,
               lymphNodesLeft: 118,
               lymphNodesDate: 119,
-              lymphNodesDateRight: 432,
-              lymphNodesLocationRight: 433,
+              lymphSize: 432,
               lymphNodesLocation: 120,
+              lymphNodesLocationOther: 433,
               lymphNodesDetails: 121,
               others: 122,
               othersDetails: 123,
@@ -316,41 +316,48 @@ const PatientInTakeForm01: React.FC<Props> = ({
             questionIds={{
               thermogramYesNo: 124,
               thermogramDate: 125,
+              thermogramDateKnown: 499,
               thermogramResult: 126,
               thermogramReportAvailable: 127,
               thermogramReportDetails: 128,
 
               mammogramYesNo: 129,
+              mammogramDateKnown: 500,
               mammogramDate: 130,
               mammogramResult: 131,
               mammogramReportAvailable: 132,
               mammogramReportDetails: 133,
 
               breastUltrasoundYesNo: 134,
+              breastUltrasoundDateKnown: 501,
               breastUltrasoundDate: 135,
               breastUltrasoundResult: 136,
               breastUltrasoundReportAvailable: 137,
               breastUltrasoundReportDetails: 138,
 
               breastMRIYesNo: 139,
+              breastMRIDateKnown: 502,
               breastMRIDate: 140,
               breastMRIResult: 141,
               breastMRIReportAvailable: 142,
               breastMRIReportDetails: 143,
 
               petctYesNo: 144,
+              petctDateKnown: 503,
               petctDate: 145,
               petctResult: 146,
               petctReportAvailable: 147,
               petctReportDetails: 148,
 
               qtImagingYesNo: 149,
+              qtimageDateKnown: 504,
               qtimageDate: 150,
               qtimageResult: 151,
               qtimageReportAvailable: 152,
               qtimageReportDetails: 153,
 
               otherImagingYesNo: 154,
+              otherImagingDateKnown: 505,
               otherImagingDate: 155,
               otherImagingResult: 156,
               otherImagingReportAvailable: 157,

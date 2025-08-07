@@ -1,27 +1,27 @@
 export const breastImpantRightQuestions = {
-    breastImplants: 1,
-    implantConfiguration: 2,
-    implantPositon: 3,
-    implantMaterial: 4,
-    displacement: 5,
-    contracture: 6,
-    contractureSev: 7,
-    contractureSide: 8,
-    rupture: 9,
-    ruptureLocation: 10,
-    ruptureSigns: 11,
-    ruptureSignsOther: 12,
-    ruptureType: 13,
-    implantMaterialOther: 116,
-  };
+  breastImplants: 1,
+  implantConfiguration: 2,
+  implantPositon: 3,
+  implantMaterial: 4,
+  displacement: 5,
+  contracture: 6,
+  contractureSev: 7,
+  contractureSide: 8,
+  rupture: 9,
+  ruptureLocation: 10,
+  ruptureSigns: 11,
+  ruptureSignsOther: 12,
+  ruptureType: 13,
+  implantMaterialOther: 116,
+};
 
-  export const symmetryQuestions = {
-    symmetry: 117,
-    symmetryLeft: 118,
-    symmetryRight: 119,
-  }
-  
-  export const breastDensityandImageRightQuestions = {
+export const symmetryQuestions = {
+  symmetry: 117,
+  symmetryLeft: 118,
+  symmetryRight: 119,
+}
+
+export const breastDensityandImageRightQuestions = {
   breastSelect: 110,
   imageQuality: 14,
   artifactsPresent: 120,
@@ -66,6 +66,10 @@ export const lesionsRightQuestions = {
   HeterogeneousDatar: 42,
   Hypertrophicstr: 43,
   HypertrophicDatar: 44,
+  fibronodulardensitystr: 122,
+  fibronodulardensityDatar: 123,
+  multipleCystsstr: 124,
+  multipleCystsDatar: 125,
   Otherstr: 45,
   OtherDatar: 46,
 };
@@ -87,66 +91,70 @@ export const ComparisonPriorRightQuestion = {
 };
 
 export const breastDensityandImageLeftQuestions = {
-    imageQuality: 57,
-    artifactsPresent: 121,
-    breastDensity: 58,
-    fibroglandularVolume: 59,
-    symmetry: 60,
-    breastSelect: 113,
-  };
+  imageQuality: 57,
+  artifactsPresent: 121,
+  breastDensity: 58,
+  fibroglandularVolume: 59,
+  symmetry: 60,
+  breastSelect: 113,
+};
 
- export const nippleAreolaSkinLeftQuestions = {
-    skinChanges: 63,
-    skinChangesOther: 64,
-    nippleDeformity: 65,
-    nippleRetraction: 61,
-    subAreolarMass: 66,
-    architecture: 67,
-    architectureOther: 68,
-    nippleSelect: 114,
-  };
+export const nippleAreolaSkinLeftQuestions = {
+  skinChanges: 63,
+  skinChangesOther: 64,
+  nippleDeformity: 65,
+  nippleRetraction: 61,
+  subAreolarMass: 66,
+  architecture: 67,
+  architectureOther: 68,
+  nippleSelect: 114,
+};
 
 export const grandularAndDuctalTissueLeftQuestions = {
-    grandularAndDuctalTissue: 69,
-    benignMicroCysts: 70,
-    benignCapsular: 71,
-    benignFibronodular: 72,
-    calcificationsPresent: 73,
-    macroCalcificationsList: 74,
-    microCalcificationsList: 75,
-    calcifiedScar: 76,
-    calcifiedScarList: 77,
-    ductalProminence: 78,
-    ductalProminenceList: 79,
-    grandularSelect: 115,
-  };
+  grandularAndDuctalTissue: 69,
+  benignMicroCysts: 70,
+  benignCapsular: 71,
+  benignFibronodular: 72,
+  calcificationsPresent: 73,
+  macroCalcificationsList: 74,
+  microCalcificationsList: 75,
+  calcifiedScar: 76,
+  calcifiedScarList: 77,
+  ductalProminence: 78,
+  ductalProminenceList: 79,
+  grandularSelect: 115,
+};
 
-export  const lesionsLeftQuestions = {
-    lesionsr: 80,
-    simplecrstr: 90,
-    simplecrstDatar: 91,
-    complexcrstr: 92,
-    complexcrstDatar: 93,
-    Heterogeneousstr: 94,
-    HeterogeneousDatar: 95,
-    Hypertrophicstr: 96,
-    HypertrophicDatar: 97,
-    Otherstr: 98,
-    OtherDatar: 99,
-  };
+export const lesionsLeftQuestions = {
+  lesionsr: 80,
+  simplecrstr: 90,
+  simplecrstDatar: 91,
+  complexcrstr: 92,
+  complexcrstDatar: 93,
+  Heterogeneousstr: 94,
+  HeterogeneousDatar: 95,
+  Hypertrophicstr: 96,
+  HypertrophicDatar: 97,
+  Otherstr: 98,
+  OtherDatar: 99,
+  fibronodulardensitystr: 126,
+  fibronodulardensityDatar: 127,
+  multipleCystsstr: 128,
+  multipleCystsDatar: 129,
+};
 
 export const LymphNodesLeftQuestions = {
-    Intramammaryr: 100,
-    IntramammaryDatar: 101,
-    axillarynodes: 102,
-    ClipsPresentStatus: 103,
-    ClipsPresentdata: 104,
-  };
+  Intramammaryr: 100,
+  IntramammaryDatar: 101,
+  axillarynodes: 102,
+  ClipsPresentStatus: 103,
+  ClipsPresentdata: 104,
+};
 
 export const ComparisonPriorLeftQuestion = {
-    ComparisonPriorRight: 105,
-    FindingStatus: 106,
-    doubletimefrom: 107,
-    doubletimeto: 108,
-    LesionCompTable: 109,
-  };
+  ComparisonPriorRight: 105,
+  FindingStatus: 106,
+  doubletimefrom: 107,
+  doubletimeto: 108,
+  LesionCompTable: 109,
+};

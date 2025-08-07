@@ -188,7 +188,7 @@ const PatientQueue: React.FC = () => {
           text: "Yet to Report",
           report: true,
           color: "grey",
-          editAccess: ["scribe", "admin", "radiologist", "wgdoctor"],
+          editAccess: ["scribe", "admin", "radiologist", "wgdoctor", "doctor"],
           readOnlyAccess: [],
         };
       }
@@ -198,8 +198,8 @@ const PatientQueue: React.FC = () => {
           text: "Predraft",
           report: true,
           color: "#8e7cc3",
-          editAccess: ["radiologist", "admin", "scribe", "wgdoctor"],
-          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
+          editAccess: ["radiologist", "admin", "scribe", "wgdoctor", "doctor"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor", "doctor"],
         };
       }
 
@@ -209,7 +209,7 @@ const PatientQueue: React.FC = () => {
           report: true,
           color: "#3c78d8",
           editAccess: ["admin", "scribe", "radiologist", "wgdoctor"],
-          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor", "doctor"],
         };
       }
 
@@ -270,6 +270,15 @@ const PatientQueue: React.FC = () => {
       readOnlyAccess: [],
     };
   };
+
+   const statusOptions = [
+      "Yet to Report",
+      "Predraft",
+      "Draft",
+      "Reviewed 1",
+      "Reviewed 2",
+      "Signed Off",
+    ];
 
   const listAllRemarks = async (appointmentId: number) => {
     setLoading(true);
@@ -1563,213 +1572,317 @@ const PatientQueue: React.FC = () => {
       },
 
       {
-        id: "refAppointmentComplete",
-        header: () => (
-          <div className="text-center w-full font-medium">Report Status</div>
-        ),
-        cell: ({ row }) => {
-          const status = getStatus(row.original.refAppointmentComplete);
-          return (
-            <div
-              className="text-center w-full uppercase text-xs font-semibold"
-              style={{ color: status?.color }}
-            >
-              {status?.text}
-            </div>
-          );
-        },
-      },
+  id: "refAppointmentComplete",
+  accessorFn: (row) => getStatus(row.refAppointmentComplete)?.text ?? "-",
+  header: ({ column }) => {
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <span className="cursor-pointer" onClick={column.getToggleSortingHandler()}>
+          Report Status
+        </span>
 
-      {
-        id: "patientReportMail",
-        header: () => (
-          <div className="flex items-center justify-center gap-1">
-            Report Delivery
-            {/* <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="hover:bg-transparent hover:text-gray-200 !p-0"
-                >
-                  <Filter />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-2">
-                {["Filled", "Not Filled"].map((option) => {
-                  const value = option === "Filled" ? "filled" : "notFilled";
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              className="hover:bg-transparent hover:text-gray-200 !p-0"
+            >
+              <Filter />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-2">
+            <Command>
+              <CommandGroup className="max-h-60 overflow-auto">
+                {statusOptions.map((statusLabel) => {
+                  const current = (column.getFilterValue() as string[]) ?? [];
+                  const isSelected = current.includes(statusLabel);
+
                   return (
-                    <div
-                      key={value}
-                      className="flex items-center gap-2 cursor-pointer py-1"
-                      onClick={() =>
-                        column.setFilterValue(
-                          column.getFilterValue() === value ? undefined : value
-                        )
-                      }
+                    <CommandItem
+                      key={statusLabel}
+                      className="flex items-center gap-2 cursor-pointer"
+                      onSelect={() => {
+                        const updated = isSelected
+                          ? current.filter((s) => s !== statusLabel)
+                          : [...current, statusLabel];
+                        column.setFilterValue(updated.length ? updated : undefined);
+                      }}
                     >
-                      <Checkbox2 checked={column.getFilterValue() === value} />
-                      <span>{option}</span>
-                    </div>
+                      <Checkbox2
+                        checked={isSelected}
+                        onCheckedChange={() => {}}
+                      />
+                      <span>{statusLabel}</span>
+                    </CommandItem>
                   );
                 })}
-                <Button
-                  variant="ghost"
-                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
-                >
-                  <XCircle className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-              </PopoverContent>
-            </Popover> */}
-          </div>
-        ),
-        cell: ({ row }) => {
-  const [showMailDialog, setShowMailDialog] = useState(false);
+              </CommandGroup>
+            </Command>
 
-  const isSignedOff =
-    row.original.refAppointmentComplete?.toLowerCase() === "signed off";
+            <Button
+              variant="ghost"
+              onClick={() => column.setFilterValue(undefined)}
+              className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+            >
+              <XCircle className="h-4 w-4" />
+              <span>Clear</span>
+            </Button>
+          </PopoverContent>
+        </Popover>
+      </div>
+    );
+  },
+  cell: ({ row }) => {
+    const status = getStatus(row.original.refAppointmentComplete);
+    return (
+      <div
+        className="text-center w-full uppercase text-xs font-semibold"
+        style={{ color: status?.color }}
+      >
+        {status?.text}
+      </div>
+    );
+  },
+  filterFn: (row, _columnId, filterValue) => {
+    const statusText = getStatus(row.original.refAppointmentComplete)?.text;
+    return (filterValue as string[])?.includes(statusText);
+  },
+  enableColumnFilter: true,
+},
 
-  const hasMailSent = row.original.refAppointmentMailSendStatus !== "";
 
-  return (
-    <>
-      {hasMailSent || isSignedOff ? (
-        <button
-          className="hover:underline cursor-pointer text-xs font-bold"
-          onClick={() => setShowMailDialog(true)}
-        >
-          {hasMailSent ? "Resend Mail" : "Send Mail"}
-        </button>
-      ) : (
-        <div className="text-center text-gray-400">-</div>
-      )}
+      {
+  id: "patientReportMail",
+  header: ({ column }) => (
+    <div className="flex items-center justify-center gap-1">
+      Report Delivery
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            className="hover:bg-transparent hover:text-gray-200 !p-0"
+          >
+            <Filter />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-40 p-2">
+          {["Send Mail", "Resend Mail", "Not Yet Available"].map((option) => {
+            return (
+              <div
+                key={option}
+                className="flex items-center gap-2 cursor-pointer py-1 text-sm"
+                onClick={() =>
+                  column.setFilterValue(
+                    column.getFilterValue() === option ? undefined : option
+                  )
+                }
+              >
+                <Checkbox2 checked={column.getFilterValue() === option} />
+                <span>{option}</span>
+              </div>
+            );
+          })}
+          <Button
+            variant="ghost"
+            className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+            onClick={() => column.setFilterValue(undefined)}
+          >
+            <XCircle className="h-4 w-4" />
+            <span>Clear</span>
+          </Button>
+        </PopoverContent>
+      </Popover>
+    </div>
+  ),
+  cell: ({ row }) => {
+    const [showMailDialog, setShowMailDialog] = useState(false);
 
-      {showMailDialog && (
-        <SendMailDialog
-          appointmentId={row.original.refAppointmentId}
-          patientId={row.original.refUserId}
-          showMailDialog={showMailDialog}
-          setShowMailDialog={setShowMailDialog}
-          handleRefreshData={fetchPatientQueue}
-        />
-      )}
-    </>
-  );
+    const isSignedOff =
+      row.original.refAppointmentComplete?.toLowerCase() === "signed off";
+    const hasMailSent = row.original.refAppointmentMailSendStatus !== "";
+
+    return (
+      <>
+        {hasMailSent || isSignedOff ? (
+          <button
+            className="hover:underline cursor-pointer text-xs font-bold"
+            onClick={() => setShowMailDialog(true)}
+          >
+            {hasMailSent ? "Resend Mail" : "Send Mail"}
+          </button>
+        ) : (
+          <div className="text-center text-gray-400">-</div>
+        )}
+
+        {showMailDialog && (
+          <SendMailDialog
+            appointmentId={row.original.refAppointmentId}
+            patientId={row.original.refUserId}
+            showMailDialog={showMailDialog}
+            setShowMailDialog={setShowMailDialog}
+            handleRefreshData={fetchPatientQueue}
+          />
+        )}
+      </>
+    );
+  },
+  enableColumnFilter: true,
+  filterFn: (row, _columnId, value) => {
+    const status = row.original.refAppointmentComplete?.toLowerCase();
+    const isSignedOff = status === "signed off";
+    const hasMailSent = row.original.refAppointmentMailSendStatus !== "";
+
+    if (value === "Send Mail") return isSignedOff && !hasMailSent;
+    if (value === "Resend Mail") return isSignedOff && hasMailSent;
+    if (value === "Not Available") return !isSignedOff;
+
+    return true; // fallback
+  },
 }
 ,
-        enableColumnFilter: true,
-        filterFn: (row, _columnId, value) => {
-          const tempStatus = getFormStatus(row.original.refAppointmentComplete);
-          const filled = tempStatus?.technicianForm === true;
-          return value === "filled" ? filled : !filled;
-        },
-      },
 
       {
         id: "assigned",
         header: () => <div className="text-center w-full">Assigned</div>,
         cell: ({ row }) => {
-          return (
-            <div className="flex justify-center">
-              <Select
-                value={
-                  row.original.refAppointmentAssignedUserId === 0
-                    ? ""
-                    : String(row.original.refAppointmentAssignedUserId)
-                }
-                onValueChange={(value) => {
-                  const selectedUser = staffData.find(
-                    (tech) => String(tech.refUserId) === value
-                  );
+  return (
+    <div className="flex justify-center">
+      <Select
+        value={
+          row.original.refAppointmentAssignedUserId === 0
+            ? ""
+            : String(row.original.refAppointmentAssignedUserId)
+        }
+        onValueChange={(value) => {
+          if (value === "none" || value === "task-complete") {
+            AssignUser(
+              row.original.refAppointmentId,
+              row.original.refUserId,
+              0,
+              ""
+            );
+          } else {
+            const selectedUser = staffData.find(
+              (tech) => String(tech.refUserId) === value
+            );
+            if (selectedUser) {
+              AssignUser(
+                row.original.refAppointmentId,
+                row.original.refUserId,
+                selectedUser.refUserId,
+                selectedUser.refUserCustId
+              );
+            }
+          }
+        }}
+      >
+        <SelectTrigger className="bg-white m-0 text-xs max-w-25">
+          <SelectValue placeholder="Assign" />
+        </SelectTrigger>
 
-                  if (selectedUser) {
-                    AssignUser(
-                      row.original.refAppointmentId,
-                      row.original.refUserId,
-                      selectedUser.refUserId,
-                      selectedUser.refUserCustId
-                    );
-                  }
-                }}
-              >
-                <SelectTrigger className="bg-white m-0 text-xs max-w-25">
-                  <SelectValue placeholder="Assign" />
-                </SelectTrigger>
+        <SelectContent>
+          {/* Custom static options */}
+          <SelectItem value="none">None</SelectItem>
+          {/* <SelectItem value="task-complete">Task Complete</SelectItem> */}
 
-                <SelectContent>
-                  {staffData?.length > 0 ? (
-                    staffData.map((tech) => (
-                      <>
-                        {(tech.refSCId === 0 ||
-                          tech.refSCId.toString() ===
-                            row.original.refSCId.toString()) && (
-                          <SelectItem
-                            key={tech.refUserId}
-                            value={String(tech.refUserId)}
-                          >
-                            {tech.refUserCustId}
-                          </SelectItem>
-                        )}
-                      </>
-                    ))
-                  ) : (
-                    <div className="text-xs text-gray-400 px-4 py-2">
-                      No staff found
-                    </div>
-                  )}
-                </SelectContent>
-              </Select>
+          {/* Dynamic staff list */}
+          {staffData?.length > 0 ? (
+            staffData.map((tech) => (
+              (tech.refSCId === 0 ||
+                tech.refSCId.toString() ===
+                  row.original.refSCId.toString()) && (
+                <SelectItem
+                  key={tech.refUserId}
+                  value={String(tech.refUserId)}
+                >
+                  {tech.refUserCustId}
+                </SelectItem>
+              )
+            ))
+          ) : (
+            <div className="text-xs text-gray-400 px-4 py-2">
+              No staff found
             </div>
-          );
-        },
+          )}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
       },
-      // {
-      //   id: "changes",
-      //   header: () => (
-      //     <div className="text-center w-full font-medium m-0 p-0">Review</div>
-      //   ),
-      //   cell: ({ row }) => (
-      //     <div className="text-center w-full">
-      //       {!row.original.GetCorrectEditModel.isHandleCorrect &&
-      //       !row.original.GetCorrectEditModel.isHandleEdited
-      //         ? "-"
-      //         : `${
-      //             row.original.GetCorrectEditModel.isHandleCorrect ? "C" : ""
-      //           }${row.original.GetCorrectEditModel.isHandleEdited ? "E" : ""}`}
-      //     </div>
-      //   ),
-      // },
 
       {
-        id: "pendingRemarks",
-        header: () => (
-          <div className="text-center w-full font-medium">Pending Remarks</div>
-        ),
-        cell: ({ row }) => {
-          const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
+  id: "pendingRemarks",
+  header: ({ column }) => (
+<div className="flex items-center justify-center gap-1">
+        Pending Remarks
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            className="hover:bg-transparent text-muted-foreground !p-0"
+          >
+            <Filter className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-44 p-2 space-y-1">
+          {["Remarks Filled", "No Remarks"].map((option) => (
+            <div
+              key={option}
+              className="flex items-center gap-2 cursor-pointer py-1 text-sm"
+              onClick={() =>
+                column.setFilterValue(
+                  column.getFilterValue() === option ? undefined : option
+                )
+              }
+            >
+              <Checkbox2 checked={column.getFilterValue() === option} />
+              <span>{option}</span>
+            </div>
+          ))}
+          <Button
+            variant="ghost"
+            className="mt-1 text-red-500 hover:text-red-700 flex items-center gap-1"
+            onClick={() => column.setFilterValue(undefined)}
+          >
+            <XCircle className="h-4 w-4" />
+            <span>Clear</span>
+          </Button>
+        </PopoverContent>
+      </Popover>
+    </div>
+  ),
+  cell: ({ row }) => {
+    const latestRemark = row.original.refAppointmentRemarks?.trim() || "";
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild disabled={!latestRemark}>
+            <Input
+              tabIndex={-1}
+              className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
+                !latestRemark ? "italic text-gray-500 text-[5px]" : ""
+              }`}
+              readOnly
+              value={latestRemark || "No remarks yet"}
+            />
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs" side="bottom">
+            {latestRemark || "No remarks yet"}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  },
+  enableColumnFilter: true,
+  filterFn: (row, _columnId, value) => {
+    const hasRemarks = row.original.refAppointmentRemarks?.trim() !== "";
+    return value === "Remarks Filled" ? hasRemarks : !hasRemarks;
+  },
+}
+,
 
-          return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild disabled={!latestRemark}>
-                  <Input
-                    tabIndex={-1}
-                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
-                      !latestRemark ? "italic text-gray-500 text-[5px]" : ""
-                    }`}
-                    readOnly
-                    value={latestRemark || "No remarks yet"}
-                  />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs" side="bottom">
-                  {latestRemark || "No remarks yet"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          );
-        },
-      },
       {
         id: "totalRemarks",
         header: () => (
@@ -2103,6 +2216,7 @@ const PatientQueue: React.FC = () => {
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
       <div className="w-11/12 h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:py-6 lg:px-2 rounded-lg">
+
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button
@@ -2234,6 +2348,22 @@ const PatientQueue: React.FC = () => {
           </Table>
         </div>
 
+              <div className="p-1 text-center" hidden={role?.type !== "patient"}>
+          <h1 className="text-sm lg:text-lg font-medium">
+            If you would like to discuss your report, you may schedule an
+            appointment{" "}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://my.practicebetter.io/#/65e5aa632c1aab1598f642fc/bookings?s=65fd9719891980592a43767c"
+              className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
+            >
+              here
+            </a>
+            .
+          </h1>
+        </div>
+        
         {/* ShadCN Pagination Controls */}
         <div className="flex flex-col items-center py-4">
           <div className="flex md:hidden items-center justify-center w-full space-x-4 mb-4">

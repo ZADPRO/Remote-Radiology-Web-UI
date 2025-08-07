@@ -26,6 +26,7 @@ interface Props {
   secondaryinputWidth?: string;
   required?: boolean;
   optionalInputType?: "input" | "textarea";
+  optionalInputRequired?: boolean;
   secondaryOptionalInputType?: "input" | "textarea";
 }
 
@@ -46,6 +47,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
   secondaryinputWidth = "w-fit w-64",
   required = false,
   optionalInputType = "input", // ✅ default to input
+  optionalInputRequired = true,
   secondaryOptionalInputType = "input", // ✅ default to input
 }) => {
   const getAnswer = (id: number) =>
@@ -122,7 +124,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                             e.target.value
                           )
                         }
-                        required
+                        required={optionalInputRequired}
                       />
                     ) : (
                       <>
@@ -136,7 +138,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                               e.target.value
                             )
                           }
-                          required
+                          required={optionalInputRequired}
                         />
                         <Label className="text-sm font-medium">
                           {inputPlaceholder}

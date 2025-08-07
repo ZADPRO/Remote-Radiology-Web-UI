@@ -221,7 +221,7 @@ const AddScribe: React.FC = () => {
                   id="aadhar-upload"
                   label="Upload Aadhar"
                   required={true}
-                  isFilePresent={formData.aadhar.length > 0}
+                  isFilePresent={formData.aadhar?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -264,7 +264,7 @@ const AddScribe: React.FC = () => {
                 <FileUploadButton
                   id="drivers-license-upload"
                   label="Upload Driver's License"
-                  isFilePresent={formData.drivers_license.length > 0}
+                  isFilePresent={formData.drivers_license?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -372,9 +372,9 @@ const AddScribe: React.FC = () => {
 
                 <FileUploadButton
                   id="pan-upload"
-                  label="Upload Pan"
+                  label="Upload PAN"
                   required={true}
-                  isFilePresent={formData.pan.length > 0}
+                  isFilePresent={formData.pan?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -427,7 +427,7 @@ const AddScribe: React.FC = () => {
             label="Upload Certificates"
             multiple
             required
-            isFilePresent={formData.education_certificate.length > 0}
+            isFilePresent={formData.education_certificate?.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;
               if (!filesSelected) return;
