@@ -47,7 +47,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
   ];
 
   const [selectedSection, setSelectedSection] = useState<string>(
-    options[8]
+    options[0]
   );
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
