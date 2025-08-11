@@ -358,7 +358,7 @@ const BreastBiopsy: React.FC<Props> = ({
                         handleFileChange(e, 165);
                       }}
                       // disabled={editStatus}
-                      required
+                      required={getPatientAnswer(165) == ""}
                     />
                     Upload File
                   </label>

@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { NewScribe, scribeService } from "@/services/scribeService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -361,6 +362,7 @@ const AddScribe: React.FC = () => {
                       dob: val?.toLocaleDateString("en-CA") || "",
                     }));
                   }}
+                  disabledDates={dateDisablers.noFuture}
                   required
                 />
               </div>

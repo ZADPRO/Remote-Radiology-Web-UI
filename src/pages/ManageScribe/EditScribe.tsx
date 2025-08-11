@@ -242,7 +242,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

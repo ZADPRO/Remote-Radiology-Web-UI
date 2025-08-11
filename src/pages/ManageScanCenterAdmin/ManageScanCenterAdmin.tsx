@@ -524,7 +524,7 @@ const ManageScanCenterAdmin: React.FC = () => {
           </div> */}
 
           {/* Add Scan Center Admin Button */}
-          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addScanCenterAdmin", {state: scanCenterId, replace: true})}>
+          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addScanCenterAdmin", {state: scanCenterId})}>
             <Plus /> Add Scan Center Manager
           </Button>
         </div>

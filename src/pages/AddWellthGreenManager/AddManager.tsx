@@ -578,6 +578,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 dob: val?.toLocaleDateString("en-CA") || "",
               }));
             }}
+            required
             disabledDates={dateDisablers.noFuture}
           />
         </div>

@@ -46,7 +46,9 @@ const PatientInTakeForm01: React.FC<Props> = ({
     "Personal Medical History",
   ];
 
-  const [selectedSection, setSelectedSection] = useState<string>(options[0]);
+  const [selectedSection, setSelectedSection] = useState<string>(
+    options[0]
+  );
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
@@ -215,17 +217,23 @@ const PatientInTakeForm01: React.FC<Props> = ({
               previousSurgiries: 66,
               mastectomy: 67,
               mastectomyPosition: 68,
+              mastectomyDate: 506,
               lumpectomy: 69,
               lumpectomyPosition: 70,
+              lumpectomyDate: 507,
               cystAspiration: 71,
               cystAspirationPosition: 72,
+              cystAspirationDate: 508,
               breastReconstruction: 73,
               breastReconstructionPosition: 74,
+              breastReconstructionDate: 509,
               augmentation: 75,
               augmentationposition: 76,
+              augmentationDate: 510,
               breastSurgeryOthers: 77,
               breastSurgeryOthersSpecify: 78,
               breastSurgeryOthersSpecifyDirection: 489,
+              breastSurgeryOthersDate: 511,
               implants: 79,
               implantsSpecify: 80,
               implantsOthersSpecify: 81,
@@ -242,7 +250,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               implantsRightOthersSpecify: 169,
               explantsRight: 294,
               explantsDateRight: 295,
-              explantsDateRightKnown: 498
+              explantsDateRightKnown: 498,
             }}
           />
         );
@@ -297,11 +305,17 @@ const PatientInTakeForm01: React.FC<Props> = ({
               lymphNodes: 116,
               lymphNodesRight: 117,
               lymphNodesLeft: 118,
-              lymphNodesDate: 119,
-              lymphSize: 432,
-              lymphNodesLocation: 120,
-              lymphNodesLocationOther: 433,
-              lymphNodesDetails: 121,
+              locationAxillary: 119,
+              locationAxillaryDuration: 432,
+              locationAxillarySize: 120,
+              locationInBetween: 433,
+              locationInBetweenDuration: 121,
+              locationInBetweenSize: 512,
+              locationOther: 513,
+              locationOtherSpecify: 514,
+              locationOtherDuration: 515,
+              locationOtherSize: 516,
+              lymphNodesDetails: 517,
               others: 122,
               othersDetails: 123,
             }}
@@ -432,6 +446,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
 
   return (
     <form
+      noValidate={readOnly}
       onSubmit={(e) => {
         e.preventDefault();
         handleNext();

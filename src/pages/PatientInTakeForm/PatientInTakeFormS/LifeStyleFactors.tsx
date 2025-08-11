@@ -60,7 +60,7 @@ const LifeStyleFactors: React.FC<Props> = ({
               { label: "Regular", value: "Regular" },
             ]}
             showInputWhenValue="Regular"
-            inputPlaceholder="Per Week"
+            inputPlaceholder="Drinks Per Week"
           />
 
           {/* B. Smoking status */}

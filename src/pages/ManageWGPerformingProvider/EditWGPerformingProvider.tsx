@@ -151,6 +151,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
   console.log(files);
 
   const handleProfileImageUpload = async (file: File) => {
+    setError(null);
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -181,6 +182,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
   const handleDigitalSignatureUpload = async (
     file: File,
   ) => {
+    setError(null);
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
     setError("");
@@ -192,7 +194,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          refRADigitalSignature: response.fileName,
+          refWGPPDigitalSignature: response.fileName,
           digitalSignatureFile: null,
         }));
   
@@ -217,6 +219,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     fieldName: keyof ListSpecificWGPerformingProvider;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError(null);
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -248,6 +251,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     tempField: keyof TempFilesState,
     uploadFn = uploadService.uploadFile // optional, default upload function
   ): Promise<void> => {
+    setError(null);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -336,7 +340,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
         malpracticeinsureance_files: tempMalpractice,
       };
       console.log(payload);
-      const res = await radiologistService.updateRadiologist(payload);
+      const res = await radiologistService.updateWGPerformingProvider(payload);
       console.log(res);
       if (res.status) {
         toast.success(res.message);
@@ -671,7 +675,6 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                       <Input
                         id="drivers-license-upload"
                         type="file"
-                        accept=".pdf"
                         className="bg-[#a1b7c3]"
                         value={formData.drivers_license.length == 0 ? "" : ""}
                         required={formData.drivers_license.length == 0}
@@ -788,7 +791,6 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               <FileUploadButton
                 id="pan-upload"
                 label="Upload PAN"
-                accept=".pdf"
                 required={false}
                 isFilePresent={!!formData.refWGPPPan}
                 onChange={(e) => {
@@ -859,7 +861,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    refRAMBBSRegNo: e.target.value,
+                    refWGPPMBBSRegNo: e.target.value,
                   }))
                 }
                 required
@@ -878,7 +880,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    refRASpecialization: e.target.value,
+                    refWGPPSpecialization: e.target.value,
                   }))
                 }
                 required
@@ -891,7 +893,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
 
               <FileUploadButton
                 id="license-upload"
-                accept=".pdf"
+                label="Upload License Files"
                 multiple
                 required={
                   !(
@@ -1037,7 +1039,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    refRAMDRegNo: e.target.value,
+                    refWGPPMDRegNo: e.target.value,
                   }))
                 }
                 required
@@ -1051,7 +1053,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
 
               <FileUploadButton
                 id="cv-upload"
-                accept=".pdf"
+                label="Upload CV Files"
                 multiple
                 required={
                   !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
@@ -1187,7 +1189,6 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               <FileUploadButton
                 id="malpractice-upload"
                 label="Upload Malpractice Insurance"
-                accept=".pdf"
                 multiple
                 required={formData.malpracticeinsureance_files.length === 0}
                 isFilePresent={files.malpracticeinsureance_files.length > 0}
@@ -1381,7 +1382,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                       onClick={() => {
                         setFormData((prev) => ({
                           ...prev,
-                          refRADigitalSignature: "",
+                          refWGPPDigitalSignature: "",
                           digitalSignatureFile: null,
                         }));
                       }}

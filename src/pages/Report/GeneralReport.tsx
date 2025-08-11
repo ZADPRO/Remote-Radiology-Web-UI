@@ -7,9 +7,8 @@ import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPa
 import { Label } from "@/components/ui/label";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { ResponseTechnicianForm } from "@/services/technicianServices";
-import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import {
-  breastImpantRightQuestions,
+  breastImpantQuestions,
   symmetryQuestions,
 } from "./ReportQuestionsAssignment";
 import PatientHistory from "./PatientHistory";
@@ -28,6 +27,10 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  symmetry: {
+    value: string;
+    onChange: (value: string) => void;
+  };
 }
 
 interface RightReportProps {
@@ -39,6 +42,7 @@ interface RightReportProps {
   textEditor: TextEditorProps;
   syncStatus: {
     breastImplant: boolean;
+    symmetry: boolean;
   };
   setsyncStatus: any;
   readOnly: boolean;
@@ -55,19 +59,28 @@ const GeneralReport: React.FC<RightReportProps> = ({
   setsyncStatus,
   readOnly,
 }) => {
-  
 
   const syncHandleReportChange = (questionId: number, value: string) => {
-    const isBreastDensityRight = Object.values(
-      breastImpantRightQuestions
+    const isBreastImplant = Object.values(
+      breastImpantQuestions
     ).includes(questionId);
 
-    if (isBreastDensityRight) {
+    if (isBreastImplant) {
       setsyncStatus({
         ...syncStatus,
         breastImplant: true,
       });
     }
+
+    const symmentry = Object.values(symmetryQuestions).includes(questionId);
+
+    if (symmentry) {
+      setsyncStatus({
+        ...syncStatus,
+        symmetry: true,
+      });
+    }
+
     handleReportInputChange(questionId, value);
   };
 
@@ -78,8 +91,6 @@ const GeneralReport: React.FC<RightReportProps> = ({
     technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
   console.log(getTechnicianAnswer(22));
-
-  
 
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
@@ -107,7 +118,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
           handleReportInputChange={syncHandleReportChange}
           patientFormData={patientFormData}
           handlePatientInputChange={handlePatientInputChange}
-          questionIds={breastImpantRightQuestions}
+          questionIds={breastImpantQuestions}
         />
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
           <div className="flex justify-between mb-2">
@@ -160,7 +171,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
               labelClassname="w-[12rem]"
               questionId={symmetryQuestions.symmetry}
               formData={reportFormData}
-              handleInputChange={handleReportInputChange}
+              handleInputChange={syncHandleReportChange}
               options={[
                 {
                   label: "Symmetrical size and shape",
@@ -171,49 +182,65 @@ const GeneralReport: React.FC<RightReportProps> = ({
             />
 
             {getAnswer(symmetryQuestions.symmetry) == "Asymmetry" && (
-              <div className="flex flex-col lg:flex-row lg:items-center w-full gap-2 relative">
-                <Label className="font-semibold text-base w-[12rem]">
-                  Side
-                </Label>
-                <div className="flex items-center gap-5">
-                  <div className="flex items-center gap-2">
-                    <Checkbox2
-                      id="symmetryLeft"
-                      checked={
-                        getAnswer(symmetryQuestions.symmetryLeft) == "true"
-                      }
-                      onClick={() =>
-                        syncHandleReportChange(
-                          symmetryQuestions.symmetryLeft,
-                          getAnswer(symmetryQuestions.symmetryLeft) === "true"
-                            ? ""
-                            : "true"
-                        )
-                      }
-                    />
-                    <Label htmlFor="symmetryLeft">Left</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox2
-                      id="symmetryLeft"
-                      checked={
-                        getAnswer(symmetryQuestions.symmetryRight) == "true"
-                      }
-                      onClick={() =>
-                        syncHandleReportChange(
-                          symmetryQuestions.symmetryRight,
-                          getAnswer(symmetryQuestions.symmetryRight) === "true"
-                            ? ""
-                            : "true"
-                        )
-                      }
-                    />
-                    <Label htmlFor="symmetryLeft">Right</Label>
-                  </div>
-                </div>
-              </div>
+              <MultiRadioOptionalInputInline
+                label="Side"
+                labelClassname="w-[12rem]"
+                questionId={symmetryQuestions.symmetryLeft}
+                formData={reportFormData}
+                handleInputChange={syncHandleReportChange}
+                options={[
+                  {
+                    label:
+                      "Right side breast is bigger than the left side breast",
+                    value:
+                      "right side breast is bigger than the left side breast",
+                  },
+                  {
+                    label:
+                      "Left side breast is bigger than the right side breast",
+                    value:
+                      "left side breast is bigger than the right side breast",
+                  },
+                ]}
+              />
             )}
           </div>
+        </div>
+        <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
+          <div className="flex justify-between mb-2">
+            <span className="text-2xl">Report Preview</span>
+            {/* {syncStatus.breastImplantRight ? (
+              <Button
+                className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
+                onClick={() => {
+                  setsyncStatus({ ...syncStatus, breastImplantRight: false });
+                }}
+              >
+                Unsync
+              </Button>
+            ) : (
+              <Button
+                className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
+                onClick={() => {
+                  setsyncStatus({ ...syncStatus, breastImplantRight: true });
+                }}
+              >
+                Sync
+              </Button>
+            )} */}
+          </div>
+          <TextEditor
+            value={textEditor.symmetry.value}
+            onChange={textEditor.symmetry.onChange}
+            onManualEdit={() => {
+              if (syncStatus.symmetry) {
+                setsyncStatus({
+                  ...syncStatus,
+                  symmetry: false,
+                });
+              }
+            }}
+          />
         </div>
       </div>
     </div>

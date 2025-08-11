@@ -317,8 +317,10 @@ const IntervalImagingHistory: React.FC<Props> = ({
   <div className="pl-4 space-y-4">
     <Label>If yes,</Label>
 
-    <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
-      <div className="w-full lg:w-64">
+    <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start min-h-10">
+      <div className="space-y-2">
+              <Label>Type</Label>
+
         <Textarea
           placeholder="Type"
           value={getAnswer(questionIds.intervalBiopsyType)}
@@ -328,10 +330,12 @@ const IntervalImagingHistory: React.FC<Props> = ({
               e.target.value
             )
           }
+          className="w-64"
         />
       </div>
 
-      <div className="w-full sm:w-48">
+      <div className="w-full space-y-2 sm:w-48">
+        <Label>Date</Label>
         <DatePicker
           value={
             getAnswer(questionIds.intervalBiopsyDate)
@@ -347,7 +351,9 @@ const IntervalImagingHistory: React.FC<Props> = ({
         />
       </div>
 
-      <Textarea
+          <div className="space-y-2">
+            <Label>Results</Label>
+            <Textarea
         placeholder="Results"
         value={getAnswer(questionIds.intervalBiopsyResult)}
         onChange={(e) =>
@@ -358,6 +364,8 @@ const IntervalImagingHistory: React.FC<Props> = ({
         }
         className="w-full sm:w-64"
       />
+          </div>
+      
     </div>
   </div>
 )}

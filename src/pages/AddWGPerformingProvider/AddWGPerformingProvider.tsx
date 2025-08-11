@@ -106,6 +106,7 @@ const AddWGPerformingProvider: React.FC = () => {
       fieldName: keyof NewWGPerformingProvider;
       tempFileKey: keyof TempFilesState;
     }) => {
+      setError(null);
       const formDataObj = new FormData();
       formDataObj.append("file", file);
 
@@ -140,6 +141,7 @@ const AddWGPerformingProvider: React.FC = () => {
       field: keyof NewWGPerformingProvider,
       tempFileKey: keyof TempFilesState
     ): Promise<void> => {
+      setError(null);
       const formData = new FormData();
       formData.append("file", file);
 
@@ -178,6 +180,7 @@ const AddWGPerformingProvider: React.FC = () => {
       key: "cv_files" | "license_files" | "malpracticeinsureance_files",
       index: number
     ) => {
+      setError(null);
       setFiles((prev) => ({
         ...prev,
         [key]: (prev[key] as File[]).filter((_, i) => i !== index),
@@ -801,7 +804,7 @@ const AddWGPerformingProvider: React.FC = () => {
 
                 <FileUploadButton
                   id="malpractice-upload"
-                  label="Upload Malpractice Insurance"
+                  label="Upload Malpractice Insurance Files"
                   multiple
                   required={formData.malpracticeinsureance_files.length === 0}
                   isFilePresent={

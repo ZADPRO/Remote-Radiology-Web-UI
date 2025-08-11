@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReportQuestion } from "../Report";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Label } from "@/components/ui/label";
@@ -33,50 +33,7 @@ const BreastImplantDetails: React.FC<Props> = ({
   questionIds,
   reportFormData,
   handleReportInputChange,
-  patientFormData,
 }) => {
-  const getAnswer = (id: number) =>
-    reportFormData.find((q) => q.questionId === id)?.answer || "";
-  const getPatientAnswer = (id: number) =>
-    patientFormData.find((q) => q.questionId === id)?.answer || "";
-
-  useEffect(() => {
-    if (!patientFormData || patientFormData.length === 0) return;
-
-    getAnswer(questionIds.breastImplants) === "" &&
-      handleReportInputChange(questionIds.breastImplants, "Present");
-
-    // getAnswer(questionIds.implantConfiguration) === "" &&
-    //   handleReportInputChange(
-    //     questionIds.implantConfiguration,
-    //     "Bilateral Similar"
-    //   );
-
-    // getAnswer(questionIds.implantPositon) === "" &&
-    //   handleReportInputChange(questionIds.implantPositon, "Subpectoral");
-
-    // getAnswer(questionIds.implantMaterial) === "" &&
-    //   handleReportInputChange(
-    //     questionIds.implantMaterial,
-    //     getPatientAnswer(80)
-    //   );
-
-    getAnswer(questionIds.displacement) === "" &&
-      handleReportInputChange(questionIds.displacement, "None");
-
-    getAnswer(questionIds.contracture) === "" &&
-      handleReportInputChange(questionIds.contracture, "None");
-
-    getAnswer(questionIds.rupture) === "" &&
-      handleReportInputChange(questionIds.rupture, "Absent");
-
-    getAnswer(questionIds.implantMaterialOther) === "" &&
-      handleReportInputChange(
-        questionIds.implantMaterialOther,
-        getPatientAnswer(81)
-      );
-  }, [patientFormData]);
-
   return (
     <div className="w-full">
       <Label
@@ -170,17 +127,17 @@ const BreastImplantDetails: React.FC<Props> = ({
               options={[
                 { label: "Left", value: "Left" },
                 { label: "Right", value: "Right" },
-                { label: "Both", value: "Both" },
+                { label: "Both", value: "both side" },
                 { label: "None", value: "None" },
               ]}
             />
 
-            {/* {reportFormData.find(
+            {reportFormData.find(
               (q) => q.questionId === questionIds.contracture
-            )?.answer === "Present" && (
+            )?.answer !== "None" && (
               <div className="pl-2 lg:pl-[15rem] space-y-2">
                 <MultiRadioOptionalInputInline
-                  label="1. Contracture"
+                  label="Contracture"
                   labelClassname="w-[10rem] font-normal"
                   questionId={questionIds.contractureSev}
                   formData={reportFormData}
@@ -193,7 +150,7 @@ const BreastImplantDetails: React.FC<Props> = ({
                   className="h-auto"
                 />
 
-                <MultiRadioOptionalInputInline
+                {/* <MultiRadioOptionalInputInline
                   label="2. Side"
                   labelClassname="w-[10rem] font-normal"
                   questionId={questionIds.contractureSide}
@@ -204,9 +161,9 @@ const BreastImplantDetails: React.FC<Props> = ({
                     { label: "Right", value: "Right" },
                     { label: "Bilateral", value: "Bilateral" },
                   ]}
-                />
+                /> */}
               </div>
-            )} */}
+            )}
 
             <MultiRadioOptionalInputInline
               label="Rupture"

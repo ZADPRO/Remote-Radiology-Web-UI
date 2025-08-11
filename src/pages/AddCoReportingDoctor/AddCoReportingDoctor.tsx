@@ -195,7 +195,7 @@ const AddCoReportingDoctor: React.FC = () => {
         }}
       >
         <h1 className="text-[#3F3F3D] uppercase font-[900] lg:pl-10 text-xl lg:text-3xl text-center lg:text-left tracking-widest">
-          Add Co-Reporting Doctor
+          Add Reviewer
         </h1>
       </div>
 
@@ -496,6 +496,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 dob: val?.toLocaleDateString("en-CA") || "",
               }));
             }}
+            required
           />
         </div>
 
@@ -722,48 +723,49 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
           </Label>
 
           <FileUploadButton
-                  id="license-upload"
-                  label="Upload License Files"
-                  multiple
-                  required={formData.license_files.length === 0}
-                  isFilePresent={formData.license_files.length > 0}
-                  onChange={async (e) => {
-                    const filesSelected = e.target.files;
-                    if (!filesSelected) return;
+            id="license-upload"
+            label="Upload License Files"
+            multiple
+            required={formData.license_files.length === 0}
+            isFilePresent={formData.license_files.length > 0}
+            onChange={async (e) => {
+              const filesSelected = e.target.files;
+              if (!filesSelected) return;
 
-                    const selectedFiles = Array.from(filesSelected);
-                    const filteredFiles = selectedFiles.filter(
-                      (file) =>
-                        file.size <= 10 * 1024 * 1024 &&
-                        !tempFiles.license_files.some((f) => f.name === file.name)
-                    );
+              const selectedFiles = Array.from(filesSelected);
+              const filteredFiles = selectedFiles.filter(
+                (file) =>
+                  file.size <= 10 * 1024 * 1024 &&
+                  !tempFiles.license_files.some((f) => f.name === file.name)
+              );
 
-                    for (const file of filteredFiles) {
-                      await uploadAndStoreFile(
-                        file,
-                        "license_files",
-                        "license_files"
-                      );
-                    }
-                  }}
-                />
+              for (const file of filteredFiles) {
+                await uploadAndStoreFile(
+                  file,
+                  "license_files",
+                  "license_files"
+                );
+              }
+            }}
+          />
 
           {tempFiles.license_files.length > 0 && (
-            <ul className="mt-2 space-y-1 text-sm text-gray-700">
+            <ul className="mt-2 space-y-2 text-sm text-gray-800">
               {tempFiles.license_files.map((file, index) => (
                 <li
                   key={index}
-                  className="flex items-center justify-between border p-2 rounded"
+                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 font-medium"
                 >
-                  <span className="w-4/5">{file.name}</span>
+                  <span className="break-words">{file.name}</span>
+
                   <button
                     type="button"
                     onClick={() =>
                       handleRemoveMultiFile("license_files", index)
                     }
-                    className="text-red-500 hover:text-red-700 text-xs"
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
                   >
-                    Remove
+                    <X className="w-4 h-4" />
                   </button>
                 </li>
               ))}
@@ -779,43 +781,41 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
           </Label>
 
           <FileUploadButton
-                  id="malpractice-upload"
-                  label="Upload Malpractice Insurance Files"
-                  multiple
-                  required={formData.malpracticeinsureance_files.length === 0}
-                  isFilePresent={
-                    formData.malpracticeinsureance_files.length > 0
-                  }
-                  onChange={async (e) => {
-                    const filesSelected = e.target.files;
-                    if (!filesSelected) return;
+            id="malpractice-upload"
+            label="Upload Malpractice Insurance Files"
+            multiple
+            required={formData.malpracticeinsureance_files.length === 0}
+            isFilePresent={formData.malpracticeinsureance_files.length > 0}
+            onChange={async (e) => {
+              const filesSelected = e.target.files;
+              if (!filesSelected) return;
 
-                    const selectedFiles = Array.from(filesSelected);
-                    const maxSize = 10 * 1024 * 1024;
+              const selectedFiles = Array.from(filesSelected);
+              const maxSize = 10 * 1024 * 1024;
 
-                    const filteredFiles = selectedFiles.filter(
-                      (file) =>
-                        file.size <= maxSize &&
-                        !tempFiles.malpracticeinsureance_files.some(
-                          (existingFile) => existingFile.name === file.name
-                        )
-                    );
+              const filteredFiles = selectedFiles.filter(
+                (file) =>
+                  file.size <= maxSize &&
+                  !tempFiles.malpracticeinsureance_files.some(
+                    (existingFile) => existingFile.name === file.name
+                  )
+              );
 
-                    if (filteredFiles.length < selectedFiles.length) {
-                      setError(
-                        "Some files were larger than 10MB or were duplicates and were not added."
-                      );
-                    }
+              if (filteredFiles.length < selectedFiles.length) {
+                setError(
+                  "Some files were larger than 10MB or were duplicates and were not added."
+                );
+              }
 
-                    for (const file of filteredFiles) {
-                      await uploadAndStoreFile(
-                        file,
-                        "malpracticeinsureance_files",
-                        "malpracticeinsureance_files"
-                      );
-                    }
-                  }}
-                />
+              for (const file of filteredFiles) {
+                await uploadAndStoreFile(
+                  file,
+                  "malpracticeinsureance_files",
+                  "malpracticeinsureance_files"
+                );
+              }
+            }}
+          />
 
           {tempFiles.malpracticeinsureance_files.length > 0 && (
             <ul className="mt-2 space-y-2 text-sm text-gray-800">
@@ -849,26 +849,24 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
           </Label>
 
           <FileUploadButton
-                  id="digital-signature-upload"
-                  label="Upload Digital Signature"
-                  accept="image/png, image/jpeg, image/jpg"
-                  required={formData.digital_signature?.length === 0}
-                  isFilePresent={formData.digital_signature?.length > 0}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+            id="digital-signature-upload"
+            label="Upload Digital Signature"
+            accept="image/png, image/jpeg, image/jpg"
+            required={formData.digital_signature?.length === 0}
+            isFilePresent={formData.digital_signature?.length > 0}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
 
-                    const maxSize = 5 * 1024 * 1024; // 5MB
-                    if (file.size > maxSize) {
-                      setError(
-                        "Digital signature image must be less than 5MB."
-                      );
-                      return;
-                    }
+              const maxSize = 5 * 1024 * 1024; // 5MB
+              if (file.size > maxSize) {
+                setError("Digital signature image must be less than 5MB.");
+                return;
+              }
 
-                    handleDigitalSignatureUpload(file);
-                  }}
-                />
+              handleDigitalSignatureUpload(file);
+            }}
+          />
 
           {/* Uploaded Digital Signature Preview */}
           {tempFiles.digital_signature && (

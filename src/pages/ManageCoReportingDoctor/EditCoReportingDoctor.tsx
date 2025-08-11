@@ -262,7 +262,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
 
   if(loading) return (<LoadingOverlay />);
 
-  if (!formData) return <div className="p-4">No Co-Doctor data found.</div>;
+  if (!formData) return <div className="p-4">No Center Reviewer data found.</div>;
 
   function downloadFile(
     base64Data: string,
@@ -283,7 +283,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -435,7 +435,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
           <div className="flex flex-col gap-4 w-full lg:w-1/3">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="CoDoctorID">
-                Co-Doctor ID
+                Reviewer ID
               </Label>
               <Input
                 id="CoDoctorID"
@@ -600,6 +600,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                       }));
                     }
                   }}
+                  disabled
                   required
                 />
               </div>
@@ -633,7 +634,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
               </Label>
 
               <FileUploadButton
-              id="license-upload"
+              id="drivers-license-upload"
               label="Upload License"
               isFilePresent={!!formData.drivers_license}
               onChange={(e) => {
@@ -734,6 +735,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
 
               <FileUploadButton
                 id="license-upload"
+                label="Upload License Files"
                 multiple
                 required={
                   !(

@@ -316,34 +316,9 @@ const PriorImaging: React.FC<Props> = ({
               </div>
             )}
           </div>
-    
-          {/* Second line: Report Available? */}
+
           {showDetails && (
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-                <Label className="text-sm font-medium lg:w-40">REPORT AVAILABLE?</Label>
-                {["Not Available", "Available"].map((val) => (
-                  <label key={val} className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name={`${idPrefix}-report`}
-                      value={val}
-                      checked={getAnswer(reportAvailableId) === val}
-                      onChange={() => handleInputChange(reportAvailableId, val)}
-                      className="custom-radio"
-                      required={showDetails}
-                    />
-                    <span>{val}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-    
-          {/* Upload */}
-          {showUpload && (
-            <>
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 min-h-9">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 min-h-9">
                 <Label className="text-sm font-medium uppercase lg:w-40">SCAN DATE?</Label>
                 {["Unknown", "Known"].map((val) => (
                   <label key={val} className="flex items-center space-x-2">
@@ -380,6 +355,35 @@ const PriorImaging: React.FC<Props> = ({
               </div>
                 )}
               </div>
+          )}
+    
+          {/* Second line: Report Available? */}
+          {showDetails && (
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                <Label className="text-sm font-medium lg:w-40">REPORT AVAILABLE?</Label>
+                {["Not Available", "Available"].map((val) => (
+                  <label key={val} className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`${idPrefix}-report`}
+                      value={val}
+                      checked={getAnswer(reportAvailableId) === val}
+                      onChange={() => handleInputChange(reportAvailableId, val)}
+                      className="custom-radio"
+                      required={showDetails}
+                    />
+                    <span>{val}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+    
+          {/* Upload */}
+          {showUpload && (
+            <>
+              
               <span className="text-sm text-muted-foreground">
             Please Upload the Report
           </span>
@@ -391,6 +395,7 @@ const PriorImaging: React.FC<Props> = ({
                 className="sr-only"
                 onChange={handleFileChange}
                 disabled={editStatus}
+                required={!(selectedFileName || uploadedFileName)}
               />
               Upload File
             </label>

@@ -313,6 +313,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                         { label: "New", value: "New" },
                       ]}
                       className="mt-0 ml-0"
+                      required={getAnswerByQuestionId(Props.RQID) != ""}
+                      disabled={getAnswerByQuestionId(Props.RQID) == ""}
                     />
                   </div>
 
@@ -326,7 +328,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                           onValueChange={(value) =>
                             updateAnswer(Props.SizeRight, value)
                           }
-                          required={getAnswerByQuestionId(Props.SizeRight) === ""}
+                          required={getAnswerByQuestionId(Props.RQID) !== ""}
+                          disabled={getAnswerByQuestionId(Props.RQID) == ""}
                         >
                           <SelectTrigger className="bg-white w-full">
                             <SelectValue placeholder="Select Size" />
@@ -397,6 +400,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                         { label: "New", value: "New" },
                       ]}
                       className="mt-0 ml-0"
+                       required={getAnswerByQuestionId(Props.LQID) != ""}
+                       disabled={getAnswerByQuestionId(Props.LQID) == ""}
                     />
                   </div>
                   {/* Size (only for "Lump or thickening") */}
@@ -409,7 +414,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                           onValueChange={(value) =>
                             updateAnswer(Props.Size, value)
                           }
-                          required={getAnswerByQuestionId(Props.Size) === ""}
+                          required={getAnswerByQuestionId(Props.LQID) !== ""}
+                          disabled={getAnswerByQuestionId(Props.LQID) == ""}
                         >
                           <SelectTrigger className="bg-white w-full">
                             <SelectValue placeholder="Select Size" />

@@ -136,6 +136,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
   console.log(files);
 
   const handleProfileImageUpload = async (file: File) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -172,6 +173,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     fieldName: keyof ListSpecificPerformingProvider;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -323,7 +325,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -337,6 +339,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
       tempField: keyof TempFilesState,
       uploadFn = uploadService.uploadFile // optional, default upload function
     ): Promise<void> => {
+      setError("");
       const formData = new FormData();
       formData.append("file", file);
   
@@ -375,6 +378,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     const handleDigitalSignatureUpload = async (
         file: File,
       ) => {
+        setError("");
         const formDataImg = new FormData();
         formDataImg.append("profileImage", file);
         setError("");
@@ -615,7 +619,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    social_security_no: e.target.value,
+                    refDDSocialSecurityNo: e.target.value,
                   }))
                 }
                 required
@@ -697,7 +701,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               </Label>
 
               <FileUploadButton
-                id="license-upload"
+                id="drivers-license-upload"
                 label="Upload License"
                 isFilePresent={!!formData.drivers_license}
                 onChange={(e) => {
@@ -798,6 +802,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
 
               <FileUploadButton
                 id="license-upload"
+                label="Upload License Files"
                 multiple
                 required={
                   !(
@@ -1134,7 +1139,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                       onClick={() => {
                         setFormData((prev) => ({
                           ...prev,
-                          refRADigitalSignature: "",
+                          digital_signature: "",
                           digitalSignatureFile: null,
                         }));
                       }}

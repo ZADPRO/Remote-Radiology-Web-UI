@@ -1,7 +1,7 @@
 import { tokenService } from "@/lib/tokenService";
 import { useEffect, useRef } from "react";
 
-const REFRESH_INTERVAL = 180 * 60 * 1000; // 180 minutes = 3 Hours
+const REFRESH_INTERVAL = 1440 * 60 * 1000; // 1440 minutes = 24 Hours
 
 export const useIdleLogout = (refreshToken: () => void, logout: () => void) => {
   const isUserActiveRef = useRef(true);

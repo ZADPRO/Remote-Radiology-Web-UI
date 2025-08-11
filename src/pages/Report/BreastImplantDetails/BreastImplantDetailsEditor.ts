@@ -28,7 +28,7 @@ export function generateBreastImplantDetailsHTML(
 
   if (breastImplants == "") return "";
   if (breastImplants === "Absent") {
-    return `<span>Absent: The QT scan shows no breast implants.</span>`;
+    return `<span>The QT scan shows no breast implants.</span>`;
   }
 
   const config = getAnswer(questionIds.implantConfiguration);
@@ -37,7 +37,7 @@ export function generateBreastImplantDetailsHTML(
   const materialOther = getAnswer(questionIds.implantMaterialOther);
   const displacement = getAnswer(questionIds.displacement);
   const contracture = getAnswer(questionIds.contracture);
-  // const contractureSev = getAnswer(questionIds.contractureSev);
+  const contractureSev = getAnswer(questionIds.contractureSev);
   // const contractureSide = getAnswer(questionIds.contractureSide);
   const rupture = getAnswer(questionIds.rupture);
   const ruptureLocation = getAnswer(questionIds.ruptureLocation);
@@ -45,7 +45,7 @@ export function generateBreastImplantDetailsHTML(
   // const ruptureSignsOther = getAnswer(questionIds.ruptureSignsOther);
   const ruptureType = getAnswer(questionIds.ruptureType);
 
-  let html = `<span>Present: The QT scan shows ${config.toLowerCase()}</span>`;
+  let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
     html += ` implants`;
@@ -64,7 +64,7 @@ export function generateBreastImplantDetailsHTML(
   }
 
   if (contracture !== "None") {
-    html += `There is ${contracture.toLowerCase()} contracture noted. `;
+    html += `There is ${contractureSev ? contractureSev.toLocaleLowerCase()+" " : ""}${contracture.toLowerCase()} contracture noted. `;
   }
 
   if (rupture === "Present") {

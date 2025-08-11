@@ -152,6 +152,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
   console.log(files);
 
   const handleProfileImageUpload = async (file: File) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -216,6 +217,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     fieldName: keyof ListSpecificRadiologist;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -247,6 +249,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     tempField: keyof TempFilesState,
     uploadFn = uploadService.uploadFile // optional, default upload function
   ): Promise<void> => {
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -784,28 +787,26 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 PAN <span className="text-red-500">*</span>
               </Label>
 
-              <Input
-                id="pan-upload"
-                type="file"
-                accept=".pdf"
-                className="bg-[#a1b7c3]"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const maxSize = 5 * 1024 * 1024;
-                  if (file.size > maxSize) {
-                    setError("PAN file must be less than 5MB.");
-                    return;
-                  }
-
-                  handleSingleFileUpload({
-                    file,
-                    fieldName: "refRAPan",
-                    tempFileKey: "pan",
-                  });
-                }}
-              />
+              <FileUploadButton
+                              id="pan-upload"
+                              label="Upload PAN"
+                              required={false}
+                              isFilePresent={!!formData.refRAPan}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  if (file.size > 5 * 1024 * 1024) {
+                                    setError("File must be less than 5MB.");
+                                    return;
+                                  }
+                                  handleSingleFileUpload({
+                                    file,
+                                    fieldName: "refRAPan",
+                                    tempFileKey: "pan",
+                                  });
+                                }
+                              }}
+                            />
 
               {/* Show uploaded or existing PAN file */}
               {files.pan ? (
@@ -891,6 +892,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
 
               <FileUploadButton
                 id="license-upload"
+                label="Upload Licenses"
                 multiple
                 required={
                   !(
@@ -1050,7 +1052,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
 
               <FileUploadButton
                 id="cv-upload"
-                accept=".pdf"
+                label="Upload CV Files"
                 multiple
                 required={
                   !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
@@ -1185,7 +1187,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
 
               <FileUploadButton
                 id="malpractice-upload"
-                label="Upload Malpractice Insurance"
+                label="Upload Malpractice Insurance Files"
                 multiple
                 required={formData.malpracticeinsureance_files.length === 0}
                 isFilePresent={files.malpracticeinsureance_files.length > 0}

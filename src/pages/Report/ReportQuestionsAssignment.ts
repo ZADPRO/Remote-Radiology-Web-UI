@@ -1,4 +1,4 @@
-export const breastImpantRightQuestions = {
+export const breastImpantQuestions = {
   breastImplants: 1,
   implantConfiguration: 2,
   implantPositon: 3,

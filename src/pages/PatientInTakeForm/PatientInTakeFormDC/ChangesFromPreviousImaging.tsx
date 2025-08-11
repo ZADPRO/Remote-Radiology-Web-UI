@@ -59,7 +59,6 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
             { label: "Unknown", value: "Unknown" },
             { label: "Known", value: "Known" },
           ]}
-          required
         />
 
        {

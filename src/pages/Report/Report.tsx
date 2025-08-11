@@ -51,7 +51,7 @@ import { generateRightBreastReportText } from "./BreastDensityandImageQuality/Br
 import {
   breastDensityandImageLeftQuestions,
   breastDensityandImageRightQuestions,
-  breastImpantRightQuestions,
+  breastImpantQuestions,
   ComparisonPriorLeftQuestion,
   ComparisonPriorRightQuestion,
   grandularAndDuctalTissueLeftQuestions,
@@ -62,7 +62,6 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
   nippleAreolaSkinRightQuestions,
-  symmetryQuestions,
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
@@ -74,6 +73,8 @@ import { DaFormReportGenerator } from "./GenerateReport/DaFormReportGenerator";
 import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
 import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
 import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
+import { SymmentryGenerator } from "./GenerateReport/SymmetryGenerator";
+import { AutoPopulateReport } from "./AutoPopulateReport";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -191,10 +192,18 @@ const Report: React.FC = () => {
     }
   }, [allowNavigationRef.current]);
 
-  const handleLeave = () => {
+  const handleLeave = async (saveStatus: boolean) => {
     allowNavigationRef.current = true;
     setShowDialog(false);
-    navigate(-1);
+
+    if (saveStatus) {
+      assignData?.appointmentStatus[0]?.refAppointmentComplete &&
+        (await handleReportSubmit(
+          assignData?.appointmentStatus[0]?.refAppointmentComplete,
+          false,
+          true
+        ));
+    } else navigate(-1);
   };
 
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
@@ -204,7 +213,7 @@ const Report: React.FC = () => {
     }))
   ); //current higgest question id: 116
 
-   const [syncStatus, setsyncStatus] = useState({
+  const [syncStatus, setsyncStatus] = useState({
     breastImplant: true,
     breastDensityandImageRight: true,
     nippleAreolaSkinRight: true,
@@ -220,6 +229,7 @@ const Report: React.FC = () => {
     LymphNodesLeft: true,
     Notes: true,
     ImpressionsRecommendations: true,
+    symmetry: true,
   });
 
   useEffect(() => {
@@ -326,6 +336,16 @@ const Report: React.FC = () => {
         )
       );
     }
+
+    if (syncStatus.breastImplant) {
+      setBreastImplantRight(
+        generateBreastImplantDetailsHTML(reportFormData, breastImpantQuestions)
+      );
+    }
+
+    if (syncStatus.symmetry) {
+      setSymmetry(SymmentryGenerator(reportFormData));
+    }
   }, [reportFormData, syncStatus]);
 
   const handleReportInputChange = (questionId: number, value: string) => {
@@ -417,6 +437,7 @@ const Report: React.FC = () => {
   );
 
   const [breastImplantRight, setBreastImplantRight] = useState("");
+  const [symmetry, setSymmetry] = useState("");
   const [breastDensityandImageRight, setBreastDensityandImageRight] =
     useState("");
   const [nippleAreolaSkinRight, setNippleAreolaSkinRight] = useState("");
@@ -437,8 +458,6 @@ const Report: React.FC = () => {
   const [Notes, setNotes] = useState("");
 
   const [patientHistory, setPatientHistory] = useState("");
-
- 
 
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
     null
@@ -530,7 +549,7 @@ const Report: React.FC = () => {
         stateData.readOnly
       );
 
-      console.log(response.appointmentStatus);
+      console.log(response);
 
       if (response.status) {
         setScanCenterImg(response.ScanCenterImg);
@@ -615,10 +634,26 @@ const Report: React.FC = () => {
             LymphNodesLeft: true,
             Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
             ImpressionsRecommendations: true,
+            symmetry: true,
           });
         }
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
+
+        if (!response.easeQTReportAccess) {
+          setsyncStatus({
+            ...syncStatus,
+            Notes: false,
+          });
+        } else {
+          setsyncStatus({
+            ...syncStatus,
+            Notes:
+              response.reportTextContentData[0]?.refRTSyncStatus === null
+                ? true
+                : response.reportTextContentData[0]?.refRTSyncStatus,
+          });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -651,11 +686,14 @@ const Report: React.FC = () => {
       //     ? "Bilateral Similar"
       //     : "",
       // 3: getreportAnswer(3) === "" || "Subpectoral" ? "Subpectoral" : "",
-      // 4: getreportAnswer(4) === "" || getAnswer(80) ? getAnswer(80) : "",
+      // 4: getreportAnswer(4) === "" || getPatientAnswer(80) ? getPatientAnswer(80) : "",
       5: getreportAnswer(5) === "" || "None" ? "None" : "",
       6: getreportAnswer(6) === "" || "None" ? "None" : "",
       9: getreportAnswer(9) === "" || "Absent" ? "Absent" : "",
-      116: getreportAnswer(116) === "" || getAnswer(81) ? getAnswer(81) : "",
+      116:
+        getreportAnswer(116) === "" || getPatientAnswer(81)
+          ? getPatientAnswer(81)
+          : "",
       110: getreportAnswer(110) === "" || "Present" ? "Present" : "",
       14: getreportAnswer(14) === "" || "Acceptable" ? "Acceptable" : "",
       15:
@@ -669,9 +707,9 @@ const Report: React.FC = () => {
       23: getreportAnswer(23) === "" || "Normal" ? "Normal" : "",
       18:
         getreportAnswer(18) === "" ||
-        getAnswer("Right" === "Right" ? 112 : 113) ||
+        getPatientAnswer("Right" === "Right" ? 112 : 113) ||
         "Absent"
-          ? getAnswer("Right" === "Right" ? 112 : 113) || "Absent"
+          ? getPatientAnswer("Right" === "Right" ? 112 : 113) || "Absent"
           : "",
       112: getreportAnswer(112) === "" || "Present" ? "Present" : "",
       25: getreportAnswer(25) === "" || "Normal" ? "Normal" : "",
@@ -694,8 +732,8 @@ const Report: React.FC = () => {
       65: getreportAnswer(65) === "" || "Absent" ? "Absent" : "",
       67: getreportAnswer(67) === "" || "Normal" ? "Normal" : "",
       61:
-        getreportAnswer(61) === "" || getAnswer(113) || "Absent"
-          ? getAnswer(113) || "Absent"
+        getreportAnswer(61) === "" || getPatientAnswer(113) || "Absent"
+          ? getPatientAnswer(113) || "Absent"
           : "",
       115: getreportAnswer(115) === "" || "Present" ? "Present" : "",
       69: getreportAnswer(69) === "" || "Normal" ? "Normal" : "",
@@ -758,7 +796,7 @@ const Report: React.FC = () => {
     const generatePatientHistory = async () => {
       if (!responsePatientInTake) return;
 
-      const getAnswer = (id: number) =>
+      const getPatientAnswer = (id: number) =>
         responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
 
       let reason = `<p><strong>HISTORY : </strong></p>`;
@@ -769,14 +807,14 @@ const Report: React.FC = () => {
       if (categoryId === 1) {
         reason += `<div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
-        ${getAnswer(11)}</div>
+        ${getPatientAnswer(11)}</div>
       `;
         reason += `<p><strong>Patient Form:</strong> S Form</p>`;
       } else if (categoryId === 2) {
         reason += "" + (await DaFormReportGenerator(responsePatientInTake));
         reason += ` <div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
-        ${getAnswer(11)}</div>
+        ${getPatientAnswer(11)}</div>
       `;
         reason += `<p><strong>Patient Form:</strong> Da Form</p>`;
       } else if (categoryId === 3) {
@@ -784,7 +822,7 @@ const Report: React.FC = () => {
         reason += `
         <div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
-        ${getAnswer(11)}</div>
+        ${getPatientAnswer(11)}</div>
       `;
         reason += `<p><strong>Patient Form:</strong> Db Form</p>`;
       } else if (categoryId === 4) {
@@ -792,7 +830,7 @@ const Report: React.FC = () => {
         reason += `
         <div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
-        ${getAnswer(11)}</div>
+        ${getPatientAnswer(11)}</div>
       `;
         reason += `<p><strong>Patient Form:</strong> Dc Form</p>`;
       }
@@ -859,21 +897,23 @@ const Report: React.FC = () => {
            <tbody>
                 <tr>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${getAnswer(
+                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
                       1
                     )}</td>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${getAnswer(
+                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
                       2
                     )}</td>
                                 </tr>
                                 <tr>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>AGE / GENDER</strong></td>
-                                    <td style="border: 1px solid #000; padding: 4px;"> ${
-                                      getAnswer(6) === "female"
-                                        ? "F"
-                                        : getAnswer(5)
-                                    } / ${getAnswer(5)}</td>
+                                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
+                                      5
+                                    )} / ${
+            getPatientAnswer(6) === "female"
+              ? "F"
+              : getPatientAnswer(6).toUpperCase()
+          }</td>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refSCCustId
@@ -959,46 +999,13 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-      if (
-        !reportFormData ||
-        reportFormData.length === 0 ||
-        !technicianForm ||
-        technicianForm.length === 0
-      )
-        return;
-      if (technicianForm.length > 0) {
-        getAnswer(symmetryQuestions.symmetry) == "" &&
-          handleReportInputChange(
-            symmetryQuestions.symmetry,
-            getTechnicianAnswer(19) == "true"
-              ? "Asymmetry"
-              : "Symmetrical size and shape"
-          );
-        getAnswer(symmetryQuestions.symmetryLeft) == "" &&
-          handleReportInputChange(
-            symmetryQuestions.symmetryLeft,
-            getTechnicianAnswer(21)
-          );
-        getAnswer(symmetryQuestions.symmetryRight) == "" &&
-          handleReportInputChange(
-            symmetryQuestions.symmetryRight,
-            getTechnicianAnswer(22)
-          );
-      }
-    }, [technicianForm]);
-
-    useEffect(() => {
-        if (syncStatus.breastImplant) {
-         setBreastImplantRight(
-            generateBreastImplantDetailsHTML(
-              reportFormData,
-              breastImpantRightQuestions
-            )
-          );
-        }
-
-        
-      }, [reportFormData, syncStatus]);
+    AutoPopulateReport(
+      getPatientAnswer,
+      getreportAnswer,
+      getTechnicianAnswer,
+      handleReportInputChange
+    );
+  }, [responsePatientInTake]);
 
   useEffect(() => {
     handleAssignUser();
@@ -1006,11 +1013,12 @@ const Report: React.FC = () => {
   }, []);
 
   const [showMailDialog, setShowMailDialog] = useState(false);
-  const [mailOption, setMailOption] = useState("");
+  const [mailOption, setMailOption] = useState("none");
 
   const handleReportSubmit = async (
     movedStatus: string,
-    editStatus: boolean
+    editStatus: boolean,
+    leaveStatus?: boolean
   ) => {
     setLoading(true);
     try {
@@ -1042,6 +1050,7 @@ const Report: React.FC = () => {
         editStatus: editStatus,
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
+        leaveStatus: leaveStatus,
       };
       console.log("payload", payload);
 
@@ -1060,7 +1069,7 @@ const Report: React.FC = () => {
     }
   };
 
-  const getAnswer = (id: number) =>
+  const getPatientAnswer = (id: number) =>
     responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
 
   const getreportAnswer = (id: number) =>
@@ -1091,7 +1100,7 @@ const Report: React.FC = () => {
               onClick={() => {
                 setTab(value);
               }}
-              className={`flex-1 flex items-center justify-center text-sm rounded-t-[2rem] border-t border-x font-semibold transition-all duration-150 relative ${
+              className={`flex-1 flex items-center justify-center text-sm 2xl:text-lg rounded-t-[2rem] border-t border-x font-semibold transition-all duration-150 relative ${
                 tab === value
                   ? "bg-[#f8f4eb] rounded-t-[2rem] h-[95%] mt-auto shadow-md border-t"
                   : "hover:bg-[#b8c2b5] rounded-t-[2rem] h-[85%] mt-auto border-t"
@@ -1119,7 +1128,7 @@ const Report: React.FC = () => {
                   <div
                     key={label}
                     onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                    className={`flex-1 max-w-xl text-xs 2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
                       accessible
                         ? subTab === value
                           ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
@@ -1153,13 +1162,15 @@ const Report: React.FC = () => {
           {/* Details Content */}
           <div className="flex flex-col gap-1 mt-2 pb-5">
             <div className="text-sm">
-              Name: <span className="font-semibold">{getAnswer(1)}</span>
+              Name: <span className="font-semibold">{getPatientAnswer(1)}</span>
             </div>
 
             <div className="text-sm">
               Age & Gender:{" "}
-              <span className="font-semibold">{getAnswer(5)}</span> /{" "}
-              <span className="font-semibold capitalize">{getAnswer(6)}</span>
+              <span className="font-semibold">{getPatientAnswer(5)}</span> /{" "}
+              <span className="font-semibold capitalize">
+                {getPatientAnswer(6)}
+              </span>
             </div>
 
             <div className="text-sm">
@@ -1201,7 +1212,8 @@ const Report: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {assignData?.reportHistoryData ? (
+                    {assignData?.reportHistoryData &&
+                    assignData?.reportHistoryData.length > 0 ? (
                       <>
                         {assignData?.reportHistoryData.map((item, idx) => (
                           <tr
@@ -1266,7 +1278,8 @@ const Report: React.FC = () => {
                             <td className="px-2 py-2 text-[10px] text-center font-semibold">
                               <span
                                 className={
-                                  item.refRHHandleEndTime
+                                  item.refRHHandleEndTime &&
+                                  item.refRHHandleStatus !== "Changes"
                                     ? "text-green-600"
                                     : "text-gray-400"
                                 }
@@ -1277,8 +1290,13 @@ const Report: React.FC = () => {
                                       <form>
                                         <DialogTrigger asChild>
                                           <div className="cursor-pointer">
-                                            {item.refRHHandleStatus +
-                                              " Completed"}
+                                            {item.refRHHandleStatus ===
+                                            "Changes"
+                                              ? "Saved Changes"
+                                              : item.refRHHandleStatus +
+                                                " Completed"}
+                                            {/* {item.refRHHandleStatus +
+                                              " Completed"} */}
                                           </div>
                                         </DialogTrigger>
                                         <DialogContent className="">
@@ -1611,6 +1629,10 @@ const Report: React.FC = () => {
                       value: patientHistory,
                       onChange: setPatientHistory,
                     },
+                    symmetry: {
+                      value: symmetry,
+                      onChange: setSymmetry,
+                    },
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1812,6 +1834,22 @@ const Report: React.FC = () => {
                             recommendationTextRight: text,
                           })),
                       },
+                      CommonImpresRecommTextVal: {
+                        value: commonImpressRecomm.id,
+                        onChange: (text: string) =>
+                          setCommonImpressRecomm((prev) => ({
+                            ...prev,
+                            text: text,
+                          })),
+                      },
+                      CommonImpresRecommTextRightVal: {
+                        value: commonImpressRecomm.idRight,
+                        onChange: (text: string) =>
+                          setCommonImpressRecomm((prev) => ({
+                            ...prev,
+                            text: text,
+                          })),
+                      },
                       CommonImpresRecommText: {
                         value: commonImpressRecomm.text,
                         onChange: (text: string) =>
@@ -1828,15 +1866,23 @@ const Report: React.FC = () => {
                             text: text,
                           })),
                       },
+                      symmetry: {
+                        value: symmetry,
+                        onChange: setSymmetry,
+                      },
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
                     Notes={Notes}
                     setNotes={setNotes}
-                    name={getAnswer(1)}
-                    gender={getAnswer(6) === "female" ? "F" : getAnswer(5)}
-                    age={getAnswer(5)}
-                    studyTime={getAnswer(2)}
+                    name={getPatientAnswer(1)}
+                    gender={
+                      getPatientAnswer(6) === "female"
+                        ? "F"
+                        : getPatientAnswer(6).toUpperCase()
+                    }
+                    age={getPatientAnswer(5)}
+                    studyTime={getPatientAnswer(2)}
                     ScancenterAddress={ScanCenterAddress}
                     AppointmentDate={
                       assignData?.appointmentStatus[0]?.refAppointmentDate
@@ -1853,6 +1899,7 @@ const Report: React.FC = () => {
                     readOnly={stateData.readOnly ? true : false}
                     patientHistory={patientHistory}
                     ScanCenterImg={ScanCenterImg}
+                    reportAccess={assignData?.easeQTReportAccess ? true : false}
                   />
                 </>
               ) : (
@@ -1873,6 +1920,8 @@ const Report: React.FC = () => {
                     commonImpressRecomm={commonImpressRecomm}
                     setCommonImpressRecomm={setCommonImpressRecomm}
                     readOnly={stateData.readOnly}
+                    reportFormData={reportFormData}
+                    handleReportInputChange={handleReportInputChange}
                   />
                 )
               )}
@@ -1894,8 +1943,11 @@ const Report: React.FC = () => {
             <Button variant="secondary" onClick={() => setShowDialog(false)}>
               Stay
             </Button>
-            <Button variant="destructive" onClick={handleLeave}>
+            <Button variant="destructive" onClick={() => handleLeave(false)}>
               Leave Anyway
+            </Button>
+            <Button variant="greenTheme" onClick={() => handleLeave(true)}>
+              Save and Leave
             </Button>
           </DialogFooter>
         </DialogContent>

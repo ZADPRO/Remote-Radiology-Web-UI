@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReportQuestion } from "../Report";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Label } from "@/components/ui/label";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomComponents/CustomSelect";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
@@ -41,24 +41,6 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-  useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0) return;
-    getAnswer(questionIds.grandularSelect) === "" &&
-      handleReportInputChange(questionIds.grandularSelect, "Present");
-    getAnswer(questionIds.grandularAndDuctalTissue) === "" &&
-      handleReportInputChange(questionIds.grandularAndDuctalTissue, "Normal");
-    getAnswer(questionIds.benignMicroCysts) === "" &&
-      handleReportInputChange(questionIds.benignMicroCysts, "Absent");
-    getAnswer(questionIds.benignCapsular) === "" && handleReportInputChange(questionIds.benignCapsular, "Absent");
-    getAnswer(questionIds.benignFibronodular) === "" && handleReportInputChange(questionIds.benignFibronodular, "Absent");
-    getAnswer(questionIds.calcificationsPresent) === "" &&
-      handleReportInputChange(questionIds.calcificationsPresent, "Absent");
-    getAnswer(questionIds.calcifiedScar) === "" &&
-      handleReportInputChange(questionIds.calcifiedScar, "Absent");
-    getAnswer(questionIds.ductalProminence) === "" &&
-      handleReportInputChange(questionIds.ductalProminence, "Absent");
-  }, []);
-
   const renderCalcificationList = (
     label: string,
     listId: number,
@@ -66,33 +48,35 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
     showDistributions: boolean = false,
     enableOtherInput: boolean = false
   ) => {
-    const defaultType = label === "Ductal Prominence"
-  ? "No Mass Effect"
-  : label === "Macrocalcifications"
-  ? "Clumped"
-  : "";
+    const defaultType =
+      label === "Ductal Prominence"
+        ? "No Mass Effect"
+        : label === "Macrocalcifications"
+        ? "Clumped"
+        : "";
 
-const defaultDistribution = showDistributions ? "Non Segmental" : undefined;
+    const defaultDistribution = showDistributions ? "Non Segmental" : undefined;
 
-const parsedList = JSON.parse(
-  getAnswer(listId) ||
-    JSON.stringify([
-      {
-        type: defaultType,
-        clock: "",
-        level: "",
-        ...(defaultDistribution ? { distribution: defaultDistribution } : {}),
-        ...(enableOtherInput ? { otherText: "" } : {}),
-      },
-    ])
-) as {
-  type: string;
-  clock: string;
-  level: string;
-  distribution?: string;
-  otherText?: string;
-}[];
-
+    const parsedList = JSON.parse(
+      getAnswer(listId) ||
+        JSON.stringify([
+          {
+            type: defaultType,
+            clock: "",
+            level: "",
+            ...(defaultDistribution
+              ? { distribution: defaultDistribution }
+              : {}),
+            ...(enableOtherInput ? { otherText: "" } : {}),
+          },
+        ])
+    ) as {
+      type: string;
+      clock: string;
+      level: string;
+      distribution?: string;
+      otherText?: string;
+    }[];
 
     const updateList = (
       updated: {
@@ -112,7 +96,7 @@ const parsedList = JSON.parse(
       "Grouped",
       "Linear",
       "Segmental",
-      "Ductal"
+      "Ductal",
     ];
 
     return (
@@ -121,34 +105,34 @@ const parsedList = JSON.parse(
           <Label className="text-base font-semibold">{label}</Label>
 
           <Button
-  variant="greenTheme"
-  className="text-shite"
-  onClick={() => {
-    const getDefaultType = () => {
-      if (label === "Ductal Prominence") return "No Mass Effect";
-      if (label === "Macrocalcifications") return "Clumped";
-      return "";
-    };
+            variant="greenTheme"
+            className="text-shite"
+            onClick={() => {
+              const getDefaultType = () => {
+                if (label === "Ductal Prominence") return "No Mass Effect";
+                if (label === "Macrocalcifications") return "Clumped";
+                return "";
+              };
 
-    const newItem = {
-      type: getDefaultType(),
-      clock: "",
-      level: "",
-      ...(showDistributions && { distribution: "Non Segmental" }),
-      ...(enableOtherInput && { otherText: "" }),
-    };
+              const newItem = {
+                type: getDefaultType(),
+                clock: "",
+                level: "",
+                ...(showDistributions && { distribution: "Non Segmental" }),
+                ...(enableOtherInput && { otherText: "" }),
+              };
 
-    updateList([...parsedList, newItem]);
-  }}
->
-  Add
-</Button>
-
+              updateList([...parsedList, newItem]);
+            }}
+          >
+            Add
+          </Button>
         </div>
         {parsedList.map((item, index) => (
           <div key={index} className="flex items-center gap-2 pl-4">
             <span className="text-sm font-medium">{index + 1}.</span>
             <CustomSelect
+              className="min-w-28 w-38"
               value={item.type}
               onChange={(val) => {
                 const updated = [...parsedList];
@@ -180,8 +164,22 @@ const parsedList = JSON.parse(
               }}
               singleSelect={true}
             />
-            <span className="text-sm">o'clock, level</span>
+            {item.clock.length > 0 && (
+              <X
+                className="cursor-pointer"
+                onClick={() => {
+                  const updated = [...parsedList];
+                  updated[index].clock = "";
+                  updateList(updated);
+                }}
+                width={13}
+                height={13}
+                color="red"
+              />
+            )}
+            <span className="text-xs">o'clock, level</span>
             <GridNumber200
+              className="w-14"
               value={item.level}
               onChange={(val) => {
                 const updated = [...parsedList];
@@ -189,10 +187,24 @@ const parsedList = JSON.parse(
                 updateList(updated);
               }}
             />
+            {item.level && (
+              <X
+                className="cursor-pointer"
+                onClick={() => {
+                  const updated = [...parsedList];
+                  updated[index].level = "";
+                  updateList(updated);
+                }}
+                width={13}
+                height={13}
+                color="red"
+              />
+            )}
             {showDistributions && (
               <>
-                <span className="text-sm">, distribution</span>
+                <span className="text-xs">, distribution</span>
                 <CustomSelect
+                  className="min-w-10"
                   value={item.distribution || ""} // ✅ ensure it's always a string
                   onChange={(val) => {
                     const updated = [...parsedList];
@@ -201,9 +213,22 @@ const parsedList = JSON.parse(
                   }}
                   options={distributionOptions}
                 />
+                {/* {item.distribution && (
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const updated = [...parsedList];
+                      updated[index].distribution = "";
+                      updateList(updated);
+                    }}
+                    width={13}
+                    height={13}
+                    color="red"
+                  />
+                )} */}
               </>
             )}
-            {parsedList.length > 1 && (
+            {parsedList.length > 0 && (
               <button
                 className="text-red-500"
                 onClick={() => {
@@ -261,7 +286,7 @@ const parsedList = JSON.parse(
       </div>
 
       {getAnswer(questionIds.grandularSelect) === "Present" && (
-        <div className="py-4 lg:px-10 space-y-4">
+        <div className="py-4 lg:pl-10 space-y-4">
           <MultiRadioOptionalInputInline
             label="Glandular And Ductal tissue"
             labelClassname="lg:w-[12rem]"
@@ -327,7 +352,7 @@ const parsedList = JSON.parse(
               {renderCalcificationList(
                 "Ductal Prominence",
                 questionIds.ductalProminenceList,
-                ["No Mass Effect", "With Mass Effect"]
+                ["No Mass Effect", "Mass Effect"]
               )}
             </div>
           )}
@@ -396,7 +421,7 @@ const parsedList = JSON.parse(
                 questionIds.calcifiedScarList,
                 ["Linear", "Curved", "Patchy", "Other"],
                 false,
-  true
+                true
               )}
             </div>
           )}

@@ -525,7 +525,7 @@ const ManagePerformingProvider: React.FC = () => {
           </div> */}
 
           {/* Add Performing Provider Button */}
-          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addPerformingProvider", {state: scanCenterId, replace: true})}>
+          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addPerformingProvider", {state: scanCenterId})}>
             <Plus /> Add Performing Provider
           </Button>
         </div>

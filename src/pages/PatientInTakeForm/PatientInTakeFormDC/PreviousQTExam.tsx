@@ -43,7 +43,7 @@ const PreviousQTExam: React.FC<Props> = ({
       <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
         <div className="flex flex-col lg:flex-row gap-4">
-          <Label className="text-bold text-base">A. Date of previous QT imaging<span className="text-red-500">*</span></Label>
+          <Label className="font-semibold text-base">A. Date of previous QT imaging</Label>
           <div>
             <DatePicker
               value={
@@ -58,15 +58,13 @@ const PreviousQTExam: React.FC<Props> = ({
                 )
               }
               disabledDates={dateDisablers.noFuture}
-              required
             />
           </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
-          <Label className="text-bold text-base">
+          <Label className="font-semibold text-base">
             <span>B. Facility where previous imaging was performed</span>
-            <span className="text-red-500">*</span>
           </Label>
           <Input
             type="text"
@@ -76,7 +74,6 @@ const PreviousQTExam: React.FC<Props> = ({
             }
             placeholder="Specify"
             className="w-full lg:w-48 text-sm"
-            required
           />
         </div>
 

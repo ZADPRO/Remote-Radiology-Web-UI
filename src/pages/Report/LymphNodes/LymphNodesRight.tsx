@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReportQuestion } from "../Report";
 import { Label } from "@/components/ui/label";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
@@ -30,28 +30,6 @@ const LymphNodesRight: React.FC<Props> = ({
   label,
   axilaryLabel,
 }) => {
-  useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0) return;
-    // getAnswer(questionIds.Intramammaryr) === "" &&
-    //   handleReportInputChange(questionIds.Intramammaryr, "Present");
-    getAnswer(questionIds.IntramammaryDatar) === "" &&
-      handleReportInputChange(
-        questionIds.IntramammaryDatar,
-        JSON.stringify([
-          {
-            option: "",
-            position: "",
-            level: "",
-            levelpercentage: "",
-            locationLevel: "benign morphology",
-          },
-        ])
-      );
-    getAnswer(questionIds.axillarynodes) === "" &&
-      handleReportInputChange(questionIds.axillarynodes, "benign morphology");
-    getAnswer(questionIds.ClipsPresentStatus) === "" &&
-      handleReportInputChange(questionIds.ClipsPresentStatus, "Present");
-  }, []);
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";

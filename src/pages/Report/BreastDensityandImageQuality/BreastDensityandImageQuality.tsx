@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReportQuestion } from "../Report";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Label } from "@/components/ui/label";
@@ -29,21 +29,6 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
 }) => {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
-
-  useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0) return;
-    getAnswer(questionIds.breastSelect) === "" &&
-      handleReportInputChange(questionIds.breastSelect, "Present");
-    getAnswer(questionIds.imageQuality) === "" &&
-      handleReportInputChange(questionIds.imageQuality, "Acceptable");
-    getAnswer(questionIds.breastDensity) === "" &&
-      handleReportInputChange(
-        questionIds.breastDensity,
-        "Heterogeneously Dense"
-      );
-    getAnswer(questionIds.symmetry) === "" &&
-      handleReportInputChange(questionIds.symmetry, "Symmetry");
-  }, []);
 
   return (
     <div className="w-full">
@@ -77,13 +62,16 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
             options={[
-              { label: "MF", value: "Mostly Fatty" },
-              { label: "SD", value: "Scattered Density" },
+              { label: "Mostly Fatty", value: "Mostly Fatty" },
               {
-                label: "HD",
+                label: "Heterogeneously Dense",
                 value: "Heterogeneously Dense",
               },
-              { label: "VD", value: "Very Dense" },
+              {
+                label: "Dense",
+                value: "Dense",
+              },
+              { label: "Very Dense", value: "Very Dense" },
             ]}
           />
 

@@ -28,6 +28,7 @@ interface Props {
   optionalInputType?: "input" | "textarea";
   optionalInputRequired?: boolean;
   secondaryOptionalInputType?: "input" | "textarea";
+  disabled?: boolean;
 }
 
 const LabeledRadioWithOptionalInput: React.FC<Props> = ({
@@ -49,6 +50,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
   optionalInputType = "input", // ✅ default to input
   optionalInputRequired = true,
   secondaryOptionalInputType = "input", // ✅ default to input
+  disabled = false,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -107,6 +109,8 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                 checked={selectedValue === value}
                 onChange={(e) => handleInputChange(questionId, e.target.value)}
                 className="custom-radio"
+                disabled={disabled}
+                required={required}
               />
               <Label htmlFor={id}>{label}</Label>
 

@@ -343,6 +343,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     fieldName: keyof NewPerformingProvider;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -496,6 +497,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 dob: val?.toLocaleDateString("en-CA") || "",
               }));
             }}
+            required
           />
         </div>
 
@@ -560,6 +562,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
     field: keyof NewPerformingProvider,
     tempFileKey: keyof TempFilesState
   ): Promise<void> => {
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -749,26 +752,27 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
                 />
 
           {tempFiles.license_files.length > 0 && (
-            <ul className="mt-2 space-y-1 text-sm text-gray-700">
-              {tempFiles.license_files.map((file, index) => (
-                <li
-                  key={index}
-                  className="flex items-center justify-between border p-2 rounded"
-                >
-                  <span className="w-4/5">{file.name}</span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleRemoveMultiFile("license_files", index)
-                    }
-                    className="text-red-500 hover:text-red-700 text-xs"
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+                            <ul className="mt-2 space-y-2 text-sm text-gray-800">
+                              {tempFiles.license_files.map((file, index) => (
+                                <li
+                                  key={index}
+                                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 font-medium"
+                                >
+                                  <span className="break-words">{file.name}</span>
+          
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleRemoveMultiFile("license_files", index)
+                                    }
+                                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
         </div>
       </div>
 

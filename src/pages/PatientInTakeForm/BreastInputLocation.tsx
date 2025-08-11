@@ -3,13 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -20,24 +13,31 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import bg from "../../assets/Patient-InTake Form/breastOutline.png";
+import ValidatedSelect from "./ValidatedSelect";
 
 type Props = {
   label: string;
   checkStatusQId: number;
   RQID: number;
   LQID: number;
-  SDate: any;
   data: any;
   setData: any;
-  Location: any;
-  LocationOther: any;
   OtherInputQId?: number;
-  // Adding Size to props for consistency, even if not directly used by default in BreastInputLocation
-  Size?: any;
   patientData?: any;
   setPatientData?: any;
   technician?: boolean;
   editStatus?: boolean;
+
+  LocationAxillary?: number;
+  LocationAxillaryDuration?: number;
+  LocationAxillarySize?: number;
+  LocationInBetween?: number;
+  LocationInBetweenDuration?: number;
+  LocationInBetweenSize?: number;
+  LocationOther?: number;
+  LocationOtherSpecify?: number;
+  LocationOtherDuration?: number;
+  LocationOtherSize?: number;
 };
 
 const BreastInputLocation: React.FC<Props> = (Props) => {
@@ -278,8 +278,6 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                 if (getAnswerByQuestionId(Props.checkStatusQId) === "true") {
                   updateAnswer(Props.LQID, "");
                   updateAnswer(Props.RQID, "");
-                  updateAnswer(Props.SDate, "");
-                  updateAnswer(Props.Location, ""); // Clear Location as well
                   if (Props.OtherInputQId) {
                     updateAnswer(Props.OtherInputQId, ""); // Clear OtherInput if it exists
                   }
@@ -289,8 +287,9 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
             <Label className="font-semibold text-base">{Props.label}</Label>
           </div>
 
+             {getAnswerByQuestionId(Props.checkStatusQId) === "true" && ( 
           <div className="h-full w-full space-y-4">
-          {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
+          
             <div className="h-full w-full space-y-2">
               <div>
                 <div className="flex flex-col space-y-2">
@@ -298,122 +297,116 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                     Location
                   </Label>
                   <div className="flex flex-col items-start gap-4 pl-4">
-                    {[
-                      "Axillary(Armpit)",
-                      "In-Between(Chest Bone)",
-                      "Other",
-                    ].map((option, index) => {
-                      const selectedValue = getAnswerByQuestionId(
-                        Props.Location
-                      );
-                      const isSelected = selectedValue === option;
-                      const isOtherSelected = isSelected && option === "Other";
-                      const isNonOtherSelected =
-                        isSelected && option !== "Other";
+  {[
+    {
+      label: "Axillary (Armpit)",
+      checkedQId: Props.LocationAxillary,
+      durationQId: Props.LocationAxillaryDuration,
+      sizeQId: Props.LocationAxillarySize,
+      isOther: false,
+    },
+    {
+      label: "In-Between (Chest Bone)",
+      checkedQId: Props.LocationInBetween,
+      durationQId: Props.LocationInBetweenDuration,
+      sizeQId: Props.LocationInBetweenSize,
+      isOther: false,
+    },
+    {
+      label: "Other",
+      checkedQId: Props.LocationOther,
+      specifQId: Props.LocationOtherSpecify,
+      durationQId: Props.LocationOtherDuration,
+      sizeQId: Props.LocationOtherSize,
+      isOther: true,
+    },
+  ].map((option, index) => {
+    const isSelected = getAnswerByQuestionId(option.checkedQId) === "true";
 
-                      return (
-                        <div
-                          key={index}
-                          className="flex flex-row items-center-safe gap-1 min-h-8"
-                        >
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name="location"
-                              className="custom-radio"
-                              id={option}
-                              value={option}
-                              checked={isSelected}
-                              onChange={() =>
-                                updateAnswer(Props.Location, option)
-                              }
-                            />
-                            <label htmlFor={option} className="text-sm">
-                              {option}
-                            </label>
-                          </div>
+    return (
+      <div
+        key={index}
+        className="flex flex-col gap-2 min-h-8 w-full"
+      >
+        {/* Checkbox */}
+        <div className="flex items-center gap-2">
+          <Checkbox2
+            id={option.label}
+            checked={isSelected}
+            onCheckedChange={() =>
+              updateAnswer(option.checkedQId ?? 0, getAnswerByQuestionId(option.checkedQId) == "true" ? "false" : "true")
+            }
+          />
+          <label htmlFor={option.label} className="text-sm">
+            {option.label}
+          </label>
+        </div>
 
-                          {/* For 'Other' Option */}
-                          {isOtherSelected && (
-                            <div className="flex items-center gap-2 ml-6 mt-1">
-                              <Input
-                                type="text"
-                                className="border px-2 py-1 rounded text-sm"
-                                placeholder="Enter location"
-                                value={getAnswerByQuestionId(
-                                  Props.LocationOther
-                                )}
-                                onChange={(e) =>
-                                  updateAnswer(
-                                    Props.LocationOther,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                              <Label>Specify</Label>
-                            </div>
-                          )}
+        {/* Extra fields if selected */}
+        {isSelected && (
+          <div className="flex flex-wrap gap-4 pl-6">
+            {option.isOther && (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                <Label>Specify</Label>
+                <Input
+                  type="text"
+                  value={getAnswerByQuestionId(option.specifQId)}
+                  onChange={(e) =>
+                    updateAnswer(option.specifQId ?? 0, e.target.value)
+                  }
+                  className="w-full lg:w-48"
+                  placeholder="Enter location"
+                  required
+                />
+              </div>
+            )}
 
-                          {/* For other options – show two inputs */}
-                          {isNonOtherSelected && (
-                            <div className="flex flex-wrap gap-2 ml-6">
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                                <Label className="">Duration (Months)</Label>
-                                <Input
-                                  placeholder="Months"
-                                  value={getAnswerByQuestionId(Props.SDate)}
-                                  onChange={(e) =>
-                                    updateAnswer(Props.SDate, e.target.value)
-                                  }
-                                  className="w-full lg:w-20"
-                                  type="number"
-                                  // required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.RQID) != ""}
-                                />
-                              </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+              <Label>Duration (Months)</Label>
+              <Input
+                placeholder="Months"
+                value={getAnswerByQuestionId(option.durationQId)}
+                onChange={(e) =>
+                  updateAnswer(option.durationQId ?? 0, e.target.value)
+                }
+                className="w-full lg:w-20"
+                type="number"
+                required
+              />
+            </div>
 
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
-                                <Label>Size</Label>
-                                <div className="w-full lg:w-32">
-                                  <Select
-                                    value={
-                                      getAnswerByQuestionId(Props.Size) || ""
-                                    }
-                                    onValueChange={(value) =>
-                                      updateAnswer(Props.Size, value)
-                                    }
-                                    required={
-                                      getAnswerByQuestionId(Props.Size) ===
-                                        "" &&
-                                      getAnswerByQuestionId(
-                                        Props.OtherInputQId
-                                      ) == ""
-                                    }
-                                  >
-                                    <SelectTrigger className="bg-white w-full">
-                                      <SelectValue placeholder="Select Size" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="Pea">Pea</SelectItem>
-                                      <SelectItem value="Grape">
-                                        Grape
-                                      </SelectItem>
-                                      <SelectItem value="Bigger">
-                                        Bigger
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+              <Label>Size</Label>
+              <div className="w-full lg:w-32">
+                <ValidatedSelect
+                          questionId={option.sizeQId ?? 0}
+                          formData={Props.data}
+                          handleInputChange={updateAnswer}
+                          options={[
+                            { label: "Pea", value: "Pea" },
+                            { label: "Grape", value: "Grape" },
+                            { label: "Bigger", value: "Bigger" },
+                          ]}
+                          placeholder="Select Size"
+                          required={
+                            getAnswerByQuestionId(option.checkedQId) != "" &&
+                            getAnswerByQuestionId(option.sizeQId) == ""
+                          }
+                        />
+                
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
+
                 </div>
               </div>
             </div>
-          )}
+          
 
           <div className="flex items-start gap-2">
             {/* R Clock Label Input */}
@@ -479,6 +472,7 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
             </div>
           )}
           </div>
+             )}
         </div>
       </div>
     </>

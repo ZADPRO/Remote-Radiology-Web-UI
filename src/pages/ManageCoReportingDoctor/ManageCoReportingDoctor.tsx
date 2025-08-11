@@ -171,7 +171,7 @@ const ManageCoReportingDoctor: React.FC = () => {
               className="cursor-pointer font-semibold text-white"
               onClick={column.getToggleSortingHandler()}
             >
-              Co-Doctor ID
+              Reviewer ID
             </span>
             <Button
               variant="ghost"
@@ -202,7 +202,7 @@ const ManageCoReportingDoctor: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Co-Doctor ID...`}
+                    placeholder={`Filter Reviewer ID...`}
                     value={(column.getFilterValue() ?? '') as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
@@ -455,7 +455,7 @@ const ManageCoReportingDoctor: React.FC = () => {
       >
         <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <h1 className="text-[#3F3F3D] uppercase font-[900] text-xl lg:text-2xl text-center lg:text-left tracking-widest">
-          Manage Co-Reporting Doctor
+          Manage Reviewer
         </h1>
       </div>
       <div className="w-11/12 mx-auto my-0 space-y-3 py-4">
@@ -524,8 +524,8 @@ const ManageCoReportingDoctor: React.FC = () => {
           </div> */}
 
           {/* Add Co-Doctor Button */}
-          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addCoReportingDoctor", {state: scanCenterId, replace: true})}>
-            <Plus /> Add Co-Reporting Doctor
+          <Button className="bg-[#a4b2a1] hover:bg-[#81927f] w-full lg:w-1/5" onClick={() => navigate("../addCoReportingDoctor", {state: scanCenterId})}>
+            <Plus /> Add Reviewer
           </Button>
         </div>
 
@@ -726,7 +726,7 @@ const ManageCoReportingDoctor: React.FC = () => {
       {/* Edit Co-Doctor Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent style={{background: "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)"}} className="h-11/12 w-[90vw] lg:w-[80vw] overflow-y-auto">
-                <DialogTitle>Edit Co-Reporting Doctor</DialogTitle>
+                <DialogTitle>Edit Reviewer</DialogTitle>
 
           {selectedCoDoctorId !== null && (
             <EditCoReportingDoctor scanCenterId={scanCenterId} scanCenterDoctorId={selectedCoDoctorId} setIsEditDialogOpen={setIsEditDialogOpen} onUpdate={getAllCoDoctors}/>

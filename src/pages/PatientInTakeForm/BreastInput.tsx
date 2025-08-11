@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 import { DialogTitle } from "@/components/ui/dialog";
 import bg from "../../assets/Patient-InTake Form/breastOutline.png";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import ValidatedSelect from "@/components/ui/CustomComponents/ValidatedSelect";
 
 type Props = {
   label: string;
@@ -235,7 +235,8 @@ const BreastInput: React.FC<Props> = (Props) => {
 
           <div className="w-full h-[320px] overflow-x-auto lg:overflow-x-hidden space-y-5">
             <Label className="text-muted-foreground w-[400px] text-center mx-auto">
-              Select the affected areas by clicking on the corresponding clock positions or the center (nipple) in the diagram below.
+              Select the affected areas by clicking on the corresponding clock
+              positions or the center (nipple) in the diagram below.
             </Label>
             <div
               className="w-[480px] h-[200px] flex justify-center items-center"
@@ -295,7 +296,13 @@ const BreastInput: React.FC<Props> = (Props) => {
                 }
               }}
             />
-            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `${Props.nameLabelColor}` : ""}`}>{Props.label}</Label>
+            <Label
+              className={`font-semibold text-base ${
+                Props.nameLabelColor ? `${Props.nameLabelColor}` : ""
+              }`}
+            >
+              {Props.label}
+            </Label>
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
@@ -317,11 +324,10 @@ const BreastInput: React.FC<Props> = (Props) => {
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-getAnswerByQuestionId(Props.RQID) === "" &&
-      getAnswerByQuestionId(Props.LQID) === "" &&
-      getAnswerByQuestionId(Props.OtherInputQId) === ""
-}
-
+                      getAnswerByQuestionId(Props.RQID) === "" &&
+                      getAnswerByQuestionId(Props.LQID) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) === ""
+                    }
                   />
                 </div>
 
@@ -331,10 +337,17 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                   <Input
                     placeholder="Months"
                     value={getAnswerByQuestionId(Props.SDateRight)}
-                    onChange={(e) => updateAnswer(Props.SDateRight, e.target.value)}
+                    onChange={(e) =>
+                      updateAnswer(Props.SDateRight, e.target.value)
+                    }
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDateRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.RQID) != ""}
+                    required={
+                      getAnswerByQuestionId(Props.SDateRight) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) == "" &&
+                      getAnswerByQuestionId(Props.RQID) != ""
+                    }
+                    disabled={getAnswerByQuestionId(Props.RQID) == ""}
                   />
                 </div>
 
@@ -344,22 +357,22 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       <Label>Size</Label>
                       <div className="w-full lg:w-32">
-                        <Select
-                          value={getAnswerByQuestionId(Props.SizeRight) || ""}
-                          onValueChange={(value) =>
-                            updateAnswer(Props.SizeRight, value)
+                        <ValidatedSelect
+                          questionId={Props.SizeRight}
+                          formData={Props.data}
+                          handleInputChange={updateAnswer}
+                          options={[
+                            { label: "Pea", value: "Pea" },
+                            { label: "Grape", value: "Grape" },
+                            { label: "Bigger", value: "Bigger" },
+                          ]}
+                          placeholder="Select Size"
+                          required={
+                            getAnswerByQuestionId(Props.SizeRight) === "" &&
+                            getAnswerByQuestionId(Props.OtherInputQId) == ""
                           }
-                          required={getAnswerByQuestionId(Props.SizeRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
-                        >
-                          <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Pea">Pea</SelectItem>
-                            <SelectItem value="Grape">Grape</SelectItem>
-                            <SelectItem value="Bigger">Bigger</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          disabled={getAnswerByQuestionId(Props.RQID) == ""}
+                        />
                       </div>
                     </div>
                   )}
@@ -367,50 +380,58 @@ getAnswerByQuestionId(Props.RQID) === "" &&
 
                 <div className="flex gap-2">
                   {/* Size (only for "Lump or thickening") */}
-                  {(Props.label === "Skin changes") && (
+                  {Props.label === "Skin changes" && (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       {/* <Label>Size</Label> */}
                       <div className="w-full">
-                        <Select
-                          value={getAnswerByQuestionId(Props.skinChangesTypeRight) || ""}
-                          onValueChange={(value) =>
-                            updateAnswer(Props.skinChangesTypeRight!, value)
-                          }
-                          required={getAnswerByQuestionId(Props.skinChangesTypeRight) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
-                        >
-                          <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Skin Changes" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Thickening">Thickening</SelectItem>
-                            <SelectItem value="Dimpling">Dimpling</SelectItem>
-                            <SelectItem value="Redness">Redness</SelectItem>
-                            <SelectItem value="Peau d'orange">Peau d'orange</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {Props.skinChangesTypeRight && (
+                          <ValidatedSelect
+                            questionId={Props.skinChangesTypeRight}
+                            formData={Props.data}
+                            handleInputChange={updateAnswer}
+                            options={[
+                              { label: "Dimpling", value: "Dimpling" },
+                              { label: "Redness", value: "Redness" },
+                              {
+                                label: "Peau d'orange",
+                                value: "Peau d'orange",
+                              },
+                              { label: "Other", value: "Other" },
+                            ]}
+                            placeholder="Select Skin Changes"
+                            required={
+                              getAnswerByQuestionId(Props.skinChangesTypeRight) ===
+                                "" &&
+                              getAnswerByQuestionId(Props.OtherInputQId) == ""
+                            }
+                            disabled={getAnswerByQuestionId(Props.RQID) == ""}
+                          />
+                        )}
                       </div>
 
-                      {
-                        getAnswerByQuestionId(Props.skinChangesTypeRight) === "Other" && (
-                          <>
-                            <div className="flex gap-1 w-full ">
-                              <Input
-                                placeholder="Specify"
-                                value={getAnswerByQuestionId(Props.skinOtherRight)}
-                                onChange={(e) =>
-                                  updateAnswer(Props.skinOtherRight!, e.target.value)
-                                }
-                              />
-                            </div>
-                          </>
-                        )
-                      }
+                      {getAnswerByQuestionId(Props.skinChangesTypeRight) ===
+                        "Other" && (
+                        <>
+                          <div className="flex gap-1 w-full ">
+                            <Input
+                              placeholder="Specify"
+                              value={getAnswerByQuestionId(
+                                Props.skinOtherRight
+                              )}
+                              onChange={(e) =>
+                                updateAnswer(
+                                  Props.skinOtherRight!,
+                                  e.target.value
+                                )
+                              }
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
-
-
               </div>
 
               <div className="flex flex-col lg:flex-row flex-wrap gap-2 w-full">
@@ -431,11 +452,10 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                       getAnswerByQuestionId(Props.checkStatusQId) !== "true"
                     }
                     required={
-  getAnswerByQuestionId(Props.RQID) === "" &&
-      getAnswerByQuestionId(Props.LQID) === "" &&
-      getAnswerByQuestionId(Props.OtherInputQId) === ""
-}
-
+                      getAnswerByQuestionId(Props.RQID) === "" &&
+                      getAnswerByQuestionId(Props.LQID) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) === ""
+                    }
                   />
                 </div>
 
@@ -448,7 +468,12 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                     onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
                     className="w-full lg:w-20"
                     type="number"
-                    required={getAnswerByQuestionId(Props.SDate) === "" && getAnswerByQuestionId(Props.OtherInputQId) == "" && getAnswerByQuestionId(Props.LQID) != ""}
+                    required={
+                      getAnswerByQuestionId(Props.SDate) === "" &&
+                      getAnswerByQuestionId(Props.OtherInputQId) == "" &&
+                      getAnswerByQuestionId(Props.LQID) != ""
+                    }
+                    disabled={getAnswerByQuestionId(Props.LQID) == ""}
                   />
                 </div>
 
@@ -458,22 +483,22 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       <Label>Size</Label>
                       <div className="w-full lg:w-32">
-                        <Select
-                          value={getAnswerByQuestionId(Props.Size) || ""}
-                          onValueChange={(value) =>
-                            updateAnswer(Props.Size, value)
+                        <ValidatedSelect
+                          questionId={Props.Size}
+                          formData={Props.data}
+                          handleInputChange={updateAnswer}
+                          options={[
+                            { label: "Pea", value: "Pea" },
+                            { label: "Grape", value: "Grape" },
+                            { label: "Bigger", value: "Bigger" },
+                          ]}
+                          placeholder="Select Size"
+                          required={
+                            getAnswerByQuestionId(Props.Size) === "" &&
+                            getAnswerByQuestionId(Props.OtherInputQId) == ""
                           }
-                          required={getAnswerByQuestionId(Props.Size) === ""}
-                        >
-                          <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Pea">Pea</SelectItem>
-                            <SelectItem value="Grape">Grape</SelectItem>
-                            <SelectItem value="Bigger">Bigger</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          disabled={getAnswerByQuestionId(Props.LQID) == ""}
+                        />
                       </div>
                     </div>
                   )}
@@ -481,45 +506,51 @@ getAnswerByQuestionId(Props.RQID) === "" &&
 
                 <div className="flex gap-2">
                   {/* Size (only for "Lump or thickening") */}
-                  {(Props.label === "Skin changes") && (
+                  {Props.label === "Skin changes" && (
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
                       {/* <Label>Size</Label> */}
                       <div className="w-full">
-                        <Select
-                          value={getAnswerByQuestionId(Props.skinChangesType) || ""}
-                          onValueChange={(value) =>
-                            updateAnswer(Props.skinChangesType!, value)
-                          }
-                          required={getAnswerByQuestionId(Props.skinChangesType) === "" && getAnswerByQuestionId(Props.OtherInputQId) == ""}
-                        >
-                          <SelectTrigger className="bg-white w-full">
-                            <SelectValue placeholder="Select Skin Changes" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Thickening">Thickening</SelectItem>
-                            <SelectItem value="Dimpling">Dimpling</SelectItem>
-                            <SelectItem value="Redness">Redness</SelectItem>
-                            <SelectItem value="Peau d'orange">Peau d'orange</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {Props.skinChangesType && (
+                          <ValidatedSelect
+                            questionId={Props.skinChangesType}
+                            formData={Props.data}
+                            handleInputChange={updateAnswer}
+                            options={[
+                              { label: "Dimpling", value: "Dimpling" },
+                              { label: "Redness", value: "Redness" },
+                              {
+                                label: "Peau d'orange",
+                                value: "Peau d'orange",
+                              },
+                              { label: "Other", value: "Other" },
+                            ]}
+                            placeholder="Select Skin Changes"
+                            required={
+                              getAnswerByQuestionId(Props.skinChangesType) ===
+                                "" &&
+                              getAnswerByQuestionId(Props.OtherInputQId) == ""
+                            }
+                            disabled={getAnswerByQuestionId(Props.LQID) == ""}
+                          />
+                        )}
                       </div>
 
-                      {
-                        getAnswerByQuestionId(Props.skinChangesType) === "Other" && (
-                          <>
-                            <div className="flex gap-1 w-full ">
-                              <Input
-                                placeholder="Specify"
-                                value={getAnswerByQuestionId(Props.skinOther)}
-                                onChange={(e) =>
-                                  updateAnswer(Props.skinOther!, e.target.value)
-                                }
-                              />
-                            </div>
-                          </>
-                        )
-                      }
+                      {getAnswerByQuestionId(Props.skinChangesType) ===
+                        "Other" && (
+                        <>
+                          <div className="flex gap-1 w-full ">
+                            <Input
+                              placeholder="Specify"
+                              value={getAnswerByQuestionId(Props.skinOther)}
+                              onChange={(e) =>
+                                updateAnswer(Props.skinOther!, e.target.value)
+                              }
+                              disabled={getAnswerByQuestionId(Props.LQID) == ""}
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -527,7 +558,7 @@ getAnswerByQuestionId(Props.RQID) === "" &&
 
               <div className="flex gap-2 mt-4 w-1/2">
                 {/* Other Input */}
-                {(Props.OtherInputQId && !Props.technician) && (
+                {Props.OtherInputQId && !Props.technician && (
                   <div className="flex gap-1 w-full ">
                     <Textarea
                       placeholder="Additional Comments"
@@ -539,7 +570,6 @@ getAnswerByQuestionId(Props.RQID) === "" &&
                   </div>
                 )}
               </div>
-
             </div>
           )}
         </div>

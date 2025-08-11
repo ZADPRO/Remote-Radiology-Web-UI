@@ -53,13 +53,13 @@ export const PatientContext = React.createContext<PatientContextType | null>(
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 510 }, (_, index) => ({
+    Array.from({ length: 520 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
   );
 
-  // 506
+  // 511
 
   const [loading, setLoading] = useState(false);
 
@@ -79,6 +79,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const location = useLocation();
   const locationState =
     location.state as PatientInTakeFormNavigationState | null;
+
+  console.log(locationState)
 
   const controlData: PatientInTakeFormNavigationState = {
     fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,

@@ -157,6 +157,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
                             required
+                            disabled={getAnswerByQuestionId(Props.RQID) != "true"}
                           />
                         )}
                     </div>
@@ -177,6 +178,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           getAnswerByQuestionId(Props.RQID) == "true" &&
                           getAnswerByQuestionId(Props.SDateRight) == ""
                         }
+                        disabled={getAnswerByQuestionId(Props.RQID) != "true"}
                       />
                     </div>
                   </div>
@@ -249,6 +251,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
                             required
+                            disabled={getAnswerByQuestionId(Props.LQID) != "true"}
                           />
                         )}
                     </div>
@@ -269,6 +272,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           getAnswerByQuestionId(Props.LQID) == "true" &&
                           getAnswerByQuestionId(Props.SDate) == ""
                         }
+                        disabled={getAnswerByQuestionId(Props.LQID) != "true"}
                       />
                     </div>
                   </div>

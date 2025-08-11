@@ -239,6 +239,7 @@ const Analytics: React.FC = () => {
       }
     } else {
       setCenterSelectedValue(null);
+      setUserSelectedValue(userSelectedValue ? userSelectedValue : user.refUserId)
       fetchAnalyticsPeruser(userSelectedValue ? userSelectedValue : user.refUserId, role?.id);
     }
   }, [dateRange]);
@@ -494,7 +495,7 @@ const Analytics: React.FC = () => {
           {!handleComponentAccess("previousMonth") && (
             <div
               className={
-                handleComponentAccess("turnaroundTime")
+                !(!handleComponentAccess("turnaroundTime") && userSelectedValue != null)
                   ? "w-full"
                   : "w-full lg:w-2/3"
               }
@@ -503,7 +504,7 @@ const Analytics: React.FC = () => {
             </div>
           )}
 
-          {!handleComponentAccess("turnaroundTime") && (
+          {(!handleComponentAccess("turnaroundTime") && (userSelectedValue != null)) && (
             <div className="w-full lg:w-1/3">
               <TATPieChart data={tatStats} />
             </div>
