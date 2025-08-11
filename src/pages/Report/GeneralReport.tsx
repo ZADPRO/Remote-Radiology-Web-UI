@@ -183,7 +183,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
 
             {getAnswer(symmetryQuestions.symmetry) == "Asymmetry" && (
               <MultiRadioOptionalInputInline
-                label="Side"
+                label="Bigger Side"
                 labelClassname="w-[12rem]"
                 questionId={symmetryQuestions.symmetryLeft}
                 formData={reportFormData}
@@ -191,15 +191,15 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 options={[
                   {
                     label:
-                      "Right side breast is bigger than the left side breast",
+                      "Right Breast",
                     value:
-                      "right side breast is bigger than the left side breast",
+                      "right breast bigger than left breast",
                   },
                   {
                     label:
-                      "Left side breast is bigger than the right side breast",
+                      "Left Breast",
                     value:
-                      "left side breast is bigger than the right side breast",
+                      "left breast bigger than right breast",
                   },
                 ]}
               />

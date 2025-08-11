@@ -125,7 +125,6 @@ const MonitoringFollow: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.nextappointment, e.target.value)
                 }
-                required
                 placeholder="Type Date"
                 className="w-64 text-sm"
               />

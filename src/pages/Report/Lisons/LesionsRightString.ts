@@ -76,11 +76,32 @@ export function LesionsRightString(
 
         let sentence = `<span>There ${
           namePart === "multiple simple cysts" ? "are" : "is"
-        } ${
+        }${
+          namePart === "complex cystic structure" ? " a" : ""
+        } ${namePart ?? "lesion"}${
           namePart === "multiple simple cysts" && data.atleast
-            ? ` atleast ${data.atleast} `
+            ? ` atleast ${data.atleast}`
             : ""
-        }${namePart ?? "lesion"}`;
+        }`;
+
+         // Distance from nipple
+        if (data.distancenipple) {
+          sentence += `${
+            namePart !== "heterogeneous tissue prominence" &&
+            namePart !== "hypertrophic tissue with microcysts"
+              ? `, `
+              : ``
+          } ${
+            namePart === "multiple simple cysts" || namePart === "heterogeneous tissue prominence" || namePart === "hypertrophic tissue with microcysts" ? "" : "measuring"
+          }  ${
+            namePart === "multiple simple cysts" ? "largest measuring" : ""
+          }${
+            namePart === "heterogeneous tissue prominence" ||
+            namePart === "hypertrophic tissue with microcysts"
+              ? `spanning`
+              : ``
+          } ${data.distancenipple} mm from the nipple, `;
+        }
 
         // Add location if available
         if (locationText) {
@@ -120,18 +141,6 @@ export function LesionsRightString(
           sentence += `, located at ${levelText}`;
         } else if (data.locationLevelPercentage) {
           sentence += `, located at ${data.locationLevelPercentage}`;
-        }
-
-        // Distance from nipple
-        if (data.distancenipple) {
-          sentence += `, approximately ${
-            namePart === "multiple simple cysts" ? "largest measuring" : ""
-          }${
-            namePart === "heterogeneous tissue prominence" ||
-            namePart === "hypertrophic tissue with microcysts"
-              ? `spanning`
-              : ``
-          } ${data.distancenipple} mm from the nipple`;
         }
 
         if (data.sizew || data.sizel || data.sizeh) {

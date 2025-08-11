@@ -109,7 +109,7 @@ export function SFormGeneration(
     }
 
     if (lumpectomy === "true") {
-      surgeries.push(`lumpectomy${lumpectomyDate ? `on ${lumpectomyDate}` : ""}`);
+      surgeries.push(`lumpectomy${lumpectomyDate ? ` on ${lumpectomyDate}` : ""}`);
     }
 
     if (cystAspiration === "true") {

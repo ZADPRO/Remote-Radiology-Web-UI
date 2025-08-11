@@ -462,7 +462,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="+1">USA (+1)</SelectItem>
-                <SelectItem value="+91">IN (+91)</SelectItem>
+                {/* <SelectItem value="+91">IN (+91)</SelectItem> */}
               </SelectContent>
             </Select>
             <Input

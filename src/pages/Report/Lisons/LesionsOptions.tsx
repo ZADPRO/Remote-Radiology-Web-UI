@@ -401,13 +401,12 @@ const LesionsOptions: React.FC<Props> = ({
                             {/* 3. Atleast */}
                             <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
                               <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
-                                Atleast
+                                Number of Cysts
                               </Label>
                               <div className="flex items-center gap-2 flex-grow">
                                 <Input
                                   type="number"
                                   className="w-20"
-                                  placeholder="mm"
                                   value={data.atleast}
                                   onChange={(e) => {
                                     const updated = [...dataArray];

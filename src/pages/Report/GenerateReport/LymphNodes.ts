@@ -58,7 +58,7 @@ export function LymphNodesGenerateString(
   }
 
   // --- Axillary Nodes
-  result += `The ${directionText.toLowerCase()} axillary nodes appear ${axillarynodes}. `;
+  result += (axillarynodes != "" && axillarynodes != "unknown") ? `The ${directionText.toLowerCase()} axillary nodes appear ${axillarynodes}. ` : "";
 
   // --- Clips
   if (clips.length > 0) {

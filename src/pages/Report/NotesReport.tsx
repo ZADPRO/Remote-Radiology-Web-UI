@@ -384,17 +384,18 @@ const NotesReport: React.FC<Props> = ({
   <p><strong>IMPRESSION:</strong></p>
   <p>${textEditor.ImpressionTextRight.value}</p>
  <p> ${textEditor.OptionalImpressionTextRight.value}</p>
+
  ${
    textEditor.CommonImpresRecommTextRightVal.value === "A" ||
    textEditor.CommonImpresRecommTextRightVal.value === "B" ||
    textEditor.CommonImpresRecommTextRightVal.value === "I" ||
    textEditor.CommonImpresRecommTextRightVal.value === "N" ||
    textEditor.CommonImpresRecommTextRightVal.value === "T"
-     ? `<p><i>${textEditor.CommonImpresRecommTextRight.value}</i></p><br/>`
+     ? `<br/><p><i>${textEditor.CommonImpresRecommTextRight.value}</i></p>`
      : ``
  }
 
-  <p><strong>RECOMMENDATION:</strong></p>
+  <br/><p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationTextRight.value}</p>
   <p>${textEditor.OptionalRecommendationTextRight.value}</p>
 
@@ -404,10 +405,10 @@ const NotesReport: React.FC<Props> = ({
      textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "N" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "T"
-       ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p><br/>`
+       ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p><br/>`
        : ``
    }
-
+<br/>
     `
       : ``
   }
@@ -425,10 +426,10 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextVal.value === "I" ||
    textEditor.CommonImpresRecommTextVal.value === "N" ||
    textEditor.CommonImpresRecommTextVal.value === "T"
-     ? `<p><i>${textEditor.CommonImpresRecommText.value}</i></p><br/>`
+     ? `<p><i>${textEditor.CommonImpresRecommText.value}</i></p>`
      : ``
  }
-  <p><strong>RECOMMENDATION:</strong></p>
+  <br/><p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationText.value}</p>
   <p>${textEditor.OptionalRecommendationText.value}</p>
 
@@ -438,7 +439,7 @@ const NotesReport: React.FC<Props> = ({
     textEditor.CommonImpresRecommTextVal.value !== "I" &&
     textEditor.CommonImpresRecommTextVal.value !== "N" &&
     textEditor.CommonImpresRecommTextVal.value !== "T"
-      ? `<p>${textEditor.CommonImpresRecommText.value}</p><br/>`
+      ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p><br/>`
       : ``
   }
  
@@ -476,8 +477,7 @@ const NotesReport: React.FC<Props> = ({
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you require access to the Ease QT 10.10 report? The rest of the
-              text has been reset in accordance with the report format.
+              Do you wish to enable the EaseQT 10.10 template? Any changes made or templates uploaded will be lost, and the report will contain only the EaseQT 10.10 template.
             </p>
           </div>
           <DialogFooter>

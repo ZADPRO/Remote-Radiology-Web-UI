@@ -16,7 +16,7 @@ export function SymmentryGenerator(reportFormData: ReportQuestion[]): string {
       : ``
   }`;
   let reportsymmentryside = `${
-    side && symmentry === "Asymmetry" ? `, with the ${side}.` : ``
+    side && symmentry === "Asymmetry" ? `, with ${side}.` : ``
   }`;
 
   let reportText = `${reportsymmentry}${reportsymmentryside}`;

@@ -32,11 +32,13 @@ export function AutoPopulateReport(
   //Left Recommendation
   getreportAnswer(133) === "" && handleReportInputChange(133, "Present");
 
-  getPatientAnswer(breastImpantQuestions.breastImplants) === "" &&
+  getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
     handleReportInputChange(
       breastImpantQuestions.breastImplants,
       "Present"
     );
+
+  console.log("qqqq", getPatientAnswer(breastImpantQuestions.breastImplants))
 
   // getPatientAnswer(questionIds.implantConfiguration) === "" &&
   //   handleReportInputChange(
@@ -53,20 +55,22 @@ export function AutoPopulateReport(
   //     getPatientAnswer(80)
   //   );
 
-  getPatientAnswer(breastImpantQuestions.displacement) === "" &&
+  getreportAnswer(breastImpantQuestions.displacement) === "" &&
     handleReportInputChange(breastImpantQuestions.displacement, "None");
 
-  getPatientAnswer(breastImpantQuestions.contracture) === "" &&
+  getreportAnswer(breastImpantQuestions.contracture) === "" &&
     handleReportInputChange(breastImpantQuestions.contracture, "None");
 
-  getPatientAnswer(breastImpantQuestions.rupture) === "" &&
+  getreportAnswer(breastImpantQuestions.rupture) === "" &&
     handleReportInputChange(breastImpantQuestions.rupture, "Absent");
 
-  getPatientAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+  getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
     handleReportInputChange(
       breastImpantQuestions.implantMaterialOther,
       getPatientAnswer(81)
     );
+
+    console.log("eeeeeeee",getTechnicianAnswer(19))
 
    getreportAnswer(symmetryQuestions.symmetry) == "" &&
             handleReportInputChange(
@@ -79,9 +83,9 @@ export function AutoPopulateReport(
             handleReportInputChange(
               symmetryQuestions.symmetryLeft,
               getTechnicianAnswer(20) === "Right"
-                ? "right side breast is bigger than the left side breast"
+                ? "right breast bigger than left breast"
                 : getTechnicianAnswer(20) === "Left"
-                ? "left side breast is bigger than the right side breast"
+                ? "left breast bigger than right breast"
                 : ""
             );
           // getreportAnswer(symmetryQuestions.symmetryRight) == "" &&
@@ -189,8 +193,8 @@ export function AutoPopulateReport(
           },
         ])
       );
-    getreportAnswer(questionIds.axillarynodes) === "" &&
-      handleReportInputChange(questionIds.axillarynodes, "benign morphology");
+    // getreportAnswer(questionIds.axillarynodes) === "" &&
+    //   handleReportInputChange(questionIds.axillarynodes, "benign morphology");
     getreportAnswer(questionIds.ClipsPresentStatus) === "" &&
       handleReportInputChange(questionIds.ClipsPresentStatus, "Present");
     }
@@ -201,17 +205,23 @@ export function AutoPopulateReport(
         questionIds.LesionCompTable,
         JSON.stringify([
           {
-            sizec: "",
-            sizep: "",
-            volumec: "",
-            volumep: "",
-            speedc: "",
-            speedp: "",
-            locationcclock: "",
-            locationcposition: "",
-            locationpclock: "",
-            locationpposition: "",
-          },
+                      sizec: "",
+                      sizep: "",
+                      volumec: "",
+                      volumep: "",
+                      speedc: "",
+                      speedp: "",
+                      locationcclock: "",
+                      locationcposition: "",
+                      locationpclock: "",
+                      locationpposition: "",
+                      previous: "",
+                      lesionStatus: "",
+                      doublingtimedate1: "+",
+                      doublingtimedate2: "",
+                      vol1: "",
+                      vol2: "",
+                    }
         ])
       );
     }

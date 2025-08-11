@@ -137,7 +137,7 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There is ${
+      const base = `There are ${
         type.toLowerCase() === "other" ? item.otherText : type.toLowerCase()
       } ${label} noted`;
       const distText =

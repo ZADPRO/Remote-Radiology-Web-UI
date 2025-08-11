@@ -133,7 +133,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                       locationpposition: "",
                       previous: "",
                       lesionStatus: "",
-                      doublingtimedate1: "",
+                      doublingtimedate1: "+",
                       doublingtimedate2: "",
                       vol1: "",
                       vol2: "",
@@ -398,10 +398,10 @@ const ComparisonPriorRight: React.FC<Props> = ({
                     </Label>
                     <div className="flex w-full flex-wrap gap-3 items-center">
                       {[
-                        "interval increase",
-                        "interval decrease",
-                        "stable",
-                        "resolved",
+                        "Interval increase",
+                        "Interval decrease",
+                        "Stable",
+                        "Resolved",
                       ].map((option) => (
                         <label
                           key={option}
@@ -435,7 +435,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                     <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full">
                       <CustomSelect
                         className="min-w-10 w-15"
-                        value={data.doublingtimedate1 || ""} // ✅ ensure it's always a string
+                        value={data.doublingtimedate1} // ✅ ensure it's always a string
                         onChange={(e) => {
                           const updated = [...dataArray];
                           updated[index].doublingtimedate1 = e;
@@ -444,6 +444,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                             JSON.stringify(updated)
                           );
                         }}
+                        placeholder=""
                         options={positiveNeagtive}
                       />
                       <Input

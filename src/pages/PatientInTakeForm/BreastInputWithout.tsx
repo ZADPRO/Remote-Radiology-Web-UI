@@ -130,6 +130,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Right")
                             }
+                            disabled={getAnswerByQuestionId(Props.RQID) != "true"}
                           />
                           <Label>Bigger Side</Label>
                         </div>
@@ -224,6 +225,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Left")
                             }
+                            disabled={getAnswerByQuestionId(Props.LQID) != "true"}
                           />
                           <Label>Bigger Side</Label>
                         </div>
