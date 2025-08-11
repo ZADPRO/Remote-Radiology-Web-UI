@@ -27,7 +27,7 @@ const PatientInTakeForm02: React.FC<Props> = ({
 }) => {
   const options = [
     "Patient Concerns",
-    "Abnormal Findings",
+    "Abnormal Findings(more details)",
     "Biopsy Information",
     "Monitoring and Follow-up Plan",
   ];
@@ -73,7 +73,7 @@ const PatientInTakeForm02: React.FC<Props> = ({
           />
         );
 
-      case "Abnormal Findings":
+      case "Abnormal Findings(more details)":
         return (
           <AbnormalFindings
             formData={formData}

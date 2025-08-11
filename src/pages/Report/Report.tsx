@@ -611,11 +611,11 @@ const Report: React.FC = () => {
         }));
 
         setTemplates(response.reportFormateList || []);
-        setResponsePatientInTake(response.intakeFormData || []);
         setTechnicianForm(response.technicianIntakeFormData || []);
         if (response.reportIntakeFormData) {
           setReportFormData(response.reportIntakeFormData);
         }
+        setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportTextContentData) {
           setNotes(response.reportTextContentData[0]?.refRTCText);
           setsyncStatus({
@@ -809,14 +809,14 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        reason += `<p><strong>Patient Form:</strong> S Form</p>`;
+        // reason += `<p><strong>Patient Form:</strong> S Form</p>`;
       } else if (categoryId === 2) {
         reason += "" + (await DaFormReportGenerator(responsePatientInTake));
         reason += ` <div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        reason += `<p><strong>Patient Form:</strong> Da Form</p>`;
+        // reason += `<p><strong>Patient Form:</strong> Da Form</p>`;
       } else if (categoryId === 3) {
         reason += await DbFormReportGenerator(responsePatientInTake);
         reason += `
@@ -824,7 +824,7 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        reason += `<p><strong>Patient Form:</strong> Db Form</p>`;
+        // reason += `<p><strong>Patient Form:</strong> Db Form</p>`;
       } else if (categoryId === 4) {
         reason += await DcFormGeneration(responsePatientInTake);
         reason += `
@@ -832,7 +832,7 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        reason += `<p><strong>Patient Form:</strong> Dc Form</p>`;
+        // reason += `<p><strong>Patient Form:</strong> Dc Form</p>`;
       }
 
       await setPatientHistory(reason);
@@ -999,13 +999,15 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
+    if(responsePatientInTake.length > 0 && technicianForm.length > 0)
     AutoPopulateReport(
       getPatientAnswer,
       getreportAnswer,
       getTechnicianAnswer,
       handleReportInputChange
     );
-  }, [responsePatientInTake]);
+    console.log("QQqqq", responsePatientInTake, technicianForm)
+  }, [responsePatientInTake, technicianForm]);
 
   useEffect(() => {
     handleAssignUser();
@@ -1074,6 +1076,18 @@ const Report: React.FC = () => {
 
   const getreportAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
+
+  const patientForm = (categoryId: number) => {
+    if(categoryId == 1) {
+      return "S Form";
+    } else if(categoryId == 2) {
+      return "Da Form"
+    } else if(categoryId == 3) {
+      return "Db Form"
+    } else if(categoryId == 4) {
+      return "Dc Form"
+    } else return ""
+  }
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -1162,7 +1176,11 @@ const Report: React.FC = () => {
           {/* Details Content */}
           <div className="flex flex-col gap-1 mt-2 pb-5">
             <div className="text-sm">
-              Name: <span className="font-semibold">{getPatientAnswer(1)}</span>
+              Patient Name: <span className="font-semibold">{getPatientAnswer(1)}</span>
+            </div>
+
+            <div className="text-sm">
+              Patient ID: <span className="font-semibold">{patientDetails.refUserCustId}</span>
             </div>
 
             <div className="text-sm">
@@ -1171,6 +1189,10 @@ const Report: React.FC = () => {
               <span className="font-semibold capitalize">
                 {getPatientAnswer(6)}
               </span>
+            </div>
+
+            <div className="text-sm">
+              Patient Form: <span className="font-semibold">{patientForm(assignData?.appointmentStatus[0]?.refCategoryId || 0)}</span>
             </div>
 
             <div className="text-sm">
@@ -1338,148 +1360,147 @@ const Report: React.FC = () => {
               </div>
             )}
 
-          {/* Buttons */}
-          {tab === 4 && subTab === 4 && (
-            <>
-              <Button
-                variant="greenTheme"
-                className="text-xs w-full text-white px-3 py-2 mb-2 min-w-[48%]"
-                onClick={() => setLoadTemplateStatus(true)}
-                disabled={syncStatus.Notes}
-              >
-                Load Template
-              </Button>
-
-              <Dialog
-                onOpenChange={setLoadTemplateStatus}
-                open={loadTemplateStatus}
-              >
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Load Template</DialogTitle>
-                  </DialogHeader>
-
-                  <div className="flex gap-4">
-                    <Input
-                      type="text"
-                      placeholder="Search template..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="mb-3 text-xs"
-                    />
-                    <PopoverDialog
-                      open={popoverOpen}
-                      onOpenChange={setPopoverOpen}
-                    >
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <PopoverTriggerDialog asChild>
-                          <Button
-                            variant="greenTheme"
-                            className="text-xs text-white"
-                            onClick={() => setPopoverOpen(true)}
-                          >
-                            <Plus size={16} />
-                          </Button>
-                        </PopoverTriggerDialog>
-                        <PopoverContentDialog className="w-80">
-                          <div className="grid gap-4">
-                            <div className="space-y-2">
-                              <h4 className="leading-none font-medium">
-                                Upload New Template
-                              </h4>
-                            </div>
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                uploadReportFormate();
-                              }}
-                            >
-                              <div className="grid gap-2">
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor="width">Name</Label>
-                                  <Input
-                                    id="name"
-                                    className="col-span-2 h-8"
-                                    value={fileName}
-                                    onChange={(e) => {
-                                      setFilename(e.target.value);
-                                    }}
-                                    required
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Label htmlFor="width">Upload File</Label>
-                                  <Input
-                                    id="file"
-                                    type="file"
-                                    accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                    className="col-span-2 h-8"
-                                    // value={fileName}
-                                    onChange={handleFileChange}
-                                    required
-                                  />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <Button
-                                    variant="greenTheme"
-                                    className="text-xs text-white"
-                                    type="submit"
-                                  >
-                                    {popoverLoading ? (
-                                      <Loader className="animate-spin w-4 h-4" />
-                                    ) : (
-                                      "Upload Template"
-                                    )}
-                                  </Button>
-                                </div>
-                              </div>
-                            </form>
-                          </div>
-                        </PopoverContentDialog>
-                      </div>
-                    </PopoverDialog>
-                  </div>
-
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {filteredTemplates.length > 0 ? (
-                      filteredTemplates.map((data: any) => (
-                        <div
-                          key={data.refRFId}
-                          className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
-                        >
-                          <div>{data.refRFName}</div>
-                          <Button
-                            variant="greenTheme"
-                            className="text-xs text-white px-3 py-1 h-6"
-                            onClick={() => {
-                              !loadingStatus && getTemplate(data.refRFId);
-                            }}
-                          >
-                            {loadingStatus === data.refRFId ? (
-                              <Loader className="animate-spin w-4 h-4" />
-                            ) : (
-                              "Load"
-                            )}
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center text-sm text-gray-500">
-                        No templates found.
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </>
-          )}
-
           {role?.type && (
             <div
               className={`flex flex-wrap gap-2 ${
                 location?.readOnly ? "pointer-events-none" : ""
               }`}
             >
+              {/* Buttons */}
+              {/* {tab === 4 && subTab === 4 && ( */}
+                <>
+                  <Button
+                    variant="greenTheme"
+                    className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                    onClick={() => setLoadTemplateStatus(true)}
+                    disabled={(tab !== 4 || subTab !== 4) || syncStatus.Notes}
+                  >
+                    Load Template
+                  </Button>
+
+                  <Dialog
+                    onOpenChange={setLoadTemplateStatus}
+                    open={loadTemplateStatus}
+                  >
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Load Template</DialogTitle>
+                      </DialogHeader>
+
+                      <div className="flex gap-4">
+                        <Input
+                          type="text"
+                          placeholder="Search template..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="mb-3 text-xs"
+                        />
+                        <PopoverDialog
+                          open={popoverOpen}
+                          onOpenChange={setPopoverOpen}
+                        >
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <PopoverTriggerDialog asChild>
+                              <Button
+                                variant="greenTheme"
+                                className="text-xs text-white"
+                                onClick={() => setPopoverOpen(true)}
+                              >
+                                <Plus size={16} />
+                              </Button>
+                            </PopoverTriggerDialog>
+                            <PopoverContentDialog className="w-80">
+                              <div className="grid gap-4">
+                                <div className="space-y-2">
+                                  <h4 className="leading-none font-medium">
+                                    Upload New Template
+                                  </h4>
+                                </div>
+                                <form
+                                  onSubmit={(e) => {
+                                    e.preventDefault();
+                                    uploadReportFormate();
+                                  }}
+                                >
+                                  <div className="grid gap-2">
+                                    <div className="flex flex-col gap-2">
+                                      <Label htmlFor="width">Name</Label>
+                                      <Input
+                                        id="name"
+                                        className="col-span-2 h-8"
+                                        value={fileName}
+                                        onChange={(e) => {
+                                          setFilename(e.target.value);
+                                        }}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                      <Label htmlFor="width">Upload File</Label>
+                                      <Input
+                                        id="file"
+                                        type="file"
+                                        accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        className="col-span-2 h-8"
+                                        // value={fileName}
+                                        onChange={handleFileChange}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                      <Button
+                                        variant="greenTheme"
+                                        className="text-xs text-white"
+                                        type="submit"
+                                      >
+                                        {popoverLoading ? (
+                                          <Loader className="animate-spin w-4 h-4" />
+                                        ) : (
+                                          "Upload Template"
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </PopoverContentDialog>
+                          </div>
+                        </PopoverDialog>
+                      </div>
+
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {filteredTemplates.length > 0 ? (
+                          filteredTemplates.map((data: any) => (
+                            <div
+                              key={data.refRFId}
+                              className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
+                            >
+                              <div>{data.refRFName}</div>
+                              <Button
+                                variant="greenTheme"
+                                className="text-xs text-white px-3 py-1 h-6"
+                                onClick={() => {
+                                  !loadingStatus && getTemplate(data.refRFId);
+                                }}
+                              >
+                                {loadingStatus === data.refRFId ? (
+                                  <Loader className="animate-spin w-4 h-4" />
+                                ) : (
+                                  "Load"
+                                )}
+                              </Button>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center text-sm text-gray-500">
+                            No templates found.
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </>
+              {/* )} */}
               <Button
                 // key={index}
                 variant="greenTheme"

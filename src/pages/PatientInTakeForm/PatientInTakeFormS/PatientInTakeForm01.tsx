@@ -47,7 +47,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
   ];
 
   const [selectedSection, setSelectedSection] = useState<string>(
-    options[0]
+    options[8]
   );
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -237,17 +237,18 @@ const PatientInTakeForm01: React.FC<Props> = ({
               implants: 79,
               implantsSpecify: 80,
               implantsOthersSpecify: 81,
-              explants: 83,
-              explantsDate: 84,
-              explantsDateKnown: 497,
-              denseBreasts: 85,
-              additionalComments: 86,
               implantLeft: 423,
               implantDateLeft: 82,
               implantRight: 167,
               implantDateRight: 424,
               implantsRightSpecify: 168,
               implantsRightOthersSpecify: 169,
+              implantBothDirection: 518,
+              explants: 83,
+              explantsDate: 84,
+              explantsDateKnown: 497,
+              denseBreasts: 85,
+              additionalComments: 86,
               explantsRight: 294,
               explantsDateRight: 295,
               explantsDateRightKnown: 498,

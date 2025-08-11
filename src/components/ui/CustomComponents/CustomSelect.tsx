@@ -29,7 +29,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 className // additional styling from props
               )}
     >
-      <option value="">{placeholder}</option>
+     {placeholder != "" && <option value="">{placeholder}</option>}
       {options.map((opt) => (
         <option key={opt} value={opt}>
           {opt}

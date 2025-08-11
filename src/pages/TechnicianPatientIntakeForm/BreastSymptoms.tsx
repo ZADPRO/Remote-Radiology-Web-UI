@@ -413,7 +413,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 <div className="w-full relative">
                   <BreastInput
                     technician={true}
-                    label="Sore"
+                    label="Pain On Palpation"
                     checkStatusQId={questionIds.sore}
                     RQID={questionIds.soreRight}
                     LQID={questionIds.soreLeft}
@@ -523,7 +523,7 @@ const BreastSymptoms: React.FC<Props> = ({
                 ["Checked", "R", "L", "Duration"],
                 <BreastInput
                   technician={true}
-                  label="Pain On Palpation" //Breast Pain
+                  label="Breast Pain" //Breast Pain
                   checkStatusQId={106}
                   RQID={107}
                   LQID={108}

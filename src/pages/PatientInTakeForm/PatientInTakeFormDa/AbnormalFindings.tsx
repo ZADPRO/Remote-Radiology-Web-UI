@@ -322,7 +322,7 @@ const renderBiRadsSection = (
 
   return (
     <div className="flex flex-col h-full">
-      <FormHeader FormTitle="ABNORMAL FINDINGS" className="uppercase" />
+      <FormHeader FormTitle="ABNORMAL FINDINGS(more details)" className="uppercase" />
       <div className={readOnly ? "pointer-events-none" : ""}>
       <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
         {/*A. Date abnormality was detected */}

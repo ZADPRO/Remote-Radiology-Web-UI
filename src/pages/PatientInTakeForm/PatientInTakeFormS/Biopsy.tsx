@@ -215,6 +215,7 @@ const Biopsy: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.biopsyLeftType, e.target.value)
                 }
+                required
               />
               <Label htmlFor={id}>{value}</Label>
             </div>
@@ -256,6 +257,7 @@ const Biopsy: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.biopsyRightType, e.target.value)
                 }
+                required
               />
               <Label htmlFor={id}>{value}</Label>
             </div>

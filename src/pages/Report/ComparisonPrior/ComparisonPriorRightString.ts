@@ -118,13 +118,13 @@ export function ComparisonPriorRightString(
           }${
             data.lesionStatus
               ? `
-        Lesion status is ${data.lesionStatus || ""}. 
+        Lesion status: ${data.lesionStatus || ""}. 
     `
               : ``
           }${
             data.doublingtimedate1 && data.doublingtimedate2
               ? `
-        Doubling time is estimated to be in the range of ${data.doublingtimedate1}${data.doublingtimedate2} days.
+        Doubling time is estimated to be ${data.doublingtimedate1}${data.doublingtimedate2} days.
         `
               : ``
           }</p>`

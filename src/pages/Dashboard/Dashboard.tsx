@@ -179,6 +179,7 @@ const Dashboard: React.FC = () => {
             "radiologist",
             "scribe",
             "codoctor",
+            "doctor",
             "manager",
             "wgdoctor"
           ],
@@ -193,6 +194,7 @@ const Dashboard: React.FC = () => {
             "scadmin",
             "scribe",
             "codoctor",
+            "doctor",
             "manager",
             "wgdoctor"
           ],
@@ -204,6 +206,7 @@ const Dashboard: React.FC = () => {
         "scadmin",
         "radiologist",
         "scribe",
+        "doctor",
         "codoctor",
         "manager",
         "wgdoctor"

@@ -58,14 +58,12 @@ const BreastInput: React.FC<Props> = (Props) => {
         (item: any) => item.questionId === questionId
       );
       return result?.answer ?? ""; // Return empty string if not found
-    }
-    else {
+    } else {
       const result = Props.data.find(
         (item: any) => item.questionId === questionId
       );
       return result?.answer ?? ""; // Return empty string if not found
     }
-
   };
 
   const updateAnswer = (questionId: number, newAnswer: any) => {
@@ -75,8 +73,7 @@ const BreastInput: React.FC<Props> = (Props) => {
           item.questionId === questionId ? { ...item, answer: newAnswer } : item
         )
       );
-    }
-    else {
+    } else {
       Props.setData((prevData: any[]) =>
         prevData.map((item) =>
           item.questionId === questionId ? { ...item, answer: newAnswer } : item
@@ -96,7 +93,6 @@ const BreastInput: React.FC<Props> = (Props) => {
   const [modal, setModal] = useState(false);
 
   // const [questionStatus, setQuestionStatus] = useState(false);
-
 
   const toggleSection = (side: "left" | "right", index: number) => {
     const selected =
@@ -121,16 +117,16 @@ const BreastInput: React.FC<Props> = (Props) => {
     else updateAnswer(Props.RQID, result);
   };
 
-
   const renderClock = (side: "left" | "right") => {
     const cx = 100;
     const cy = 100;
     const r = 90;
     const total = 12;
 
-    const values = (side === "left"
-      ? getAnswerByQuestionId(Props.LQID)
-      : getAnswerByQuestionId(Props.RQID)
+    const values = (
+      side === "left"
+        ? getAnswerByQuestionId(Props.LQID)
+        : getAnswerByQuestionId(Props.RQID)
     )
       .split(",")
       .filter((val: any) => val !== "")
@@ -173,8 +169,9 @@ const BreastInput: React.FC<Props> = (Props) => {
         <path
           key={`${side}-${idx}`}
           d={d}
-          className={`cursor-pointer transition-all duration-200 stroke-black stroke-[2px] ${values.includes(idx) ? "fill-[#edd1ce]" : "fill-white"
-            }`}
+          className={`cursor-pointer transition-all duration-200 stroke-black stroke-[2px] ${
+            values.includes(idx) ? "fill-[#edd1ce]" : "fill-white"
+          }`}
           onClick={() => toggleSection(side, idx)}
         />
       );
@@ -209,8 +206,9 @@ const BreastInput: React.FC<Props> = (Props) => {
           cx={cx}
           cy={cy}
           r="20"
-          className={`stroke-black stroke-[0.5] cursor-pointer transition-all duration-200 ${nippleSelected ? "fill-[#ff9b99]" : "fill-[#fce2da]"
-            }`}
+          className={`stroke-black stroke-[0.5] cursor-pointer transition-all duration-200 ${
+            nippleSelected ? "fill-[#ff9b99]" : "fill-[#fce2da]"
+          }`}
           onClick={toggleNipple}
         />
         <text
@@ -218,12 +216,10 @@ const BreastInput: React.FC<Props> = (Props) => {
           y={cy + 4}
           textAnchor="middle"
           className="text-[12px] fill-black font-semibold pointer-events-none"
-        >
-        </text>
+        ></text>
       </svg>
     );
   };
-
 
   return (
     <>
@@ -400,8 +396,9 @@ const BreastInput: React.FC<Props> = (Props) => {
                             ]}
                             placeholder="Select Skin Changes"
                             required={
-                              getAnswerByQuestionId(Props.skinChangesTypeRight) ===
-                                "" &&
+                              getAnswerByQuestionId(
+                                Props.skinChangesTypeRight
+                              ) === "" &&
                               getAnswerByQuestionId(Props.OtherInputQId) == ""
                             }
                             disabled={getAnswerByQuestionId(Props.RQID) == ""}
@@ -561,7 +558,11 @@ const BreastInput: React.FC<Props> = (Props) => {
                 {Props.OtherInputQId && !Props.technician && (
                   <div className="flex gap-1 w-full ">
                     <Textarea
-                      placeholder="Additional Comments"
+                      placeholder={
+                        Props.label === "Breast pain"
+                          ? "Type of Pain"
+                          : "Additional Comments"
+                      }
                       value={getAnswerByQuestionId(Props.OtherInputQId)}
                       onChange={(e) =>
                         updateAnswer(Props.OtherInputQId!, e.target.value)

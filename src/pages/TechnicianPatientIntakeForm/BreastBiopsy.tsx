@@ -71,7 +71,6 @@ const BreastBiopsy: React.FC<Props> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     questionId: number
   ) => {
-    console.log("############Chnaged");
     const file = e.target.files?.[0];
     if (file) {
       // setSelectedFileName(file.name); // Optimistic UI update
@@ -295,7 +294,7 @@ const BreastBiopsy: React.FC<Props> = ({
 
                   {getPatientAnswer(434) === "true" && (
                     <MultiRadioOptionalInputInline
-                      questionId={436}
+                      questionId={437}
                       formData={patientFormData}
                       handleInputChange={handlePatientInputChange}
                       options={[
@@ -315,7 +314,7 @@ const BreastBiopsy: React.FC<Props> = ({
                   {renderCheckbox("Right", 435, editStatuses["breastBiopsy"])}
                   {getPatientAnswer(435) === "true" && (
                     <MultiRadioOptionalInputInline
-                      questionId={437}
+                      questionId={436}
                       formData={patientFormData}
                       handleInputChange={handlePatientInputChange}
                       options={[
@@ -325,6 +324,7 @@ const BreastBiopsy: React.FC<Props> = ({
                           value: "Malignant",
                         },
                       ]}
+                      required
                     />
                   )}
                 </div>

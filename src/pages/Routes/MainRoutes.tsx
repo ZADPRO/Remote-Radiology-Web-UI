@@ -105,6 +105,7 @@ const MainRoutes: React.FC = () => {
     { path: "addCoReportingDoctor", element: <AddCoReportingDoctor /> },
     { path: "patientQueue", element: <PatientQueue />},
     { path: "analytics", element: <Analytics /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles />}
   ];
 
   const technicianRoutes: AppRoute[] = [

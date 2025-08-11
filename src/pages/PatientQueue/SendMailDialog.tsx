@@ -24,7 +24,7 @@ interface Props {
   patientId: number;
   showMailDialog: boolean;
   setShowMailDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  handleRefreshData: () => void;
+  handleRefreshData?: () => void;
 }
 
 const SendMailDialog: React.FC<Props> = ({
@@ -52,7 +52,7 @@ const SendMailDialog: React.FC<Props> = ({
       if (res.status) {
         toast.success(res.message);
         setShowMailDialog(false);
-        handleRefreshData();
+        handleRefreshData && handleRefreshData();
       }
     } catch (error) {
       console.log(error);

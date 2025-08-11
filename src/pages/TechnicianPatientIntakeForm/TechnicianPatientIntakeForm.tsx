@@ -17,6 +17,7 @@ import { IntakeOption } from "../PatientInTakeForm/PatientInTakeForm";
 import { technicianService } from "@/services/technicianServices";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import { TechnicianFormSubmitDialog } from "./TechnicianFormSubmitDialog";
 
 export interface ResponsePatientForm {
   refITFId: number;
@@ -86,6 +87,13 @@ const TechnicianPatientIntakeForm: React.FC<
       verifyTechnician: false,
     }))
   );
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const handleOpenDialog = () => setIsDialogOpen(true);
+  const handleCloseDialog = () => setIsDialogOpen(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [auditData, setAuditData] = useState<ResponseAudit[]>([]);
 
@@ -297,6 +305,8 @@ const TechnicianPatientIntakeForm: React.FC<
 
   const handleAddTechnicianForm = async () => {
     setLoading(true);
+    setIsSubmitting(true);
+    setSubmitError(null);
     try {
       const categoryId = patientFormData.find((item) => item.questionId == 170);
 
@@ -556,7 +566,7 @@ const TechnicianPatientIntakeForm: React.FC<
         const currentIndex = options.indexOf(selectedSection);
         const isLastSection = currentIndex === options.length - 1;
         if (isLastSection) {
-          handleAddTechnicianForm();
+          handleOpenDialog();
         } else {
           setSelectedSection(options[currentIndex + 1]);
         }
@@ -716,6 +726,16 @@ const TechnicianPatientIntakeForm: React.FC<
           </div>
         </div>
       </div>
+
+      {!controlData.readOnly && (
+                <TechnicianFormSubmitDialog
+                  open={isDialogOpen}
+                  onClose={handleCloseDialog}
+                  onSubmit={handleAddTechnicianForm}
+                  isSubmitting={isSubmitting}
+                  error={submitError}
+                />
+              )}
 
       {/* <div className=" h-[8vh] flex items-end justify-center pb-1 text-sm">
         Copyright © Wellthgreen

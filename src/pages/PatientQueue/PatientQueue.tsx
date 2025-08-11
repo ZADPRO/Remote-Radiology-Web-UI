@@ -724,6 +724,53 @@ const PatientQueue: React.FC = () => {
         enableColumnFilter: true,
       },
       {
+        // Changed from refSCId to refUserCustId for PatientQueue
+        accessorKey: "refUserCustId",
+        id: "refUserCustId", // Renamed ID to reflect content
+        header: ({ column }) => (
+          <div className="flex items-center justify-center gap-1">
+            <span
+              className="cursor-pointer font-semibold "
+              onClick={column.getToggleSortingHandler()}
+            >
+              Patient ID
+            </span>
+            {column.getCanFilter() && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="hover:bg-transparent hover:text-gray-200 !p-0"
+                  >
+                    <Filter className="" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2">
+                  <Input
+                    placeholder={`Filter Patient ID...`}
+                    value={(column.getFilterValue() ?? "") as string}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      column.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                  />
+                  <Button
+                    variant="ghost"
+                    onClick={() => column.setFilterValue(undefined)}
+                    className="p-0 mt-2 text-red-500 hover:text-red-700"
+                    title="Clear filter"
+                  >
+                    <XCircle className="h-4 w-4" /> <span>Clear</span>
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        ),
+        cell: ({ row }) => <span>{`${row.original.refUserCustId}`}</span>,
+        enableColumnFilter: true,
+      },
+      {
         accessorKey: "refUserFirstName",
         id: "refUserFirstName",
         header: ({ column }) => (
@@ -784,6 +831,11 @@ const PatientQueue: React.FC = () => {
         cell: ({ row }) => {
           const appointmentId = row.original.refAppointmentId;
 
+          if(row.original.refAppointmentComplete == "fillform") {
+            return (
+              <div>-</div>
+            )
+          } else {
           return (
             <div
               className="hover:underline cursor-pointer font-bold text-center"
@@ -794,55 +846,9 @@ const PatientQueue: React.FC = () => {
             >
               View
             </div>
-          );
+          )
+        }
         },
-        enableColumnFilter: true,
-      },
-      {
-        // Changed from refSCId to refUserCustId for PatientQueue
-        accessorKey: "refUserCustId",
-        id: "refUserCustId", // Renamed ID to reflect content
-        header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
-            <span
-              className="cursor-pointer font-semibold "
-              onClick={column.getToggleSortingHandler()}
-            >
-              Patient ID
-            </span>
-            {column.getCanFilter() && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="hover:bg-transparent hover:text-gray-200 !p-0"
-                  >
-                    <Filter className="" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-48 p-2">
-                  <Input
-                    placeholder={`Filter Patient ID...`}
-                    value={(column.getFilterValue() ?? "") as string}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      column.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                  />
-                  <Button
-                    variant="ghost"
-                    onClick={() => column.setFilterValue(undefined)}
-                    className="p-0 mt-2 text-red-500 hover:text-red-700"
-                    title="Clear filter"
-                  >
-                    <XCircle className="h-4 w-4" /> <span>Clear</span>
-                  </Button>
-                </PopoverContent>
-              </Popover>
-            )}
-          </div>
-        ),
-        cell: ({ row }) => <span>{`${row.original.refUserCustId}`}</span>,
         enableColumnFilter: true,
       },
       {
@@ -2050,6 +2056,7 @@ const PatientQueue: React.FC = () => {
       "select",
       "dateOfAppointment",
       "refUserFirstName",
+      "refUserCustId",
       "patientId",
       "refSCCustId",
       "consentView",
@@ -2083,6 +2090,7 @@ const PatientQueue: React.FC = () => {
     scribe: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2106,6 +2114,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
+      "dicomFull",
       "report",
       "refAppointmentComplete",
       "patientReportMail",
@@ -2116,6 +2125,7 @@ const PatientQueue: React.FC = () => {
     ],
     patient: [
       "dateOfAppointment",
+      "consentView",
       "refSCCustId",
       "patientFormAndStatus",
       "report",
@@ -2139,6 +2149,7 @@ const PatientQueue: React.FC = () => {
     radiologist: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2171,6 +2182,7 @@ const PatientQueue: React.FC = () => {
     manager: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2188,6 +2200,7 @@ const PatientQueue: React.FC = () => {
     wgdoctor: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2285,7 +2298,7 @@ const PatientQueue: React.FC = () => {
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
-            hidden={role?.type !== "admin" && role?.type !== "scadmin"}
+            hidden={role?.type !== "admin" && role?.type !== "scadmin" && role?.type !== "manager"}
           >
             <Download className="h-4 w-4" />
             Download Patient Consent
@@ -2379,7 +2392,7 @@ const PatientQueue: React.FC = () => {
         </div>
 
         <div className="p-1 text-center" hidden={role?.type !== "patient"}>
-          <h1 className="text-sm lg:text-lg font-medium">
+          <h1 className="text-sm lg:text-lg font-bold">
             If you would like to discuss your report, you may schedule an
             appointment{" "}
             <a

@@ -356,6 +356,7 @@ const LymphNodesRight: React.FC<Props> = ({
                       value: "suspicious morphology",
                     },
                     { label: "Not Visualized", value: "not visualized" },
+                    { label: "Unknown", value: "unknown" },
                   ].map((item, indexVal) => (
                     <div
                       key={item.value}
