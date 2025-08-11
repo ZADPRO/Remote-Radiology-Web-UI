@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { dateDisablers } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificTechnician, technicianService } from "@/services/technicianServices";
 import { Camera, FileText, Pencil, X } from "lucide-react";
@@ -121,6 +122,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
   }, [technicianId]);
 
   const handleProfileImageUpload = async (file: File) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -156,6 +158,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     fieldName: keyof ListSpecificTechnician;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -187,6 +190,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     tempField: keyof TempFilesState,
     uploadFn = uploadService.uploadFile // optional, default upload function
   ): Promise<void> => {
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -241,7 +245,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     // Create a temporary <a> and trigger click
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${filename}.pdf`; // Desired filename
+    a.download = `${filename}`; // Desired filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -264,7 +268,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         if (response.status) {
           setFormData((prev) => ({
             ...prev,
-            refRADigitalSignature: response.fileName,
+            refTDDigitalSignature: response.fileName,
             digitalSignatureFile: null,
           }));
     
@@ -583,6 +587,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                   refUserDOB: val?.toLocaleDateString("en-CA") || "",
                 }));
               }}
+              disabledDates={dateDisablers.noFuture}
             />
           </div>
 
@@ -595,8 +600,8 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
             </Label>
 
              <FileUploadButton
-              id="license-upload"
-              label="Upload License"
+              id="drivers-license-upload"
+              label="Upload Driving License"
               isFilePresent={!!formData.refTDDrivingLicense}
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -657,11 +662,12 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
           <div className="flex flex-col gap-1.5 w-full">
             <Label className="text-sm font-medium" htmlFor="license-upload">
-              License <span className="text-red-500">*</span>
+              Licenseaaa <span className="text-red-500">*</span>
             </Label>
 
             <FileUploadButton
                             id="license-upload"
+                            label="Upload License Files"
                             multiple
                             required={
                               !(

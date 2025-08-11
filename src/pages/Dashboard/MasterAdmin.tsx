@@ -26,7 +26,7 @@ import CoReportingDoctorProfile from "../Profile/CoReportingDoctorProfile";
 import WellthGreenAdminProfile from "../Profile/WellthGreenAdminProfile";
 import dashboard from "../../assets/Administration/Dashboard.png";
 import medicalHistory from "../../assets/Administration/MedicalHistory.png";
-import PatientBrochure from "../../assets/Administration/PatientBrochure.png";
+// import PatientBrochure from "../../assets/Administration/PatientBrochure.png";
 import PatientProfile from "../Profile/PatientProfile";
 import WGPerformingProvider from "../Profile/WGPerformingProvider";
 import PatientInformation from "./PatientBrouchure/PatientInformation";
@@ -186,11 +186,11 @@ const MasterAdmin: React.FC = () => {
         path: "/patient/medicalHistory",
         icon: <img src={medicalHistory} className="w-5 h-5" />,
       },
-      {
-        label: "Patient Info",
-        path: "/patient/myCare",
-        icon: <img src={PatientBrochure} className="w-5 h-5" />,
-      },
+      // {
+      //   label: "Patient Info",
+      //   path: "/patient/myCare",
+      //   icon: <img src={PatientBrochure} className="w-5 h-5" />,
+      // },
     ],
     manager: [
       {

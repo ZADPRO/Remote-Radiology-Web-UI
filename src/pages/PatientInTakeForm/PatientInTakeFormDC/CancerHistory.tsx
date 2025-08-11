@@ -62,6 +62,7 @@ const CancerHistory: React.FC<Props> = ({
                     { label: "Left", value: "Left" },
                     { label: "Both", value: "Both" },
                   ]}
+                  required
                 />
               </div>
               <div className="flex items-center gap-4">

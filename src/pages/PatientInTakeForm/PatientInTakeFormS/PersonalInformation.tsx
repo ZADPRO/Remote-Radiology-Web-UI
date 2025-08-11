@@ -271,8 +271,9 @@ const PersonalInformation: React.FC<Props> = ({
                 required
               />
             </div>
+          </div>
 
-            <div className="w-full lg:w-1/3 flex flex-col">
+          <div className="w-full flex flex-col">
               <LabeledRadioWithOptionalInput
                 name="gender"
                 label="Gender"
@@ -297,7 +298,6 @@ const PersonalInformation: React.FC<Props> = ({
                 ]}
               />
             </div>
-          </div>
 
           {/* Row 4 */}
           <div className="flex flex-col sm:flex-row gap-5 sm:gap-40">

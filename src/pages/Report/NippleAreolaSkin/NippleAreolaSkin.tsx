@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ReportQuestion } from "../Report";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
@@ -30,31 +30,10 @@ const NippleAreolaSkin: React.FC<Props> = ({
   reportFormData,
   handleReportInputChange,
   label,
-  patientFormData,
-  side,
 }) => {
-  useEffect(() => {
-    if (!reportFormData || reportFormData.length === 0) return;
-
-    getAnswer(questionIds.nippleSelect) === "" &&
-      handleReportInputChange(questionIds.nippleSelect, "Present");
-    getAnswer(questionIds.skinChanges) === "" &&
-      handleReportInputChange(questionIds.skinChanges, "Normal");
-    getAnswer(questionIds.nippleDeformity) === "" &&
-      handleReportInputChange(questionIds.nippleDeformity, "Absent");
-    getAnswer(questionIds.architecture) === "" &&
-      handleReportInputChange(questionIds.architecture, "Normal");
-    if (getAnswer(questionIds.nippleRetraction) === "") {
-      const answer = getPatientAnswer(side === "Right" ? 112 : 113) || "Absent";
-
-      handleReportInputChange(questionIds.nippleRetraction, answer);
-    }
-
-  }, []);
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
-  const getPatientAnswer = (id: number) => patientFormData.find((q) => q.questionId === id)?.answer || "";
   return (
     <div className="w-full">
       <div className="flex gap-4 items-center mb-4">

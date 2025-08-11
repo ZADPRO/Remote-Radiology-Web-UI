@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { MedicalLicenseSecurity } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { dateDisablers } from "@/lib/dateUtils";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -137,6 +138,7 @@ const AddRadiologist: React.FC = () => {
     field: keyof NewRadiologist,
     tempFileKey: keyof TempFilesState,
   ): Promise<void> => {
+    setError(null);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -172,6 +174,7 @@ const AddRadiologist: React.FC = () => {
     key: "cv_files" | "license_files" | "malpracticeinsureance_files",
     index: number
   ) => {
+    setError(null);
     setFiles((prev) => ({
       ...prev,
       [key]: (prev[key] as File[]).filter((_, i) => i !== index),
@@ -233,6 +236,7 @@ const AddRadiologist: React.FC = () => {
   const handleDigitalSignatureUpload = useCallback(async (
     file: File,
   ) => {
+    setError(null);
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
     setError("");
@@ -260,6 +264,7 @@ const AddRadiologist: React.FC = () => {
   }, [setFormData, setFiles, setError]);
 
   const handleProfileImageUpload = useCallback(async (file: File) => {
+    setError(null);
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -472,6 +477,7 @@ const AddRadiologist: React.FC = () => {
                       dob: val?.toLocaleDateString("en-CA") || "",
                     }));
                   }}
+                  disabledDates={dateDisablers.noFuture}
                   required
                 />
               </div>
@@ -574,7 +580,7 @@ const AddRadiologist: React.FC = () => {
 
                 <FileUploadButton
                   id="medical-license-upload"
-                  label="Upload License"
+                  label="Upload Licenses"
                   multiple
                   required={formData.license_files.length === 0}
                   isFilePresent={
@@ -787,7 +793,7 @@ const AddRadiologist: React.FC = () => {
 
                 <FileUploadButton
                   id="malpractice-upload"
-                  label="Upload Malpractice Insurance"
+                  label="Upload Malpractice Insurance Files"
                   multiple
                   required={formData.malpracticeinsureance_files.length === 0}
                   isFilePresent={
@@ -932,13 +938,12 @@ const AddRadiologist: React.FC = () => {
         return;
       }
 
-      console.log("finalForm", formData); // Keep this for debugging
       const res = await radiologistService.createNewRadiologist(formData);
       console.log(res);
       if (res.status) {
         toast.success(res.message);
         setTimeout(() => {
-          navigate("../manageRadiologist");
+          navigate(-1);
         }, 1500);
       } else {
         setError(res.message);

@@ -1,6 +1,6 @@
 import TextEditor from "@/components/TextEditor";
 import { Button } from "@/components/ui/button";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   breastDensityandImageRightQuestions,
   ComparisonPriorLeftQuestion,
@@ -13,7 +13,17 @@ import {
   nippleAreolaSkinRightQuestions,
 } from "./ReportQuestionsAssignment";
 import { FileData } from "./Report";
+import { Switch } from "@/components/ui/switch";
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface TextEditorProps {
   breastImplant: {
@@ -108,6 +118,18 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  CommonImpresRecommTextVal: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  CommonImpresRecommTextRightVal: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  symmetry: {
+    value: string;
+    onChange: (value: string) => void;
+  };
 }
 
 interface ReportQuestion {
@@ -137,6 +159,7 @@ type Props = {
   patientHistory: string;
   ScanCenterImg: FileData | null;
   ScancenterAddress: string;
+  reportAccess: boolean;
 };
 
 const NotesReport: React.FC<Props> = ({
@@ -157,7 +180,10 @@ const NotesReport: React.FC<Props> = ({
   patientHistory,
   ScanCenterImg,
   ScancenterAddress,
+  reportAccess,
 }) => {
+  const [dialog, setDialog] = useState(false);
+
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
   const breastDensityRight =
@@ -208,6 +234,8 @@ const NotesReport: React.FC<Props> = ({
       : false;
 
   useEffect(() => {
+  
+
     if (syncStatus.Notes) {
       setNotes(`
        <div>
@@ -259,9 +287,21 @@ const NotesReport: React.FC<Props> = ({
   <div><strong>BREAST IMPLANTS:</strong><br />${
     textEditor.breastImplant.value
   }</div>
+
+  ${
+    textEditor.symmetry.value
+      ? `
+    <br />
+  <div>${textEditor.symmetry.value}</div>
+    `
+      : ``
+  }
   <br />
 
-  <p><strong>RIGHT BREAST FINDINGS:</strong></p><br />
+  ${
+    getAnswer(130) === "Present"
+      ? `
+    <p><strong>RIGHT BREAST FINDINGS:</strong></p><br />
 
   ${
     breastDensityRight
@@ -293,8 +333,14 @@ const NotesReport: React.FC<Props> = ({
       ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPrior.value}</p><br />`
       : ``
   }
-
-  <p><strong>LEFT BREAST FINDINGS:</strong></p><br />
+    `
+      : ``
+  }
+  
+  ${
+    getAnswer(131) === "Present"
+      ? `
+    <p><strong>LEFT BREAST FINDINGS:</strong></p><br />
 
   ${
     breastDensityLeft
@@ -326,34 +372,81 @@ const NotesReport: React.FC<Props> = ({
       ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPriorLeft.value}</p><br />`
       : ``
   }
+    `
+      : ``
+  }
 
-  <h3><strong>RIGHT BREAST:</strong></h3>
+
+  ${
+    getAnswer(132) === "Present"
+      ? `
+    <h3><strong>RIGHT BREAST:</strong></h3>
   <p><strong>IMPRESSION:</strong></p>
   <p>${textEditor.ImpressionTextRight.value}</p>
- <p> ${textEditor.OptionalImpressionTextRight.value}</p><br />
+ <p> ${textEditor.OptionalImpressionTextRight.value}</p>
+ ${
+   textEditor.CommonImpresRecommTextRightVal.value === "A" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "B" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "I" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "N" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "T"
+     ? `<p><i>${textEditor.CommonImpresRecommTextRight.value}</i></p><br/>`
+     : ``
+ }
 
   <p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationTextRight.value}</p>
   <p>${textEditor.OptionalRecommendationTextRight.value}</p>
 
-  <br />
-  <p><i>${textEditor.CommonImpresRecommTextRight.value}</i></p>
+   ${
+     textEditor.CommonImpresRecommTextRightVal.value !== "A" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "B" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "N" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "T"
+       ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p><br/>`
+       : ``
+   }
 
-  <br/>
-  <br/>
+    `
+      : ``
+  }
 
-    <h3><strong>LEFT BREAST:</strong></h3>
+  ${
+    getAnswer(133) === "Present"
+      ? `
+        <h3><strong>LEFT BREAST:</strong></h3>
   <p><strong>IMPRESSION:</strong></p>
   <p>${textEditor.ImpressionText.value}</p>
- <p> ${textEditor.OptionalImpressionText.value}</p><br />
-
+ <p> ${textEditor.OptionalImpressionText.value}</p>
+ ${
+   textEditor.CommonImpresRecommTextVal.value === "A" ||
+   textEditor.CommonImpresRecommTextVal.value === "B" ||
+   textEditor.CommonImpresRecommTextVal.value === "I" ||
+   textEditor.CommonImpresRecommTextVal.value === "N" ||
+   textEditor.CommonImpresRecommTextVal.value === "T"
+     ? `<p><i>${textEditor.CommonImpresRecommText.value}</i></p><br/>`
+     : ``
+ }
   <p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationText.value}</p>
   <p>${textEditor.OptionalRecommendationText.value}</p>
 
-  <br />
-  <p><i>${textEditor.CommonImpresRecommText.value}</i></p>
-  <br/>
+  ${
+    textEditor.CommonImpresRecommTextVal.value !== "A" &&
+    textEditor.CommonImpresRecommTextVal.value !== "B" &&
+    textEditor.CommonImpresRecommTextVal.value !== "I" &&
+    textEditor.CommonImpresRecommTextVal.value !== "N" &&
+    textEditor.CommonImpresRecommTextVal.value !== "T"
+      ? `<p>${textEditor.CommonImpresRecommText.value}</p><br/>`
+      : ``
+  }
+ 
+    `
+      : ``
+  }
+
+
   <strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
   <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
   <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
@@ -365,15 +458,59 @@ const NotesReport: React.FC<Props> = ({
   <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
 `);
     }
-  }, [reportFormData, syncStatus, patientHistory, textEditor.breastImplant.value]);
+  }, [
+    reportFormData,
+    syncStatus,
+    patientHistory,
+    textEditor.breastImplant.value,
+  ]);
 
   return (
-    <div className="w-full lg:w-[90%] mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll">
-      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
-        <div className="flex items-center justify-between mb-2">
-          {" "}
-          <span className="text-2xl">Final Report Preview</span>
-          {syncStatus.Notes ? (
+    <>
+      <Dialog open={dialog} onOpenChange={setDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              Warning
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-6">
+            <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
+              Do you require access to the Ease QT 10.10 report? The rest of the
+              text has been reset in accordance with the report format.
+            </p>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <>
+                <Button
+                  className="w-1/2 bg-[#abb4a5] hover:bg-[#abb4a5]"
+                  onClick={() => setDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="w-1/2 bg-[#abb4a5] hover:bg-[#abb4a5]"
+                  onClick={() => {
+                    setsyncStatus({ ...syncStatus, Notes: true });
+                    setDialog(false);
+                  }}
+                >
+                  Ok
+                </Button>
+              </>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="w-full lg:w-[90%] mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll">
+        <div className={`${readOnly ? "pointer-events-none" : ""}`}>
+          {reportAccess && (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                {" "}
+                <span className="text-2xl">Final Report Preview</span>
+                {/* {syncStatus.Notes ? (
             <Button
               className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
               onClick={() => {
@@ -391,15 +528,40 @@ const NotesReport: React.FC<Props> = ({
             >
               Sync
             </Button>
+          )} */}
+                <div className="self-start mt-2">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-base">
+                        Ease QT 10.10 Auto Report
+                      </Label>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={syncStatus.Notes}
+                      onCheckedChange={(checked: boolean) => {
+                        if (!checked) {
+                          setsyncStatus({ ...syncStatus, Notes: checked });
+                        } else {
+                          setDialog(true);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
           )}
+          <TextEditor
+            value={Notes}
+            onChange={setNotes}
+            readOnly={syncStatus.Notes}
+            // height="60vh"
+          />
         </div>
-        <TextEditor
-          value={Notes}
-          onChange={setNotes}
-          readOnly={syncStatus.Notes}
-        />
       </div>
-    </div>
+    </>
   );
 };
 

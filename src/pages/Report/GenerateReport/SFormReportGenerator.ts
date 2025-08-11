@@ -3,7 +3,6 @@ import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/Technic
 export function SFormGeneration(
   patientInTakeForm: ResponsePatientForm[]
 ): string {
-  console.log("########### Hi I am S Form", patientInTakeForm)
   // console.log("SFORM", patientInTakeForm);
   const getPatientAnswer = (id: number) =>
     patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
@@ -16,22 +15,35 @@ export function SFormGeneration(
   const mutationSpecify = getPatientAnswer(20);
 
   const hormonRT = getPatientAnswer(32);
+
   const previousSurgery = {
-    previousSurgeryYesNo: getPatientAnswer(66),
-    mastectomy: getPatientAnswer(67),
-    mastectomyPosition: getPatientAnswer(68),
-    lumpectomy: getPatientAnswer(69),
-    lumpectomyPosition: getPatientAnswer(70),
-    cystAspiration: getPatientAnswer(71),
-    cystAspirationPosition: getPatientAnswer(72),
-    breastReconstruction: getPatientAnswer(73),
-    breastReconstructionPosition: getPatientAnswer(74),
-    augmentation: getPatientAnswer(75),
-    augmentationPosition: getPatientAnswer(76),
-    breastSurgeryOthers: getPatientAnswer(77),
-    breastSurgeryOthersSpecify: getPatientAnswer(78),
-    breastSurgeryOthersSpecifyDirection: getPatientAnswer(489),
-  };
+  previousSurgeryYesNo: getPatientAnswer(66),
+
+  mastectomy: getPatientAnswer(67),
+  mastectomyPosition: getPatientAnswer(68),
+  mastectomyDate: getPatientAnswer(506),
+
+  lumpectomy: getPatientAnswer(69),
+  lumpectomyPosition: getPatientAnswer(70),
+  lumpectomyDate: getPatientAnswer(507),
+
+  cystAspiration: getPatientAnswer(71),
+  cystAspirationPosition: getPatientAnswer(72),
+  cystAspirationDate: getPatientAnswer(508),
+
+  breastReconstruction: getPatientAnswer(73),
+  breastReconstructionPosition: getPatientAnswer(74),
+  breastReconstructionDate: getPatientAnswer(509),
+
+  augmentation: getPatientAnswer(75),
+  augmentationPosition: getPatientAnswer(76),
+  augmentationDate: getPatientAnswer(510),
+
+  breastSurgeryOthers: getPatientAnswer(77),
+  breastSurgeryOthersSpecify: getPatientAnswer(78),
+  breastSurgeryOthersSpecifyDirection: getPatientAnswer(489),
+  breastSurgeryOthersDate: getPatientAnswer(511),
+};
 
   const previousBiopsy = {
     previousBiopsy: getPatientAnswer(160),
@@ -65,36 +77,66 @@ export function SFormGeneration(
   }
 
   const getSurgeryText = () => {
-    let surgeryText = "";
-    const {
-      previousSurgeryYesNo,
-      mastectomy,
-      lumpectomy,
-      cystAspiration,
-      breastReconstruction,
-      augmentation,
-      breastSurgeryOthers,
-      breastSurgeryOthersSpecify,
-    } = previousSurgery;
+  let surgeryText = "";
+  const {
+    previousSurgeryYesNo,
 
-    if (previousSurgeryYesNo === "Yes") {
-      const surgeries: string[] = [];
+    mastectomy,
+    mastectomyDate,
 
-      if (mastectomy === "true") surgeries.push("mastectomy");
-      if (lumpectomy === "true") surgeries.push("lumpectomy");
-      if (cystAspiration === "true") surgeries.push("cyst aspiration");
-      if (breastReconstruction === "true") surgeries.push("breast reconstruction");
-      if (augmentation === "true") surgeries.push("augmentation");
-      if (breastSurgeryOthers === "true" && breastSurgeryOthersSpecify)
-        surgeries.push(breastSurgeryOthersSpecify);
+    lumpectomy,
+    lumpectomyDate,
 
-      if (surgeries.length > 0) {
-        surgeryText = surgeries.join(", ");
-      }
+    cystAspiration,
+    cystAspirationDate,
+
+    breastReconstruction,
+    breastReconstructionDate,
+
+    augmentation,
+    augmentationDate,
+
+    breastSurgeryOthers,
+    breastSurgeryOthersSpecify,
+    breastSurgeryOthersDate,
+  } = previousSurgery;
+
+  if (previousSurgeryYesNo === "Yes") {
+    const surgeries: string[] = [];
+
+    if (mastectomy === "true") {
+      surgeries.push(`mastectomy${mastectomyDate ? ` on ${mastectomyDate}` : ""}`);
     }
 
-    return surgeryText;
-  };
+    if (lumpectomy === "true") {
+      surgeries.push(`lumpectomy${lumpectomyDate ? `on ${lumpectomyDate}` : ""}`);
+    }
+
+    if (cystAspiration === "true") {
+      surgeries.push(`cyst aspiration${cystAspirationDate ? ` on ${cystAspirationDate}` : ""}`);
+    }
+
+    if (breastReconstruction === "true") {
+      surgeries.push(`breast reconstruction${breastReconstructionDate ? ` on ${breastReconstructionDate}` : ""}`);
+    }
+
+    if (augmentation === "true") {
+      surgeries.push(`augmentation${augmentationDate ? ` on ${augmentationDate}` : ""}`);
+    }
+
+    if (breastSurgeryOthers === "true" && breastSurgeryOthersSpecify) {
+      surgeries.push(
+        `${breastSurgeryOthersSpecify}${breastSurgeryOthersDate ? ` on ${breastSurgeryOthersDate}` : ""}`
+      );
+    }
+
+    if (surgeries.length > 0) {
+      surgeryText = surgeries.join(", ");
+    }
+  }
+
+  return surgeryText;
+};
 
   function formatClockLabels(input: string): string {
     if (!input.trim()) return "";
@@ -147,7 +189,7 @@ export function SFormGeneration(
     if (nipplePain === "true") {
       const sides: string[] = [];
       if (nipplePainLeft === "true") sides.push("left " + (breastSymptoms.nipplePosition.toLocaleLowerCase() === "inverted" ? breastSymptoms.nipplePosition.toLocaleLowerCase() : breastSymptoms.nipplePositionDetails.toLocaleLowerCase()));
-      if (nipplePainRight === "true") sides.push("right" + (breastSymptoms.nipplePositionRight.toLocaleLowerCase() === "inverted" ? breastSymptoms.nipplePositionRight.toLocaleLowerCase() : breastSymptoms.nipplePositionRightDetails.toLocaleLowerCase()));
+      if (nipplePainRight === "true") sides.push("right " + (breastSymptoms.nipplePositionRight.toLocaleLowerCase() === "inverted" ? breastSymptoms.nipplePositionRight.toLocaleLowerCase() : breastSymptoms.nipplePositionRightDetails.toLocaleLowerCase()));
       symptoms.push(
         `Nipple changes${sides.length > 0 ? ` in ${sides.join(" and ")}` : ""}`
       );
@@ -167,7 +209,7 @@ export function SFormGeneration(
   };
 
 
-  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman with IBIS Tyrer-Cuzic score of ${ibisScore}% and ${auriaResult.toLocaleLowerCase()} AURIA breast cancer test${mutationSpecify ? ` having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? "on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo == "Yes" ? ` with ${getSurgeryText()} surgery done` : ""}. `
+  reportText += `A ${age} year old ${pregnant == "Yes" ? "pregnant / lactating" : ""} woman${ibisScore ? ` with IBIS Tyrer-Cuzic risk score of ${ibisScore}% and ` : ``}${auriaResult.toLocaleLowerCase()}${mutationSpecify ? `AURIA breast cancer test having ${mutationSpecify}` : ""}${hormonRT == "Yes" ? " on hormonal replacement therapy" : ""}${previousSurgery.previousSurgeryYesNo === "Yes" ? ` who underwent ${getSurgeryText()} surgery` : ""}.`
 
   if (previousBiopsy.previousBiopsy) {
     const isAbnormal = previousBiopsy.biopsyResults === "Yes";

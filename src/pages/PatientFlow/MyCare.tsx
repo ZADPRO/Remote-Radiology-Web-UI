@@ -11,9 +11,15 @@ import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { dateDisablers } from "@/lib/dateUtils";
-// import { Dialog } from "@/components/ui/dialog";
-// import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
-// import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
+import { Dialog } from "@/components/ui/dialog";
+import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
+import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
+
+interface AppointmentDetails {
+  appointmentId: number,
+  scId: number,
+  SCCustId: string
+}
 
 const MyCare: React.FC = () => {
   const [appointmentData, setAppointmentData] = useState<AppointmentAdd>({
@@ -23,8 +29,14 @@ const MyCare: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] = useState<boolean>(false);
-  // const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] = useState<boolean>(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+
+  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
+    appointmentId: 0,
+    scId: 0,
+    SCCustId: ""
+  })
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -47,7 +59,15 @@ const MyCare: React.FC = () => {
       const res = await appointmentService.addAppointment(appointmentData);
 
       if (res.status) {
-        navigate("../medicalHistory");
+        // navigate("../medicalHistory");
+        setAppointmentDetails({
+          appointmentId: res.AppointmentId,
+          scId: res.SCId,
+          SCCustId: res.SCCustId
+        });
+        setIsEditDialogBroucherOpen(true);
+
+        console.log(res)
       } else {
         // Assuming 'res.message' contains the error message from the API
         const errorMessage =
@@ -189,7 +209,7 @@ const MyCare: React.FC = () => {
         </div>
       </form>
 
-      {/* {isEditDialogBroucherOpen && (
+      {isEditDialogBroucherOpen && (
         <Dialog
           open={isEditDialogBroucherOpen}
           onOpenChange={setIsEditDialogBroucherOpen}
@@ -199,7 +219,7 @@ const MyCare: React.FC = () => {
               setIsEditDialogBroucherOpen(false);
               setIsEditDialogOpen(true);
             }}
-            scId={row.original.refSCId}
+            scId={appointmentDetails.scId}
           />
         </Dialog>
       )}
@@ -211,19 +231,19 @@ const MyCare: React.FC = () => {
               navigate("/patientInTakeForm", {
                 state: {
                   fetchFormData: false,
-                  appointmentId: row.original.refAppointmentId,
+                  appointmentId: appointmentDetails.appointmentId,
                   user: user?.refUserId,
                   name: user?.refUserFirstName,
                   custId: user?.refUserCustId,
-                  scancenterCustId: row.original.refSCCustId,
+                  scancenterCustId: appointmentDetails.SCCustId,
                   consent: consent,
                 },
               })
             }
-            scId={row.original.refSCId}
+            scId={appointmentDetails.scId}
           />
         </Dialog>
-      )} */}
+      )}
     </div>
   );
 };

@@ -16,6 +16,7 @@ interface Props {
   className?: string;
   required?: boolean;
   description?: string;
+  disabled?: boolean;
 }
 
 const MultiOptionRadioGroup: React.FC<Props> = ({
@@ -27,6 +28,7 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
   className,
   required = false,
   description,
+  disabled = false
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -69,7 +71,8 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
                 checked={getAnswer(questionId) === value}
                 onChange={(e) => handleInputChange(questionId, e.target.value)}
                 required={required}
-                className="custom-radio"
+                disabled={disabled}
+                className={`custom-radio ${disabled ? "pointer-events-none" : ""}`}
               />
               <Label htmlFor={id}>{optLabel}</Label>
             </div>

@@ -133,7 +133,7 @@ const BiopsyInformation: React.FC<Props> = ({
             {/*E. Biopsy results*/}
             <div className="flex -mt-2 flex-col gap-4">
               <Label className="font-bold text-base">E. Biopsy results <span className="text-red-500">*</span></Label>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2 lg:gap-0">
                 {[
                   "Benign",
                   "Atypical",

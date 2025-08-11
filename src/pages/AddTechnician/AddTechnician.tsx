@@ -121,6 +121,7 @@ const AddTechnician: React.FC = () => {
     fieldName: keyof NewTechnician;
     tempFileKey: keyof TempFilesState;
   }) => {
+    setError("");
     const formDataObj = new FormData();
     formDataObj.append("file", file);
 
@@ -153,6 +154,7 @@ const AddTechnician: React.FC = () => {
     tempField: keyof TempFilesState,
     uploadFn = uploadService.uploadFile // optional, default upload function
   ): Promise<void> => {
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -185,6 +187,7 @@ const AddTechnician: React.FC = () => {
   const handleDigitalSignatureUpload = useCallback(async (
     file: File,
   ) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
     setError("");
@@ -240,6 +243,7 @@ const AddTechnician: React.FC = () => {
   }, [setFormData, setFiles]);
 
   const handleProfileImageUpload = useCallback(async (file: File) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 

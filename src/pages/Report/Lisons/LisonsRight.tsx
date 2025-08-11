@@ -116,7 +116,7 @@ const LisonsRight: React.FC<Props> = ({
           <LesionsOptions
             reportFormData={reportFormData}
             handleReportInputChange={handleReportInputChange}
-            LabelVal={"Multiple Cysts"}
+            LabelVal={"Multiple Simple Cysts"}
             mainQId={questionIds.multipleCystsstr}
             DataQId={questionIds.multipleCystsDatar}
           />

@@ -67,7 +67,7 @@ const AllergiesMedications: React.FC<Props> = ({
             className="custom-radio"
           />
           <Label
-            className="text-xl font-black"
+            className="text-4xl font-black"
             htmlFor={`${name}-${value.toLowerCase()}`}
           >
             {value}
@@ -101,7 +101,7 @@ const AllergiesMedications: React.FC<Props> = ({
 
   return (
     <div className={`flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto`}>
-      <div className={`${readOnly ? "pointer-events-none" : ""}`}>
+      <div className={`${readOnly ? "pointer-events-none" : ""} space-y-4`}>
         {/* Priority */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <Label className="w-full sm:w-1/3 text-base font-semibold">

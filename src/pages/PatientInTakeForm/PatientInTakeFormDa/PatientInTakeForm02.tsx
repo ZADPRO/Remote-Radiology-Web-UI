@@ -191,6 +191,7 @@ const PatientInTakeForm02: React.FC<Props> = ({
 
   return (
     <form
+      noValidate={readOnly}
       onSubmit={(e) => {
         e.preventDefault();
         handleNext();

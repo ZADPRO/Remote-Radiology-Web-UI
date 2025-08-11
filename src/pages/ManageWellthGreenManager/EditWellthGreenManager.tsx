@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { dateDisablers } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificManager, managerService } from "@/services/managerService";
 import { Camera, FileText, Pencil, X, CircleAlert } from "lucide-react";
@@ -61,6 +62,10 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     education_certificate: [],
   });
   const [tempEduFiles, setTempEduFiles] = useState<TempUpdateEduFile[]>([]);
+
+  console.log(tempEduFiles, "tempEduFiles");
+  console.log(files, "files");
+  console.log(formData, "formData");
 
   useEffect(() => {
     if (error && errorRef.current) {
@@ -459,7 +464,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                   downloadFile(
                     formData.drivingLicenseFile!.base64Data,
                     formData.drivingLicenseFile!.contentType,
-                    "License.pdf"
+                    "License"
                   )
                 }
               >
@@ -527,6 +532,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
               value={
                 formData.refUserDOB ? new Date(formData.refUserDOB) : undefined
               }
+              className="pointer-events-auto"
               onChange={(date) =>
                 setFormData((prev) =>
                   prev
@@ -539,7 +545,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                     : null
                 )
               }
-              className="bg-white"
+              disabledDates={dateDisablers.noFuture}
             />
           </div>
 
@@ -585,7 +591,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                   downloadFile(
                     formData.panFile!.base64Data,
                     formData.panFile!.contentType,
-                    "PAN.pdf"
+                    "PAN"
                   )
                 }
               >
@@ -611,13 +617,12 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-15 w-full">
         <div className="flex flex-col gap-4 2xl:gap-6 w-full">
           <Label htmlFor="edu-certs-upload">
-            Educational Certificates (.pdf, multiple, max 10MB each){" "}
+            Educational Certificates (multiple, max 10MB each){" "}
             <span className="text-red-500">*</span>
           </Label>
           <FileUploadButton
             id="edu-certs-upload"
             label="Upload Education Certificates"
-            accept=".pdf"
             multiple
             required={false}
             isFilePresent={files.education_certificate.length > 0}
@@ -657,7 +662,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                           cert.educationCertificateFile.base64Data,
                           cert.educationCertificateFile.contentType,
                           cert.refECOldFileName ||
-                            `Certificate-${index + 1}.pdf`
+                            `Certificate-${index + 1}`
                         )
                       }
                     >

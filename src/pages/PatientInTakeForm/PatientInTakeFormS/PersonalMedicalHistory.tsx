@@ -7,22 +7,29 @@ import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
+import DatePicker from "@/components/date-picker";
 
 interface QuestionIds {
   previousSurgiries: number;
   mastectomy: number;
   mastectomyPosition: number;
+  mastectomyDate: number;
   lumpectomy: number;
   lumpectomyPosition: number;
+  lumpectomyDate: number;
   cystAspiration: number;
   cystAspirationPosition: number;
+  cystAspirationDate: number;
   breastReconstruction: number;
   breastReconstructionPosition: number;
+  breastReconstructionDate: number;
   augmentation: number;
   augmentationposition: number;
+  augmentationDate: number;
   breastSurgeryOthers: number;
   breastSurgeryOthersSpecify: number;
   breastSurgeryOthersSpecifyDirection: number;
+  breastSurgeryOthersDate: number;
   implants: number;
   implantsSpecify: number;
   implantsOthersSpecify: number;
@@ -76,236 +83,211 @@ const PersonalMedicalHistory: React.FC<Props> = ({
           />
 
           {getAnswer(questionIds.previousSurgiries) === "Yes" && (
-            <div className="space-y-4 pl-4">
-              <Label className="text-sm font-medium">If Yes,</Label>
+  <div className="space-y-4 pl-4">
+    <Label className="text-sm font-medium">If Yes,</Label>
 
-              {[
-                {
-                  label: "Mastectomy",
-                  id: "mastectomy",
-                  posId: "mastectomyPosition",
-                },
-                {
-                  label: "Lumpectomy",
-                  id: "lumpectomy",
-                  posId: "lumpectomyPosition",
-                },
-                {
-                  label: "Cyst Aspiration",
-                  id: "cystAspiration",
-                  posId: "cystAspirationPosition",
-                },
-                {
-                  label: "Breast Reconstruction",
-                  id: "breastReconstruction",
-                  posId: "breastReconstructionPosition",
-                },
-                {
-                  label: "Augmentation",
-                  id: "augmentation",
-                  posId: "augmentationposition",
-                },
-              ].map((item) => {
-                const checked =
-                  getAnswer(questionIds[item.id as keyof QuestionIds]) ===
-                  "true";
-                return (
+    {[
+      {
+        label: "Mastectomy",
+        id: "mastectomy",
+        posId: "mastectomyPosition",
+        dateId: "mastectomyDate",
+      },
+      {
+        label: "Lumpectomy",
+        id: "lumpectomy",
+        posId: "lumpectomyPosition",
+        dateId: "lumpectomyDate",
+      },
+      {
+        label: "Cyst Aspiration",
+        id: "cystAspiration",
+        posId: "cystAspirationPosition",
+        dateId: "cystAspirationDate",
+      },
+      {
+        label: "Breast Reconstruction",
+        id: "breastReconstruction",
+        posId: "breastReconstructionPosition",
+        dateId: "breastReconstructionDate",
+      },
+      {
+        label: "Augmentation",
+        id: "augmentation",
+        posId: "augmentationposition",
+        dateId: "augmentationDate",
+      },
+    ].map((item) => {
+      const checked =
+        getAnswer(questionIds[item.id as keyof QuestionIds]) === "true";
+      return (
+        <div
+          key={item.id}
+          className="flex flex-wrap sm:flex-nowrap items-center gap-4"
+        >
+          {/* Checkbox + Label */}
+          <div className="flex items-center gap-2 min-w-[180px]">
+            <Checkbox2
+              id={item.id}
+              checked={checked}
+              onCheckedChange={(checked) =>
+                handleInputChange(
+                  questionIds[item.id as keyof QuestionIds],
+                  checked ? "true" : "false"
+                )
+              }
+            />
+            <Label className="whitespace-nowrap" htmlFor={item.id}>
+              {item.label}
+            </Label>
+          </div>
+
+          {checked && (
+            <>
+              {/* Radio buttons */}
+              <div className="flex flex-wrap gap-4">
+                {["Right", "Left", "Both"].map((pos) => (
                   <div
-                    key={item.id}
-                    className="flex items-center gap-4 h-[20px]"
+                    className="flex items-center space-x-2"
+                    key={`${item.id}-${pos}`}
                   >
-                    <div className="flex items-center gap-2">
-                      <Checkbox2
-                        id={item.id}
-                        checked={checked}
-                        onCheckedChange={(checked) =>
-                          handleInputChange(
-                            questionIds[item.id as keyof QuestionIds],
-                            checked ? "true" : "false"
-                          )
-                        }
-                      />
-                      <Label className="w-[150px]" htmlFor={item.id}>
-                        {item.label}
-                      </Label>
-                    </div>
-
-                    {checked && (
-                      <div className="flex items-center gap-6">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`${item.id}-right`}
-                            name={`position-${item.id}`} // Group radios by unique name
-                            value="Right"
-                            checked={
-                              getAnswer(
-                                questionIds[item.posId as keyof QuestionIds]
-                              ) === "Right"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds[item.posId as keyof QuestionIds],
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`${item.id}-right`}>Right</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`${item.id}-left`}
-                            name={`position-${item.id}`}
-                            value="Left"
-                            checked={
-                              getAnswer(
-                                questionIds[item.posId as keyof QuestionIds]
-                              ) === "Left"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds[item.posId as keyof QuestionIds],
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`${item.id}-left`}>Left</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`${item.id}-both`}
-                            name={`position-${item.id}`}
-                            value="Both"
-                            checked={
-                              getAnswer(
-                                questionIds[item.posId as keyof QuestionIds]
-                              ) === "Both"
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds[item.posId as keyof QuestionIds],
-                                e.target.value
-                              )
-                            }
-                            className="custom-radio"
-                            required
-                          />
-                          <Label htmlFor={`${item.id}-both`}>Both</Label>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              <div className="flex items-center gap-2 h-[20px]">
-                <Checkbox2
-                  // id={questionIds.breastSurgeryOthers}
-                  checked={
-                    getAnswer(questionIds.breastSurgeryOthers) === "true"
-                  }
-                  onCheckedChange={(checked) =>
-                    handleInputChange(
-                      questionIds.breastSurgeryOthers,
-                      checked ? "true" : "false"
-                    )
-                  }
-                />
-                <Label className="w-[150px]">Others</Label>
-                {getAnswer(questionIds.breastSurgeryOthers) === "true" && (
-                  <>
-                    <Label className="text-sm font-medium pl-2">Specify</Label>
-                    <Input
-                      value={getAnswer(questionIds.breastSurgeryOthersSpecify)}
+                    <input
+                      type="radio"
+                      id={`${item.id}-${pos.toLowerCase()}`}
+                      name={`position-${item.id}`}
+                      value={pos}
+                      checked={
+                        getAnswer(
+                          questionIds[item.posId as keyof QuestionIds]
+                        ) === pos
+                      }
                       onChange={(e) =>
                         handleInputChange(
-                          questionIds.breastSurgeryOthersSpecify,
+                          questionIds[item.posId as keyof QuestionIds],
                           e.target.value
                         )
                       }
-                      className="w-48"
+                      className="custom-radio"
                       required
                     />
-                  </>
-                )}
-                {getAnswer(questionIds.breastSurgeryOthers) === "true" && (
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id={`other-right`}
-                        name={`position-other`} // Group radios by unique name
-                        value="Right"
-                        checked={
-                          getAnswer(
-                            questionIds.breastSurgeryOthersSpecifyDirection
-                          ) === "Right"
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.breastSurgeryOthersSpecifyDirection,
-                            e.target.value
-                          )
-                        }
-                        className="custom-radio"
-                        required
-                      />
-                      <Label htmlFor={`other-right`}>Right</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id={`other-left`}
-                        name={`position-other`}
-                        value="Left"
-                        checked={
-                          getAnswer(
-                            questionIds.breastSurgeryOthersSpecifyDirection
-                          ) === "Left"
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.breastSurgeryOthersSpecifyDirection,
-                            e.target.value
-                          )
-                        }
-                        className="custom-radio"
-                        required
-                      />
-                      <Label htmlFor={`other-left`}>Left</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id={`other-both`}
-                        name={`position-other`}
-                        value="Both"
-                        checked={
-                          getAnswer(
-                            questionIds.breastSurgeryOthersSpecifyDirection
-                          ) === "Both"
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.breastSurgeryOthersSpecifyDirection,
-                            e.target.value
-                          )
-                        }
-                        className="custom-radio"
-                        required
-                      />
-                      <Label htmlFor={`other-both`}>Both</Label>
-                    </div>
+                    <Label htmlFor={`${item.id}-${pos.toLowerCase()}`}>
+                      {pos}
+                    </Label>
                   </div>
-                )}
+                ))}
               </div>
-            </div>
+
+              {/* Date Picker */}
+              <div className="flex-1 min-w-40 max-w-50">
+                <DatePicker
+                  value={
+                    getAnswer(questionIds[item.dateId as keyof QuestionIds])
+                      ? new Date(
+                          getAnswer(
+                            questionIds[item.dateId as keyof QuestionIds]
+                          )
+                        )
+                      : undefined
+                  }
+                  onChange={(e) =>
+                    handleInputChange(
+                      questionIds[item.dateId as keyof QuestionIds],
+                      e?.toLocaleDateString("en-CA") || ""
+                    )
+                  }
+                />
+              </div>
+            </>
           )}
+        </div>
+      );
+    })}
+
+    {/* Others */}
+<div className="flex flex-wrap items-center gap-4">
+  {/* Checkbox + Label */}
+  <div className="flex items-center gap-2 min-w-[100px]">
+    <Checkbox2
+      checked={getAnswer(questionIds.breastSurgeryOthers) === "true"}
+      onCheckedChange={(checked) =>
+        handleInputChange(
+          questionIds.breastSurgeryOthers,
+          checked ? "true" : "false"
+        )
+      }
+    />
+    <Label className="whitespace-nowrap">Others</Label>
+  </div>
+
+  {/* When Others is checked */}
+  {getAnswer(questionIds.breastSurgeryOthers) === "true" && (
+    <div className="flex flex-col sm:flex-row flex-wrap gap-4 flex-1">
+      {/* Specify input */}
+      <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-[200px]">
+        <Label className="text-sm font-medium">Specify</Label>
+        <Input
+          value={getAnswer(questionIds.breastSurgeryOthersSpecify)}
+          onChange={(e) =>
+            handleInputChange(
+              questionIds.breastSurgeryOthersSpecify,
+              e.target.value
+            )
+          }
+          className="flex-1"
+          required
+        />
+      </div>
+
+      {/* Radio buttons */}
+      <div className="flex flex-wrap items-center gap-4">
+        {["Right", "Left", "Both"].map((pos) => (
+          <div className="flex items-center space-x-2" key={pos}>
+            <input
+              type="radio"
+              id={`other-${pos.toLowerCase()}`}
+              name={`position-other`}
+              value={pos}
+              checked={
+                getAnswer(
+                  questionIds.breastSurgeryOthersSpecifyDirection
+                ) === pos
+              }
+              onChange={(e) =>
+                handleInputChange(
+                  questionIds.breastSurgeryOthersSpecifyDirection,
+                  e.target.value
+                )
+              }
+              className="custom-radio"
+              required
+            />
+            <Label htmlFor={`other-${pos.toLowerCase()}`}>{pos}</Label>
+          </div>
+        ))}
+      </div>
+
+      {/* Date picker */}
+      <div className="flex-1 min-w-[160px] max-w-[200px]">
+        <DatePicker
+          value={
+            getAnswer(questionIds.breastSurgeryOthersDate)
+              ? new Date(getAnswer(questionIds.breastSurgeryOthersDate))
+              : undefined
+          }
+          onChange={(e) =>
+            handleInputChange(
+              questionIds.breastSurgeryOthersDate,
+              e?.toLocaleDateString("en-CA") || ""
+            )
+          }
+        />
+      </div>
+    </div>
+  )}
+</div>
+
+  </div>
+)}
 
           <div className="space-y-2">
             <MultiOptionRadioGroup
@@ -453,7 +435,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           </div>
 
                           {getAnswer(questionIds.explants) === "Yes" && (
-                              <div className="flex flex-wrap gap-1 lg:gap-4 w-full">
+                              <div className="flex flex-wrap flex-col lg:flex-row gap-1 lg:gap-4 w-full">
                                 <MultiRadioOptionalInputInline
                                   label="Is the date known?"
                                   questionId={questionIds.explantsDateKnown}
@@ -468,7 +450,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
                                 {getAnswer(questionIds.explantsDateKnown) ===
                                 "Yes" && (
-                                <div className="flex gap-2">
+                                <div className="flex items-center gap-2">
                                   <Input
                                     placeholder="Duration"
                                     className="lg:w-38"

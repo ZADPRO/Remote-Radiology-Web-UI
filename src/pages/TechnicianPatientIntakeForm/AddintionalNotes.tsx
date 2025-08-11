@@ -46,13 +46,13 @@ const AddintionalNotes: React.FC<Props> = ({
   //     RADIO_QUESTION_IDS.includes(item.questionId) && item.answer === "true"
   // )?.questionId;
 
-  const isCorrectFormConfirmed = getAnswer(questionIds.confirmation) === "true";
+  // const isCorrectFormConfirmed = getAnswer(questionIds.confirmation) === "true";
 
   // handle manual radio selection
-  const handleRadioSelect = (value: string) => {
-    if (isCorrectFormConfirmed) return;
-    handleInputChange(RADIO_QUESTION_ID, value);
-  };
+  // const handleRadioSelect = (value: string) => {
+  //   if (isCorrectFormConfirmed) return;
+  //   handleInputChange(RADIO_QUESTION_ID, value);
+  // };
 
   const renderPatientRadioGroup = (
     name: string,
@@ -88,117 +88,147 @@ const AddintionalNotes: React.FC<Props> = ({
   return (
     <div className="flex h-full flex-col gap-6 p-4 sm:p-6 overflow-y-auto relative">
       <div className={`space-y-4 ${readOnly ? "pointer-events-none" : ""}`}>
-        <div className="flex flex-col gap-2">
-          <Label className="text-base font-semibold">
-            Patient has filled out the correct form
-          </Label>
+        <div className="flex flex-col gap-2yy">
+  <Label className="text-base font-semibold">
+    Patient has filled out the correct form
+  </Label>
 
-          {/* Radio group: 167–170 */}
-          <div className="mt-0 space-y-1">
-            {
-              // Radio options: 1-4 (stored as string in answer to questionId 170)
-              [
-                {
-                  id: "1",
-                  label:
-                    "S. Breast QT Screening Form (First-time or Annual checkup – No Abnormal Findings)",
-                  color: "#741b47"  // Dark magenta
-                },
-                {
-                  id: "2",
-                  label:
-                    "Da. Breast QT Diagnostic Evaluation Form (Abnormal result from a previous scan / abnormal symptoms)",
-                  color: "#366091" // dark blue
-                },
-                {
-                  id: "3",
-                  label:
-                    "Db. Breast QT Diagnostic Health Form (Biopsy proven DCIS/Cancer Diagnosis)",
-                  color: "#4f6228", // green
-                },
-                {
-                  id: "4",
-                  label:
-                    "Dc. Breast QT Diagnostic Follow-up Form (Previous QT Comparison)",
-                  color: "#984806", // dark orange
-                },
-              ].map((item) => {
-                const isSelected =
-                  (
-                    patientFormData.find(
-                      (item: any) => item.questionId === RADIO_QUESTION_ID
-                    ) || {}
-                  ).answer.toString() === item.id;
-                const isDisabled = isCorrectFormConfirmed;
+  {/* Forms list */}
+  <div className="space-y-1">
+    {[
+      {
+        id: "1",
+        label:
+          "S. Breast QT Screening Form (First-time or Annual checkup – No Abnormal Findings)",
+        color: "#741b47",
+      },
+      {
+        id: "2",
+        label:
+          "Da. Breast QT Diagnostic Evaluation Form (Abnormal result from a previous scan / abnormal symptoms)",
+        color: "#366091",
+      },
+      {
+        id: "3",
+        label:
+          "Db. Breast QT Diagnostic Health Form (Biopsy proven DCIS/Cancer Diagnosis)",
+        color: "#4f6228",
+      },
+      {
+        id: "4",
+        label:
+          "Dc. Breast QT Diagnostic Follow-up Form (Previous QT Comparison)",
+        color: "#984806",
+      },
+    ].map((item) => {
+      const filledFormId =
+        patientFormData.find(
+          (pf: any) => pf.questionId === RADIO_QUESTION_ID
+        )?.answer?.toString() ?? null;
 
-                return (
-                  <label
-                    key={item.id}
-                     style={{color: item.color}}
-                    className={cn(
-                      "flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm sm:text-base font-semibold p-1 rounded-md w-full",
-                      isSelected && isDisabled
-                        ? "bg-[#f0fdf4] border border-green-400"
-                        : ""
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="formTypeSelection"
-                      className="custom-radio"
-                      value={item.id}
-                      checked={isSelected}
-                      disabled={isDisabled}
-                      onChange={() => handleRadioSelect(item.id)}
-                    />
-                    <span>
-                      {item.label}{" "}
-                      {!isDisabled && (
-                        <span
-                          className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 hover:bg-yellow-200 cursor-pointer"
-                          onClick={() => handleShift(parseInt(item.id))}
-                        >
-                          Fill Form
-                        </span>
-                      )}
-                    </span>
-                  </label>
-                );
-              })
-            }
-          </div>
+      const isFilledForm = filledFormId === item.id;
+      const isNoSelected =
+        getAnswer(questionIds.confirmation) === "false";
 
-          {/* Yes / No radio for confirmation */}
-          <div className="flex mt-1 px-1 gap-6">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="formCorrect"
-                className="custom-radio"
-                value="false"
-                checked={getAnswer(questionIds.confirmation) !== "true"}
-                onChange={() =>
-                  handleInputChange(questionIds.confirmation, "false")
-                }
-              />
-              <span className="text-sm sm:text-base">No</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="formCorrect"
-                className="custom-radio"
-                value="true"
-                checked={getAnswer(questionIds.confirmation) === "true"}
-                onChange={() =>
-                  handleInputChange(questionIds.confirmation, "true")
-                }
-              />
-              <span className="text-sm sm:text-base">Yes</span>
-            </label>
-          </div>
+      return (
+        <div
+          key={item.id}
+          className={cn(
+            "flex items-center flex-col lg:flex-row justify-between p-1 lg:mx-10 border rounded-md transition-all duration-200",
+            isFilledForm
+              ? "bg-green-50 border-green-400"
+              : ""
+          )}
+        >
+          <span
+            className="font-semibold text-sm sm:text-base"
+            style={{ color: item.color }}
+          >
+            {item.label}
+            {isFilledForm && (
+              <span className="ml-2 text-xs sm:text-sm text-green-600">
+                Filled
+              </span>
+            )}
+          </span>
 
+          {isNoSelected && (
+            <button
+  type="button" // important: prevents form submit
+  onClick={(e) => {
+    e.preventDefault(); // stop default form behaviour
+    // e.stopPropagation(); // stop parent click events
+    handleShift(parseInt(item.id));
+  }}
+  className="px-3 text-xs sm:text-sm rounded bg-yellow-100 min-w-30 self-end cursor-pointer text-yellow-800 hover:bg-yellow-200 transition-colors"
+>
+  Fill Form
+</button>
+
+          )}
         </div>
+      );
+    })}
+  </div>
+
+  {/* Divider */}
+  <div className="border-t my-2"></div>
+
+  {/* Yes / No Confirmation */}
+  <div className="flex flex-col gap-3">
+    {/* <Label className="text-lg font-bold text-gray-800">
+      Is this the correct form?
+    </Label> */}
+    <div className="flex gap-4">
+      {/* YES */}
+      <label
+        className={cn(
+          "flex items-center justify-center px-6 py-3 rounded-xl border font-bold cursor-pointer text-lg transition-all duration-200",
+          getAnswer(questionIds.confirmation) === "true"
+            ? "bg-green-500 text-white border-green-500 shadow-md"
+            : "bg-white text-green-600 border-green-400 hover:bg-green-50"
+        )}
+      >
+        <input
+          type="radio"
+          name="formCorrect"
+          className="hidden"
+          value="true"
+          checked={getAnswer(questionIds.confirmation) === "true"}
+          onChange={() =>
+            handleInputChange(questionIds.confirmation, "true")
+          }
+        />
+        Yes
+      </label>
+
+      {/* NO */}
+      <label
+        className={cn(
+          "flex items-center justify-center px-6 py-3 rounded-xl border font-bold cursor-pointer text-lg transition-all duration-200",
+          getAnswer(questionIds.confirmation) === "false"
+            ? "bg-red-500 text-white border-red-500 shadow-md"
+            : "bg-white text-red-600 border-red-400 hover:bg-red-50"
+        )}
+      >
+        <input
+          type="radio"
+          name="formCorrect"
+          className="hidden"
+          value="false"
+          checked={getAnswer(questionIds.confirmation) === "false"}
+          onChange={() =>
+            handleInputChange(questionIds.confirmation, "false")
+          }
+        />
+        No
+      </label>
+    </div>
+  </div>
+</div>
+
+
+
 
         {/* Additional Notes */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3">

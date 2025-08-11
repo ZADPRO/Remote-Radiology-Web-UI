@@ -61,10 +61,16 @@ interface QuestionIds {
   lymphNodes: number;
   lymphNodesRight: number;
   lymphNodesLeft: number;
-  lymphNodesDate: number;
-  lymphSize: number;
-  lymphNodesLocation: number;
-  lymphNodesLocationOther: number;
+  locationAxillary: number;
+  locationAxillaryDuration: number;
+  locationAxillarySize: number;
+  locationInBetween: number;
+  locationInBetweenDuration: number;
+  locationInBetweenSize: number;
+  locationOther: number;
+  locationOtherSpecify: number;
+  locationOtherDuration: number;
+  locationOtherSize: number;
   lymphNodesDetails: number;
   others: number;
   othersDetails: number;
@@ -195,10 +201,16 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 checkStatusQId={Props.questionIds.lymphNodes}
                 RQID={Props.questionIds.lymphNodesRight}
                 LQID={Props.questionIds.lymphNodesLeft}
-                SDate={Props.questionIds.lymphNodesDate}
-                Size={Props.questionIds.lymphSize}
-                Location={Props.questionIds.lymphNodesLocation}
-                LocationOther={Props.questionIds.lymphNodesLocationOther}
+                LocationAxillary={Props.questionIds.locationAxillary}
+                LocationAxillaryDuration={Props.questionIds.locationAxillaryDuration}
+                LocationAxillarySize={Props.questionIds.locationAxillarySize}
+                LocationInBetween={Props.questionIds.locationInBetween}
+                LocationInBetweenDuration={Props.questionIds.locationInBetweenDuration}
+                LocationInBetweenSize={Props.questionIds.locationInBetweenSize}
+                LocationOther={Props.questionIds.locationOther}
+                LocationOtherSpecify={Props.questionIds.locationOtherSpecify}
+                LocationOtherDuration={Props.questionIds.locationOtherDuration}
+                LocationOtherSize={Props.questionIds.locationOtherSize}                
                 data={Props.data}
                 setData={Props.setData}
                 OtherInputQId={Props.questionIds.lymphNodesDetails}

@@ -55,13 +55,15 @@ export function generateGrandularAndDuctalTissueReport(
     ductalList[0]?.level ||
     "";
 
-    //glandularandductal
-    const glandularandductaltext = (glandularandductal === "Normal") ? "<p>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.</p>" : "";
+  //glandularandductal
+  const glandularandductaltext =
+    glandularandductal === "Normal"
+      ? "<p>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.</p>"
+      : "";
 
   // 1. Benign Findings
   const benignFindings: string[] = [];
-  if (benignMicroCysts === "Present")
-    benignFindings.push("benign microcysts");
+  if (benignMicroCysts === "Present") benignFindings.push("benign microcysts");
   if (benignCapsular === "Present")
     benignFindings.push("benign capsular microcalcifications");
   if (benignFibronodular === "Present")
@@ -69,22 +71,22 @@ export function generateGrandularAndDuctalTissueReport(
 
   const benignText =
     benignFindings.length > 0
-      ? `There are multiple ${benignFindings
-        .join(", ")
-        .toLocaleLowerCase()} noted. Otherwise, the breast tissue appears normal.`
+      ? `There are multiple ${benignFindings.join(", ").toLocaleLowerCase()} ${
+          benignFindings.length > 1 ? "are " : "is "
+        } noted. Otherwise, the breast tissue appears normal.`
       : "The breast tissue appears unremarkable.";
 
   // 2. Macrocalcifications
   const macroText = generateCalcificationText(
     macroList,
-    "calcification",
+    "macrocalcifications",
     true
   );
 
   // 3. Microcalcifications
   const microText = generateCalcificationText(
     microList,
-    "calcification",
+    "microcalcifications",
     true
   );
 
@@ -98,12 +100,13 @@ export function generateGrandularAndDuctalTissueReport(
   const ductalText =
     ductalProminence === "Present" && ductalList.length > 0
       ? `There is ductal prominence with ${ductalList
-        .map((d) => d.type)
-        .join(" and ")
-        .toLocaleLowerCase()} noted at ${clock && level
-        ? `${clock} o'clock in coronal location P${level}.`
-        : ""
-      }`
+          .map((d) => d.type)
+          .join(" and ")
+          .toLocaleLowerCase()} noted at ${
+          clock && level
+            ? `${clock} o'clock in coronal location P${level}.`
+            : ""
+        }`
       : "";
 
   return `
@@ -123,7 +126,6 @@ function generateCalcificationText(
   label: string,
   showDistribution: boolean
 ): string {
-
   if (!list.length) return "";
 
   return list
@@ -135,15 +137,19 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There is ${type.toLowerCase() === "other" ? item.otherText: type.toLowerCase()} ${label} noted `;
+      const base = `There is ${
+        type.toLowerCase() === "other" ? item.otherText : type.toLowerCase()
+      } ${label} noted`;
       const distText =
         showDistribution && distribution
-          ? `with ${distribution.toLowerCase()} distribution`
+          ? ` with ${distribution.toLowerCase()} distribution`
           : "";
-      const location =
-        clock && level ? `at ${clock} o'clock in coronal location P${level}.` : "";
+      let location = clock
+        ? ` at ${clock === "0" ? "nipple" : clock + ` o'clock`}`
+        : "";
+      location += level ? ` in coronal location P${level}` : "";
 
-      return `<p>${base} ${distText} ${location}</p>`;
+      return `<p>${base}${distText}${location}.</p>`;
     })
     .join("\n");
 }

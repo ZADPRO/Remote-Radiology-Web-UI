@@ -74,6 +74,7 @@ const RiskFactors: React.FC<Props> = ({
                   onChange={(e) =>
                     handleInputChange(questionIds.weightDiff, e.target.value)
                   }
+                  required
                 />
                 <ValidatedSelect
                   questionId={questionIds.weightType}

@@ -66,6 +66,9 @@ const LesionsOptions: React.FC<Props> = ({
                     debris: string;
                     shadowing: string;
                     Volumne: string;
+                    locationclockpositionto: string;
+                    locationLevelPercentageto: string;
+                    atleast: string;
                   }[] = [];
 
                   try {
@@ -87,14 +90,48 @@ const LesionsOptions: React.FC<Props> = ({
                       sizew: "",
                       sizel: "",
                       sizeh: "",
-                      Shape: "",
-                      Appearance: "",
-                      Margins: "",
-                      density: "",
+                      Shape:
+                        LabelVal === "Simple Cyst" ||
+                        LabelVal === "Multiple Simple Cysts"
+                          ? "round"
+                          : LabelVal === "Complex Cystic Structure"
+                          ? "oval"
+                          : "",
+                      Appearance:
+                        LabelVal === "Simple Cyst" ||
+                        LabelVal === "Multiple Simple Cysts"
+                          ? "homogenous"
+                          : LabelVal === "Complex Cystic Structure" ||
+                            LabelVal === "Heterogeneous Tissue Prominence" ||
+                            LabelVal === "Hypertrophic Tissue with Microcysts"
+                          ? "heterogenous"
+                          : "",
+                      Margins:
+                        LabelVal === "Simple Cyst" ||
+                        LabelVal === "Multiple Simple Cysts"
+                          ? "well circumscribed"
+                          : LabelVal === "Complex Cystic Structure"
+                          ? "indistinct"
+                          : "",
+                      density:
+                        LabelVal === "Simple Cyst" ||
+                        LabelVal === "Multiple Simple Cysts"
+                          ? "hypoechoic"
+                          : LabelVal === "Complex Cystic Structure" ||
+                            LabelVal === "Heterogeneous Tissue Prominence" ||
+                            LabelVal === "Hypertrophic Tissue with Microcysts"
+                          ? "mixed"
+                          : "",
                       Transmissionspped: "",
-                      debris: "",
+                      debris:
+                        LabelVal === "Complex Cystic Structure"
+                          ? "present"
+                          : "",
                       shadowing: "",
                       Volumne: "",
+                      locationclockpositionto: "",
+                      locationLevelPercentageto: "",
+                      atleast: "",
                     },
                   ];
                   handleReportInputChange(DataQId, JSON.stringify(updated));
@@ -184,6 +221,43 @@ const LesionsOptions: React.FC<Props> = ({
                                 color="red"
                               />
                             )}
+
+                            {(LabelVal === "Heterogeneous Tissue Prominence" ||
+                              LabelVal ===
+                                "Hypertrophic Tissue with Microcysts") && (
+                              <>
+                                <span>To </span>
+                                <SingleBreastPositionPicker
+                                  value={data.locationclockpositionto}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index].locationclockpositionto = e;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                  singleSelect={true}
+                                />
+                                {data.locationclockpositionto.length > 0 && (
+                                  <X
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].locationclockpositionto =
+                                        "";
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    width={13}
+                                    height={13}
+                                    color="red"
+                                  />
+                                )}
+                              </>
+                            )}
                           </div>
                         </div>
 
@@ -251,6 +325,7 @@ const LesionsOptions: React.FC<Props> = ({
                                   : "P -"}
                               </span>
                               <GridNumber200
+                                className="w-20"
                                 value={data.locationLevelPercentage}
                                 onChange={(e) => {
                                   const updated = [...dataArray];
@@ -277,9 +352,78 @@ const LesionsOptions: React.FC<Props> = ({
                                   color="red"
                                 />
                               )}
+                              {(LabelVal ===
+                                "Heterogeneous Tissue Prominence" ||
+                                LabelVal ===
+                                  "Hypertrophic Tissue with Microcysts") && (
+                                <>
+                                  <span>To </span>
+                                  <GridNumber200
+                                    className="w-20"
+                                    value={data.locationLevelPercentageto}
+                                    onChange={(e) => {
+                                      const updated = [...dataArray];
+                                      updated[index].locationLevelPercentageto =
+                                        e;
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                  />
+                                  {data.locationLevelPercentageto.length >
+                                    0 && (
+                                    <X
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        const updated = [...dataArray];
+                                        updated[
+                                          index
+                                        ].locationLevelPercentageto = "";
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
+                                      width={13}
+                                      height={13}
+                                      color="red"
+                                    />
+                                  )}
+                                </>
+                              )}
                             </div>
                           )}
                         </div>
+
+                        {LabelVal === "Multiple Simple Cysts" && (
+                          <>
+                            {/* 3. Atleast */}
+                            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                              <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                                Atleast
+                              </Label>
+                              <div className="flex items-center gap-2 flex-grow">
+                                <Input
+                                  type="number"
+                                  className="w-20"
+                                  placeholder="mm"
+                                  value={data.atleast}
+                                  onChange={(e) => {
+                                    const updated = [...dataArray];
+                                    updated[index].atleast =
+                                      e.target.value;
+                                    handleReportInputChange(
+                                      DataQId,
+                                      JSON.stringify(updated)
+                                    );
+                                  }}
+                                />
+                                {/* <span className="text-sm">mm</span> */}
+                              </div>
+                            </div>
+                          </>
+                        )}
 
                         {/* 3. Distance from Nipple */}
                         <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
@@ -437,7 +581,7 @@ const LesionsOptions: React.FC<Props> = ({
                           </Label>
                           <div className="flex flex-wrap gap-3">
                             {[
-                              "Circumscribed",
+                              "Well Circumscribed",
                               "Microlobulated",
                               "Indistinct",
                               "Obscured",
@@ -485,34 +629,42 @@ const LesionsOptions: React.FC<Props> = ({
                               "Isoechoic",
                               "Anechoic",
                               "Mixed",
-                              // "Hyperechoic",
+                              LabelVal !== "Simple Cyst" && "Hyperechoic",
                               // "Complex",
                               "Unknown",
                             ].map((d, i) => (
-                              <div key={d} className="flex items-center gap-2">
-                                <input
-                                  type="radio"
-                                  id={`Density-${mainQId}-${index}-${i}`}
-                                  name={`densityquestion-${mainQId}-${index}`}
-                                  value={d.toLowerCase()}
-                                  checked={data.density === d.toLowerCase()}
-                                  onChange={() => {
-                                    const updated = [...dataArray];
-                                    updated[index].density = d.toLowerCase();
-                                    handleReportInputChange(
-                                      DataQId,
-                                      JSON.stringify(updated)
-                                    );
-                                  }}
-                                  required
-                                  className="custom-radio"
-                                />
-                                <Label
-                                  htmlFor={`Density-${mainQId}-${index}-${i}`}
-                                >
-                                  {d}
-                                </Label>
-                              </div>
+                              <>
+                                {d && (
+                                  <div
+                                    key={d}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      id={`Density-${mainQId}-${index}-${i}`}
+                                      name={`densityquestion-${mainQId}-${index}`}
+                                      value={d.toLowerCase()}
+                                      checked={data.density === d.toLowerCase()}
+                                      onChange={() => {
+                                        const updated = [...dataArray];
+                                        updated[index].density =
+                                          d.toLowerCase();
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
+                                      required
+                                      className="custom-radio"
+                                    />
+                                    <Label
+                                      htmlFor={`Density-${mainQId}-${index}-${i}`}
+                                    >
+                                      {d}
+                                    </Label>
+                                  </div>
+                                )}
+                              </>
                             ))}
                           </div>
                         </div>
@@ -525,7 +677,7 @@ const LesionsOptions: React.FC<Props> = ({
                           <div className="flex items-center gap-2">
                             <Input
                               type="number"
-                              className="w-20"
+                              className="w-25"
                               placeholder="m/s"
                               value={data.Transmissionspped}
                               onChange={(e) => {
@@ -542,46 +694,53 @@ const LesionsOptions: React.FC<Props> = ({
                           </div>
                         </div>
 
-                        {/* 10. Internal debris / Shadowing */}
-                        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-                          <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
-                            Internal debris / Shadowing
-                          </Label>
-                          <div className="flex flex-wrap gap-3">
-                            {[
-                              { label: "Present", value: "present" },
-                              { label: "Not present", value: "not present" },
-                            ].map((item, i) => (
-                              <div
-                                key={item.value}
-                                className="flex items-center gap-2"
-                              >
-                                <input
-                                  type="radio"
-                                  id={`Internal-${mainQId}-${index}-${i}`}
-                                  name={`internalquestion-${mainQId}-${index}`}
-                                  value={item.value}
-                                  checked={data.debris === item.value}
-                                  onChange={() => {
-                                    const updated = [...dataArray];
-                                    updated[index].debris = item.value;
-                                    handleReportInputChange(
-                                      DataQId,
-                                      JSON.stringify(updated)
-                                    );
-                                  }}
-                                  required
-                                  className="custom-radio"
-                                />
-                                <Label
-                                  htmlFor={`Internal-${mainQId}-${index}-${i}`}
-                                >
-                                  {item.label}
-                                </Label>
+                        {LabelVal !== "Simple Cyst" && (
+                          <>
+                            {/* 10. Internal debris / Shadowing */}
+                            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                              <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                                Internal debris / Shadowing
+                              </Label>
+                              <div className="flex flex-wrap gap-3">
+                                {[
+                                  { label: "Present", value: "present" },
+                                  {
+                                    label: "Not present",
+                                    value: "not present",
+                                  },
+                                ].map((item, i) => (
+                                  <div
+                                    key={item.value}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      id={`Internal-${mainQId}-${index}-${i}`}
+                                      name={`internalquestion-${mainQId}-${index}`}
+                                      value={item.value}
+                                      checked={data.debris === item.value}
+                                      onChange={() => {
+                                        const updated = [...dataArray];
+                                        updated[index].debris = item.value;
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
+                                      required
+                                      className="custom-radio"
+                                    />
+                                    <Label
+                                      htmlFor={`Internal-${mainQId}-${index}-${i}`}
+                                    >
+                                      {item.label}
+                                    </Label>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                            </div>
+                          </>
+                        )}
 
                         {/* 11. Volume */}
                         <div className="flex flex-col lg:flex-row gap-4 lg:items-center">

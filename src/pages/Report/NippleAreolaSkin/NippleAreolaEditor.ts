@@ -39,11 +39,11 @@ export function generateNippleAreolaBreastEditor(
   // Architecture section
   result += " ";
   if (architecture === "Architectural Distortion") {
-    result += `The architectural distortion observed is attributed to post-operative or post-procedural changes.`;
+    result += `The architectural distortion observed is attributed to post-operative changes.`;
   } else if (architecture === "Normal") {
     result += `The architectural is normal.`;
   } else {
-    result += `The architectural distortion observed is attributed to post-operative or post-procedural changes is ${architectureOther.toLowerCase()}.`;
+    result += `${architectureOther.toLowerCase()} is seen.`;
   }
 
   return result.trim();

@@ -49,6 +49,7 @@ const ViewScanCenter: React.FC = () => {
   });
 
   const handleProfileImageUpload = async (file: File) => {
+    setError("");
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
 
@@ -276,7 +277,7 @@ const ViewScanCenter: React.FC = () => {
                   Manage Performing Provider
                 </Button>
                 <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageCoReportingDoctor", {state: formData.refSCId})}>
-                  Manage Co-Reporting Doctor
+                  Manage Reviewer
                 </Button>
               </div>
               <Button

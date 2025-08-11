@@ -612,28 +612,26 @@ const TechnicianPatientIntakeForm: React.FC<
       </div>
 
       {/* Patient Info Grid */}
-      {
-        !props.reportview && (
-          <div className="bg-white lg:w-fit w-11/12 rounded px-4 py-2 lg:mx-15 mx-auto my-1 grid grid-cols-1 sm:grid-cols-2 gap-2 space-x-6 text-xs sm:text-sm">
-        <div className="flex gap-1">
-          <div className="font-medium">Patient Name</div>
-          <div>: {locationState?.name}</div>
+      {!props.reportview && (
+        <div className="bg-white lg:w-fit w-11/12 rounded px-4 py-2 lg:mx-15 mx-auto my-1 grid grid-cols-1 sm:grid-cols-2 gap-2 space-x-6 text-xs sm:text-sm">
+          <div className="flex gap-1">
+            <div className="font-medium">Patient Name</div>
+            <div>: {locationState?.name}</div>
+          </div>
+          <div className="flex gap-1">
+            <div className="font-medium">Patient ID</div>
+            <div>: {locationState?.custId}</div>
+          </div>
+          <div className="flex gap-1">
+            <div className="font-medium">Scan Center</div>
+            <div>: {locationState?.scancenterCustId}</div>
+          </div>
+          <div className="flex gap-1">
+            <div className="font-medium">DOB</div>
+            <div>: {getPatientFormAnswer(2)}</div>
+          </div>
         </div>
-        <div className="flex gap-1">
-          <div className="font-medium">Patient ID</div>
-          <div>: {locationState?.custId}</div>
-        </div>
-        <div className="flex gap-1">
-          <div className="font-medium">Scan Center</div>
-          <div>: {locationState?.scancenterCustId}</div>
-        </div>
-        <div className="flex gap-1">
-          <div className="font-medium">DOB</div>
-          <div>: {getPatientFormAnswer(2)}</div>
-        </div>
-      </div>
-        )
-      }
+      )}
 
       <div className="px-3 w-full py-2 lg:px-15 flex flex-col min-h-0 h-full">
         {/* Tabs Header */}
@@ -648,8 +646,12 @@ const TechnicianPatientIntakeForm: React.FC<
                 ref={(el) => {
                   optionRefs.current[option] = el;
                 }}
-                onClick={() => setSelectedSection(option)}
-                className={`cursor-pointer w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
+                onClick={() =>
+                  controlData.readOnly && setSelectedSection(option)
+                }
+                className={`${
+                  controlData.readOnly && `cursor-pointer `
+                } w-[200px] lg:w-[20%] flex h-[8vh] gap-3 px-3 justify-center items-center ${
                   index !== options.length - 1 ? "border-r-1" : "border-r-0"
                 } border-r-[#BFB2B2] ${
                   selectedSection === option

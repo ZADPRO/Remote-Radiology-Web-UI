@@ -4,6 +4,9 @@ import BreastInputWithout from "./BreastInputWithout";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Separator } from "@/components/ui/separator";
 import FormHeader from "../FormHeader";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   data: any;
@@ -192,33 +195,33 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                 SResultRight={Props.questionIds.lymphNodesResultRight}
               />
               <Separator className="bg-[#a4b2a1]" />
-              {/* <div className="flex justify-start flex-row w-[100%] items-center space-x-2">
-              //   <Checkbox2
-              //     checked={getAnswerByQuestionId(Props.questionIds.others) === "true"}
-              //     onClick={() => {
-              //       updateAnswer(
-              //         Props.questionIds.others,
-              //         getAnswerByQuestionId(Props.questionIds.others) === "true"
-              //           ? "false"
-              //           : "true"
-              //       );
-              //     }}
-              //   />
-              //   <Label className="font-semibold text-base lg:w-[180px]">Others</Label>
+              <div className="flex justify-start flex-row w-[100%] items-center space-x-2">
+                <Checkbox2
+                  checked={getAnswerByQuestionId(Props.questionIds.others) === "true"}
+                  onClick={() => {
+                    handleInputChange(
+                      Props.questionIds.others,
+                      getAnswerByQuestionId(Props.questionIds.others) === "true"
+                        ? "false"
+                        : "true"
+                    );
+                  }}
+                />
+                <Label className="font-semibold text-base lg:w-[180px]">Others</Label>
 
-              //   {getAnswerByQuestionId(Props.questionIds.others) === "true" && (
-              //     <Input
-              //       type="text"
-              //       value={getAnswerByQuestionId(Props.questionIds.othersRight)}
-              //       onChange={(e) => {
-              //         handleInputChange(Props.questionIds.othersRight, e.target.value);
-              //       }
-              //       }
-              //       className="w-1/3"
-              //       required
-              //     />
-              //   )}
-              // </div>  */}
+                {getAnswerByQuestionId(Props.questionIds.others) === "true" && (
+                  <Textarea
+                    value={getAnswerByQuestionId(Props.questionIds.othersDetails)}
+                    onChange={(e) => {
+                      handleInputChange(Props.questionIds.othersDetails, e.target.value);
+                    }
+                    }
+                    className="w-1/3"
+                    placeholder="Additional Comments"
+                    required
+                  />
+                )}
+              </div> 
             </div>
           </>
         )}

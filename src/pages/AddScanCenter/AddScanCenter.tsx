@@ -84,7 +84,7 @@ const AddScanCenter: React.FC = () => {
       if(res.status) {
         toast.success("Scan Center Added Successfully");
         setTimeout(() => {
-          navigate("../manageScanCenter");
+          navigate(-1);
         }, 1500);
       } else {
         setError(res.message);

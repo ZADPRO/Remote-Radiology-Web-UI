@@ -29,7 +29,7 @@ const NewInvoice: React.FC<Props> = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const {role} = useAuth();
+  const { role } = useAuth();
 
   const [input, setInput] = useState({
     refSCId: 0,
@@ -149,7 +149,7 @@ const NewInvoice: React.FC<Props> = () => {
     }));
   };
 
-  console.log(input)
+  console.log(input);
 
   const handleSubmitInvoice = () => {
     setLoading(true);
@@ -458,9 +458,14 @@ const NewInvoice: React.FC<Props> = () => {
                     <p className="text-xs sm:text-sm font-bold">Quantity</p>
                     <Input
                       type="number"
-                      value={input.quantity}
+                      value={(input.quantity)}
                       name="quantity"
-                      onChange={handleInputChanges}
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          quantity: parseInt(e.target.value),
+                        });
+                      }}
                       required
                       placeholder="Quantity"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
@@ -471,9 +476,14 @@ const NewInvoice: React.FC<Props> = () => {
                     <p className="text-xs sm:text-sm font-bold">Amount (INR)</p>
                     <Input
                       type="number"
-                      value={input.amount}
+                      value={(input.amount)}
                       name="amount"
-                      onChange={handleInputChanges}
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          amount: parseInt(e.target.value),
+                        });
+                      }}
                       required
                       placeholder="Amount"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
