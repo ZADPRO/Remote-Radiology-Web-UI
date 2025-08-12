@@ -234,8 +234,6 @@ const NotesReport: React.FC<Props> = ({
       : false;
 
   useEffect(() => {
-  
-
     if (syncStatus.Notes) {
       setNotes(`
        <div>
@@ -391,7 +389,7 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextRightVal.value === "I" ||
    textEditor.CommonImpresRecommTextRightVal.value === "N" ||
    textEditor.CommonImpresRecommTextRightVal.value === "T"
-     ? `<br/><p><i>${textEditor.CommonImpresRecommTextRight.value}</i></p>`
+     ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p>`
      : ``
  }
 
@@ -426,7 +424,7 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextVal.value === "I" ||
    textEditor.CommonImpresRecommTextVal.value === "N" ||
    textEditor.CommonImpresRecommTextVal.value === "T"
-     ? `<p><i>${textEditor.CommonImpresRecommText.value}</i></p>`
+     ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
   <br/><p><strong>RECOMMENDATION:</strong></p>
