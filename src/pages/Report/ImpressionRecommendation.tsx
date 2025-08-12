@@ -689,121 +689,6 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
     );
   }, []);
 
-  useEffect(() => {
-    if (mainImpressionRecommendation.selectedImpressionId) {
-      setMainImpressionRecommendation((prev) => ({
-        ...prev,
-        impressionText:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id === mainImpressionRecommendation.selectedImpressionId
-            )?.impressionText || "", // default to empty string
-        recommendationText:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                mainImpressionRecommendation.selectedRecommendationId
-            )?.recommendationText || "",
-      }));
-    }
-
-    if (mainImpressionRecommendation.selectedImpressionIdRight) {
-      setMainImpressionRecommendation((prev) => ({
-        ...prev,
-        impressionTextRight:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                mainImpressionRecommendation.selectedImpressionIdRight
-            )?.impressionText || "",
-        recommendationTextRight:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                mainImpressionRecommendation.selectedRecommendationIdRight
-            )?.recommendationText || "",
-      }));
-    }
-
-    if (optionalImpressionRecommendation.selectedImpressionId) {
-      setOptionalImpressionRecommendation((prev) => ({
-        ...prev,
-        impressionText:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                optionalImpressionRecommendation.selectedImpressionId
-            )?.impressionText || "",
-        recommendationText:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                optionalImpressionRecommendation.selectedRecommendationId
-            )?.recommendationText || "",
-      }));
-    }
-
-    if (optionalImpressionRecommendation.selectedImpressionIdRight) {
-      setOptionalImpressionRecommendation((prev) => ({
-        ...prev,
-        impressionTextRight:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                optionalImpressionRecommendation.selectedImpressionIdRight
-            )?.impressionText || "",
-        recommendationTextRight:
-          impressionRecommendation
-            .map((item) => item.data)
-            .flat()
-            .find(
-              (item) =>
-                item.id ===
-                optionalImpressionRecommendation.selectedRecommendationIdRight
-            )?.recommendationText || "",
-      }));
-    }
-
-    if (commonImpressRecomm.id) {
-      setCommonImpressRecomm((prev) => ({
-        ...prev,
-        text:
-          additionalOptions.find((item) => item.id === commonImpressRecomm.id)
-            ?.text || "",
-      }));
-    }
-    if (commonImpressRecomm.idRight) {
-      setCommonImpressRecomm((prev) => ({
-        ...prev,
-        textRight:
-          additionalOptions.find(
-            (item) => item.id === commonImpressRecomm.idRight
-          )?.text || "",
-      }));
-    }
-  }, []);
-
   const selectedImpression = impressionRecommendation
     .flatMap((group) => group.data)
     .find(
@@ -1235,7 +1120,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">
-                Common Impression / Recommendation
+                Macro Impression / Recommendation
               </Label>
               <Select
                 value={commonImpressRecomm.idRight}
@@ -1640,7 +1525,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">
-                Common Impression / Recommendation
+                Macro Impression / Recommendation
               </Label>
               <Select
                 value={commonImpressRecomm.id}

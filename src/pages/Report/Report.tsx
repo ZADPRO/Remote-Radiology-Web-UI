@@ -74,7 +74,7 @@ import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
 import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
 import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
 import { SymmentryGenerator } from "./GenerateReport/SymmetryGenerator";
-import { AutoPopulateReport } from "./AutoPopulateReport";
+import { AutoPopulateReport, AutoPopulateReportImpressRecomm } from "./AutoPopulateReport";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -1006,8 +1006,12 @@ const Report: React.FC = () => {
       getTechnicianAnswer,
       handleReportInputChange
     );
-    console.log("QQqqq", responsePatientInTake, technicianForm)
   }, [responsePatientInTake, technicianForm]);
+
+
+  useEffect(() => {
+    AutoPopulateReportImpressRecomm(mainImpressionRecommendation, setMainImpressionRecommendation, optionalImpressionRecommendation, setOptionalImpressionRecommendation, commonImpressRecomm, setCommonImpressRecomm)     
+  }, [assignData]);
 
   useEffect(() => {
     handleAssignUser();

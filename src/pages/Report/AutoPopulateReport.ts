@@ -1,4 +1,8 @@
 import {
+  additionalOptions,
+  impressionRecommendation,
+} from "./ImpressionRecommendation";
+import {
   breastDensityandImageRightQuestions,
   breastDensityandImageLeftQuestions,
   ComparisonPriorLeftQuestion,
@@ -19,7 +23,6 @@ export function AutoPopulateReport(
   getTechnicianAnswer: (id: number) => string,
   handleReportInputChange: (questionId: number, value: string) => void
 ) {
-    
   //Right Breast Access Check
   getreportAnswer(130) === "" && handleReportInputChange(130, "Present");
 
@@ -33,12 +36,7 @@ export function AutoPopulateReport(
   getreportAnswer(133) === "" && handleReportInputChange(133, "Present");
 
   getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
-    handleReportInputChange(
-      breastImpantQuestions.breastImplants,
-      "Present"
-    );
-
-  console.log("qqqq", getPatientAnswer(breastImpantQuestions.breastImplants))
+    handleReportInputChange(breastImpantQuestions.breastImplants, "Present");
 
   // getPatientAnswer(questionIds.implantConfiguration) === "" &&
   //   handleReportInputChange(
@@ -70,65 +68,63 @@ export function AutoPopulateReport(
       getPatientAnswer(81)
     );
 
-    console.log("eeeeeeee",getTechnicianAnswer(19))
+  console.log("eeeeeeee", getTechnicianAnswer(19));
 
-   getreportAnswer(symmetryQuestions.symmetry) == "" &&
-            handleReportInputChange(
-              symmetryQuestions.symmetry,
-              getTechnicianAnswer(19) == "true"
-                ? "Asymmetry"
-                : "Symmetrical size and shape"
-            );
-          getreportAnswer(symmetryQuestions.symmetryLeft) == "" &&
-            handleReportInputChange(
-              symmetryQuestions.symmetryLeft,
-              getTechnicianAnswer(20) === "Right"
-                ? "right breast bigger than left breast"
-                : getTechnicianAnswer(20) === "Left"
-                ? "left breast bigger than right breast"
-                : ""
-            );
-          // getreportAnswer(symmetryQuestions.symmetryRight) == "" &&
-          //   handleReportInputChange(
-          //     symmetryQuestions.symmetryRight,
-          //     getTechnicianAnswer(22)
-          //   );
+  getreportAnswer(symmetryQuestions.symmetry) == "" &&
+    handleReportInputChange(
+      symmetryQuestions.symmetry,
+      getTechnicianAnswer(19) == "true"
+        ? "Asymmetry"
+        : "Symmetrical size and shape"
+    );
+  getreportAnswer(symmetryQuestions.symmetryLeft) == "" &&
+    handleReportInputChange(
+      symmetryQuestions.symmetryLeft,
+      getTechnicianAnswer(20) === "Right"
+        ? "right breast bigger than left breast"
+        : getTechnicianAnswer(20) === "Left"
+        ? "left breast bigger than right breast"
+        : ""
+    );
+  // getreportAnswer(symmetryQuestions.symmetryRight) == "" &&
+  //   handleReportInputChange(
+  //     symmetryQuestions.symmetryRight,
+  //     getTechnicianAnswer(22)
+  //   );
 
-// --------------------- Right ---------------------------- //
+  // --------------------- Right ---------------------------- //
 
-    // Breast Density and Image Quality Right
-    breastDensityandImage(breastDensityandImageRightQuestions);
+  // Breast Density and Image Quality Right
+  breastDensityandImage(breastDensityandImageRightQuestions);
 
-    // Nipple Areola Right
-    nippleAreola(nippleAreolaSkinRightQuestions, "Right");
+  // Nipple Areola Right
+  nippleAreola(nippleAreolaSkinRightQuestions, "Right");
 
-    // Glandular Ductal Right
-    glandularAndDuctalTissue(grandularAndDuctalTissueRightQuestions);
-    
-    // Lymph Nodes Right
-    lymphNodes(LymphNodesRightQuestions);
+  // Glandular Ductal Right
+  glandularAndDuctalTissue(grandularAndDuctalTissueRightQuestions);
 
-    // Comparison Prior Right
-    comparisonPrior(ComparisonPriorRightQuestion);
-    
+  // Lymph Nodes Right
+  lymphNodes(LymphNodesRightQuestions);
 
-// --------------------- Left ---------------------------- //
+  // Comparison Prior Right
+  comparisonPrior(ComparisonPriorRightQuestion);
 
-    // Breast Density and Image Quality Left
-    breastDensityandImage(breastDensityandImageLeftQuestions);
+  // --------------------- Left ---------------------------- //
 
-    // Nipple Areola Left
-    nippleAreola(nippleAreolaSkinLeftQuestions, "Left");
+  // Breast Density and Image Quality Left
+  breastDensityandImage(breastDensityandImageLeftQuestions);
 
-    // Glandular Ductal Left
-    glandularAndDuctalTissue(grandularAndDuctalTissueLeftQuestions);
-    
-    // Lymph Nodes Left
-    lymphNodes(LymphNodesLeftQuestions);
+  // Nipple Areola Left
+  nippleAreola(nippleAreolaSkinLeftQuestions, "Left");
 
-    // Comparison Prior Left
-    comparisonPrior(ComparisonPriorLeftQuestion);
+  // Glandular Ductal Left
+  glandularAndDuctalTissue(grandularAndDuctalTissueLeftQuestions);
 
+  // Lymph Nodes Left
+  lymphNodes(LymphNodesLeftQuestions);
+
+  // Comparison Prior Left
+  comparisonPrior(ComparisonPriorLeftQuestion);
 
   function breastDensityandImage(questionIds: { [key: string]: number }) {
     getreportAnswer(questionIds.breastSelect) === "" &&
@@ -143,8 +139,8 @@ export function AutoPopulateReport(
     getreportAnswer(questionIds.symmetry) === "" &&
       handleReportInputChange(questionIds.symmetry, "Symmetry");
   }
-  
-  function nippleAreola(questionIds: { [key: string]: number } ,side: string) {
+
+  function nippleAreola(questionIds: { [key: string]: number }, side: string) {
     getreportAnswer(questionIds.nippleSelect) === "" &&
       handleReportInputChange(questionIds.nippleSelect, "Present");
     getreportAnswer(questionIds.skinChanges) === "" &&
@@ -177,10 +173,10 @@ export function AutoPopulateReport(
       handleReportInputChange(questionIds.calcifiedScar, "Absent");
     getreportAnswer(questionIds.ductalProminence) === "" &&
       handleReportInputChange(questionIds.ductalProminence, "Absent");
-}
+  }
 
-    function lymphNodes(questionIds: { [key: string]: number }) {
-        getreportAnswer(questionIds.IntramammaryDatar) === "" &&
+  function lymphNodes(questionIds: { [key: string]: number }) {
+    getreportAnswer(questionIds.IntramammaryDatar) === "" &&
       handleReportInputChange(
         questionIds.IntramammaryDatar,
         JSON.stringify([
@@ -197,32 +193,207 @@ export function AutoPopulateReport(
     //   handleReportInputChange(questionIds.axillarynodes, "benign morphology");
     getreportAnswer(questionIds.ClipsPresentStatus) === "" &&
       handleReportInputChange(questionIds.ClipsPresentStatus, "Present");
-    }
+  }
 
-    function comparisonPrior(questionIds: { [key: string]: number }) {
-        getreportAnswer(questionIds.LesionCompTable) === "" &&
+  function comparisonPrior(questionIds: { [key: string]: number }) {
+    getreportAnswer(questionIds.LesionCompTable) === "" &&
       handleReportInputChange(
         questionIds.LesionCompTable,
         JSON.stringify([
           {
-                      sizec: "",
-                      sizep: "",
-                      volumec: "",
-                      volumep: "",
-                      speedc: "",
-                      speedp: "",
-                      locationcclock: "",
-                      locationcposition: "",
-                      locationpclock: "",
-                      locationpposition: "",
-                      previous: "",
-                      lesionStatus: "",
-                      doublingtimedate1: "+",
-                      doublingtimedate2: "",
-                      vol1: "",
-                      vol2: "",
-                    }
+            sizec: "",
+            sizep: "",
+            volumec: "",
+            volumep: "",
+            speedc: "",
+            speedp: "",
+            locationcclock: "",
+            locationcposition: "",
+            locationpclock: "",
+            locationpposition: "",
+            previous: "",
+            lesionStatus: "",
+            doublingtimedate1: "+",
+            doublingtimedate2: "",
+            vol1: "",
+            vol2: "",
+          },
         ])
       );
-    }
+  }
+}
+
+export function AutoPopulateReportImpressRecomm(
+  mainImpressionRecommendation: any,
+  setMainImpressionRecommendation: any,
+  optionalImpressionRecommendation: any,
+  setOptionalImpressionRecommendation: any,
+  commonImpressRecomm: any,
+  setCommonImpressRecomm: any
+) {
+  if (mainImpressionRecommendation.selectedImpressionId) {
+    setMainImpressionRecommendation((prev: any) => ({
+      ...prev,
+      impressionText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === mainImpressionRecommendation.selectedImpressionId
+          )?.impressionText || "", // default to empty string
+      recommendationText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === mainImpressionRecommendation.selectedRecommendationId
+          )?.recommendationText || "",
+    }));
+  }
+
+  if (mainImpressionRecommendation.selectedImpressionIdRight) {
+    setMainImpressionRecommendation((prev: any) => ({
+      ...prev,
+      impressionTextRight:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === mainImpressionRecommendation.selectedImpressionIdRight
+          )?.impressionText || "",
+      recommendationTextRight:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id ===
+              mainImpressionRecommendation.selectedRecommendationIdRight
+          )?.recommendationText || "",
+    }));
+  }
+
+  if (optionalImpressionRecommendation.selectedImpressionId) {
+    setOptionalImpressionRecommendation((prev: any) => ({
+      ...prev,
+      impressionText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id === optionalImpressionRecommendation.selectedImpressionId
+          )?.impressionText || "",
+      recommendationText:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id ===
+              optionalImpressionRecommendation.selectedRecommendationId
+          )?.recommendationText || "",
+    }));
+  }
+
+  if (optionalImpressionRecommendation.selectedImpressionIdRight) {
+    setOptionalImpressionRecommendation((prev: any) => ({
+      ...prev,
+      impressionTextRight:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id ===
+              optionalImpressionRecommendation.selectedImpressionIdRight
+          )?.impressionText || "",
+      recommendationTextRight:
+        impressionRecommendation
+          .map((item) => item.data)
+          .flat()
+          .find(
+            (item) =>
+              item.id ===
+              optionalImpressionRecommendation.selectedRecommendationIdRight
+          )?.recommendationText || "",
+    }));
+  }
+
+  if (commonImpressRecomm.id) {
+    setCommonImpressRecomm((prev: any) => ({
+      ...prev,
+      text:
+        additionalOptions.find((item) => item.id === commonImpressRecomm.id)
+          ?.text || "",
+    }));
+  }
+  if (commonImpressRecomm.idRight) {
+    setCommonImpressRecomm((prev: any) => ({
+      ...prev,
+      textRight:
+        additionalOptions.find(
+          (item) => item.id === commonImpressRecomm.idRight
+        )?.text || "",
+    }));
+  }
+
+  const additionalImpressionRight =
+    optionalImpressionRecommendation.selectedImpressionIdRight.length > 0
+      ? JSON.parse(optionalImpressionRecommendation.selectedImpressionIdRight)
+      : [];
+
+  const additionalRecommendationRight =
+    optionalImpressionRecommendation.selectedRecommendationIdRight.length > 0
+      ? JSON.parse(
+          optionalImpressionRecommendation.selectedRecommendationIdRight
+        )
+      : [];
+
+  const additionalImpression =
+    optionalImpressionRecommendation.selectedImpressionId.length > 0
+      ? JSON.parse(optionalImpressionRecommendation.selectedImpressionId)
+      : [];
+
+  const additionalRecommendation =
+    optionalImpressionRecommendation.selectedRecommendationId.length > 0
+      ? JSON.parse(optionalImpressionRecommendation.selectedRecommendationId)
+      : [];
+
+  setOptionalImpressionRecommendation((prev: any) => ({
+    ...prev,
+    // selectedImpressionIdRight: additionalImpressionRight,
+    impressionTextRight: additionalImpressionRight
+      .map((item: any) => item.text)
+      .join("<br/>"),
+  }));
+
+  setOptionalImpressionRecommendation((prev: any) => ({
+    ...prev,
+    // selectedRecommendationIdRight: JSON.stringify(
+    //   additionalRecommendationRight
+    // ),
+    recommendationTextRight: additionalRecommendationRight
+      .map((item: any) => item.text)
+      .join("<br/>"),
+  }));
+
+  setOptionalImpressionRecommendation((prev: any) => ({
+    ...prev,
+    // selectedImpressionId: JSON.stringify(additionalImpression),
+    impressionText: additionalImpression
+      .map((item: any) => item.text)
+      .join("<br/>"),
+  }));
+
+  setOptionalImpressionRecommendation((prev: any) => ({
+    ...prev,
+    // selectedRecommendationId: JSON.stringify(additionalRecommendation),
+    recommendationText: additionalRecommendation
+      .map((item: any) => item.text)
+      .join("<br/>"),
+  }));
 }
