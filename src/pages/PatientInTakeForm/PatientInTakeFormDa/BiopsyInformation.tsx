@@ -5,6 +5,7 @@ import FormHeader from "../FormHeader";
 import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
 import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   performed: number;
@@ -72,7 +73,7 @@ const BiopsyInformation: React.FC<Props> = ({
                 <DatePicker
                   value={
                     getAnswer(questionIds.datebio)
-                      ? new Date(getAnswer(questionIds.datebio))
+                      ? parseLocalDate(getAnswer(questionIds.datebio))
                       : undefined
                   }
                   onChange={(val) =>

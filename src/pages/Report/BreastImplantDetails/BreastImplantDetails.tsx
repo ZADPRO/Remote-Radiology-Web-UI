@@ -127,7 +127,7 @@ const BreastImplantDetails: React.FC<Props> = ({
               options={[
                 { label: "Left", value: "Left" },
                 { label: "Right", value: "Right" },
-                { label: "Both", value: "both side" },
+                { label: "Both", value: "Both" },
                 { label: "None", value: "None" },
               ]}
             />

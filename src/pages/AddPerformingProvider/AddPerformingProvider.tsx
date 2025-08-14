@@ -30,6 +30,7 @@ import {
 } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -71,11 +72,11 @@ const AddPerformingProvider: React.FC = () => {
   console.log(formData);
 
   useEffect(() => {
-      setFormData((prev) => ({
-        ...prev,
-        refSCId: scanCenterId,
-      }));
-    }, []);
+    setFormData((prev) => ({
+      ...prev,
+      refSCId: scanCenterId,
+    }));
+  }, []);
 
   const [files, setFiles] = useState<TempFilesState>({
     profile_img: null,
@@ -141,8 +142,7 @@ const AddPerformingProvider: React.FC = () => {
       }
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -490,7 +490,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
           <DatePicker
-            value={formData.dob ? new Date(formData.dob) : undefined}
+            value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
               setFormData((prev) => ({
                 ...prev,
@@ -686,7 +686,8 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="npi">
-            NPI <span className="text-red-500">*</span>
+            NPI
+            {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
             id="npi"
@@ -697,12 +698,13 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, npi: e.target.value }))
             }
-            required
+            // required
           />
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm " htmlFor="specialization">
-            Specialization <span className="text-red-500">*</span>
+            Specialization
+            {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
             id="specialization"
@@ -716,110 +718,110 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
                 specialization: e.target.value,
               }))
             }
-            required
+            // required
           />
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="license-upload">
-            Upload License <span className="text-red-500">*</span>
+            Upload License
+            <span className="text-red-500">*</span>
           </Label>
 
           <FileUploadButton
-                  id="license-upload"
-                  label="Upload License Files"
-                  multiple
-                  required={formData.license_files.length === 0}
-                  isFilePresent={formData.license_files.length > 0}
-                  onChange={async (e) => {
-                    const filesSelected = e.target.files;
-                    if (!filesSelected) return;
+            id="license-upload"
+            label="Upload License Files"
+            multiple
+            required={formData.license_files.length === 0}
+            isFilePresent={formData.license_files.length > 0}
+            onChange={async (e) => {
+              const filesSelected = e.target.files;
+              if (!filesSelected) return;
 
-                    const selectedFiles = Array.from(filesSelected);
-                    const filteredFiles = selectedFiles.filter(
-                      (file) =>
-                        file.size <= 10 * 1024 * 1024 &&
-                        !tempFiles.license_files.some((f) => f.name === file.name)
-                    );
+              const selectedFiles = Array.from(filesSelected);
+              const filteredFiles = selectedFiles.filter(
+                (file) =>
+                  file.size <= 10 * 1024 * 1024 &&
+                  !tempFiles.license_files.some((f) => f.name === file.name)
+              );
 
-                    for (const file of filteredFiles) {
-                      await uploadAndStoreFile(
-                        file,
-                        "license_files",
-                        "license_files"
-                      );
-                    }
-                  }}
-                />
+              for (const file of filteredFiles) {
+                await uploadAndStoreFile(
+                  file,
+                  "license_files",
+                  "license_files"
+                );
+              }
+            }}
+          />
 
           {tempFiles.license_files.length > 0 && (
-                            <ul className="mt-2 space-y-2 text-sm text-gray-800">
-                              {tempFiles.license_files.map((file, index) => (
-                                <li
-                                  key={index}
-                                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 font-medium"
-                                >
-                                  <span className="break-words">{file.name}</span>
-          
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleRemoveMultiFile("license_files", index)
-                                    }
-                                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+            <ul className="mt-2 space-y-2 text-sm text-gray-800">
+              {tempFiles.license_files.map((file, index) => (
+                <li
+                  key={index}
+                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 font-medium"
+                >
+                  <span className="break-words">{file.name}</span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleRemoveMultiFile("license_files", index)
+                    }
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="malpractice-upload">
-            Upload Malpractice Insurance <span className="text-red-500">*</span>
+            Upload Malpractice Insurance
+            {/* <span className="text-red-500">*</span> */}
           </Label>
 
           <FileUploadButton
-                  id="malpractice-upload"
-                  label="Upload Malpractice Insurance Files"
-                  multiple
-                  required={formData.malpracticeinsureance_files.length === 0}
-                  isFilePresent={
-                    formData.malpracticeinsureance_files.length > 0
-                  }
-                  onChange={async (e) => {
-                    const filesSelected = e.target.files;
-                    if (!filesSelected) return;
+            id="malpractice-upload"
+            label="Upload Malpractice Insurance Files"
+            multiple
+            // required={formData.malpracticeinsureance_files.length === 0}
+            isFilePresent={formData.malpracticeinsureance_files.length > 0}
+            onChange={async (e) => {
+              const filesSelected = e.target.files;
+              if (!filesSelected) return;
 
-                    const selectedFiles = Array.from(filesSelected);
-                    const maxSize = 10 * 1024 * 1024;
+              const selectedFiles = Array.from(filesSelected);
+              const maxSize = 10 * 1024 * 1024;
 
-                    const filteredFiles = selectedFiles.filter(
-                      (file) =>
-                        file.size <= maxSize &&
-                        !tempFiles.malpracticeinsureance_files.some(
-                          (existingFile) => existingFile.name === file.name
-                        )
-                    );
+              const filteredFiles = selectedFiles.filter(
+                (file) =>
+                  file.size <= maxSize &&
+                  !tempFiles.malpracticeinsureance_files.some(
+                    (existingFile) => existingFile.name === file.name
+                  )
+              );
 
-                    if (filteredFiles.length < selectedFiles.length) {
-                      setError(
-                        "Some files were larger than 10MB or were duplicates and were not added."
-                      );
-                    }
+              if (filteredFiles.length < selectedFiles.length) {
+                setError(
+                  "Some files were larger than 10MB or were duplicates and were not added."
+                );
+              }
 
-                    for (const file of filteredFiles) {
-                      await uploadAndStoreFile(
-                        file,
-                        "malpracticeinsureance_files",
-                        "malpracticeinsureance_files"
-                      );
-                    }
-                  }}
-                />
+              for (const file of filteredFiles) {
+                await uploadAndStoreFile(
+                  file,
+                  "malpracticeinsureance_files",
+                  "malpracticeinsureance_files"
+                );
+              }
+            }}
+          />
 
           {tempFiles.malpracticeinsureance_files.length > 0 && (
             <ul className="mt-2 space-y-2 text-sm text-gray-800">
@@ -849,30 +851,29 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="digital-signature-upload">
-            Digital Signature <span className="text-red-500">*</span>
+            Digital Signature
+            {/* <span className="text-red-500">*</span> */}
           </Label>
 
           <FileUploadButton
-                  id="digital-signature-upload"
-                  label="Upload Digital Signature"
-                  accept="image/png, image/jpeg, image/jpg"
-                  required={formData.digital_signature?.length === 0}
-                  isFilePresent={formData.digital_signature?.length > 0}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+            id="digital-signature-upload"
+            label="Upload Digital Signature"
+            accept="image/png, image/jpeg, image/jpg"
+            // required={formData.digital_signature?.length === 0}
+            isFilePresent={formData.digital_signature?.length > 0}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
 
-                    const maxSize = 5 * 1024 * 1024; // 5MB
-                    if (file.size > maxSize) {
-                      setError(
-                        "Digital signature image must be less than 5MB."
-                      );
-                      return;
-                    }
+              const maxSize = 5 * 1024 * 1024; // 5MB
+              if (file.size > maxSize) {
+                setError("Digital signature image must be less than 5MB.");
+                return;
+              }
 
-                    handleDigitalSignatureUpload(file);
-                  }}
-                />
+              handleDigitalSignatureUpload(file);
+            }}
+          />
 
           {/* Uploaded Digital Signature Preview */}
           {tempFiles.digital_signature && (

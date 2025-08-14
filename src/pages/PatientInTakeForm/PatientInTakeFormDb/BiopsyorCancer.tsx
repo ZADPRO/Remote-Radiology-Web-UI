@@ -7,6 +7,7 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { IntakeOption } from "../PatientInTakeForm";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   datediagnosis: number;
@@ -210,7 +211,7 @@ const BiopsyorCancer: React.FC<Props> = ({
             <DatePicker
               value={
                 getAnswer(questionIds.datediagnosis)
-                  ? new Date(getAnswer(questionIds.datediagnosis))
+                  ? parseLocalDate(getAnswer(questionIds.datediagnosis))
                   : undefined
               }
               onChange={(val) =>

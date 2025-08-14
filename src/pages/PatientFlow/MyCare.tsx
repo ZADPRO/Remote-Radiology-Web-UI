@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import { Dialog } from "@/components/ui/dialog";
 import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
 import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
@@ -26,6 +26,8 @@ const MyCare: React.FC = () => {
     refSCId: "",
     refAppointmentDate: "",
   });
+
+  console.log(appointmentData)
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,15 +168,11 @@ const MyCare: React.FC = () => {
             </Label>
             <div className="flex-1">
               <DatePicker
-                value={
-                  appointmentData.refAppointmentDate
-                    ? new Date(appointmentData.refAppointmentDate)
-                    : undefined
-                }
+                value={parseLocalDate(appointmentData.refAppointmentDate)}
                 onChange={(val) => {
                   setAppointmentData((prev) => ({
                     ...prev,
-                    refAppointmentDate: val?.toLocaleDateString("en-CA") || "",
+                    refAppointmentDate: val ? formatLocalDate(val) : "",
                   }));
                 }}
                 disabledDates={dateDisablers.noPast}

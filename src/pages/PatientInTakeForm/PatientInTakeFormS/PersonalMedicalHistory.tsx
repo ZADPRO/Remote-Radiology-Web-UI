@@ -8,7 +8,7 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import { IntakeOption } from "../PatientInTakeForm";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import DatePicker from "@/components/date-picker";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -191,7 +191,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               getAnswer(
                                 questionIds[item.dateId as keyof QuestionIds]
                               )
-                                ? new Date(
+                                ? parseLocalDate(
                                     getAnswer(
                                       questionIds[
                                         item.dateId as keyof QuestionIds
@@ -207,6 +207,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               )
                             }
                             disabledDates={dateDisablers.noFuture}
+                            required
                           />
                         </div>
                       </>
@@ -289,7 +290,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       <DatePicker
                         value={
                           getAnswer(questionIds.breastSurgeryOthersDate)
-                            ? new Date(
+                            ? parseLocalDate(
                                 getAnswer(questionIds.breastSurgeryOthersDate)
                               )
                             : undefined
@@ -300,6 +301,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             e?.toLocaleDateString("en-CA") || ""
                           )
                         }
+                        required
                       />
                     </div>
                   </div>
@@ -407,6 +409,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
                         <div className="flex gap-2">
                           <Input
+                            type="number"
                             placeholder="Duration"
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateLeft)}
@@ -454,12 +457,15 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 questionId={questionIds.explantsDateKnown}
                                 formData={formData}
                                 handleInputChange={(_id, value) => {
-                                handleInputChange(questionIds.explantsDateKnown, value);
-                                handleInputChange(
-                                  questionIds.explantsDateRightKnown,
-                                  value
-                                );
-                              }}
+                                  handleInputChange(
+                                    questionIds.explantsDateKnown,
+                                    value
+                                  );
+                                  handleInputChange(
+                                    questionIds.explantsDateRightKnown,
+                                    value
+                                  );
+                                }}
                                 options={[
                                   { label: "No", value: "No" },
                                   { label: "Yes", value: "Yes" },
@@ -471,6 +477,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 "Yes" && (
                                 <div className="flex items-center gap-2">
                                   <Input
+                                    type="number"
                                     placeholder="Duration"
                                     className="lg:w-38"
                                     value={getAnswer(questionIds.explantsDate)}
@@ -580,6 +587,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
                         <div className="flex gap-2">
                           <Input
+                            type="number"
                             placeholder="Duration"
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateLeft)}
@@ -628,6 +636,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 "Yes" && (
                                 <div className="flex items-center gap-2">
                                   <Input
+                                    type="number"
                                     placeholder="Duration"
                                     className="lg:w-38"
                                     value={getAnswer(questionIds.explantsDate)}
@@ -733,6 +742,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
                         <div className="flex gap-2">
                           <Input
+                            type="number"
                             placeholder="Duration"
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateRight)}
@@ -776,6 +786,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 "Yes" && (
                                 <div className="flex gap-2">
                                   <Input
+                                    type="number"
                                     placeholder="Duration"
                                     className="lg:w-38"
                                     value={getAnswer(

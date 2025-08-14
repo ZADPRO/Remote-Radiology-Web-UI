@@ -182,7 +182,7 @@ const MasterAdmin: React.FC = () => {
         icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
       {
-        label: "My Reports",
+        label: "My Files",
         path: "/patient/medicalHistory",
         icon: <img src={medicalHistory} className="w-5 h-5" />,
       },

@@ -76,7 +76,7 @@ const FamilyHistory: React.FC<Props> = ({
                 If yes, age(s) at diagnosis
               </Label>
               <Input
-                type="text"
+                type="number"
                 value={getAnswer(questionIds.relativesDiagnoses)}
                 onChange={(e) =>
                   handleInputChange(

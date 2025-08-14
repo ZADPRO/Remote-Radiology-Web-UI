@@ -8,6 +8,9 @@ type Props = {
 };
 
 const InvoiceDownloadButton = ({ invoiceHistory }: Props) => {
+
+  console.log(invoiceHistory.refIHSignatureFile)
+
   return (
     <div >
       <PDFDownloadLink

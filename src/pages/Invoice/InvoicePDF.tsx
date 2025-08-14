@@ -5,6 +5,7 @@ import {
   Document,
   StyleSheet,
   Font,
+  Image,
 } from "@react-pdf/renderer";
 import PoppinsRegular from "./Poppins-Regular.ttf";
 import PoppinsBold from "./Poppins-Bold.ttf";
@@ -147,9 +148,18 @@ const InvoicePDF = ({ invoiceHistory }: Props) => (
       </Text>
 
       <View style={styles.signature}>
-        <Text>Signature:</Text>
-        <Text>{invoiceHistory.refIHFromName}</Text>
-        <Text>Date: {invoiceHistory.refIHCreatedAt.split(" ")[0]}</Text>
+        {
+          invoiceHistory.refIHSignatureFile && (
+            <Image
+              src={`data:${invoiceHistory.refIHSignatureFile.contentType};base64,${invoiceHistory.refIHSignatureFile.base64Data}`}
+              // src={Logo}
+              style={{ width: "100px" }}
+            />
+          )
+        }
+        <Text>Signature</Text>
+        {/* <Text>{invoiceHistory.refIHFromName}</Text>
+        <Text>Date: {invoiceHistory.refIHCreatedAt.split(" ")[0]}</Text> */}
       </View>
     </Page>
   </Document>

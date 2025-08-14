@@ -259,4 +259,26 @@ export const reportService = {
     console.log(decryptedData);
     return decryptedData;
   },
+
+  getPatientInTakeFormReport: async (fileId: number) => {
+    console.log(fileId);
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: fileId }, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/downloadreport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
 };

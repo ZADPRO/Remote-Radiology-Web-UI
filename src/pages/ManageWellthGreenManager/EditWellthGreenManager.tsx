@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificManager, managerService } from "@/services/managerService";
 import { Camera, FileText, Pencil, X, CircleAlert } from "lucide-react";
@@ -530,7 +530,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? new Date(formData.refUserDOB) : undefined
+                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
               }
               className="pointer-events-auto"
               onChange={(date) =>

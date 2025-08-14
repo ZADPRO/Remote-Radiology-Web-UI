@@ -16,6 +16,7 @@ import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { ListSpecificScanCenterAdmin, scanCenterAdminService } from "@/services/scancenterService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 // Define the props interface for EditScanCenterAdmin
 interface EditScanCenterAdminProps {
@@ -515,12 +516,11 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
               <DatePicker
                 value={
                   formData.refUserDOB
-                    ? new Date(formData.refUserDOB)
+                    ? parseLocalDate(formData.refUserDOB)
                     : undefined
                 }
                 className="pointer-events-auto"
                 onChange={(val) => {
-                  console.log(val);
                   setFormData((prev) => ({
                     ...prev,
                     refUserDOB: val?.toLocaleDateString("en-CA") || "",

@@ -14,10 +14,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { invoiceServie } from "@/services/invoiceService";
 import { ArrowLeft, Loader } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "../Routes/AuthContext";
+import { parseLocalDate } from "@/lib/dateUtils";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import SignatureCanvas from "react-signature-canvas";
+import { uploadService } from "@/services/commonServices";
 
 type Props = {};
 
@@ -56,6 +60,7 @@ const NewInvoice: React.FC<Props> = () => {
     quantity: 0,
     amount: 0,
     total: 0,
+    signature: "",
   });
 
   useEffect(() => {
@@ -173,8 +178,88 @@ const NewInvoice: React.FC<Props> = () => {
     setLoading(false);
   };
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const sigCanvas = useRef<SignatureCanvas | null>(null);
+  const [trimmedDataURL, setTrimmedDataURL] = useState<string | null>(null);
+
+  const signUpload = async (file: File) => {
+    const formDataObj = new FormData();
+    formDataObj.append("file", file);
+    try {
+      const response = await uploadService.uploadFile({
+        formFile: formDataObj,
+      });
+      if (response.status) {
+        setInput((prev) => ({
+          ...prev,
+          signature: response.fileName,
+        }));
+        console.log(`Upload successful for file: ${file.name}`);
+      } else {
+        console.log(`Upload failed for file: ${file.name}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const previewSignature = () => {
+    if (!sigCanvas.current) return;
+
+    // You can replace getCanvas() with getTrimmedCanvas() if you want to trim whitespace
+    const dataUrl = sigCanvas.current.getCanvas().toDataURL("image/png");
+    setTrimmedDataURL(dataUrl);
+
+    // Also store the file for later upload
+    // sigCanvas.current.getCanvas().toBlob((blob) => {
+    //   if (!blob) return;
+    //   const fileObj = new File([blob], "signature.png", { type: "image/png" });
+    //   setFile(fileObj);
+    // });
+  };
+
+  const saveSignature = () => {
+    if (!sigCanvas.current) return;
+
+    // Convert canvas to Blob and upload
+    sigCanvas.current.getCanvas().toBlob((blob) => {
+      if (!blob) return;
+      const fileObj = new File([blob], "signature.png", { type: "image/png" });
+      previewSignature();
+      signUpload(fileObj);
+      setDialogOpen(false);
+    });
+  };
+
+  const clear = () => {
+    sigCanvas.current?.clear();
+  };
+
+  console.log(trimmedDataURL);
+
   return (
     <div className="flex w-full flex-col bg-[#edd1ce] min-h-screen">
+      {dialogOpen && (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="p-4 max-w-xl">
+            <SignatureCanvas
+              ref={sigCanvas}
+              canvasProps={{
+                width: 500,
+                height: 200,
+                className: "border border-gray-300 rounded",
+              }}
+            />
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={clear}>
+                Clear
+              </Button>
+              <Button onClick={saveSignature}>Save</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -183,7 +268,6 @@ const NewInvoice: React.FC<Props> = () => {
         className="w-full flex flex-col items-center"
       >
         {loading && <LoadingOverlay />}
-
         {/* Header */}
         <div
           className="p-2 w-full flex gap-3 sm:gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
@@ -332,7 +416,7 @@ const NewInvoice: React.FC<Props> = () => {
                   <DatePicker
                     value={
                       input.billingfrom
-                        ? new Date(input.billingfrom)
+                        ? parseLocalDate(input.billingfrom)
                         : undefined
                     }
                     placeholder="From Date"
@@ -343,7 +427,9 @@ const NewInvoice: React.FC<Props> = () => {
                 <div className="w-full">
                   <DatePicker
                     value={
-                      input.billingto ? new Date(input.billingto) : undefined
+                      input.billingto
+                        ? parseLocalDate(input.billingto)
+                        : undefined
                     }
                     placeholder="To Date"
                     disabled
@@ -458,7 +544,7 @@ const NewInvoice: React.FC<Props> = () => {
                     <p className="text-xs sm:text-sm font-bold">Quantity</p>
                     <Input
                       type="number"
-                      value={(input.quantity)}
+                      value={input.quantity}
                       name="quantity"
                       onChange={(e) => {
                         setInput({
@@ -476,7 +562,7 @@ const NewInvoice: React.FC<Props> = () => {
                     <p className="text-xs sm:text-sm font-bold">Amount (INR)</p>
                     <Input
                       type="number"
-                      value={(input.amount)}
+                      value={input.amount}
                       name="amount"
                       onChange={(e) => {
                         setInput({
@@ -500,6 +586,10 @@ const NewInvoice: React.FC<Props> = () => {
               </div>
             </div>
 
+            <div className="bg-white rounded mx-auto w-2/3">
+              {trimmedDataURL && <img alt="signature" src={trimmedDataURL} />}
+            </div>
+
             {/* Submit Button */}
             <div className="w-full flex justify-center sm:justify-end mt-6 sm:mt-8 lg:mt-10">
               {loading ? (
@@ -510,13 +600,26 @@ const NewInvoice: React.FC<Props> = () => {
                   <Loader className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               ) : (
-                <Button
-                  type="submit"
-                  className="bg-[#a3b1a1] hover:bg-[#a3b1a1] text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
-                >
-                  <span className="hidden sm:inline">Generate Report</span>
-                  <span className="sm:hidden">Generate</span>
-                </Button>
+                <div className="space-x-2">
+                  <Button
+                    type="button"
+                    variant="greenTheme"
+                    className="text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    <span className="hidden sm:inline">Insert Signature</span>
+                    <span className="sm:hidden">Insert Signature</span>
+                  </Button>
+
+                  <Button
+                    type="submit"
+                    variant="greenTheme"
+                    className="text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
+                  >
+                    <span className="hidden sm:inline">Generate Report</span>
+                    <span className="sm:hidden">Generate</span>
+                  </Button>
+                </div>
               )}
             </div>
           </div>

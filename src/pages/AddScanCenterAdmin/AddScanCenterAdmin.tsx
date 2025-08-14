@@ -30,6 +30,7 @@ import {
 } from "@/services/scancenterService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -571,7 +572,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
           <DatePicker
-            value={formData.dob ? new Date(formData.dob) : undefined}
+            value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
               setFormData((prev) => ({
                 ...prev,

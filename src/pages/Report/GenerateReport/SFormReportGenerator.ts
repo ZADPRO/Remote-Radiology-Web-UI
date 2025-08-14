@@ -248,45 +248,52 @@ export function SFormGeneration(
     reportText += ` shows ${getPatientAnswer(131).toLowerCase()} results. The report is ${getPatientAnswer(132).toLowerCase()}.</p>`
   }
 
-  if (getPatientAnswer(134) === "Yes") {
-    reportText += `<p>Breast ultrasound / HERscan`
-    if (getPatientAnswer(501) === "Known") {
-      reportText += ` taken on ${getPatientAnswer(135)}`
-    }
-    reportText += ` shows ${getPatientAnswer(136).toLowerCase()} results. The report is ${getPatientAnswer(137).toLowerCase()}.</p>`
-  }
+  function appendImagingReport(
+  label: string,
+  yesQId: number,
+  dateKnownQId: number,
+  dateQId: number,
+  resultsQId: number,
+  reportQId: number,
+  getPatientAnswer: (id: number) => string | undefined
+) {
+  if (getPatientAnswer(yesQId) === "Yes") {
+    let text = `<p>${label}`;
 
-  if (getPatientAnswer(139) === "Yes") {
-    reportText += `<p>Breast MRI`
-    if (getPatientAnswer(502) === "Known") {
-      reportText += ` taken on ${getPatientAnswer(140)}`
+    if (getPatientAnswer(dateKnownQId) === "Known") {
+      const date = getPatientAnswer(dateQId);
+      if (date) text += ` taken on ${date}`;
     }
-    reportText += ` shows ${getPatientAnswer(141).toLowerCase()} results. The report is ${getPatientAnswer(142).toLowerCase()}.</p>`
-  }
 
-  if (getPatientAnswer(144) === "Yes") {
-    reportText += `<p>PET/CT Scan`
-    if (getPatientAnswer(503) === "Known") {
-      reportText += ` taken on ${getPatientAnswer(145)}`
+    const resultsAnswer = getPatientAnswer(resultsQId);
+    if (resultsAnswer) {
+      if (resultsAnswer.toLowerCase() === "unknown") {
+        text += ` results are not known`;
+      } else {
+        text += ` shows ${resultsAnswer.toLowerCase()} results`;
+      }
     }
-    reportText += ` shows ${getPatientAnswer(146).toLowerCase()} results. The report is ${getPatientAnswer(147).toLowerCase()}.</p>`
-  }
 
-  if (getPatientAnswer(149) === "Yes") {
-    reportText += `<p>QT Imaging`
-    if (getPatientAnswer(504) === "Known") {
-      reportText += ` taken on ${getPatientAnswer(150)}`
+    const reportStatus = getPatientAnswer(reportQId);
+    if (reportStatus) {
+      text += `. The report is ${reportStatus.toLowerCase()}`;
     }
-    reportText += ` shows ${getPatientAnswer(151).toLowerCase()} results. The report is ${getPatientAnswer(152).toLowerCase()}.</p>`
-  }
 
-  if (getPatientAnswer(154) === "Yes") {
-    reportText += `<p>Other imaging or scans (like bone scans, scintimammography, etc)`
-    if (getPatientAnswer(505) === "Known") {
-      reportText += ` taken on ${getPatientAnswer(155)}`
-    }
-    reportText += ` shows ${getPatientAnswer(156).toLowerCase()} results. The report is ${getPatientAnswer(157).toLowerCase()}.</p>`
+    text += `.</p>`;
+    return text;
   }
+  return "";
+}
+
+
+// Usage
+reportText += appendImagingReport("Breast ultrasound / HERscan", 134, 501, 135, 136, 137, getPatientAnswer);
+reportText += appendImagingReport("Breast MRI", 139, 502, 140, 141, 142, getPatientAnswer);
+reportText += appendImagingReport("PET/CT Scan", 144, 503, 145, 146, 147, getPatientAnswer);
+reportText += appendImagingReport("QT Imaging", 149, 504, 150, 151, 152, getPatientAnswer);
+reportText += appendImagingReport("Other imaging or scans (like bone scans, scintimammography, etc)", 154, 505, 155, 156, 157, getPatientAnswer);
+
+
 
   return reportText.trim();
 }

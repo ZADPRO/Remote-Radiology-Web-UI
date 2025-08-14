@@ -146,6 +146,7 @@ const LifeStyleFactors: React.FC<Props> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Label className="text-sm font-medium">BMI</Label>
               <Input
+              type="number"
                 className="w-full sm:w-64"
                 value={getAnswer(questionIds.bmi)}
                 onChange={(e) =>
@@ -160,6 +161,7 @@ const LifeStyleFactors: React.FC<Props> = ({
             <p className="font-semibold text-base">F. Height</p>
             <div className="flex gap-2">
               <Input
+              type="number"
                 id="height"
                 placeholder="Height"
                 value={getAnswer(questionIds.height)}

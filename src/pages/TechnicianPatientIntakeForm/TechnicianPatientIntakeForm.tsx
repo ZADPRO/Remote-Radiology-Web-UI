@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew2.png";
 import navbar_bg from "../../assets/navbar_bg.png";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import AllergiesMedications from "./AllergiesMedications";
 import BreastBiopsy from "./BreastBiopsy";
 import AddintionalNotes from "./AddintionalNotes";
@@ -127,8 +127,8 @@ const TechnicianPatientIntakeForm: React.FC<
         // Check appointment match
         if (parsed.appointmentId == controlData.appointmentId) {
           // Load the saved session data
-          if (parsed.patientFormData && parsed.technicianFormData) {
-            setPatientFormData(parsed.patientFormData);
+          if (parsed.technicianFormData) {
+            // setPatientFormData(parsed.patientFormData);
             setTechnicianFormData(parsed.technicianFormData);
           }
         }
@@ -146,12 +146,12 @@ const TechnicianPatientIntakeForm: React.FC<
 
     const dataToStore = {
       appointmentId: controlData.appointmentId,
-      patientFormData,
+      // patientFormData,
       technicianFormData,
     };
 
     localStorage.setItem("formSession", JSON.stringify(dataToStore));
-  }, [patientFormData, technicianFormData]);
+  }, [technicianFormData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -694,7 +694,7 @@ const TechnicianPatientIntakeForm: React.FC<
             <div className="h-full flex items-center justify-between py-4 mt-2 lg:mt-0">
               <button
                 type="button"
-                className="flex items-center justify-center text-base font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+                 className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 ml-2 mb-[2px] max-w-[10rem] rounded-md"
                 onClick={() => {
                   const currentIndex = options.indexOf(selectedSection);
                   if (currentIndex === 0) {
@@ -704,7 +704,7 @@ const TechnicianPatientIntakeForm: React.FC<
                   }
                 }}
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <ChevronLeft className="mr-1 h-4 w-4" />
                 Back
               </button>
 
@@ -714,12 +714,12 @@ const TechnicianPatientIntakeForm: React.FC<
               ) && (
                 <button
                   type="submit"
-                  className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+                  className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 mr-2 mb-[2px] max-w-[10rem] rounded-md"
                 >
                   {options.indexOf(selectedSection) === options.length - 1
                     ? "Submit"
                     : "Next"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ChevronRight className="ml-1 h-4 w-4" />
                 </button>
               )}
             </div>

@@ -16,6 +16,7 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import { IntakeOption } from "../PatientInTakeForm";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { useAuth } from "@/pages/Routes/AuthContext";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   fullName: number;
@@ -61,14 +62,18 @@ const PersonalInformation: React.FC<Props> = ({
     { label: "H", value: "H" },
   ];
 
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!formData || formData.length === 0 || !user) return;
 
-    getAnswer(questionIds.fullName) == "" && handleInputChange(questionIds.fullName, user?.refUserFirstName);
-    getAnswer(questionIds.email) == "" && handleInputChange(questionIds.email, user?.refCODOEmail);
-    user?.refCODOPhoneNo1 && getAnswer(questionIds.phone) == "" && handleInputChange(questionIds.phone, user?.refCODOPhoneNo1);
+    getAnswer(questionIds.fullName) == "" &&
+      handleInputChange(questionIds.fullName, user?.refUserFirstName);
+    getAnswer(questionIds.email) == "" &&
+      handleInputChange(questionIds.email, user?.refCODOEmail);
+    user?.refCODOPhoneNo1 &&
+      getAnswer(questionIds.phone) == "" &&
+      handleInputChange(questionIds.phone, user?.refCODOPhoneNo1);
   }, []);
 
   useEffect(() => {
@@ -134,10 +139,7 @@ const PersonalInformation: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col h-full relative">
-      <FormHeader
-        FormTitle="Personal Information"
-        className="uppercase"
-      />
+      <FormHeader FormTitle="Personal Information" className="uppercase" />
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* Row 1 */}
@@ -171,7 +173,7 @@ const PersonalInformation: React.FC<Props> = ({
               <DatePicker
                 value={
                   getAnswer(questionIds.dob)
-                    ? new Date(getAnswer(questionIds.dob))
+                    ? parseLocalDate(getAnswer(questionIds.dob))
                     : undefined
                 }
                 onChange={(val) =>
@@ -261,6 +263,7 @@ const PersonalInformation: React.FC<Props> = ({
                 </span>
               </Label>
               <Input
+                type="number"
                 id="age"
                 placeholder="Age"
                 className="mt-2"
@@ -274,30 +277,30 @@ const PersonalInformation: React.FC<Props> = ({
           </div>
 
           <div className="w-full flex flex-col">
-              <LabeledRadioWithOptionalInput
-                name="gender"
-                label="Gender"
-                required
-                questionId={questionIds.gender}
-                optionalInputQuestionId={questionIds.genderOther}
-                showInputWhenValue="other"
-                formData={formData}
-                handleInputChange={handleInputChange}
-                options={[
-                  { label: "Female", value: "female" },
-                  { label: "Male", value: "male" },
-                  {
-                    label: "Transgender - Born Male",
-                    value: "transgender-born male",
-                  },
-                  {
-                    label: "Transgender - Born Female",
-                    value: "transgender-born female",
-                  },
-                  { label: "Other", value: "other" },
-                ]}
-              />
-            </div>
+            <LabeledRadioWithOptionalInput
+              name="gender"
+              label="Gender"
+              required
+              questionId={questionIds.gender}
+              optionalInputQuestionId={questionIds.genderOther}
+              showInputWhenValue="other"
+              formData={formData}
+              handleInputChange={handleInputChange}
+              options={[
+                { label: "Female", value: "female" },
+                { label: "Male", value: "male" },
+                {
+                  label: "Transgender - Born Male",
+                  value: "transgender-born male",
+                },
+                {
+                  label: "Transgender - Born Female",
+                  value: "transgender-born female",
+                },
+                { label: "Other", value: "other" },
+              ]}
+            />
+          </div>
 
           {/* Row 4 */}
           <div className="flex flex-col sm:flex-row gap-5 sm:gap-40">
@@ -315,6 +318,7 @@ const PersonalInformation: React.FC<Props> = ({
               </Label>
               <div className="flex gap-2">
                 <Input
+                type="number"
                   id="weight"
                   placeholder="Weight"
                   value={getAnswer(questionIds.weight)}

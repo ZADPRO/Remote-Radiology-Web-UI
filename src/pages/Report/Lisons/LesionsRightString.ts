@@ -85,23 +85,16 @@ export function LesionsRightString(
         }`;
 
          // Distance from nipple
-        if (data.distancenipple) {
+        // if (data.distancenipple) {
           sentence += `${
             namePart !== "heterogeneous tissue prominence" &&
             namePart !== "hypertrophic tissue with microcysts"
               ? `, `
               : ``
           } ${
-            namePart === "multiple simple cysts" || namePart === "heterogeneous tissue prominence" || namePart === "hypertrophic tissue with microcysts" ? "" : "measuring"
-          }  ${
             namePart === "multiple simple cysts" ? "largest measuring" : ""
-          }${
-            namePart === "heterogeneous tissue prominence" ||
-            namePart === "hypertrophic tissue with microcysts"
-              ? `spanning`
-              : ``
-          } ${data.distancenipple} mm from the nipple, `;
-        }
+          }`;
+        // }
 
         // Add location if available
         if (locationText) {
@@ -143,8 +136,18 @@ export function LesionsRightString(
           sentence += `, located at ${data.locationLevelPercentage}`;
         }
 
+        if(data.distancenipple){
+          sentence += `,
+          ${
+            namePart === "heterogeneous tissue prominence" ||
+            namePart === "hypertrophic tissue with microcysts"
+              ? `spanning`
+              : `approximately`
+          } ${data.distancenipple} mm from the nipple`
+        }
+
         if (data.sizew || data.sizel || data.sizeh) {
-          sentence += `. The lesion is`;
+          sentence += `. The lesion is measuring `;
         }
 
         // width Size

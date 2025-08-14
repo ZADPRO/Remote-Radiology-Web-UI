@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import checkedImg from "../../../assets/checked.png";
 import PersonalInformation from "./PersonalInformation"; // Path may vary
 import PreviousImaging from "./PreviousImaging";
@@ -46,9 +46,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
     "Personal Medical History",
   ];
 
-  const [selectedSection, setSelectedSection] = useState<string>(
-    options[0]
-  );
+  const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
   const optionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const patientDetails = useContext(PatientContext);
@@ -302,7 +300,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               nipplePosition: 104,
               nipplePositionDetails: 105,
               nipplePositionRight: 431,
-              nipplePositionRightDetails: 117,
+              nipplePositionRightDetails: 519,
               lymphNodes: 116,
               lymphNodesRight: 117,
               lymphNodesLeft: 118,
@@ -572,7 +570,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
           {/* Back Button */}
           <button
             type="button"
-            className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+            className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 ml-2 mb-[2px] max-w-[10rem] rounded-md"
             onClick={() => {
               const currentIndex = options.indexOf(selectedSection);
               if (currentIndex === 0) {
@@ -582,7 +580,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               }
             }}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ChevronLeft className="mr-1 h-4 w-4" />
             Back
           </button>
 
@@ -590,11 +588,11 @@ const PatientInTakeForm01: React.FC<Props> = ({
           {/* {!isNextButtonDisabled && ( */}
           <button
             type="submit" // Changed to type="submit" to trigger form onSubmit
-            className="flex items-center justify-center text-lg font-medium cursor-pointer px-4 max-w-[10rem] rounded-md"
+            className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 mr-2 mb-[2px] max-w-[10rem] rounded-md"
             // disabled={isNextButtonDisabled}
           >
             {buttonText}
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <ChevronRight className="ml-1 h-4 w-4" />
           </button>
           {/* )} */}
         </div>
