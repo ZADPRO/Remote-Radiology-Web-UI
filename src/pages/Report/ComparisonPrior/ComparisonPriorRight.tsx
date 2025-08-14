@@ -187,7 +187,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.sizec}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
@@ -204,7 +204,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.sizep}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
@@ -226,7 +226,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.volumec}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
@@ -243,7 +243,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.volumep}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
@@ -263,7 +263,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.speedc}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
@@ -280,7 +280,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                               <div className="w-full flex justify-center items-center">
                                 <Input
                                   type="number"
-                                  className="w-12 h-8 text-sm text-center"
+                                  className="w-20 h-8 text-sm text-center"
                                   value={data.speedp}
                                   onChange={(e) => {
                                     const updated = [...dataArray];

@@ -187,7 +187,7 @@ export function DaFormReportGenerator(
     rightdistancefromnipple !== "unknown"
       ? ` at ${rightdistancefromnipple} from nipple.`
       : ""
-  } Magenetic implants: ${MagneticImplants}
+  } Magnetic implants: ${MagneticImplants}
 `;
 
   // Left Form
@@ -208,7 +208,7 @@ export function DaFormReportGenerator(
       ? ` at ${leftdistancefromnipple} from nipple.`
       : ""
   } 
-  Magenetic implants: ${MagneticImplants}
+  Magnetic implants: ${MagneticImplants}
 <p/>`;
 
   // Final String

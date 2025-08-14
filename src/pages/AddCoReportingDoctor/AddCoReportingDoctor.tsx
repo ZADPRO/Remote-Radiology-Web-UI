@@ -30,6 +30,7 @@ import {
 } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -489,7 +490,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
           <DatePicker
-            value={formData.dob ? new Date(formData.dob) : undefined}
+            value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
               setFormData((prev) => ({
                 ...prev,
@@ -684,7 +685,8 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="npi">
-            NPI <span className="text-red-500">*</span>
+            NPI 
+            {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
             id="npi"
@@ -695,12 +697,13 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, npi: e.target.value }))
             }
-            required
+            // required
           />
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm " htmlFor="specialization">
-            Specialization <span className="text-red-500">*</span>
+            Specialization 
+            {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
             id="specialization"
@@ -714,7 +717,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
                 specialization: e.target.value,
               }))
             }
-            required
+            // required
           />
         </div>
         <div className="flex flex-col gap-1.5 w-full">
@@ -777,14 +780,15 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="malpractice-upload">
-            Upload Malpractice Insurance <span className="text-red-500">*</span>
+            Upload Malpractice Insurance 
+            {/* <span className="text-red-500">*</span> */}
           </Label>
 
           <FileUploadButton
             id="malpractice-upload"
             label="Upload Malpractice Insurance Files"
             multiple
-            required={formData.malpracticeinsureance_files.length === 0}
+            // required={formData.malpracticeinsureance_files.length === 0}
             isFilePresent={formData.malpracticeinsureance_files.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;
@@ -845,14 +849,15 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="digital-signature-upload">
-            Digital Signature <span className="text-red-500">*</span>
+            Digital Signature 
+            {/* <span className="text-red-500">*</span> */}
           </Label>
 
           <FileUploadButton
             id="digital-signature-upload"
             label="Upload Digital Signature"
             accept="image/png, image/jpeg, image/jpg"
-            required={formData.digital_signature?.length === 0}
+            // required={formData.digital_signature?.length === 0}
             isFilePresent={formData.digital_signature?.length > 0}
             onChange={(e) => {
               const file = e.target.files?.[0];

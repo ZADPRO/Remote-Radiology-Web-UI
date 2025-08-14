@@ -59,7 +59,7 @@ export default function DatePicker({
             <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
         </PopoverTrigger>
-        <PopoverContent className={cn("w-auto p-0", className)} align="start">
+        {!disabled && <PopoverContent className={cn("w-auto p-0", className)} align="start">
           <Calendar
             mode="single"
             selected={value}
@@ -67,7 +67,7 @@ export default function DatePicker({
             disabled={disabledDates} // ✅ Use the prop here
             autoFocus
           />
-        </PopoverContent>
+        </PopoverContent>}
       </Popover>
     </div>
   )

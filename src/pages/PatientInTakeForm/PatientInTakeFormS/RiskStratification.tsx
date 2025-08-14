@@ -89,6 +89,7 @@ const RiskStratification: React.FC<Props> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Label className="text-sm font-medium">SCORE (%)</Label>
               <Input
+                type="number"
                 className="w-full sm:w-64"
                 placeholder="Enter percentage score"
                 value={getAnswer(questionIds.ibisScore)}

@@ -7,7 +7,7 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import DatePicker from "@/components/date-picker";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   abnormality: number;
@@ -341,7 +341,7 @@ const renderBiRadsSection = (
             <DatePicker
               value={
                 getAnswer(questionIds.abnormality)
-                  ? new Date(getAnswer(questionIds.abnormality))
+                  ? parseLocalDate(getAnswer(questionIds.abnormality))
                   : undefined
               }
               onChange={(val) =>

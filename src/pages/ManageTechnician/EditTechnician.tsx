@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificTechnician, technicianService } from "@/services/technicianServices";
 import { Camera, FileText, Pencil, X } from "lucide-react";
@@ -577,7 +577,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? new Date(formData.refUserDOB) : undefined
+                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
               }
               className="pointer-events-auto"
               onChange={(val) => {

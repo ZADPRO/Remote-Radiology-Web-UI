@@ -207,7 +207,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
           )}
  
           <Button variant="greenTheme" onClick={() => handleSave()}>
-            Save
+            Upload
           </Button>
         </div>
       )}

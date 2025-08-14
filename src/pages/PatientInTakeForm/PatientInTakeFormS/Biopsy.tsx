@@ -9,6 +9,7 @@ import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousBiopsy: number;
@@ -125,7 +126,7 @@ const Biopsy: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.previousBiopsyDate)
-                          ? new Date(getAnswer(questionIds.previousBiopsyDate))
+                          ? parseLocalDate(getAnswer(questionIds.previousBiopsyDate))
                           : undefined
                       }
                       onChange={(val) =>

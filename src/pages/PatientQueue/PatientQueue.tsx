@@ -120,11 +120,6 @@ const PatientQueue: React.FC = () => {
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
 
-  const [consentDialogOpen, setConsentDialogOpen] = useState(false);
-  const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<
-    number[]
-  >([]);
-
   const currentUserRole = useAuth().role?.type;
   const currentUser = useAuth().user?.refUserId;
 
@@ -830,6 +825,10 @@ const PatientQueue: React.FC = () => {
         ),
         cell: ({ row }) => {
           const appointmentId = row.original.refAppointmentId;
+          const [consentDialogOpen, setConsentDialogOpen] = useState(false);
+          const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<
+            number[]
+          >([]);
 
           if(row.original.refAppointmentComplete == "fillform") {
             return (
@@ -837,6 +836,7 @@ const PatientQueue: React.FC = () => {
             )
           } else {
           return (
+            <>
             <div
               className="hover:underline cursor-pointer font-bold text-center"
               onClick={() => {
@@ -846,6 +846,18 @@ const PatientQueue: React.FC = () => {
             >
               View
             </div>
+
+              {consentDialogOpen &&
+              <Dialog open={consentDialogOpen} onOpenChange={setConsentDialogOpen}>
+        <PatientConsentDialog
+          appointmentIds={selectedAppointmentIds}
+          patientConsentDialog={consentDialogOpen}
+          appointmentDate={row.original.refAppointmentDate}
+          patientCustId={row.original.refUserCustId ?? user?.refUserCustId}
+        />
+      </Dialog>
+          }
+            </>
           )
         }
         },
@@ -2298,7 +2310,7 @@ const PatientQueue: React.FC = () => {
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
-            hidden={role?.type !== "admin" && role?.type !== "scadmin" && role?.type !== "manager"}
+            hidden={role?.type !== "admin" && role?.type !== "scadmin" && role?.type !== "manager" && role?.type !== "wgdoctor"}
           >
             <Download className="h-4 w-4" />
             Download Patient Consent
@@ -2392,7 +2404,7 @@ const PatientQueue: React.FC = () => {
         </div>
 
         <div className="p-1 text-center" hidden={role?.type !== "patient"}>
-          <h1 className="text-sm lg:text-lg font-bold">
+          <h1 className="text-sm lg:text-lg text-[#50b33b] font-bold">
             If you would like to discuss your report, you may schedule an
             appointment{" "}
             <a
@@ -2532,12 +2544,7 @@ const PatientQueue: React.FC = () => {
         </div>
       </div>
 
-      <Dialog open={consentDialogOpen} onOpenChange={setConsentDialogOpen}>
-        <PatientConsentDialog
-          appointmentIds={selectedAppointmentIds}
-          patientConsentDialog={consentDialogOpen}
-        />
-      </Dialog>
+      
     </div>
   );
 };

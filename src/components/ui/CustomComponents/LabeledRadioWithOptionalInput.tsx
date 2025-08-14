@@ -167,6 +167,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                     ) : (
                       <>
                         <Input
+                          type="number"
                           className={cn("ml-2 mr-2", secondaryinputWidth)}
                           placeholder={secondaryInputPlaceholder}
                           value={secondaryOptionalValue}

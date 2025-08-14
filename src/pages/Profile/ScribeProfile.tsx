@@ -305,7 +305,7 @@ const res = await scribeService.listSpecificScribe(scribeId);
             {/* Alternative: Disabled DatePicker if it visually suits better
             <DatePicker
               value={
-                formData.refUserDOB ? new Date(formData.refUserDOB) : undefined
+                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
               }
               disabled
             /> */}

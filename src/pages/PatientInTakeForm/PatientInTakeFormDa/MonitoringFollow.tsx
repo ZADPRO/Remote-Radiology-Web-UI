@@ -132,7 +132,7 @@ const MonitoringFollow: React.FC<Props> = ({
               {/* <DatePicker
               value={
                 getAnswer(questionIds.nextappointment)
-                  ? new Date(getAnswer(questionIds.nextappointment))
+                  ? parseLocalDate(getAnswer(questionIds.nextappointment))
                   : undefined
               }
               onChange={(val) =>

@@ -6,6 +6,7 @@ import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
 import { IntakeOption } from "../PatientInTakeForm";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   thermogramYesNo: number;
@@ -175,49 +176,53 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
 
       {showDetails && (
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 min-h-9">
-            <Label className="text-sm font-medium uppercase lg:w-40">SCAN DATE?</Label>
-            {["Unknown", "Known"].map((val) => (
-              <label key={val} className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name={`${idPrefix}-report-date`}
-                  value={val}
-                  checked={getAnswer(dateKnownId) === val}
-                  onChange={() => handleInputChange(dateKnownId, val)}
-                  className="custom-radio"
-                  required={showDetails}
-                />
-                <span>{val}</span>
-              </label>
-            ))}
-            {getAnswer(dateKnownId) === "Known" && (
-              <div className="flex items-center gap-2">
-            <Label className="text-sm font-medium">DATE</Label>
-            <div className="w-48">
-              <DatePicker
-                value={
-                  getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
-                }
-                onChange={(val) =>
-                  handleInputChange(
-                    dateId,
-                    val?.toLocaleDateString("en-CA") || ""
-                  )
-                }
-                disabledDates={(date) => date > new Date()}
-                required={getAnswer(reportAvailableId) == "Available"}
+          <Label className="text-sm font-medium uppercase lg:w-40">
+            SCAN DATE?
+          </Label>
+          {["Unknown", "Known"].map((val) => (
+            <label key={val} className="flex items-center space-x-2">
+              <input
+                type="radio"
+                name={`${idPrefix}-report-date`}
+                value={val}
+                checked={getAnswer(dateKnownId) === val}
+                onChange={() => handleInputChange(dateKnownId, val)}
+                className="custom-radio"
+                required={showDetails}
               />
+              <span>{val}</span>
+            </label>
+          ))}
+          {getAnswer(dateKnownId) === "Known" && (
+            <div className="flex items-center gap-2">
+              <Label className="text-sm font-medium">DATE</Label>
+              <div className="w-48">
+                <DatePicker
+                  value={
+                    getAnswer(dateId) ? parseLocalDate(getAnswer(dateId)) : undefined
+                  }
+                  onChange={(val) =>
+                    handleInputChange(
+                      dateId,
+                      val?.toLocaleDateString("en-CA") || ""
+                    )
+                  }
+                  disabledDates={(date) => date > new Date()}
+                  required={getAnswer(reportAvailableId) == "Available"}
+                />
+              </div>
             </div>
-          </div>
-            )}
-          </div>
+          )}
+        </div>
       )}
 
       {/* Second line: Report Available? */}
       {showDetails && (
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-            <Label className="text-sm font-medium lg:w-40">REPORT AVAILABLE?</Label>
+            <Label className="text-sm font-medium lg:w-40">
+              REPORT AVAILABLE?
+            </Label>
             {["Not Available", "Available"].map((val) => (
               <label key={val} className="flex items-center space-x-2">
                 <input
@@ -242,9 +247,10 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
           <span className="text-sm text-muted-foreground">
             Please Upload the Report
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1">
             <Label className="text-sm font-medium">UPLOAD REPORT</Label>
-            <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100">
+
+            <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100 w-fit">
               <input
                 type="file"
                 accept=".pdf, .jpg, .jpeg, .png"
@@ -254,9 +260,12 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
               />
               Upload File
             </label>
+
             {(selectedFileName || uploadedFileName) && (
               <span
-                className={`text-sm ${uploadedFileName && "pointer-events-auto cursor-pointer"}`}
+                className={`text-sm break-words ${
+                  uploadedFileName && "pointer-events-auto cursor-pointer"
+                }`}
                 onClick={() => {
                   getFile &&
                     downloadDocumentFile(

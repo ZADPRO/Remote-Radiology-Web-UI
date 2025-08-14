@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import ReactQuill, { Quill } from "react-quill-new"; // or 'react-quill'
+import ReactQuill from "react-quill-new"; // or 'react-quill'
 import "react-quill-new/dist/quill.snow.css";
- 
-import TableUI from "quill-table-ui";
-import "quill-table-ui/dist/index.css";
+// import TableUI from "quill-table-ui";
+// import "quill-table-ui/dist/index.css";
+import QuillToolbar, { formats, modules } from "./QuillToolbar";
  
 interface TextEditorProps {
   value: string;
@@ -16,40 +16,40 @@ interface TextEditorProps {
 }
  
 // Register the table UI module
-Quill.register("modules/tableUI", TableUI);
+// Quill.register("modules/tableUI", TableUI);
  
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    ["blockquote", "code-block"],
-    [{ align: [] }],
-    [{ color: [] }, { background: [] }],
-    ["link", "image"],
-    ["clean"],
-    // ["table"], // Add the table button here
-  ],
-  tableUI: true, // enable table UI module
-};
+// const modules = {
+//   toolbar: [
+//     [{ header: [1, 2, 3, false] }],
+//     ["bold", "italic", "underline"],
+//     [{ list: "ordered" }, { list: "bullet" }],
+//     [{ 'indent': '-1'}, { 'indent': '+1' }],
+//     ["blockquote", "code-block"],
+//     [{ align: [] }],
+//     [{ color: [] }, { background: [] }],
+//     ["link", "image"],
+//     ["clean"],
+//     // ["table"], // Add the table button here
+//   ],
+//   tableUI: true, // enable table UI module
+// };
  
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "list",
-  'indent',
-  "blockquote",
-  "code-block",
-  "align",
-  "color",
-  "background",
-  "link",
-  "image",
-  "table",
-];
+// const formats = [
+//   "header",
+//   "bold",
+//   "italic",
+//   "underline",
+//   "list",
+//   'indent',
+//   "blockquote",
+//   "code-block",
+//   "align",
+//   "color",
+//   "background",
+//   "link",
+//   "image",
+//   "table",
+// ];
  
 const TextEditor: React.FC<TextEditorProps> = ({
   value,
@@ -90,7 +90,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
           height: ${height ? height : "auto"};
         }
       `}</style>
-
+      <QuillToolbar />
       <ReactQuill
         ref={quillRef}
         value={value}

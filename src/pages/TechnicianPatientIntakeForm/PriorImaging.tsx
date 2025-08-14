@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface IntakeOption {
   questionId: number;
@@ -340,7 +341,7 @@ const PriorImaging: React.FC<Props> = ({
                 <div className="w-48">
                   <DatePicker
                     value={
-                      getAnswer(dateId) ? new Date(getAnswer(dateId)) : undefined
+                      getAnswer(dateId) ? parseLocalDate(getAnswer(dateId)) : undefined
                     }
                     onChange={(val) =>
                       handleInputChange(

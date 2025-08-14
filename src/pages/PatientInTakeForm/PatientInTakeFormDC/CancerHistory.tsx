@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   cancerHistory: number;
@@ -73,7 +74,7 @@ const CancerHistory: React.FC<Props> = ({
                   <DatePicker
                     value={
                       getAnswer(questionIds.cancerDate)
-                        ? new Date(getAnswer(questionIds.cancerDate))
+                        ? parseLocalDate(getAnswer(questionIds.cancerDate))
                         : undefined
                     }
                     onChange={(val) =>

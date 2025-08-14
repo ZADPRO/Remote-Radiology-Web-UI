@@ -36,6 +36,7 @@
     "cmdk": "^1.1.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
+    "docx-preview": "^0.3.6",
     "html-to-pdfmake": "^2.5.30",
     "html2canvas": "^1.4.1",
     "htmlparser2": "^10.0.0",
@@ -57,9 +58,11 @@
     "react-pdf": "^10.0.1",
     "react-quill-new": "^3.4.6",
     "react-router-dom": "^7.5.2",
+    "react-signature-canvas": "^1.1.0-alpha.2",
     "recharts": "^2.15.4",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
+    "trim-canvas": "^0.1.2",
     "zod": "^3.25.62"
   },
   "devDependencies": {

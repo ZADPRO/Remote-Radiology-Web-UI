@@ -174,7 +174,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Duration (Months)</Label>
                   <Input
-                    type="text"
+                    type="number"
                     value={getAnswer(questionIds.breastFeedingDuration)}
                     onChange={(e) =>
                       handleInputChange(
@@ -206,7 +206,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Duration (Months)</Label>
                   <Input
-                    type="text"
+                    type="number"
                     value={getAnswer(
                       questionIds.hormoneBirthControlUseDuration
                     )}
@@ -240,7 +240,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Duration (Months)</Label>
                   <Input
-                    type="text"
+                    type="number"
                     value={getAnswer(questionIds.hormoneTherapyDuration)}
                     onChange={(e) =>
                       handleInputChange(
@@ -317,7 +317,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Duration (Months)</Label>
                   <Input
-                    type="text"
+                    type="number"
                     value={getAnswer(questionIds.lactatingDuration)}
                     onChange={(e) =>
                       handleInputChange(
@@ -348,7 +348,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Duration (Months)</Label>
                   <Input
-                    type="text"
+                    type="number"
                     value={getAnswer(questionIds.pregnantDuration)}
                     onChange={(e) =>
                       handleInputChange(

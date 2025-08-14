@@ -136,7 +136,9 @@ const BreastSymptoms: React.FC<Props> = ({
             !patientFormData.find((q) => q.questionId === symptomMainQuestionId)
               ?.verifyTechnician
           )
-            setAlert(true);
+            if (getPatientFormAnswer(symptomMainQuestionId) === "true") {
+              setAlert(true);
+            }
           handleVerifyChange(
             symptomMainQuestionId,
             !(
@@ -307,7 +309,7 @@ const BreastSymptoms: React.FC<Props> = ({
           </DialogHeader>
           <div className="py-6">
             <p className="text-lg text-center font-medium flex justify-center items-center gap-2">
-              Kindly  <Droplet className="h-5 w-5 text-[#abb4a5]" /> Change Water
+              Kindly <Droplet className="h-5 w-5 text-[#abb4a5]" /> Change Water
             </p>
           </div>
           <DialogFooter>
@@ -421,7 +423,7 @@ const BreastSymptoms: React.FC<Props> = ({
                     SDateRight={questionIds.soreDurationRight}
                     data={technicianFormData}
                     setData={setTechnicianFormData}
-                     nameLabelColor="text-[#42a202]"
+                    nameLabelColor="text-[#42a202]"
                   />
                   {getAnswer(questionIds.sore) === "true" && (
                     <div className="flex gap-1 ml-[21%] w-90 mb-2">
@@ -442,7 +444,7 @@ const BreastSymptoms: React.FC<Props> = ({
               </div>
 
               <Separator />
-              
+
               {/* Use renderSymptomWithVerification for other symptoms */}
               {renderSymptomWithVerification(
                 "lump",
@@ -603,7 +605,6 @@ const BreastSymptoms: React.FC<Props> = ({
               )}
 
               {/* Lymph Node Swelling - with verification */}
-              
             </>
           )}
         </div>

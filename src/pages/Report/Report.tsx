@@ -10,7 +10,8 @@ import TechnicianPatientIntakeForm, {
   ResponsePatientForm,
 } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 import { Button } from "@/components/ui/button";
-import Mammoth from "mammoth";
+// import Mammoth from "mammoth";
+import { renderAsync } from "docx-preview";
 import { Plus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -74,7 +75,11 @@ import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
 import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
 import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
 import { SymmentryGenerator } from "./GenerateReport/SymmetryGenerator";
-import { AutoPopulateReport, AutoPopulateReportImpressRecomm } from "./AutoPopulateReport";
+import {
+  AutoPopulateReport,
+  AutoPopulateReportImpressRecomm,
+} from "./AutoPopulateReport";
+import { downloadDocumentFile } from "@/lib/commonUtlis";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -412,20 +417,26 @@ const Report: React.FC = () => {
     const file = event.target.files?.[0];
     if (file && file.name.endsWith(".docx")) {
       const reader = new FileReader();
+      reader.onload = async (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
 
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        const arrayBuffer = e.target?.result;
-        if (arrayBuffer && typeof arrayBuffer !== "string") {
-          try {
-            const result = await Mammoth.convertToHtml({ arrayBuffer });
-            setFileData(result.value); // Set HTML to Quill
-            console.log(result.value);
-          } catch (error) {
-            console.error("Error converting .docx:", error);
-          }
-        }
+        // Create a hidden temporary container
+        const tempContainer = document.createElement("div");
+        tempContainer.style.display = "none";
+        document.body.appendChild(tempContainer);
+
+        // Render DOCX into the hidden container
+        await renderAsync(arrayBuffer, tempContainer);
+
+        // Extract HTML string
+        const htmlString = tempContainer.innerHTML;
+
+        // Cleanup temp container
+        document.body.removeChild(tempContainer);
+
+        // Pass HTML string to your Quill editor
+        setFileData(htmlString);
       };
-
       reader.readAsArrayBuffer(file);
     } else {
       alert("Please upload a valid .docx file.");
@@ -525,6 +536,57 @@ const Report: React.FC = () => {
 
   const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
   const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
+
+  const patientReports = [
+    {
+      yesNocheckQId: 124,
+      reportAvailableQId: 127,
+      questionId: 128,
+      label: "Thermogram",
+    },
+    {
+      yesNocheckQId: 129,
+      reportAvailableQId: 132,
+      questionId: 133,
+      label: "Mammogram",
+    },
+    {
+      yesNocheckQId: 134,
+      reportAvailableQId: 137,
+      questionId: 138,
+      label: "Breast Ultrasound",
+    },
+    {
+      yesNocheckQId: 139,
+      reportAvailableQId: 142,
+      questionId: 143,
+      label: "Breast MRI",
+    },
+    {
+      yesNocheckQId: 144,
+      reportAvailableQId: 147,
+      questionId: 148,
+      label: "PET/CT Scan",
+    },
+    {
+      yesNocheckQId: 149,
+      reportAvailableQId: 152,
+      questionId: 153,
+      label: "QT Imaging",
+    },
+    {
+      yesNocheckQId: 154,
+      reportAvailableQId: 157,
+      questionId: 158,
+      label: "Other Imaging",
+    },
+    {
+      yesNocheckQId: 160,
+      reportAvailableQId: 164,
+      questionId: 165,
+      label: "Biopsy",
+    },
+  ];
 
   const handleAssignUser = async () => {
     setLoading(true);
@@ -999,18 +1061,24 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    if(responsePatientInTake.length > 0 && technicianForm.length > 0)
-    AutoPopulateReport(
-      getPatientAnswer,
-      getreportAnswer,
-      getTechnicianAnswer,
-      handleReportInputChange
-    );
+    if (responsePatientInTake.length > 0 && technicianForm.length > 0)
+      AutoPopulateReport(
+        getPatientAnswer,
+        getreportAnswer,
+        getTechnicianAnswer,
+        handleReportInputChange
+      );
   }, [responsePatientInTake, technicianForm]);
 
-
   useEffect(() => {
-    AutoPopulateReportImpressRecomm(mainImpressionRecommendation, setMainImpressionRecommendation, optionalImpressionRecommendation, setOptionalImpressionRecommendation, commonImpressRecomm, setCommonImpressRecomm)     
+    AutoPopulateReportImpressRecomm(
+      mainImpressionRecommendation,
+      setMainImpressionRecommendation,
+      optionalImpressionRecommendation,
+      setOptionalImpressionRecommendation,
+      commonImpressRecomm,
+      setCommonImpressRecomm
+    );
   }, [assignData]);
 
   useEffect(() => {
@@ -1082,16 +1150,38 @@ const Report: React.FC = () => {
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
   const patientForm = (categoryId: number) => {
-    if(categoryId == 1) {
+    if (categoryId == 1) {
       return "S Form";
-    } else if(categoryId == 2) {
-      return "Da Form"
-    } else if(categoryId == 3) {
-      return "Db Form"
-    } else if(categoryId == 4) {
-      return "Dc Form"
-    } else return ""
-  }
+    } else if (categoryId == 2) {
+      return "Da Form";
+    } else if (categoryId == 3) {
+      return "Db Form";
+    } else if (categoryId == 4) {
+      return "Dc Form";
+    } else return "";
+  };
+
+  const getPatientReport = async (fileId: number) => {
+    setLoading(true);
+
+    try {
+      const res = await reportService.getPatientInTakeFormReport(fileId);
+      if (res.status) {
+        if (res.data.file) {
+          downloadDocumentFile(
+            res.data.file?.base64Data,
+            res.data.file?.contentType,
+            "Report"
+          );
+        }
+      }
+      console.log("ee", res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -1180,11 +1270,15 @@ const Report: React.FC = () => {
           {/* Details Content */}
           <div className="flex flex-col gap-1 mt-2 pb-5">
             <div className="text-sm">
-              Patient Name: <span className="font-semibold">{getPatientAnswer(1)}</span>
+              Patient Name:{" "}
+              <span className="font-semibold">{getPatientAnswer(1)}</span>
             </div>
 
             <div className="text-sm">
-              Patient ID: <span className="font-semibold">{patientDetails.refUserCustId}</span>
+              Patient ID:{" "}
+              <span className="font-semibold">
+                {patientDetails.refUserCustId}
+              </span>
             </div>
 
             <div className="text-sm">
@@ -1196,7 +1290,12 @@ const Report: React.FC = () => {
             </div>
 
             <div className="text-sm">
-              Patient Form: <span className="font-semibold">{patientForm(assignData?.appointmentStatus[0]?.refCategoryId || 0)}</span>
+              Patient Form:{" "}
+              <span className="font-semibold">
+                {patientForm(
+                  assignData?.appointmentStatus[0]?.refCategoryId || 0
+                )}
+              </span>
             </div>
 
             <div className="text-sm">
@@ -1220,6 +1319,63 @@ const Report: React.FC = () => {
                 {assignData?.appointmentStatus[0]?.refSCName}
               </span>
             </div>
+          </div>
+
+          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
+            <table className="min-w-full divide-y divide-gray-200  text-left">
+              <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
+                <tr>
+                  <th className="px-1 py-2 w-1/6 font-semibold">S.No</th>
+                  <th className="px-1 py-2 w-3/6 font-semibold text-left">
+                    Report Title
+                  </th>
+                  <th className="px-1 py-2 w-2/6 font-semibold">File</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {patientReports
+                  .filter((report) => {
+                    const yesNoItem = responsePatientInTake.find(
+                      (item) => item.questionId === report.yesNocheckQId
+                    );
+                    return yesNoItem?.answer === "Yes";
+                  })
+                  .map((report, idx) => {
+                    const availabilityItem = responsePatientInTake.find(
+                      (item) => item.questionId === report.reportAvailableQId
+                    );
+                    const reportItem = responsePatientInTake.find(
+                      (item) => item.questionId === report.questionId
+                    );
+
+                    return (
+                      <tr key={report.questionId} className="text-xs">
+                        <td className="px-1 py-2 text-center w-12">
+                          {idx + 1}
+                        </td>
+                        <td className="px-1 py-2 text-left">{report.label}</td>
+                        <td className="px-1 py-2 text-center">
+                          {availabilityItem?.answer === "Available" &&
+                          reportItem?.answer !== "" ? (
+                            <span
+                              className="hover:underline cursor-pointer text-blue-500 text-xs"
+                              onClick={() =>
+                                reportItem?.refITFId &&
+                                getPatientReport(reportItem.refITFId)
+                              }
+                            >
+                              Download
+                            </span>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
           </div>
 
           {/* Table Content */}
@@ -1372,138 +1528,138 @@ const Report: React.FC = () => {
             >
               {/* Buttons */}
               {/* {tab === 4 && subTab === 4 && ( */}
-                <>
-                  <Button
-                    variant="greenTheme"
-                    className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
-                    onClick={() => setLoadTemplateStatus(true)}
-                    disabled={(tab !== 4 || subTab !== 4) || syncStatus.Notes}
-                  >
-                    Load Template
-                  </Button>
+              <>
+                <Button
+                  variant="greenTheme"
+                  className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                  onClick={() => setLoadTemplateStatus(true)}
+                  disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                >
+                  Load Template
+                </Button>
 
-                  <Dialog
-                    onOpenChange={setLoadTemplateStatus}
-                    open={loadTemplateStatus}
-                  >
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Load Template</DialogTitle>
-                      </DialogHeader>
+                <Dialog
+                  onOpenChange={setLoadTemplateStatus}
+                  open={loadTemplateStatus}
+                >
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Load Template</DialogTitle>
+                    </DialogHeader>
 
-                      <div className="flex gap-4">
-                        <Input
-                          type="text"
-                          placeholder="Search template..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="mb-3 text-xs"
-                        />
-                        <PopoverDialog
-                          open={popoverOpen}
-                          onOpenChange={setPopoverOpen}
-                        >
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <PopoverTriggerDialog asChild>
-                              <Button
-                                variant="greenTheme"
-                                className="text-xs text-white"
-                                onClick={() => setPopoverOpen(true)}
-                              >
-                                <Plus size={16} />
-                              </Button>
-                            </PopoverTriggerDialog>
-                            <PopoverContentDialog className="w-80">
-                              <div className="grid gap-4">
-                                <div className="space-y-2">
-                                  <h4 className="leading-none font-medium">
-                                    Upload New Template
-                                  </h4>
-                                </div>
-                                <form
-                                  onSubmit={(e) => {
-                                    e.preventDefault();
-                                    uploadReportFormate();
-                                  }}
-                                >
-                                  <div className="grid gap-2">
-                                    <div className="flex flex-col gap-2">
-                                      <Label htmlFor="width">Name</Label>
-                                      <Input
-                                        id="name"
-                                        className="col-span-2 h-8"
-                                        value={fileName}
-                                        onChange={(e) => {
-                                          setFilename(e.target.value);
-                                        }}
-                                        required
-                                      />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                      <Label htmlFor="width">Upload File</Label>
-                                      <Input
-                                        id="file"
-                                        type="file"
-                                        accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        className="col-span-2 h-8"
-                                        // value={fileName}
-                                        onChange={handleFileChange}
-                                        required
-                                      />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                      <Button
-                                        variant="greenTheme"
-                                        className="text-xs text-white"
-                                        type="submit"
-                                      >
-                                        {popoverLoading ? (
-                                          <Loader className="animate-spin w-4 h-4" />
-                                        ) : (
-                                          "Upload Template"
-                                        )}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-                            </PopoverContentDialog>
-                          </div>
-                        </PopoverDialog>
-                      </div>
-
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {filteredTemplates.length > 0 ? (
-                          filteredTemplates.map((data: any) => (
-                            <div
-                              key={data.refRFId}
-                              className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
+                    <div className="flex gap-4">
+                      <Input
+                        type="text"
+                        placeholder="Search template..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="mb-3 text-xs"
+                      />
+                      <PopoverDialog
+                        open={popoverOpen}
+                        onOpenChange={setPopoverOpen}
+                      >
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <PopoverTriggerDialog asChild>
+                            <Button
+                              variant="greenTheme"
+                              className="text-xs text-white"
+                              onClick={() => setPopoverOpen(true)}
                             >
-                              <div>{data.refRFName}</div>
-                              <Button
-                                variant="greenTheme"
-                                className="text-xs text-white px-3 py-1 h-6"
-                                onClick={() => {
-                                  !loadingStatus && getTemplate(data.refRFId);
+                              <Plus size={16} />
+                            </Button>
+                          </PopoverTriggerDialog>
+                          <PopoverContentDialog className="w-80">
+                            <div className="grid gap-4">
+                              <div className="space-y-2">
+                                <h4 className="leading-none font-medium">
+                                  Upload New Template
+                                </h4>
+                              </div>
+                              <form
+                                onSubmit={(e) => {
+                                  e.preventDefault();
+                                  uploadReportFormate();
                                 }}
                               >
-                                {loadingStatus === data.refRFId ? (
-                                  <Loader className="animate-spin w-4 h-4" />
-                                ) : (
-                                  "Load"
-                                )}
-                              </Button>
+                                <div className="grid gap-2">
+                                  <div className="flex flex-col gap-2">
+                                    <Label htmlFor="width">Name</Label>
+                                    <Input
+                                      id="name"
+                                      className="col-span-2 h-8"
+                                      value={fileName}
+                                      onChange={(e) => {
+                                        setFilename(e.target.value);
+                                      }}
+                                      required
+                                    />
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <Label htmlFor="width">Upload File</Label>
+                                    <Input
+                                      id="file"
+                                      type="file"
+                                      accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                      className="col-span-2 h-8"
+                                      // value={fileName}
+                                      onChange={handleFileChange}
+                                      required
+                                    />
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <Button
+                                      variant="greenTheme"
+                                      className="text-xs text-white"
+                                      type="submit"
+                                    >
+                                      {popoverLoading ? (
+                                        <Loader className="animate-spin w-4 h-4" />
+                                      ) : (
+                                        "Upload Template"
+                                      )}
+                                    </Button>
+                                  </div>
+                                </div>
+                              </form>
                             </div>
-                          ))
-                        ) : (
-                          <div className="text-center text-sm text-gray-500">
-                            No templates found.
+                          </PopoverContentDialog>
+                        </div>
+                      </PopoverDialog>
+                    </div>
+
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {filteredTemplates.length > 0 ? (
+                        filteredTemplates.map((data: any) => (
+                          <div
+                            key={data.refRFId}
+                            className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
+                          >
+                            <div>{data.refRFName}</div>
+                            <Button
+                              variant="greenTheme"
+                              className="text-xs text-white px-3 py-1 h-6"
+                              onClick={() => {
+                                !loadingStatus && getTemplate(data.refRFId);
+                              }}
+                            >
+                              {loadingStatus === data.refRFId ? (
+                                <Loader className="animate-spin w-4 h-4" />
+                              ) : (
+                                "Load"
+                              )}
+                            </Button>
                           </div>
-                        )}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </>
+                        ))
+                      ) : (
+                        <div className="text-center text-sm text-gray-500">
+                          No templates found.
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
               {/* )} */}
               <Button
                 // key={index}

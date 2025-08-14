@@ -1,6 +1,7 @@
 import { decrypt, encrypt } from "@/Helper";
 import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
+import { FileData } from "./commonServices";
 
 export interface scancenterData {
   refSCId: number;
@@ -61,6 +62,7 @@ export interface InvoiceHistory {
   refIHCreatedAt: string; // or Date if parsed
   refIHCreatedBy: number;
   refIHToAddress: string;
+  refIHSignatureFile: FileData;
 }
 
 export interface TakenDate {

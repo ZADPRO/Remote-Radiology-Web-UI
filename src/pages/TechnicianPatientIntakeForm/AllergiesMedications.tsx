@@ -67,7 +67,7 @@ const AllergiesMedications: React.FC<Props> = ({
             className="custom-radio"
           />
           <Label
-            className="text-4xl font-black"
+            className={`text-4xl ${value === "Urgent" ? "text-red-500": "text-green-800"} font-semibold`}
             htmlFor={`${name}-${value.toLowerCase()}`}
           >
             {value}

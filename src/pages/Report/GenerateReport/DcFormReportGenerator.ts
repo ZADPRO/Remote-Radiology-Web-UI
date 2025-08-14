@@ -85,7 +85,7 @@ export function DcFormGeneration(patientInTakeForm: ResponsePatientForm[]): stri
     const treatment = cancerTreatment || "no treatment recorded";
     const status = cancerStatus || "status unknown";
 
-    reportText += `History of ${type} breast cancer on ${historyPosition} side. `;
+    reportText += `History of ${type} breast cancer on ${historyPosition == "Both" ? `${historyPosition.toLowerCase()} sides` : `${historyPosition.toLowerCase()} side`}. `;
     reportText += `Treatment: ${treatment}. `;
     reportText += `Current status: ${status}.`;
   }

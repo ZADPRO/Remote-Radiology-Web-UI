@@ -64,7 +64,8 @@ export function generateBreastImplantDetailsHTML(
   }
 
   if (contracture !== "None") {
-    html += `There is ${contractureSev ? contractureSev.toLocaleLowerCase()+" " : ""}${contracture.toLowerCase()} contracture noted. `;
+    html += `There is ${contractureSev ? contractureSev.toLocaleLowerCase()+" " : ""} contracture noted 
+    on ${contracture.toLowerCase() == "both" ? `${contracture.toLowerCase()} sides` : `the ${contracture.toLowerCase()} side`}.`;
   }
 
   if (rupture === "Present") {

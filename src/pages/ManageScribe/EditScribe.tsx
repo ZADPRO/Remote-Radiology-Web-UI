@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificScribe, scribeService } from "@/services/scribeService";
 import { Camera, FileText, Pencil, X } from "lucide-react";
@@ -628,7 +629,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? new Date(formData.refUserDOB) : undefined
+                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
               }
               className="pointer-events-auto"
               onChange={(val) => {

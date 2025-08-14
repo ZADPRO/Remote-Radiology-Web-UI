@@ -24,7 +24,7 @@ import { UploadFile, uploadService } from "@/services/commonServices";
 import { useNavigate } from "react-router-dom";
 import { managerService, NewManager } from "@/services/managerService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 
 interface TempFilesState {
@@ -570,9 +570,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
           <DatePicker
-            value={formData.dob ? new Date(formData.dob) : undefined}
+            value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
-              console.log(val?.toLocaleDateString("en-CA") || "")
               setFormData((prev) => ({
                 ...prev,
                 dob: val?.toLocaleDateString("en-CA") || "",

@@ -482,7 +482,7 @@ const Analytics: React.FC = () => {
           className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
           hidden={handleComponentAccess("TAT")}
         >
-          <span className="w-1/3 leading-tight text-sx font-semibold">TAT</span>
+          <span className="w-1/3 leading-tight text-sx font-semibold">Total Time</span>
           <span className="w-2/3 font-bold text-3xl">
             {userAccessTiming ? userAccessTiming[0]?.total_hours : 0} Hrs
           </span>

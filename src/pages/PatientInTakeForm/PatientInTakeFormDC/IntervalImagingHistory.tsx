@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
-import { dateDisablers } from "@/lib/dateUtils";
+import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   noneCheckbox: number;
@@ -128,7 +128,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.mammogramDate)
-                          ? new Date(getAnswer(questionIds.mammogramDate))
+                          ? parseLocalDate(getAnswer(questionIds.mammogramDate))
                           : undefined
                       }
                       onChange={(val) =>
@@ -176,7 +176,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.ultrasoundDate)
-                          ? new Date(getAnswer(questionIds.ultrasoundDate))
+                          ? parseLocalDate(getAnswer(questionIds.ultrasoundDate))
                           : undefined
                       }
                       onChange={(val) =>
@@ -221,7 +221,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.mriDate)
-                          ? new Date(getAnswer(questionIds.mriDate))
+                          ? parseLocalDate(getAnswer(questionIds.mriDate))
                           : undefined
                       }
                       onChange={(val) =>
@@ -276,7 +276,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.otherDate)
-                          ? new Date(getAnswer(questionIds.otherDate))
+                          ? parseLocalDate(getAnswer(questionIds.otherDate))
                           : undefined
                       }
                       onChange={(val) =>
@@ -339,7 +339,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
         <DatePicker
           value={
             getAnswer(questionIds.intervalBiopsyDate)
-              ? new Date(getAnswer(questionIds.intervalBiopsyDate))
+              ? parseLocalDate(getAnswer(questionIds.intervalBiopsyDate))
               : undefined
           }
           onChange={(val) =>

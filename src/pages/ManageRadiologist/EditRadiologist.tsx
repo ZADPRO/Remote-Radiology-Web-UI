@@ -20,6 +20,7 @@ import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 // Define the props interface for EditRadiologist
 interface EditRadiologistProps {
@@ -768,7 +769,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               <DatePicker
                 value={
                   formData.refUserDOB
-                    ? new Date(formData.refUserDOB)
+                    ? parseLocalDate(formData.refUserDOB)
                     : undefined
                 }
                 className="pointer-events-auto"

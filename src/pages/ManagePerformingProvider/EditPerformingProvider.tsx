@@ -14,13 +14,18 @@ import DatePicker from "@/components/date-picker";
 import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
-import { doctorService, ListSpecificPerformingProvider } from "@/services/doctorService";
+import {
+  doctorService,
+  ListSpecificPerformingProvider,
+} from "@/services/doctorService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import { Switch } from "@/components/ui/switch";
+import { useAuth } from "../Routes/AuthContext";
+import { parseLocalDate } from "@/lib/dateUtils";
 
 // Define the props interface for EditPerformingProvider
 interface EditPerformingProviderProps {
-    scanCenterId: number;
+  scanCenterId: number;
   scanCenterDoctorId: number;
   setIsEditDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onUpdate: () => void;
@@ -42,7 +47,7 @@ interface TempLicense {
 }
 
 const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
-    scanCenterId,
+  scanCenterId,
   scanCenterDoctorId,
   setIsEditDialogOpen,
   onUpdate,
@@ -53,73 +58,75 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
 
   console.log(error);
 
+  const { role } = useAuth();
+
   const [tempLicenses, setTempLicenses] = useState<TempLicense[]>([]);
-    const [tempMalpractice, setTempMalpractice] = useState<TempLicense[]>([]);
+  const [tempMalpractice, setTempMalpractice] = useState<TempLicense[]>([]);
 
   const [formData, setFormData] = useState<ListSpecificPerformingProvider>({
-  profileImgFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  digitalSignatureFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  driversLicenseFile: {
-    base64Data: "",
-    contentType: "",
-  },
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    digitalSignatureFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    driversLicenseFile: {
+      base64Data: "",
+      contentType: "",
+    },
 
-  licenseFiles: [],
-  malpracticeinsureance_files: [],
-  medicalLicenseSecurity: [],
+    licenseFiles: [],
+    malpracticeinsureance_files: [],
+    medicalLicenseSecurity: [],
 
-  aadharFile: {
-    base64Data: "",
-    contentType: "",
-  }, // optional based on earlier structure
-  panFile: {
-    base64Data: "",
-    contentType: "",
-  },    // optional based on earlier structure
+    aadharFile: {
+      base64Data: "",
+      contentType: "",
+    }, // optional based on earlier structure
+    panFile: {
+      base64Data: "",
+      contentType: "",
+    }, // optional based on earlier structure
 
-  refCODOEmail: "",
-  refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "",
+    refCODOEmail: "",
+    refCODOPhoneNo1: "",
+    refCODOPhoneNo1CountryCode: "",
 
-  refDDNPI: "",
-  refDDSocialSecurityNo: "",
+    refDDNPI: "",
+    refDDSocialSecurityNo: "",
 
-  digital_signature: "",
-  drivers_license: "",
-  Specialization: "",
+    digital_signature: "",
+    drivers_license: "",
+    Specialization: "",
 
-  refRTId: 0,
-  refUserCustId: "",
-  refUserDOB: "",
-  refUserFirstName: "",
-  refUserLastName: "",
-  refUserId: 0,
-  refUserProfileImg: "",
-  refUserStatus: false,
-  refDDEaseQTReportAccess: false
-});
-
+    refRTId: 0,
+    refUserCustId: "",
+    refUserDOB: "",
+    refUserFirstName: "",
+    refUserLastName: "",
+    refUserId: 0,
+    refUserProfileImg: "",
+    refUserStatus: false,
+    refDDEaseQTReportAccess: false,
+  });
 
   const [files, setFiles] = useState<TempFilesState>({
-      profile_img: null,
-      license_files: [],
-      drivers_license: null,
-      malpracticeinsureance_files: [],
-      digital_signature: null,
-    });
+    profile_img: null,
+    license_files: [],
+    drivers_license: null,
+    malpracticeinsureance_files: [],
+    digital_signature: null,
+  });
 
   const getSpecificCenterAdmin = async () => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
       const res = await doctorService.getSpecificPerformingProvider(
-        scanCenterId, scanCenterDoctorId
+        scanCenterId,
+        scanCenterDoctorId
       );
       console.log("Fetching Center Admin...", res);
 
@@ -200,47 +207,49 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     }
   };
 
-//   const uploadAndStoreFile = async (
-//     file: File,
-//     tempField: keyof files,
-//     uploadFn = uploadService.uploadFile // optional, default upload function
-//   ): Promise<void> => {
-//     const formData = new FormData();
-//     formData.append("file", file);
+  //   const uploadAndStoreFile = async (
+  //     file: File,
+  //     tempField: keyof files,
+  //     uploadFn = uploadService.uploadFile // optional, default upload function
+  //   ): Promise<void> => {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
 
-//     try {
-//       const response = await uploadFn({ formFile: formData });
+  //     try {
+  //       const response = await uploadFn({ formFile: formData });
 
-//       if (response.status) {
-//         const result: TempLicense = {
-//           file_name: response.fileName,
-//           old_file_name: file.name,
-//           status: "new" as const,
-//         };
+  //       if (response.status) {
+  //         const result: TempLicense = {
+  //           file_name: response.fileName,
+  //           old_file_name: file.name,
+  //           status: "new" as const,
+  //         };
 
-//         console.log(result);
+  //         console.log(result);
 
-//         if (tempField == "license_files") {
-//           setTempLicenses((prev) => [...prev, result]);
-//         }
+  //         if (tempField == "license_files") {
+  //           setTempLicenses((prev) => [...prev, result]);
+  //         }
 
-//         if (tempField == "cv_files") {
-//           setTempCVs((prev) => [...prev, result]);
-//         }
+  //         if (tempField == "cv_files") {
+  //           setTempCVs((prev) => [...prev, result]);
+  //         }
 
-//         setFiles((prev) => ({
-//           ...prev,
-//           [tempField]: [...((prev[tempField] as File[]) || []), file],
-//         }));
-//       } else {
-//         setError(`Upload failed for file: ${file.name}`);
-//       }
-//     } catch (err) {
-//       setError(`Error uploading file: ${file.name}`);
-//     }
-//   };
+  //         setFiles((prev) => ({
+  //           ...prev,
+  //           [tempField]: [...((prev[tempField] as File[]) || []), file],
+  //         }));
+  //       } else {
+  //         setError(`Upload failed for file: ${file.name}`);
+  //       }
+  //     } catch (err) {
+  //       setError(`Error uploading file: ${file.name}`);
+  //     }
+  //   };
 
-  const handleRemoveSingleFile = (key: "profile_img" | "pan" | "aadhar" | "digital_signature") => {
+  const handleRemoveSingleFile = (
+    key: "profile_img" | "pan" | "aadhar" | "digital_signature"
+  ) => {
     setFiles((prev) => ({
       ...prev,
       [key]: null,
@@ -282,10 +291,10 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         status: formData.refUserStatus,
         license_files: tempLicenses,
         malpracticeinsureance_files: tempMalpractice,
-        digital_signature:  formData.digital_signature,
-        easeQTReportAccess: formData.refDDEaseQTReportAccess
+        digital_signature: formData.digital_signature,
+        easeQTReportAccess: formData.refDDEaseQTReportAccess,
       };
-      console.log("payload",payload);
+      console.log("payload", payload);
       const res = await doctorService.updatePerformingProvider(payload);
       console.log(res);
       if (res.status) {
@@ -301,10 +310,11 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     }
   };
 
-//   if (error) return <div className="text-red-500 mb-4 p-4">{error}</div>;
-  if(loading) return (<LoadingOverlay />);
+  //   if (error) return <div className="text-red-500 mb-4 p-4">{error}</div>;
+  if (loading) return <LoadingOverlay />;
 
-  if (!formData) return <div className="p-4">No Performing Provider Admin data found.</div>;
+  if (!formData)
+    return <div className="p-4">No Performing Provider Admin data found.</div>;
 
   function downloadFile(
     base64Data: string,
@@ -335,76 +345,74 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
   }
 
   const uploadAndStoreFile = async (
-      file: File,
-      tempField: keyof TempFilesState,
-      uploadFn = uploadService.uploadFile // optional, default upload function
-    ): Promise<void> => {
-      setError("");
-      const formData = new FormData();
-      formData.append("file", file);
-  
-      try {
-        const response = await uploadFn({ formFile: formData });
-  
-        if (response.status) {
-          const result: TempLicense = {
-            file_name: response.fileName,
-            old_file_name: file.name,
-            status: "new" as const,
-          };
-  
-          console.log(result);
-  
-          if (tempField == "license_files") {
-            setTempLicenses((prev) => [...prev, result]);
-          }
-  
-          if (tempField == "malpracticeinsureance_files") {
-            setTempMalpractice((prev) => [...prev, result]);
-          }
-  
-          setFiles((prev) => ({
-            ...prev,
-            [tempField]: [...((prev[tempField] as File[]) || []), file],
-          }));
-        } else {
-          setError(`Upload failed for file: ${file.name}`);
-        }
-      } catch (err) {
-        setError(`Error uploading file: ${file.name}`);
-      }
-    };
+    file: File,
+    tempField: keyof TempFilesState,
+    uploadFn = uploadService.uploadFile // optional, default upload function
+  ): Promise<void> => {
+    setError("");
+    const formData = new FormData();
+    formData.append("file", file);
 
-    const handleDigitalSignatureUpload = async (
-        file: File,
-      ) => {
-        setError("");
-        const formDataImg = new FormData();
-        formDataImg.append("profileImage", file);
-        setError("");
-        try {
-          const response = await uploadService.uploadImage({
-            formImg: formDataImg,
-          });
-      
-          if (response.status) {
-            setFormData((prev) => ({
-              ...prev,
-              digital_signature: response.fileName,
-              digitalSignatureFile: null,
-            }));
-      
-            setFiles((prev) => ({
-              ...prev,
-              digital_signature: file,
-            }));
-          } else {
-            setError("Digital signature upload failed.");
-          }
-        } catch (err) {
-          setError("Error uploading digital signature.");
+    try {
+      const response = await uploadFn({ formFile: formData });
+
+      if (response.status) {
+        const result: TempLicense = {
+          file_name: response.fileName,
+          old_file_name: file.name,
+          status: "new" as const,
+        };
+
+        console.log(result);
+
+        if (tempField == "license_files") {
+          setTempLicenses((prev) => [...prev, result]);
         }
-      };
+
+        if (tempField == "malpracticeinsureance_files") {
+          setTempMalpractice((prev) => [...prev, result]);
+        }
+
+        setFiles((prev) => ({
+          ...prev,
+          [tempField]: [...((prev[tempField] as File[]) || []), file],
+        }));
+      } else {
+        setError(`Upload failed for file: ${file.name}`);
+      }
+    } catch (err) {
+      setError(`Error uploading file: ${file.name}`);
+    }
+  };
+
+  const handleDigitalSignatureUpload = async (file: File) => {
+    setError("");
+    const formDataImg = new FormData();
+    formDataImg.append("profileImage", file);
+    setError("");
+    try {
+      const response = await uploadService.uploadImage({
+        formImg: formDataImg,
+      });
+
+      if (response.status) {
+        setFormData((prev) => ({
+          ...prev,
+          digital_signature: response.fileName,
+          digitalSignatureFile: null,
+        }));
+
+        setFiles((prev) => ({
+          ...prev,
+          digital_signature: file,
+        }));
+      } else {
+        setError("Digital signature upload failed.");
+      }
+    } catch (err) {
+      setError("Error uploading digital signature.");
+    }
+  };
 
   return (
     <>
@@ -493,7 +501,6 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 required
               />
             </div>
-
             <div className="flex flex-col gap-1.5 w-full relative">
               <Label className="text-sm" htmlFor="status">
                 Status <span className="text-red-500">*</span>
@@ -517,30 +524,33 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="self-start mt-2 w-full">
-              <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
-                <div>
-                  <Label className="font-semibold text-base">
-                    Ease QT 10.10 Report Access
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Toggle to enable access
-                  </p>
+            {(role?.type === "admin" || role?.type === "manager") && (
+              <>
+                <div className="self-start mt-2 w-full">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-base">
+                        Ease QT 10.10 Report Access
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Toggle to enable access
+                      </p>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={formData.refDDEaseQTReportAccess}
+                      onCheckedChange={(checked: boolean) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          refDDEaseQTReportAccess: checked,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
-                <Switch
-                  id="qtAccess"
-                  className="cursor-pointer"
-                  checked={formData.refDDEaseQTReportAccess}
-                  onCheckedChange={(checked: boolean) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      refDDEaseQTReportAccess: checked,
-                    }))
-                  }
-                />
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -679,7 +689,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               <DatePicker
                 value={
                   formData.refUserDOB
-                    ? new Date(formData.refUserDOB)
+                    ? parseLocalDate(formData.refUserDOB)
                     : undefined
                 }
                 className="pointer-events-auto"
@@ -762,7 +772,8 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm " htmlFor="npi">
-                NPI <span className="text-red-500">*</span>
+                NPI 
+                {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
                 id="npi"
@@ -773,12 +784,13 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, refDDNPI: e.target.value }))
                 }
-                required
+                // required
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="specialization">
-                Specialization <span className="text-red-500">*</span>
+                Specialization 
+                {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
                 id="specialization"
@@ -792,7 +804,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                     Specialization: e.target.value,
                   }))
                 }
-                required
+                // required
               />
             </div>
             <div className="flex flex-col gap-1.5 w-full">
@@ -940,14 +952,15 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 className="text-sm font-medium"
                 htmlFor="malpractice-upload"
               >
-                Malpractice Insurance <span className="text-red-500">*</span>
+                Malpractice Insurance 
+                {/* <span className="text-red-500">*</span> */}
               </Label>
 
               <FileUploadButton
                 id="malpractice-upload"
                 label="Upload Malpractice Insurance"
                 multiple
-                required={formData.malpracticeinsureance_files.length === 0}
+                // required={formData.malpracticeinsureance_files.length === 0}
                 isFilePresent={files.malpracticeinsureance_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
@@ -1078,16 +1091,17 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
 
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm" htmlFor="digital-signature-upload">
-                Digital Signature <span className="text-red-500">*</span>
+                Digital Signature
+                 {/* <span className="text-red-500">*</span> */}
               </Label>
 
               <FileUploadButton
                 id="digital-signature-upload"
                 label="Upload Digital Signature"
                 accept="image/png, image/jpeg, image/jpg"
-                required={
-                  !formData.digital_signature && !files.digital_signature
-                }
+                // required={
+                //   !formData.digital_signature && !files.digital_signature
+                // }
                 isFilePresent={!!files.digital_signature}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
