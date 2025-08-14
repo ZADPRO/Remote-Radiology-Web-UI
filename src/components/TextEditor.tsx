@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 import ReactQuill from "react-quill-new"; // or 'react-quill'
 import "react-quill-new/dist/quill.snow.css";
 // import TableUI from "quill-table-ui";
 // import "quill-table-ui/dist/index.css";
-import QuillToolbar, { formats, modules } from "./QuillToolbar";
+import QuillToolbar, { createModules, formats } from "./QuillToolbar";
  
 interface TextEditorProps {
   value: string;
@@ -61,6 +61,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   height,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
+  const toolbarId = useId()
  
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
@@ -90,12 +91,12 @@ const TextEditor: React.FC<TextEditorProps> = ({
           height: ${height ? height : "auto"};
         }
       `}</style>
-      <QuillToolbar />
+      <QuillToolbar id={toolbarId}/>
       <ReactQuill
         ref={quillRef}
         value={value}
         onChange={onChange}
-        modules={modules}
+        modules={createModules(toolbarId)}
         formats={formats}
         theme="snow"
         placeholder={placeholder}
