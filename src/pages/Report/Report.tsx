@@ -871,14 +871,14 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        // reason += `<p><strong>Patient Form:</strong> S Form</p>`;
+        reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
       } else if (categoryId === 2) {
         reason += "" + (await DaFormReportGenerator(responsePatientInTake));
         reason += ` <div><h3><strong>Indications: </strong></h3>
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        // reason += `<p><strong>Patient Form:</strong> Da Form</p>`;
+        reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
         reason += await DbFormReportGenerator(responsePatientInTake);
         reason += `
@@ -886,7 +886,7 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        // reason += `<p><strong>Patient Form:</strong> Db Form</p>`;
+        reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
       } else if (categoryId === 4) {
         reason += await DcFormGeneration(responsePatientInTake);
         reason += `
@@ -894,7 +894,7 @@ const Report: React.FC = () => {
         <div><strong>Reason for having this QT scan: </strong>
         ${getPatientAnswer(11)}</div>
       `;
-        // reason += `<p><strong>Patient Form:</strong> Dc Form</p>`;
+        reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
 
       await setPatientHistory(reason);
@@ -1333,15 +1333,29 @@ const Report: React.FC = () => {
                 </tr>
               </thead>
 
-              <tbody>
-                {patientReports
-                  .filter((report) => {
+              <tbody className="bg-white">
+                {(() => {
+                  const filteredReports = patientReports.filter((report) => {
                     const yesNoItem = responsePatientInTake.find(
                       (item) => item.questionId === report.yesNocheckQId
                     );
                     return yesNoItem?.answer === "Yes";
-                  })
-                  .map((report, idx) => {
+                  });
+
+                  if (filteredReports.length === 0) {
+                    return (
+                      <tr className="bg-[#f9f2ea]">
+                        <td
+                          colSpan={3}
+                          className="text-center py-2 text-xs text-gray-500"
+                        >
+                          No Reports Found
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  return filteredReports.map((report, idx) => {
                     const availabilityItem = responsePatientInTake.find(
                       (item) => item.questionId === report.reportAvailableQId
                     );
@@ -1373,7 +1387,8 @@ const Report: React.FC = () => {
                         </td>
                       </tr>
                     );
-                  })}
+                  });
+                })()}
               </tbody>
             </table>
           </div>
@@ -1510,7 +1525,7 @@ const Report: React.FC = () => {
                       </>
                     ) : (
                       <tr className="bg-[#f9f2ea]">
-                        <td className="px-2 py-2 text-xs text-center">
+                        <td colSpan={4} className="px-2 py-2 text-xs text-center text-gray-500">
                           No Data Found
                         </td>
                       </tr>
