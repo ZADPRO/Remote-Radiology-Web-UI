@@ -1368,7 +1368,7 @@ const Report: React.FC = () => {
                               Download
                             </span>
                           ) : (
-                            "-"
+                            <span>Not Available</span>
                           )}
                         </td>
                       </tr>
