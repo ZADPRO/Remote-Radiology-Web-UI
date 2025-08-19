@@ -23,11 +23,19 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  breastImplantImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   patientHistory: {
     value: string;
     onChange: (value: string) => void;
   };
   symmetry: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  symmetryImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -59,11 +67,10 @@ const GeneralReport: React.FC<RightReportProps> = ({
   setsyncStatus,
   readOnly,
 }) => {
-
   const syncHandleReportChange = (questionId: number, value: string) => {
-    const isBreastImplant = Object.values(
-      breastImpantQuestions
-    ).includes(questionId);
+    const isBreastImplant = Object.values(breastImpantQuestions).includes(
+      questionId
+    );
 
     if (isBreastImplant) {
       setsyncStatus({
@@ -120,8 +127,9 @@ const GeneralReport: React.FC<RightReportProps> = ({
           handlePatientInputChange={handlePatientInputChange}
           questionIds={breastImpantQuestions}
         />
-        <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-          <div className="flex justify-between mb-2">
+        <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+          <div>
+            <div className="flex justify-between mb-2">
             <span className="text-2xl">Report Preview</span>
             {/* {syncStatus.breastImplantRight ? (
               <Button
@@ -155,6 +163,20 @@ const GeneralReport: React.FC<RightReportProps> = ({
               }
             }}
           />
+          </div>
+
+          <div>
+            <div className="flex justify-between mb-2">
+            <span className="text-2xl">Image Preview</span>
+          </div>
+
+          <TextEditor
+            value={textEditor.breastImplantImage.value}
+            onChange={textEditor.breastImplantImage.onChange}
+          />
+          </div>
+
+          
         </div>
 
         <div className="w-full mt-3">
@@ -190,26 +212,23 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 handleInputChange={syncHandleReportChange}
                 options={[
                   {
-                    label:
-                      "Right Breast",
-                    value:
-                      "right breast bigger than left breast",
+                    label: "Right Breast",
+                    value: "right breast bigger than left breast",
                   },
                   {
-                    label:
-                      "Left Breast",
-                    value:
-                      "left breast bigger than right breast",
+                    label: "Left Breast",
+                    value: "left breast bigger than right breast",
                   },
                 ]}
               />
             )}
           </div>
         </div>
-        <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-          <div className="flex justify-between mb-2">
-            <span className="text-2xl">Report Preview</span>
-            {/* {syncStatus.breastImplantRight ? (
+        <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-2xl">Report Preview</span>
+              {/* {syncStatus.breastImplantRight ? (
               <Button
                 className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
                 onClick={() => {
@@ -228,19 +247,31 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 Sync
               </Button>
             )} */}
+            </div>
+            <TextEditor
+              value={textEditor.symmetry.value}
+              onChange={textEditor.symmetry.onChange}
+              onManualEdit={() => {
+                if (syncStatus.symmetry) {
+                  setsyncStatus({
+                    ...syncStatus,
+                    symmetry: false,
+                  });
+                }
+              }}
+            />
           </div>
-          <TextEditor
-            value={textEditor.symmetry.value}
-            onChange={textEditor.symmetry.onChange}
-            onManualEdit={() => {
-              if (syncStatus.symmetry) {
-                setsyncStatus({
-                  ...syncStatus,
-                  symmetry: false,
-                });
-              }
-            }}
-          />
+
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-2xl">Image Preview</span>
+            </div>
+
+            <TextEditor
+              value={textEditor.symmetryImage.value}
+              onChange={textEditor.symmetryImage.onChange}
+            />
+          </div>
         </div>
       </div>
     </div>

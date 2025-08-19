@@ -1120,7 +1120,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">
-                Macro Impression / Recommendation
+                Macro Sentence
               </Label>
               <Select
                 value={commonImpressRecomm.idRight}
@@ -1525,7 +1525,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">
-                Macro Impression / Recommendation
+                Macro Sentence
               </Label>
               <Select
                 value={commonImpressRecomm.id}

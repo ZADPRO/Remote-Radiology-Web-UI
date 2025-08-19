@@ -1063,7 +1063,7 @@ const PatientQueue: React.FC = () => {
         id: "technicianForm",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            Technician Form
+            Tech Form
             <Popover>
               <PopoverTrigger asChild>
                 <Button

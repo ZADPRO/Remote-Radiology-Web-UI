@@ -309,7 +309,7 @@ const TechnicianPatientIntakeForm: React.FC<
     setSubmitError(null);
     try {
       const categoryId = patientFormData.find((item) => item.questionId == 170);
-
+      
       if (categoryId) {
         const payload = {
           patientId: controlData.userId,
@@ -317,6 +317,8 @@ const TechnicianPatientIntakeForm: React.FC<
           appointmentId: controlData.appointmentId,
           updatedAnswers: patientFormData,
           technicianAnswers: technicianFormData,
+          artificatsLeft: (getTechnicianFormAnswer(41) == "Left" || getTechnicianFormAnswer(41) == "Both") ? true : false,
+          artificatsRight: (getTechnicianFormAnswer(41) == "Right" || getTechnicianFormAnswer(41) == "Both") ? true : false,
         };
         console.log("payload", payload);
         const res = await appointmentService.addTechnicianInTakeForm(payload);
@@ -355,6 +357,9 @@ const TechnicianPatientIntakeForm: React.FC<
   //         handleInputChange(47, "No")
   //     }
   // }, [])
+
+  const getTechnicianFormAnswer = (id: number) =>
+    technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
   const getPatientFormAnswer = (id: number) =>
     patientFormData?.find((q) => q.questionId === id)?.answer || "";
@@ -481,7 +486,7 @@ const TechnicianPatientIntakeForm: React.FC<
             questionIds={{
               postscan: 39,
               artifactsstaus: 40,
-              artifactsother: 41,
+              artifactsDirection: 41,
               reprocessing: 42,
               confirmation: 43,
             }}

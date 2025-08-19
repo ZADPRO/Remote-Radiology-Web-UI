@@ -18,9 +18,9 @@ const PatientHistory: React.FC<Props> = ({patientHistoryNotes, setPatientHistory
       </Label>
 
       <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-          <div className="flex justify-between mb-2">
-            <span className="text-2xl">Report Preview</span>
-            {/* {syncStatus.breastImplantRight ? (
+        <div className="flex justify-between mb-2">
+          <span className="text-2xl">Report Preview</span>
+          {/* {syncStatus.breastImplantRight ? (
               <Button
                 className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
                 onClick={() => {
@@ -39,21 +39,21 @@ const PatientHistory: React.FC<Props> = ({patientHistoryNotes, setPatientHistory
                 Sync
               </Button>
             )} */}
-          </div>
-      <TextEditor
-            value={patientHistoryNotes}
-            onChange={setPatientHistoryNotes}
-            readOnly
-            // onManualEdit={() => {
-            //   if (syncStatus.sForm) {
-            //     setsyncStatus({
-            //       ...syncStatus,
-            //       sForm: false,
-            //     });
-            //   }
-            // }}
-          />
-    </div>
+        </div>
+        <TextEditor
+          value={patientHistoryNotes}
+          onChange={setPatientHistoryNotes}
+          // readOnly
+          // onManualEdit={() => {
+          //   if (syncStatus.sForm) {
+          //     setsyncStatus({
+          //       ...syncStatus,
+          //       sForm: false,
+          //     });
+          //   }
+          // }}
+        />
+      </div>
     </div>
   );
 };

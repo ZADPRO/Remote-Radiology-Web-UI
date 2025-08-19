@@ -52,6 +52,12 @@ export interface TATStats {
   le_10_days: number;
 }
 
+export interface TotalArtifacts {
+  bothartifacts: number;
+  leftartifacts: number;
+  rightartifacts: number;
+}
+
 export const analyticsService = {
   overallScanCenter: async (SCId: number, startDate: string, endDate: string) => {
     const token = localStorage.getItem("token");
@@ -75,6 +81,8 @@ export const analyticsService = {
       UserListIds: UserList[];
       AllScaCenter: ListScanCenter[];
       ImpressionModel: ImpressionModel[];
+      ReportArtificate: TotalArtifacts[];
+      TechArtificate: TotalArtifacts[];
     } = decrypt(res.data.data, res.data.token);
     console.log(decryptedData)
     tokenService.setToken(res.data.token);
@@ -109,6 +117,8 @@ export const analyticsService = {
       DurationBucketModel: TATStats[];
       ImpressionModel: ImpressionModel[];
       TotalCorrectEdit: TotalCorrectEdit[];
+      ReportArtificate: TotalArtifacts[];
+      TechArtificate: TotalArtifacts[];
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     console.log(decryptedData)

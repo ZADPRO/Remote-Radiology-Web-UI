@@ -24,6 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, Save } from "lucide-react";
+import { FinalAddendumText, reportService } from "@/services/reportService";
 
 interface TextEditorProps {
   breastImplant: {
@@ -130,6 +133,10 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  addendumText: {
+    value: string;
+    onChange: (value: string) => void;
+  };
 }
 
 interface ReportQuestion {
@@ -160,6 +167,8 @@ type Props = {
   ScanCenterImg: FileData | null;
   ScancenterAddress: string;
   reportAccess: boolean;
+  reportStatus: string;
+  AppointmentId: number;
 };
 
 const NotesReport: React.FC<Props> = ({
@@ -176,11 +185,13 @@ const NotesReport: React.FC<Props> = ({
   ScancenterCode,
   studyTime,
   patientDetails,
-  readOnly,
+  // readOnly,
   patientHistory,
   ScanCenterImg,
   ScancenterAddress,
   reportAccess,
+  reportStatus,
+  AppointmentId,
 }) => {
   const [dialog, setDialog] = useState(false);
 
@@ -455,14 +466,45 @@ const NotesReport: React.FC<Props> = ({
   </p></i>
   <i><p>QT’s first blinded trial: Malik B, Iuanow E, Klock J. An Exploratory Multi-reader, Multicase Study Comparing Transmission Ultrasound to Mammography on Recall Rates and Detection Rates for Breast Cancer Lesions. Academic Radiology February 2021. https://www.sciencedirect.com/science/article/pii/S1076633220306462 ; https://doi.org/10.1016/j.acra.2020.11.011 </p></i>
   <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
-`);
+`+ (textEditor.addendumText.value.length > 0 ? "<br/><h3><strong>ADDENDUM:</strong></h3>" + textEditor.addendumText.value : ""));
     }
   }, [
     reportFormData,
     syncStatus,
     patientHistory,
     textEditor.breastImplant.value,
+    textEditor.addendumText.value
   ]);
+
+  const [addButton, setAddButton] = useState<boolean>(false);
+
+  const [addendumText, setAddendumText] = useState("");
+
+  const handleAddAddendum = async () => {
+    try {
+      const response = await reportService.AddAddedum(
+        addendumText,
+        AppointmentId
+      );
+
+      console.log(response);
+      
+      setAddButton(false);
+      setAddendumText("");
+
+      if (response.status) {
+        textEditor.addendumText.onChange(
+          response.data.map(
+            (data: FinalAddendumText) =>
+              `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
+          ).join("<br/><br/>")
+        );
+      }
+      // textEditor.addendumText.onChange("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -475,7 +517,9 @@ const NotesReport: React.FC<Props> = ({
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the EaseQT 10.10 template? Any changes made or templates uploaded will be lost, and the report will contain only the EaseQT 10.10 template.
+              Do you wish to enable the EaseQT 10.10 template? Any changes made
+              or templates uploaded will be lost, and the report will contain
+              only the EaseQT 10.10 template.
             </p>
           </div>
           <DialogFooter>
@@ -501,8 +545,8 @@ const NotesReport: React.FC<Props> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="w-full lg:w-[90%] mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll">
-        <div className={`${readOnly ? "pointer-events-none" : ""}`}>
+      <div className="w-full lg:px-15 mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll">
+        <div className="space-y-4">
           {reportAccess && (
             <>
               <div className="flex items-center justify-between mb-2">
@@ -555,8 +599,46 @@ const NotesReport: React.FC<Props> = ({
             value={Notes}
             onChange={setNotes}
             readOnly={syncStatus.Notes}
-            // height="60vh"
+            height="60vh"
           />
+
+          {reportStatus === "Signed Off" && (
+            <div className="flex flex-col mb-4">
+              <div className="flex items-center justify-between">
+                <p className="text-2xl">Addendum</p>
+                <Button
+                  variant="default"
+                  className="mt-3 mb-2"
+                  onClick={() => {
+                    if (addButton) {
+                      handleAddAddendum();
+                    } else {
+                      setAddButton(true);
+                    }
+                  }}
+                >
+                  {addButton ? (
+                    <>
+                      <Save />
+                      <span>Save</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus />
+                      <span>Add</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+              {addButton && (
+                <Textarea
+                  placeholder="Add Addendum"
+                  value={addendumText}
+                  onChange={(e) => setAddendumText(e.target.value)}
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -16,6 +16,7 @@ import {
   IntakeFormAnalytics,
   ListScanAppointmentCount,
   TATStats,
+  TotalArtifacts,
   TotalCorrectEdit,
   UserAccessTiming,
   UserList,
@@ -33,6 +34,7 @@ import { TATPieChart } from "./TATPieChart";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/calendar";
 import { ChevronDown, User } from "lucide-react";
+import { ArtifactsPie } from "./ArtifactsPieChart";
 
 const Analytics: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -77,6 +79,10 @@ const Analytics: React.FC = () => {
     TotalCorrectEdit[]
   >([]);
   const [tatStats, setTatStats] = useState<TATStats[]>([]);
+
+  const [techArtifacts, setTechArtifacts] = useState<TotalArtifacts[]>([]);
+
+  const [reportArtifacts, setReportArtifacts] = useState<TotalArtifacts[]>([]);
 
   const [tempRole, setTempRole] = useState({
     id: 0,
@@ -138,7 +144,10 @@ const Analytics: React.FC = () => {
     }
 
     // ✅ If admin/manager and a user is selected, check ONLY tempRole
-    if (["admin", "manager", "scadmin"].includes(role.type) && userSelectedValue) {
+    if (
+      ["admin", "manager", "scadmin"].includes(role.type) &&
+      userSelectedValue
+    ) {
       const tempRoleType = tempRole?.type as UserRole | undefined;
 
       // If tempRole exists, base access ONLY on it
@@ -176,7 +185,9 @@ const Analytics: React.FC = () => {
         setAllUsers(res.UserListIds);
         setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics);
         setRecode(res.ImpressionModel);
-        setTatStats([])
+        setTatStats([]);
+        setTechArtifacts(res.TechArtificate);
+        setReportArtifacts(res.ReportArtificate);
       }
     } catch (error) {
       console.log(error);
@@ -212,6 +223,8 @@ const Analytics: React.FC = () => {
         setRecode(res.ImpressionModel);
         setTotalCorrectEdits(res.TotalCorrectEdit);
         setTatStats(res.DurationBucketModel);
+        setReportArtifacts(res.ReportArtificate);
+        setTechArtifacts(res.TechArtificate);
       }
     } catch (error) {
       console.log(error);
@@ -230,22 +243,35 @@ const Analytics: React.FC = () => {
     setTatStats([]);
 
     if (["admin", "manager", "scadmin"].includes(role.type)) {
-      if(userSelectedValue) {
+      if (userSelectedValue) {
         setCenterSelectedValue(null);
-      fetchAnalyticsPeruser(userSelectedValue ? userSelectedValue : user.refUserId, tempRole.id ? tempRole.id : role?.id);
+        fetchAnalyticsPeruser(
+          userSelectedValue ? userSelectedValue : user.refUserId,
+          tempRole.id ? tempRole.id : role?.id
+        );
       } else {
         setUserSelectedValue(null);
-      fetchOverallScanCenter((centerSelectedValue || centerSelectedValue == 0) ? Number(centerSelectedValue) : user.refSCId);
+        fetchOverallScanCenter(
+          centerSelectedValue || centerSelectedValue == 0
+            ? Number(centerSelectedValue)
+            : user.refSCId
+        );
       }
     } else {
       setCenterSelectedValue(null);
-      setUserSelectedValue(userSelectedValue ? userSelectedValue : user.refUserId)
-      fetchAnalyticsPeruser(userSelectedValue ? userSelectedValue : user.refUserId, role?.id);
+      setUserSelectedValue(
+        userSelectedValue ? userSelectedValue : user.refUserId
+      );
+      fetchAnalyticsPeruser(
+        userSelectedValue ? userSelectedValue : user.refUserId,
+        role?.id
+      );
     }
   }, [dateRange]);
 
   useEffect(() => {
-    (centerSelectedValue || centerSelectedValue == 0) && fetchOverallScanCenter(Number(centerSelectedValue));
+    (centerSelectedValue || centerSelectedValue == 0) &&
+      fetchOverallScanCenter(Number(centerSelectedValue));
   }, [centerSelectedValue]);
 
   useEffect(() => {
@@ -482,7 +508,9 @@ const Analytics: React.FC = () => {
           className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
           hidden={handleComponentAccess("TAT")}
         >
-          <span className="w-1/3 leading-tight text-sx font-semibold">Total Time</span>
+          <span className="w-1/3 leading-tight text-sx font-semibold">
+            Total Time
+          </span>
           <span className="w-2/3 font-bold text-3xl">
             {userAccessTiming ? userAccessTiming[0]?.total_hours : 0} Hrs
           </span>
@@ -495,7 +523,10 @@ const Analytics: React.FC = () => {
           {!handleComponentAccess("previousMonth") && (
             <div
               className={
-                !(!handleComponentAccess("turnaroundTime") && userSelectedValue != null)
+                !(
+                  !handleComponentAccess("turnaroundTime") &&
+                  userSelectedValue != null
+                )
                   ? "w-full"
                   : "w-full lg:w-2/3"
               }
@@ -504,26 +535,36 @@ const Analytics: React.FC = () => {
             </div>
           )}
 
-          {(!handleComponentAccess("turnaroundTime") && (userSelectedValue != null)) && (
-            <div className="w-full lg:w-1/3">
-              <TATPieChart data={tatStats} />
-            </div>
-          )}
+          {!handleComponentAccess("turnaroundTime") &&
+            userSelectedValue != null && (
+              <div className="w-full lg:w-1/3">
+                <TATPieChart data={tatStats} />
+              </div>
+            )}
         </div>
       </div>
 
       {/* ---------- Row 2 ---------- */}
-      <div className="flex flex-col lg:flex-row flex-wrap gap-4 mt-4 max-w-5xl mx-auto justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-5xl mx-auto">
         {!handleComponentAccess("scanIndications") && (
-          <div className="flex-1 basis-[45%] max-w-2xl min-w-[280px]">
+          <div className="w-full">
             <ScanIndicationsPie data={intakeFormAnalytics} />
           </div>
         )}
+
         {!handleComponentAccess("recoCodeCount") && (
-          <div className="flex-1 basis-[45%] max-w-[400px] min-w-[280px]">
+          <div className="w-full">
             <RecoCodeCountPie ImpressionModel={recoCode} />
           </div>
         )}
+
+        <div className="w-full">
+          <ArtifactsPie data={techArtifacts} label="Tech Artifact" />
+        </div>
+
+        <div className="w-full">
+          <ArtifactsPie data={reportArtifacts} label="Report Artifact" />
+        </div>
       </div>
     </div>
   );

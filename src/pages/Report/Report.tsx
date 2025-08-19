@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppointmentStatus,
+  FinalAddendumText,
   ReportHistoryData,
   reportService,
 } from "@/services/reportService";
@@ -212,11 +213,11 @@ const Report: React.FC = () => {
   };
 
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
-    Array.from({ length: 200 }, (_, index) => ({
+    Array.from({ length: 131 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
-  ); //current higgest question id: 116
+  ); //current higgest question id: 131
 
   const [syncStatus, setsyncStatus] = useState({
     breastImplant: true,
@@ -448,27 +449,43 @@ const Report: React.FC = () => {
   );
 
   const [breastImplantRight, setBreastImplantRight] = useState("");
+  const [breastImplantImage, setBreastImplantImage] = useState("");
   const [symmetry, setSymmetry] = useState("");
+  const [symmentryImage, setSymmetryImage] = useState("");
   const [breastDensityandImageRight, setBreastDensityandImageRight] =
     useState("");
+  const [breastDensityandImageRightImage, setBreastDensityandImageRightImage] = useState("");
   const [nippleAreolaSkinRight, setNippleAreolaSkinRight] = useState("");
+  const [nippleAreolaSkinRightImage, setNippleAreolaSkinRightImage] = useState("");
   const [LesionsRight, setLesionsRight] = useState("");
   const [ComparisonPrior, setComparisonPrior] = useState("");
   const [grandularAndDuctalTissueRight, setGrandularAndDuctalTissueRight] =
     useState("");
+  const [grandularAndDuctalTissueRightImage, setGrandularAndDuctalTissueRightImage] =
+    useState("");
   const [LymphNodesRight, setLymphNodesRight] = useState("");
+  const [LymphNodesRightImage, setLymphNodesRightImage] = useState("");
   const [breastDensityandImageLeft, setBreastDensityandImageLeft] =
     useState("");
+    const [breastDensityandImageLeftImage, setBreastDensityandImageLeftImage] =
+    useState("");
   const [nippleAreolaSkinLeft, setNippleAreolaSkinLeft] = useState("");
+  const [nippleAreolaSkinLeftImage, setNippleAreolaSkinLeftImage] = useState("");
   const [LesionsLeft, setLesionsLeft] = useState("");
   const [ComparisonPriorLeft, setComparisonPriorLeft] = useState("");
   const [grandularAndDuctalTissueLeft, setGrandularAndDuctalTissueLeft] =
     useState("");
+  const [grandularAndDuctalTissueLeftImage, setGrandularAndDuctalTissueLeftImage] =
+    useState("");
+
   const [LymphNodesLeft, setLymphNodesLeft] = useState("");
+  const [LymphNodesLeftImage, setLymphNodesLeftImage] = useState("");
 
   const [Notes, setNotes] = useState("");
 
   const [patientHistory, setPatientHistory] = useState("");
+
+  const [addendumText, setAddendumText] = useState("");
 
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
     null
@@ -592,6 +609,7 @@ const Report: React.FC = () => {
     setLoading(true);
     try {
       const response: {
+        Addendum: FinalAddendumText[];
         appointmentStatus: AppointmentStatus[];
         reportHistoryData: ReportHistoryData[];
         intakeFormData: ResponsePatientForm[];
@@ -702,6 +720,14 @@ const Report: React.FC = () => {
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
 
+        response.Addendum &&
+          setAddendumText(
+            response.Addendum.map(
+              (data: FinalAddendumText) =>
+                `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
+            ).join("<br/><br/>") // extra line break between entries
+          );
+
         if (!response.easeQTReportAccess) {
           setsyncStatus({
             ...syncStatus,
@@ -728,7 +754,7 @@ const Report: React.FC = () => {
     technicianForm.find((q) => q.questionId === id)?.answer || "";
 
   const ReportResetAll = () => {
-    const previousAnswer1 = getreportAnswer(1); // ❗Grab before reset
+    const previousAnswer1 = getReportAnswer(1); // ❗Grab before reset
 
     let newFormData = Array.from({ length: 200 }, (_, index) => ({
       questionId: index + 1,
@@ -744,67 +770,67 @@ const Report: React.FC = () => {
       119: getTechnicianAnswer(22),
       1: previousAnswer1 === "" || "Present" ? "Present" : "",
       // 2:
-      //   getreportAnswer(2) === "" || "Bilateral Similar"
+      //   getReportAnswer(2) === "" || "Bilateral Similar"
       //     ? "Bilateral Similar"
       //     : "",
-      // 3: getreportAnswer(3) === "" || "Subpectoral" ? "Subpectoral" : "",
-      // 4: getreportAnswer(4) === "" || getPatientAnswer(80) ? getPatientAnswer(80) : "",
-      5: getreportAnswer(5) === "" || "None" ? "None" : "",
-      6: getreportAnswer(6) === "" || "None" ? "None" : "",
-      9: getreportAnswer(9) === "" || "Absent" ? "Absent" : "",
+      // 3: getReportAnswer(3) === "" || "Subpectoral" ? "Subpectoral" : "",
+      // 4: getReportAnswer(4) === "" || getPatientAnswer(80) ? getPatientAnswer(80) : "",
+      5: getReportAnswer(5) === "" || "None" ? "None" : "",
+      6: getReportAnswer(6) === "" || "None" ? "None" : "",
+      9: getReportAnswer(9) === "" || "Absent" ? "Absent" : "",
       116:
-        getreportAnswer(116) === "" || getPatientAnswer(81)
+        getReportAnswer(116) === "" || getPatientAnswer(81)
           ? getPatientAnswer(81)
           : "",
-      110: getreportAnswer(110) === "" || "Present" ? "Present" : "",
-      14: getreportAnswer(14) === "" || "Acceptable" ? "Acceptable" : "",
+      110: getReportAnswer(110) === "" || "Present" ? "Present" : "",
+      14: getReportAnswer(14) === "" || "Acceptable" ? "Acceptable" : "",
       15:
-        getreportAnswer(15) === "" || "Heterogeneously Dense"
+        getReportAnswer(15) === "" || "Heterogeneously Dense"
           ? "Heterogeneously Dense"
           : "",
-      17: getreportAnswer(17) === "" || "Symmetry" ? "Symmetry" : "",
-      111: getreportAnswer(111) === "" || "Present" ? "Present" : "",
-      19: getreportAnswer(19) === "" || "Normal" ? "Normal" : "",
-      21: getreportAnswer(21) === "" || "Absent" ? "Absent" : "",
-      23: getreportAnswer(23) === "" || "Normal" ? "Normal" : "",
+      17: getReportAnswer(17) === "" || "Symmetry" ? "Symmetry" : "",
+      111: getReportAnswer(111) === "" || "Present" ? "Present" : "",
+      19: getReportAnswer(19) === "" || "Normal" ? "Normal" : "",
+      21: getReportAnswer(21) === "" || "Absent" ? "Absent" : "",
+      23: getReportAnswer(23) === "" || "Normal" ? "Normal" : "",
       18:
-        getreportAnswer(18) === "" ||
+        getReportAnswer(18) === "" ||
         getPatientAnswer("Right" === "Right" ? 112 : 113) ||
         "Absent"
           ? getPatientAnswer("Right" === "Right" ? 112 : 113) || "Absent"
           : "",
-      112: getreportAnswer(112) === "" || "Present" ? "Present" : "",
-      25: getreportAnswer(25) === "" || "Normal" ? "Normal" : "",
-      26: getreportAnswer(26) === "" || "Absent" ? "Absent" : "",
-      27: getreportAnswer(27) === "" || "Absent" ? "Absent" : "",
-      28: getreportAnswer(28) === "" || "Absent" ? "Absent" : "",
-      29: getreportAnswer(29) === "" || "Absent" ? "Absent" : "",
-      32: getreportAnswer(32) === "" || "Absent" ? "Absent" : "",
-      34: getreportAnswer(34) === "" || "Absent" ? "Absent" : "",
+      112: getReportAnswer(112) === "" || "Present" ? "Present" : "",
+      25: getReportAnswer(25) === "" || "Normal" ? "Normal" : "",
+      26: getReportAnswer(26) === "" || "Absent" ? "Absent" : "",
+      27: getReportAnswer(27) === "" || "Absent" ? "Absent" : "",
+      28: getReportAnswer(28) === "" || "Absent" ? "Absent" : "",
+      29: getReportAnswer(29) === "" || "Absent" ? "Absent" : "",
+      32: getReportAnswer(32) === "" || "Absent" ? "Absent" : "",
+      34: getReportAnswer(34) === "" || "Absent" ? "Absent" : "",
 
-      113: getreportAnswer(113) === "" || "Present" ? "Present" : "",
-      57: getreportAnswer(57) === "" || "Acceptable" ? "Acceptable" : "",
+      113: getReportAnswer(113) === "" || "Present" ? "Present" : "",
+      57: getReportAnswer(57) === "" || "Acceptable" ? "Acceptable" : "",
       58:
-        getreportAnswer(58) === "" || "Heterogeneously Dense"
+        getReportAnswer(58) === "" || "Heterogeneously Dense"
           ? "Heterogeneously Dense"
           : "",
-      60: getreportAnswer(60) === "" || "Symmetry" ? "Symmetry" : "",
-      114: getreportAnswer(114) === "" || "Present" ? "Present" : "",
-      63: getreportAnswer(63) === "" || "Normal" ? "Normal" : "",
-      65: getreportAnswer(65) === "" || "Absent" ? "Absent" : "",
-      67: getreportAnswer(67) === "" || "Normal" ? "Normal" : "",
+      60: getReportAnswer(60) === "" || "Symmetry" ? "Symmetry" : "",
+      114: getReportAnswer(114) === "" || "Present" ? "Present" : "",
+      63: getReportAnswer(63) === "" || "Normal" ? "Normal" : "",
+      65: getReportAnswer(65) === "" || "Absent" ? "Absent" : "",
+      67: getReportAnswer(67) === "" || "Normal" ? "Normal" : "",
       61:
-        getreportAnswer(61) === "" || getPatientAnswer(113) || "Absent"
+        getReportAnswer(61) === "" || getPatientAnswer(113) || "Absent"
           ? getPatientAnswer(113) || "Absent"
           : "",
-      115: getreportAnswer(115) === "" || "Present" ? "Present" : "",
-      69: getreportAnswer(69) === "" || "Normal" ? "Normal" : "",
-      70: getreportAnswer(70) === "" || "Absent" ? "Absent" : "",
-      71: getreportAnswer(71) === "" || "Absent" ? "Absent" : "",
-      72: getreportAnswer(72) === "" || "Absent" ? "Absent" : "",
-      73: getreportAnswer(73) === "" || "Absent" ? "Absent" : "",
-      76: getreportAnswer(76) === "" || "Absent" ? "Absent" : "",
-      78: getreportAnswer(78) === "" || "Absent" ? "Absent" : "",
+      115: getReportAnswer(115) === "" || "Present" ? "Present" : "",
+      69: getReportAnswer(69) === "" || "Normal" ? "Normal" : "",
+      70: getReportAnswer(70) === "" || "Absent" ? "Absent" : "",
+      71: getReportAnswer(71) === "" || "Absent" ? "Absent" : "",
+      72: getReportAnswer(72) === "" || "Absent" ? "Absent" : "",
+      73: getReportAnswer(73) === "" || "Absent" ? "Absent" : "",
+      76: getReportAnswer(76) === "" || "Absent" ? "Absent" : "",
+      78: getReportAnswer(78) === "" || "Absent" ? "Absent" : "",
     };
 
     newFormData = newFormData.map((q) =>
@@ -851,7 +877,7 @@ const Report: React.FC = () => {
 
     setReportFormData(newFormData);
 
-    console.log(getreportAnswer(1));
+    console.log(getReportAnswer(1));
   };
 
   useEffect(() => {
@@ -1064,7 +1090,7 @@ const Report: React.FC = () => {
     if (responsePatientInTake.length > 0 && technicianForm.length > 0)
       AutoPopulateReport(
         getPatientAnswer,
-        getreportAnswer,
+        getReportAnswer,
         getTechnicianAnswer,
         handleReportInputChange
       );
@@ -1125,6 +1151,8 @@ const Report: React.FC = () => {
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
         leaveStatus: leaveStatus,
+        artificatsLeft: getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) == "Yes" ? true : false,
+        artificatsRight: getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) == "Yes" ? true : false,
       };
       console.log("payload", payload);
 
@@ -1146,7 +1174,7 @@ const Report: React.FC = () => {
   const getPatientAnswer = (id: number) =>
     responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
 
-  const getreportAnswer = (id: number) =>
+  const getReportAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
   const patientForm = (categoryId: number) => {
@@ -1821,6 +1849,10 @@ const Report: React.FC = () => {
                       value: breastImplantRight,
                       onChange: setBreastImplantRight,
                     },
+                    breastImplantImage: {
+                      value: breastImplantImage,
+                      onChange: setBreastImplantImage,
+                    },
                     patientHistory: {
                       value: patientHistory,
                       onChange: setPatientHistory,
@@ -1829,6 +1861,10 @@ const Report: React.FC = () => {
                       value: symmetry,
                       onChange: setSymmetry,
                     },
+                    symmetryImage: {
+                      value: symmentryImage,
+                      onChange: setSymmetryImage,
+                    }
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1844,9 +1880,17 @@ const Report: React.FC = () => {
                       value: breastDensityandImageRight,
                       onChange: setBreastDensityandImageRight,
                     },
+                    breastDensityandImageRightImage: {
+                      value: breastDensityandImageRightImage,
+                      onChange: setBreastDensityandImageRightImage,
+                    },
                     nippleAreolaSkinRight: {
                       value: nippleAreolaSkinRight,
                       onChange: setNippleAreolaSkinRight,
+                    },
+                    nippleAreolaSkinRightImage: {
+                      value: nippleAreolaSkinRightImage,
+                      onChange: setNippleAreolaSkinRightImage,
                     },
                     LesionsRight: {
                       value: LesionsRight,
@@ -1860,9 +1904,17 @@ const Report: React.FC = () => {
                       value: grandularAndDuctalTissueRight,
                       onChange: setGrandularAndDuctalTissueRight,
                     },
+                    grandularAndDuctalTissueRightImage: {
+                      value: grandularAndDuctalTissueRightImage,
+                      onChange: setGrandularAndDuctalTissueRightImage,
+                    },
                     LymphNodesRight: {
                       value: LymphNodesRight,
                       onChange: setLymphNodesRight,
+                    },
+                    LymphNodesRightImage: {
+                      value: LymphNodesRightImage,
+                      onChange: setLymphNodesRightImage,
                     },
                   }}
                   syncStatus={syncStatus}
@@ -1879,9 +1931,17 @@ const Report: React.FC = () => {
                       value: breastDensityandImageLeft,
                       onChange: setBreastDensityandImageLeft,
                     },
+                    breastDensityandImageLeftImage: {
+                      value: breastDensityandImageLeftImage,
+                      onChange: setBreastDensityandImageLeftImage,
+                    },
                     nippleAreolaSkinLeft: {
                       value: nippleAreolaSkinLeft,
                       onChange: setNippleAreolaSkinLeft,
+                    },
+                    nippleAreolaSkinLeftImage: {
+                      value: nippleAreolaSkinLeftImage,
+                      onChange: setNippleAreolaSkinLeftImage,
                     },
                     LesionsLeft: {
                       value: LesionsLeft,
@@ -1895,9 +1955,17 @@ const Report: React.FC = () => {
                       value: grandularAndDuctalTissueLeft,
                       onChange: setGrandularAndDuctalTissueLeft,
                     },
+                    grandularAndDuctalTissueLeftImage: {
+                      value: grandularAndDuctalTissueLeftImage,
+                      onChange: setGrandularAndDuctalTissueLeftImage,
+                    },
                     LymphNodesLeft: {
                       value: LymphNodesLeft,
                       onChange: setLymphNodesLeft,
+                    },
+                    LymphNodesLeftImage: {
+                      value: LymphNodesLeftImage,
+                      onChange: setLymphNodesLeftImage,
                     },
                   }}
                   syncStatus={syncStatus}
@@ -2066,6 +2134,10 @@ const Report: React.FC = () => {
                         value: symmetry,
                         onChange: setSymmetry,
                       },
+                      addendumText: {
+                        value: addendumText,
+                        onChange: setAddendumText,
+                      }
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
@@ -2096,6 +2168,8 @@ const Report: React.FC = () => {
                     patientHistory={patientHistory}
                     ScanCenterImg={ScanCenterImg}
                     reportAccess={assignData?.easeQTReportAccess ? true : false}
+                    reportStatus = {assignData?.appointmentStatus[0].refAppointmentComplete || ""}
+                    AppointmentId={assignData?.appointmentStatus[0].refAppointmentId || 0}
                   />
                 </>
               ) : (

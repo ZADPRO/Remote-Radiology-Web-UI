@@ -1,7 +1,7 @@
 // src/Dashboard/MasterAdmin.tsx
 
 import React, { JSX, useEffect, useState } from "react";
-import { ChartPie, PersonStanding, Settings2 } from "lucide-react";
+import { BellIcon, ChartPie, PersonStanding, Settings2 } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,6 +31,9 @@ import PatientProfile from "../Profile/PatientProfile";
 import WGPerformingProvider from "../Profile/WGPerformingProvider";
 import PatientInformation from "./PatientBrouchure/PatientInformation";
 import ConsentForm from "./ConsentForm/ConsentForm";
+import { Button } from "@/components/ui/button";
+import NotificationDialog from "./Notifications/Notification";
+import { notificationService } from "@/services/notificationService";
 
 const MasterAdmin: React.FC = () => {
   const navigate = useNavigate();
@@ -38,7 +41,6 @@ const MasterAdmin: React.FC = () => {
   const { user, role, setRole } = useAuth();
 
   const renderProfileComponent = () => {
-    console.log(role?.type);
     switch (role?.type) {
       case "scadmin":
         return <ScanCenterAdminProfile />;
@@ -73,6 +75,8 @@ const MasterAdmin: React.FC = () => {
   const [BrochureMenu, setBrochureMenu] = useState(false);
   const [BrochureMobileMenu, setBrochureMobileMenu] = useState(false);
   const [BrochureMenuopen, setBrochureMenuopen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
+
   const [activeDialogContent, setActiveDialogContent] =
     useState<JSX.Element | null>(null);
 
@@ -283,6 +287,32 @@ const MasterAdmin: React.FC = () => {
     }
   }, [location.pathname, role?.type]);
 
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  useEffect(() => {
+  const getUnreadNotificationCount = async () => {
+    try {
+      const res = await notificationService.getUnreadNotificationCount();
+      // console.log("Unread count:", res);
+      // optionally set state here
+      setUnreadCount(res.totalcount);
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+    }
+  };
+
+  // initial call
+  getUnreadNotificationCount();
+
+  // set interval
+  const interval = setInterval(() => {
+    getUnreadNotificationCount();
+  }, 5000); // every 5 sec
+
+  // cleanup on unmount
+  return () => clearInterval(interval);
+}, []);
+
   return (
     <div className={`flex h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]`}>
       <Dialog open={BrochureMenuopen} onOpenChange={setBrochureMenuopen}>
@@ -483,27 +513,27 @@ const MasterAdmin: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             {/* <Button
               variant="outline"
               className="rounded-3xl bg-[#f8f3eb]"
               size="icon"
             >
               <HelpCircleIcon />
-            </Button>
-            <div className="relative">
+            </Button> */}
+            <div className="relative" hidden={role?.type === "patient" || role?.type == "scadmin"}>
               <Button
                 variant="outline"
-                className="rounded-3xl bg-[#f8f3eb]"
+                className="rounded-3xl bg-[#f8f3eb] w-10 h-10"
                 size="icon"
+                onClick={() => setNotificationOpen(true)}
               >
                 <BellIcon />
               </Button>
-              {/* <span className="absolute top-1 right-1 px-1.5 py-0.5 min-w-4 translate-x-1/2 -translate-y-1/2 origin-center flex items-center justify-center rounded-sm text-xs bg-[#F3C294] text-destructive-foreground">
-                2
-              </span> */}{" "}
-            {/*}
-            </div> */}
+              <span className="absolute top-1 right-1 px-1.5 py-0.5 min-w-4 translate-x-1/2 -translate-y-1/2 origin-center flex items-center justify-center rounded-sm text-xs bg-[#F3C294] text-destructive-foreground">
+                {unreadCount}
+              </span>
+            </div>
             <DropdownMenu
               open={isDropdownOpen}
               onOpenChange={setIsDropDownOpen}
@@ -516,7 +546,7 @@ const MasterAdmin: React.FC = () => {
                       {user?.refUserFirstName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col">
+                  <div className="lg:flex hidden flex-col">
                     <span className="text-sm font-bold">
                       {user?.refUserFirstName}
                     </span>
@@ -586,6 +616,12 @@ const MasterAdmin: React.FC = () => {
               {renderProfileComponent()}
             </DialogContent>
           </Dialog>
+
+          {notificationOpen && (
+            <Dialog open={notificationOpen} onOpenChange={setNotificationOpen}>
+              <NotificationDialog />
+            </Dialog>
+          )}
         </header>
 
         {/* Content */}
