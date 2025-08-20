@@ -1463,9 +1463,9 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              if (status.text == "Signed Off") {
-                setPatientReportDialog(true);
-              } else {
+              // if (status.text == "Signed Off") {
+              //   setPatientReportDialog(true);
+              // } else {
                 navigate("/report", {
                   state: {
                     appointmentId: row.original.refAppointmentId,
@@ -1473,12 +1473,12 @@ const PatientQueue: React.FC = () => {
                     readOnly: true,
                   },
                 });
-              }
+              // }
             }
           };
 
           return (
-            <div className="text-center w-full">
+            <div className={`text-center ${row.original.reportStatus === "Urgent" ? "text-[red]" : ""} w-full`}>
               {!row.original.dicomFiles ||
               row.original.dicomFiles.length === 0 ? (
                 <span>-</span>

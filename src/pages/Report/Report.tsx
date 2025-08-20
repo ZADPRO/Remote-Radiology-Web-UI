@@ -130,6 +130,35 @@ export interface FileData {
 }
 
 const Report: React.FC = () => {
+  // const [changedOne, setChangedOne] = useState({
+  //   reportQuestion: [],
+  //   reportTextContent: false,
+  //   syncStatus: false,
+  //   impression: false,
+  //   recommendation: false,
+  //   impressionaddtional: false,
+  //   recommendationaddtional: false,
+  //   commonImpressionRecommendation: false,
+  //   impressionRight: false,
+  //   recommendationRight: false,
+  //   impressionaddtionalRight: false,
+  //   recommendationaddtionalRight: false,
+  //   commonImpressionRecommendationRight: false,
+  //   artificatsLeft: false,
+  //   artificatsRight: false,
+  //   patienthistory: false,
+  //   breastimplantImageText: false,
+  //   symmetryImageText: false,
+  //   breastdensityImageText: false,
+  //   nippleareolaImageText: false,
+  //   glandularImageText: false,
+  //   lymphnodesImageText: false,
+  //   breastdensityImageTextLeft: false,
+  //   nippleareolaImageTextLeft: false,
+  //   glandularImageTextLeft: false,
+  //   lymphnodesImageTextLeft: false,
+  // });
+
   const [tab, setTab] = useState<number>(4);
 
   const [subTab, setSubTab] = useState<number>(4);
@@ -212,12 +241,7 @@ const Report: React.FC = () => {
     } else navigate(-1);
   };
 
-  const [reportFormData, setReportFormData] = useState<ReportQuestion[]>(
-    Array.from({ length: 131 }, (_, index) => ({
-      questionId: 1 + index,
-      answer: "",
-    }))
-  ); //current higgest question id: 131
+  const [reportFormData, setReportFormData] = useState<ReportQuestion[]>([]); //current higgest question id: 131
 
   const [syncStatus, setsyncStatus] = useState({
     breastImplant: true,
@@ -454,29 +478,37 @@ const Report: React.FC = () => {
   const [symmentryImage, setSymmetryImage] = useState("");
   const [breastDensityandImageRight, setBreastDensityandImageRight] =
     useState("");
-  const [breastDensityandImageRightImage, setBreastDensityandImageRightImage] = useState("");
+  const [breastDensityandImageRightImage, setBreastDensityandImageRightImage] =
+    useState("");
   const [nippleAreolaSkinRight, setNippleAreolaSkinRight] = useState("");
-  const [nippleAreolaSkinRightImage, setNippleAreolaSkinRightImage] = useState("");
+  const [nippleAreolaSkinRightImage, setNippleAreolaSkinRightImage] =
+    useState("");
   const [LesionsRight, setLesionsRight] = useState("");
+  const [LesionsRightImage, setLesionsRightImage] = useState("");
   const [ComparisonPrior, setComparisonPrior] = useState("");
   const [grandularAndDuctalTissueRight, setGrandularAndDuctalTissueRight] =
     useState("");
-  const [grandularAndDuctalTissueRightImage, setGrandularAndDuctalTissueRightImage] =
-    useState("");
+  const [
+    grandularAndDuctalTissueRightImage,
+    setGrandularAndDuctalTissueRightImage,
+  ] = useState("");
   const [LymphNodesRight, setLymphNodesRight] = useState("");
   const [LymphNodesRightImage, setLymphNodesRightImage] = useState("");
   const [breastDensityandImageLeft, setBreastDensityandImageLeft] =
     useState("");
-    const [breastDensityandImageLeftImage, setBreastDensityandImageLeftImage] =
+  const [breastDensityandImageLeftImage, setBreastDensityandImageLeftImage] =
     useState("");
   const [nippleAreolaSkinLeft, setNippleAreolaSkinLeft] = useState("");
-  const [nippleAreolaSkinLeftImage, setNippleAreolaSkinLeftImage] = useState("");
+  const [nippleAreolaSkinLeftImage, setNippleAreolaSkinLeftImage] =
+    useState("");
   const [LesionsLeft, setLesionsLeft] = useState("");
   const [ComparisonPriorLeft, setComparisonPriorLeft] = useState("");
   const [grandularAndDuctalTissueLeft, setGrandularAndDuctalTissueLeft] =
     useState("");
-  const [grandularAndDuctalTissueLeftImage, setGrandularAndDuctalTissueLeftImage] =
-    useState("");
+  const [
+    grandularAndDuctalTissueLeftImage,
+    setGrandularAndDuctalTissueLeftImage,
+  ] = useState("");
 
   const [LymphNodesLeft, setLymphNodesLeft] = useState("");
   const [LymphNodesLeftImage, setLymphNodesLeftImage] = useState("");
@@ -629,7 +661,7 @@ const Report: React.FC = () => {
         stateData.readOnly
       );
 
-      console.log(response);
+      console.log("---------->", response);
 
       if (response.status) {
         setScanCenterImg(response.ScanCenterImg);
@@ -690,10 +722,97 @@ const Report: React.FC = () => {
               .refAppointmentCommonImpressionRecommendationRight,
         }));
 
+        if (response.appointmentStatus[0].refAppointmentPatietHistory) {
+          setPatientHistory(
+            response.appointmentStatus[0].refAppointmentPatietHistory
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentBreastImplantImageText
+        ) {
+          setBreastImplantImage(
+            response.appointmentStatus[0].refAppointmentBreastImplantImageText
+          );
+        }
+
+        if (response.appointmentStatus[0].refAppointmentSymmetryImageText) {
+          setSymmetryImage(
+            response.appointmentStatus[0].refAppointmentSymmetryImageText
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentBreastdensityImageText
+        ) {
+          setBreastDensityandImageRightImage(
+            response.appointmentStatus[0].refAppointmentBreastdensityImageText
+          );
+        }
+
+        if (response.appointmentStatus[0].refAppointmentNippleAreolaImageText) {
+          setNippleAreolaSkinRightImage(
+            response.appointmentStatus[0].refAppointmentNippleAreolaImageText
+          );
+        }
+
+        if (response.appointmentStatus[0].refAppointmentGlandularImageText) {
+          setGrandularAndDuctalTissueRightImage(
+            response.appointmentStatus[0].refAppointmentGlandularImageText
+          );
+        }
+
+        if (response.appointmentStatus[0].refAppointmentLymphnodeImageText) {
+          setLymphNodesRightImage(
+            response.appointmentStatus[0].refAppointmentLymphnodeImageText
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
+        ) {
+          setBreastDensityandImageLeftImage(
+            response.appointmentStatus[0]
+              .refAppointmentBreastdensityImageTextLeft
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
+        ) {
+          setNippleAreolaSkinLeftImage(
+            response.appointmentStatus[0]
+              .refAppointmentNippleAreolaImageTextLeft
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
+        ) {
+          setGrandularAndDuctalTissueLeftImage(
+            response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
+          );
+        }
+
+        if (
+          response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
+        ) {
+          setLymphNodesLeftImage(
+            response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
+          );
+        }
+
         setTemplates(response.reportFormateList || []);
         setTechnicianForm(response.technicianIntakeFormData || []);
         if (response.reportIntakeFormData) {
           setReportFormData(response.reportIntakeFormData);
+        } else {
+          setReportFormData(
+            Array.from({ length: 131 }, (_, index) => ({
+              questionId: 1 + index,
+              answer: "",
+            }))
+          );
         }
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportTextContentData) {
@@ -926,7 +1045,9 @@ const Report: React.FC = () => {
       await setPatientHistory(reason);
     };
 
-    generatePatientHistory();
+    if (!patientHistory) {
+      generatePatientHistory();
+    }
   }, [responsePatientInTake]);
 
   const uploadReportFormate = async () => {
@@ -1151,8 +1272,29 @@ const Report: React.FC = () => {
         patientMailStatus: mailOption === "patient" || mailOption === "both",
         managerMailStatus: mailOption === "scancenter" || mailOption === "both",
         leaveStatus: leaveStatus,
-        artificatsLeft: getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) == "Yes" ? true : false,
-        artificatsRight: getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) == "Yes" ? true : false,
+        artificatsLeft:
+          getReportAnswer(
+            breastDensityandImageLeftQuestions.artifactsPresent
+          ) == "Yes"
+            ? true
+            : false,
+        artificatsRight:
+          getReportAnswer(
+            breastDensityandImageRightQuestions.artifactsPresent
+          ) == "Yes"
+            ? true
+            : false,
+        patienthistory: patientHistory,
+        breastimplantImageText: breastImplantImage,
+        symmetryImageText: symmentryImage,
+        breastdensityImageText: breastDensityandImageRightImage,
+        nippleareolaImageText: nippleAreolaSkinRightImage,
+        glandularImageText: grandularAndDuctalTissueRightImage,
+        lymphnodesImageText: LymphNodesRightImage,
+        breastdensityImageTextLeft: breastDensityandImageLeftImage,
+        nippleareolaImageTextLeft: nippleAreolaSkinLeftImage,
+        glandularImageTextLeft: grandularAndDuctalTissueLeftImage,
+        lymphnodesImageTextLeft: LymphNodesLeftImage,
       };
       console.log("payload", payload);
 
@@ -1211,6 +1353,244 @@ const Report: React.FC = () => {
     }
   };
 
+  // const [timeOut, setTimeOut] = useState(false);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTimeOut((prev) => !prev); // toggle value every 1.5s
+  //   }, 10000);
+
+  //   return () => clearInterval(interval); // cleanup on unmount
+  // }, []);
+
+  // const fecthautosave = async () => {
+  //   const payload = {
+  //     reportIntakeForm: reportFormData,
+  //     reportTextContent: Notes,
+  //     appointmentId: stateData.appointmentId,
+  //     patientId: stateData.userId,
+  //     syncStatus: syncStatus.Notes,
+  //     impression: mainImpressionRecommendation.selectedImpressionId,
+  //     recommendation: mainImpressionRecommendation.selectedRecommendationId,
+  //     impressionaddtional:
+  //       optionalImpressionRecommendation.selectedImpressionId,
+  //     recommendationaddtional:
+  //       optionalImpressionRecommendation.selectedRecommendationId,
+  //     commonImpressionRecommendation: commonImpressRecomm.id,
+  //     impressionRight: mainImpressionRecommendation.selectedImpressionIdRight,
+  //     recommendationRight:
+  //       mainImpressionRecommendation.selectedRecommendationIdRight,
+  //     impressionaddtionalRight:
+  //       optionalImpressionRecommendation.selectedImpressionIdRight,
+  //     recommendationaddtionalRight:
+  //       optionalImpressionRecommendation.selectedRecommendationIdRight,
+  //     commonImpressionRecommendationRight: commonImpressRecomm.idRight,
+  //     artificatsLeft:
+  //       getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) ==
+  //       "Yes"
+  //         ? true
+  //         : false,
+  //     artificatsRight:
+  //       getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) ==
+  //       "Yes"
+  //         ? true
+  //         : false,
+  //     patienthistory: patientHistory,
+  //     breastimplantImageText: breastImplantImage,
+  //     symmetryImageText: symmentryImage,
+  //     breastdensityImageText: breastDensityandImageRightImage,
+  //     nippleareolaImageText: nippleAreolaSkinRightImage,
+  //     glandularImageText: grandularAndDuctalTissueRightImage,
+  //     lymphnodesImageText: LymphNodesRightImage,
+  //     breastdensityImageTextLeft: breastDensityandImageLeftImage,
+  //     nippleareolaImageTextLeft: nippleAreolaSkinLeftImage,
+  //     glandularImageTextLeft: grandularAndDuctalTissueLeftImage,
+  //     lymphnodesImageTextLeft: LymphNodesLeftImage,
+  //   };
+
+  //   const response: {
+  //     appointmentStatus: AppointmentStatus[];
+  //     intakeFormData: ResponsePatientForm[];
+  //     reportIntakeFormData: ReportQuestion[];
+  //     reportTextContentData: TextEditorContent[];
+  //     status: boolean;
+  //     easeQTReportAccess: boolean;
+  //   } = await reportService.autosaveReport(payload);
+
+  //   console.log("##################", payload);
+
+  //   if (response.status) {
+  //     setAssignData({
+  //       appointmentStatus: response.appointmentStatus,
+  //       reportHistoryData: assignData?.reportHistoryData || [],
+  //       easeQTReportAccess: response.easeQTReportAccess || false,
+  //     });
+
+  //     setMainImpressionRecommendation((prev) => ({
+  //       ...prev,
+  //       selectedImpressionId:
+  //         response.appointmentStatus[0].refAppointmentImpression,
+  //       selectedRecommendationId:
+  //         response.appointmentStatus[0].refAppointmentRecommendation,
+  //       selectedImpressionIdRight:
+  //         response.appointmentStatus[0].refAppointmentImpressionRight,
+  //       selectedRecommendationIdRight:
+  //         response.appointmentStatus[0].refAppointmentRecommendationRight,
+  //     }));
+  //     setOptionalImpressionRecommendation((prev) => ({
+  //       ...prev,
+  //       selectedImpressionId:
+  //         response.appointmentStatus[0].refAppointmentImpressionAdditional,
+  //       selectedRecommendationId:
+  //         response.appointmentStatus[0].refAppointmentRecommendationAdditional,
+  //       selectedImpressionIdRight:
+  //         response.appointmentStatus[0].refAppointmentImpressionAdditionalRight,
+  //       selectedRecommendationIdRight:
+  //         response.appointmentStatus[0]
+  //           .refAppointmentRecommendationAdditionalRight,
+  //     }));
+
+  //     setShowOptional(() => ({
+  //       impression:
+  //         response.appointmentStatus[0].refAppointmentImpressionAdditional !=
+  //         "",
+  //       recommendation:
+  //         response.appointmentStatus[0]
+  //           .refAppointmentRecommendationAdditional != "",
+  //       impressionRight:
+  //         response.appointmentStatus[0]
+  //           .refAppointmentRecommendationAdditionalRight != "",
+  //       recommendationRight:
+  //         response.appointmentStatus[0]
+  //           .refAppointmentRecommendationAdditionalRight != "",
+  //     }));
+
+  //     setCommonImpressRecomm((prev) => ({
+  //       ...prev,
+  //       id: response.appointmentStatus[0]
+  //         .refAppointmentCommonImpressionRecommendation,
+  //       idRight:
+  //         response.appointmentStatus[0]
+  //           .refAppointmentCommonImpressionRecommendationRight,
+  //     }));
+
+  //     if (response.appointmentStatus[0].refAppointmentPatietHistory) {
+  //       setPatientHistory(
+  //         response.appointmentStatus[0].refAppointmentPatietHistory
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentBreastImplantImageText) {
+  //       setBreastImplantImage(
+  //         response.appointmentStatus[0].refAppointmentBreastImplantImageText
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentSymmetryImageText) {
+  //       setSymmetryImage(
+  //         response.appointmentStatus[0].refAppointmentSymmetryImageText
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentBreastdensityImageText) {
+  //       setBreastDensityandImageRightImage(
+  //         response.appointmentStatus[0].refAppointmentBreastdensityImageText
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentNippleAreolaImageText) {
+  //       setNippleAreolaSkinRightImage(
+  //         response.appointmentStatus[0].refAppointmentNippleAreolaImageText
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentGlandularImageText) {
+  //       setGrandularAndDuctalTissueRightImage(
+  //         response.appointmentStatus[0].refAppointmentGlandularImageText
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentLymphnodeImageText) {
+  //       setLymphNodesRightImage(
+  //         response.appointmentStatus[0].refAppointmentLymphnodeImageText
+  //       );
+  //     }
+
+  //     if (
+  //       response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
+  //     ) {
+  //       setBreastDensityandImageLeftImage(
+  //         response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
+  //       );
+  //     }
+
+  //     if (
+  //       response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
+  //     ) {
+  //       setNippleAreolaSkinLeftImage(
+  //         response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentGlandularImageTextLeft) {
+  //       setGrandularAndDuctalTissueLeftImage(
+  //         response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
+  //       );
+  //     }
+
+  //     if (response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft) {
+  //       setLymphNodesLeftImage(
+  //         response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
+  //       );
+  //     }
+
+  //     if (response.reportTextContentData) {
+  //       setNotes(response.reportTextContentData[0]?.refRTCText);
+  //       setsyncStatus({
+  //         breastImplant: true,
+  //         breastDensityandImageRight: true,
+  //         nippleAreolaSkinRight: true,
+  //         LesionsRight: true,
+  //         ComparisonPrior: true,
+  //         grandularAndDuctalTissueRight: true,
+  //         LymphNodesRight: true,
+  //         breastDensityandImageLeft: true,
+  //         nippleAreolaSkinLeft: true,
+  //         LesionsLeft: true,
+  //         ComparisonPriorLeft: true,
+  //         grandularAndDuctalTissueLeft: true,
+  //         LymphNodesLeft: true,
+  //         Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
+  //         ImpressionsRecommendations: true,
+  //         symmetry: true,
+  //       });
+  //     }
+
+  //     if (response.reportIntakeFormData) {
+  //       setReportFormData(response.reportIntakeFormData);
+  //     }
+
+  //     if (!response.easeQTReportAccess) {
+  //       setsyncStatus({
+  //         ...syncStatus,
+  //         Notes: false,
+  //       });
+  //     } else {
+  //       setsyncStatus({
+  //         ...syncStatus,
+  //         Notes:
+  //           response.reportTextContentData[0]?.refRTSyncStatus === null
+  //             ? true
+  //             : response.reportTextContentData[0]?.refRTSyncStatus,
+  //       });
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fecthautosave();
+  // }, [timeOut]);
+
   return (
     <div className="h-dvh bg-[#edd1ce]">
       {loading && <LoadingOverlay />}
@@ -1258,7 +1638,6 @@ const Report: React.FC = () => {
               { label: "Final Report", value: 4 },
             ].map(({ label, value }) => {
               const accessible = isTabAccessible(value);
-              console.log(isTabAccessible(value));
               return (
                 accessible && (
                   <div
@@ -1553,7 +1932,10 @@ const Report: React.FC = () => {
                       </>
                     ) : (
                       <tr className="bg-[#f9f2ea]">
-                        <td colSpan={4} className="px-2 py-2 text-xs text-center text-gray-500">
+                        <td
+                          colSpan={4}
+                          className="px-2 py-2 text-xs text-center text-gray-500"
+                        >
                           No Data Found
                         </td>
                       </tr>
@@ -1864,7 +2246,7 @@ const Report: React.FC = () => {
                     symmetryImage: {
                       value: symmentryImage,
                       onChange: setSymmetryImage,
-                    }
+                    },
                   }}
                   syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
@@ -1895,6 +2277,10 @@ const Report: React.FC = () => {
                     LesionsRight: {
                       value: LesionsRight,
                       onChange: setLesionsRight,
+                    },
+                    LesionsRightImage: {
+                      value: LesionsRightImage,
+                      onChange: setLesionsRightImage,
                     },
                     ComparisonPrior: {
                       value: ComparisonPrior,
@@ -1978,6 +2364,14 @@ const Report: React.FC = () => {
                     reportFormData={reportFormData}
                     responsePatientInTake={responsePatientInTake}
                     textEditor={{
+                      patientHistory: {
+                        value: patientHistory,
+                        onChange: setPatientHistory,
+                      },
+                      breastImplantImage: {
+                        value: breastImplantImage,
+                        onChange: setBreastImplantImage,
+                      },
                       breastImplant: {
                         value: breastImplantRight,
                         onChange: setBreastImplantRight,
@@ -1986,13 +2380,25 @@ const Report: React.FC = () => {
                         value: breastDensityandImageRight,
                         onChange: setBreastDensityandImageRight,
                       },
+                      breastDensityandImageRightImage: {
+                        value: breastDensityandImageRightImage,
+                        onChange: setBreastDensityandImageRightImage,
+                      },
                       nippleAreolaSkinRight: {
                         value: nippleAreolaSkinRight,
                         onChange: setNippleAreolaSkinRight,
                       },
+                      nippleAreolaSkinRightImage: {
+                        value: nippleAreolaSkinRightImage,
+                        onChange: setNippleAreolaSkinRightImage,
+                      },
                       LesionsRight: {
                         value: LesionsRight,
                         onChange: setLesionsRight,
+                      },
+                      LesionsRightImage: {
+                        value: LesionsRightImage,
+                        onChange: setLesionsRightImage,
                       },
                       ComparisonPrior: {
                         value: ComparisonPrior,
@@ -2002,17 +2408,33 @@ const Report: React.FC = () => {
                         value: grandularAndDuctalTissueRight,
                         onChange: setGrandularAndDuctalTissueRight,
                       },
+                      grandularAndDuctalTissueRightImage: {
+                        value: grandularAndDuctalTissueRightImage,
+                        onChange: setGrandularAndDuctalTissueRightImage,
+                      },
                       LymphNodesRight: {
                         value: LymphNodesRight,
                         onChange: setLymphNodesRight,
+                      },
+                      LymphNodesRightImage: {
+                        value: LymphNodesRightImage,
+                        onChange: setLymphNodesRightImage,
                       },
                       breastDensityandImageLeft: {
                         value: breastDensityandImageLeft,
                         onChange: setBreastDensityandImageLeft,
                       },
+                      breastDensityandImageLeftImage: {
+                        value: breastDensityandImageLeftImage,
+                        onChange: setBreastDensityandImageLeftImage,
+                      },
                       nippleAreolaSkinLeft: {
                         value: nippleAreolaSkinLeft,
                         onChange: setNippleAreolaSkinLeft,
+                      },
+                      nippleAreolaSkinLeftImage: {
+                        value: nippleAreolaSkinLeftImage,
+                        onChange: setNippleAreolaSkinLeftImage,
                       },
                       LesionsLeft: {
                         value: LesionsLeft,
@@ -2026,9 +2448,17 @@ const Report: React.FC = () => {
                         value: grandularAndDuctalTissueLeft,
                         onChange: setGrandularAndDuctalTissueLeft,
                       },
+                      grandularAndDuctalTissueLeftImage: {
+                        value: grandularAndDuctalTissueLeftImage,
+                        onChange: setGrandularAndDuctalTissueLeftImage,
+                      },
                       LymphNodesLeft: {
                         value: LymphNodesLeft,
                         onChange: setLymphNodesLeft,
+                      },
+                      LymphNodesLeftImage: {
+                        value: LymphNodesLeftImage,
+                        onChange: setLymphNodesLeftImage,
                       },
                       ImpressionText: {
                         value: mainImpressionRecommendation.impressionText,
@@ -2134,10 +2564,14 @@ const Report: React.FC = () => {
                         value: symmetry,
                         onChange: setSymmetry,
                       },
+                      symmetryImage: {
+                        value: symmentryImage,
+                        onChange: setSymmetryImage,
+                      },
                       addendumText: {
                         value: addendumText,
                         onChange: setAddendumText,
-                      }
+                      },
                     }}
                     syncStatus={syncStatus}
                     setsyncStatus={setsyncStatus}
@@ -2168,8 +2602,13 @@ const Report: React.FC = () => {
                     patientHistory={patientHistory}
                     ScanCenterImg={ScanCenterImg}
                     reportAccess={assignData?.easeQTReportAccess ? true : false}
-                    reportStatus = {assignData?.appointmentStatus[0].refAppointmentComplete || ""}
-                    AppointmentId={assignData?.appointmentStatus[0].refAppointmentId || 0}
+                    reportStatus={
+                      assignData?.appointmentStatus[0].refAppointmentComplete ||
+                      ""
+                    }
+                    AppointmentId={
+                      assignData?.appointmentStatus[0].refAppointmentId || 0
+                    }
                   />
                 </>
               ) : (

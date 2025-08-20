@@ -44,6 +44,10 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  LesionsRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   ComparisonPrior: {
     value: string;
     onChange: (value: string) => void;
@@ -160,7 +164,6 @@ const RightReport: React.FC<RightReportProps> = ({
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
-  console.log("aaaa", syncStatus.ComparisonPrior);
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
       <div
@@ -356,8 +359,10 @@ const RightReport: React.FC<RightReportProps> = ({
               reportFormData={reportFormData}
               handleReportInputChange={syncHandleReportChange}
               questionIds={lesionsRightQuestions}
+              textEditorVal={textEditor.LesionsRight.value}
+              textEditorOnChange={textEditor.LesionsRight.onChange}
             />
-            {getAnswer(lesionsRightQuestions.lesionsr) === "Present" && (
+            {/* {getAnswer(lesionsRightQuestions.lesionsr) === "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
                   {" "}
@@ -365,18 +370,18 @@ const RightReport: React.FC<RightReportProps> = ({
                 </div>
                 <TextEditor
                   value={textEditor.LesionsRight.value}
-                  onChange={textEditor.LesionsRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.LesionsRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        LesionsRight: false,
-                      });
-                    }
-                  }}
+                  // onChange={textEditor.LesionsRight.onChange}
+                  // onManualEdit={() => {
+                  //   if (syncStatus.LesionsRight) {
+                  //     setsyncStatus({
+                  //       ...syncStatus,
+                  //       LesionsRight: false,
+                  //     });
+                  //   }
+                  // }}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           <div className={`${readOnly ? "pointer-events-none" : ""}`}>
@@ -430,8 +435,10 @@ const RightReport: React.FC<RightReportProps> = ({
               handleReportInputChange={syncHandleReportChange}
               questionIds={ComparisonPriorRightQuestion}
               side="Right"
+              textEditorVal={textEditor.ComparisonPrior.value}
+              textEditorOnChange={textEditor.ComparisonPrior.onChange}
             />
-            {getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ===
+            {/* {getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ===
               "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
@@ -451,7 +458,7 @@ const RightReport: React.FC<RightReportProps> = ({
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </>
       )}

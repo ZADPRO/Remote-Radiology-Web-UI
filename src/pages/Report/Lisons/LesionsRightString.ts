@@ -21,6 +21,17 @@ interface QuestionIds {
   multipleCystsDatar: number;
 }
 
+export type LesionKeys =
+  | "simple cyst"
+  | "complex cystic structure"
+  | "heterogeneous tissue prominence"
+  | "hypertrophic tissue with microcysts"
+  | "fibronodular density"
+  | "multiple simple cysts"
+  | "others";
+
+export type LesionsVal = Record<LesionKeys, string[]>;
+
 export function LesionsRightString(
   reportFormData: ReportQuestion[],
   questionIds: QuestionIds
@@ -30,7 +41,18 @@ export function LesionsRightString(
 
   if (getAnswer(questionIds.lesionsr) !== "Present") return "";
 
+  const lesionsVal: LesionsVal = {
+    "simple cyst": [],
+    "complex cystic structure": [],
+    "heterogeneous tissue prominence": [],
+    "hypertrophic tissue with microcysts": [],
+    "fibronodular density": [],
+    "multiple simple cysts": [],
+    others: [],
+  };
+
   const createHTMLFromData = (label: string, raw: string, isOther = false) => {
+    const htmlVal: string[] = [];
     let html = "";
     try {
       const dataArray = raw ? JSON.parse(raw) : [];
@@ -76,24 +98,22 @@ export function LesionsRightString(
 
         let sentence = `<span>There ${
           namePart === "multiple simple cysts" ? "are" : "is"
+        }${namePart === "complex cystic structure" ? " a" : ""} ${
+          namePart ?? "lesion"
         }${
-          namePart === "complex cystic structure" ? " a" : ""
-        } ${namePart ?? "lesion"}${
           namePart === "multiple simple cysts" && data.atleast
             ? ` atleast ${data.atleast}`
             : ""
         }`;
 
-         // Distance from nipple
+        // Distance from nipple
         // if (data.distancenipple) {
-          sentence += `${
-            namePart !== "heterogeneous tissue prominence" &&
-            namePart !== "hypertrophic tissue with microcysts"
-              ? `, `
-              : ``
-          } ${
-            namePart === "multiple simple cysts" ? "largest measuring" : ""
-          }`;
+        sentence += `${
+          namePart !== "heterogeneous tissue prominence" &&
+          namePart !== "hypertrophic tissue with microcysts"
+            ? `, `
+            : ``
+        } ${namePart === "multiple simple cysts" ? "largest measuring" : ""}`;
         // }
 
         // Add location if available
@@ -136,14 +156,14 @@ export function LesionsRightString(
           sentence += `, located at ${data.locationLevelPercentage}`;
         }
 
-        if(data.distancenipple){
+        if (data.distancenipple) {
           sentence += `,
           ${
             namePart === "heterogeneous tissue prominence" ||
             namePart === "hypertrophic tissue with microcysts"
               ? `spanning`
               : `approximately`
-          } ${data.distancenipple} mm from the nipple`
+          } ${data.distancenipple} mm from the nipple`;
         }
 
         if (data.sizew || data.sizel || data.sizeh) {
@@ -209,17 +229,22 @@ export function LesionsRightString(
         }
 
         sentence += ".</span><br /><br />";
+        htmlVal.push(sentence);
         html += sentence;
       });
     } catch (err) {
       console.error("Invalid JSON:", err);
     }
-    return html;
+    return htmlVal;
   };
 
   let finalHTML = "";
 
   if (getAnswer(questionIds.simplecrstr) === "Present") {
+    lesionsVal["simple cyst"] = createHTMLFromData(
+      "simple cyst",
+      getAnswer(questionIds.simplecrstDatar)
+    );
     finalHTML += createHTMLFromData(
       "simple cyst",
       getAnswer(questionIds.simplecrstDatar)
@@ -227,6 +252,10 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.complexcrstr) === "Present") {
+    lesionsVal["complex cystic structure"] = createHTMLFromData(
+      "complex cystic structure",
+      getAnswer(questionIds.complexcrstDatar)
+    );
     finalHTML += createHTMLFromData(
       "complex cystic structure",
       getAnswer(questionIds.complexcrstDatar)
@@ -234,6 +263,10 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.Heterogeneousstr) === "Present") {
+    lesionsVal["heterogeneous tissue prominence"] = createHTMLFromData(
+      "heterogeneous tissue prominence",
+      getAnswer(questionIds.HeterogeneousDatar)
+    );
     finalHTML += createHTMLFromData(
       "heterogeneous tissue prominence",
       getAnswer(questionIds.HeterogeneousDatar)
@@ -241,6 +274,10 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.Hypertrophicstr) === "Present") {
+    lesionsVal["hypertrophic tissue with microcysts"] = createHTMLFromData(
+      "hypertrophic tissue with microcysts",
+      getAnswer(questionIds.HypertrophicDatar)
+    );
     finalHTML += createHTMLFromData(
       "hypertrophic tissue with microcysts",
       getAnswer(questionIds.HypertrophicDatar)
@@ -248,6 +285,10 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.fibronodulardensitystr) === "Present") {
+    lesionsVal["fibronodular density"] = createHTMLFromData(
+      "fibronodular density",
+      getAnswer(questionIds.fibronodulardensityDatar)
+    );
     finalHTML += createHTMLFromData(
       "fibronodular density",
       getAnswer(questionIds.fibronodulardensityDatar)
@@ -255,6 +296,10 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.multipleCystsstr) === "Present") {
+    lesionsVal["multiple simple cysts"] = createHTMLFromData(
+      "multiple simple cysts",
+      getAnswer(questionIds.multipleCystsDatar)
+    );
     finalHTML += createHTMLFromData(
       "multiple simple cysts",
       getAnswer(questionIds.multipleCystsDatar)
@@ -262,6 +307,11 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.Otherstr) === "Present") {
+    lesionsVal["others"] = createHTMLFromData(
+      "",
+      getAnswer(questionIds.OtherDatar),
+      true
+    );
     finalHTML += createHTMLFromData(
       "",
       getAnswer(questionIds.OtherDatar),
@@ -269,5 +319,5 @@ export function LesionsRightString(
     );
   }
 
-  return finalHTML.trim();
+  return JSON.stringify(lesionsVal);
 }

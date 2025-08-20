@@ -27,6 +27,17 @@ export interface AppointmentStatus {
   refAppointmentImpressionAdditionalRight: string;
   refAppointmentRecommendationAdditionalRight: string;
   refAppointmentCommonImpressionRecommendationRight: string;
+  refAppointmentPatietHistory: string;
+  refAppointmentBreastImplantImageText: string;
+  refAppointmentSymmetryImageText: string;
+  refAppointmentBreastdensityImageText: string;
+  refAppointmentNippleAreolaImageText: string;
+  refAppointmentGlandularImageText: string;
+  refAppointmentLymphnodeImageText: string;
+  refAppointmentBreastdensityImageTextLeft: string;
+  refAppointmentNippleAreolaImageTextLeft: string;
+  refAppointmentGlandularImageTextLeft: string;
+  refAppointmentLymphnodeImageTextLeft: string;
 }
 
 export interface ReportHistoryData {
@@ -165,6 +176,29 @@ export const reportService = {
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/submitReport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+   autosaveReport: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/autosaveReport`,
       { encryptedData: payload },
       {
         headers: {

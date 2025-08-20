@@ -61,7 +61,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
   handleReportInputChange,
   patientFormData,
   handlePatientInputChange,
-  technicianFormData,
+  // technicianFormData,
   textEditor,
   syncStatus,
   setsyncStatus,
@@ -94,10 +94,8 @@ const GeneralReport: React.FC<RightReportProps> = ({
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-  const getTechnicianAnswer = (id: number) =>
-    technicianFormData.find((q) => q.questionId === id)?.answer || "";
-
-  console.log(getTechnicianAnswer(22));
+  // const getTechnicianAnswer = (id: number) =>
+  //   technicianFormData.find((q) => q.questionId === id)?.answer || "";
 
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">

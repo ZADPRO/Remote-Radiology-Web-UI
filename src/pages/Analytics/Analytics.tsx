@@ -101,7 +101,9 @@ const Analytics: React.FC = () => {
     | "totalCaseCountPopover"
     | "previousMonth"
     | "scanIndications"
-    | "turnaroundTime";
+    | "turnaroundTime"
+    | "techArtifact"
+    | "reportArtifact";
 
   const accessMap: Record<AccessKey, UserRole[]> = {
     userselect: ["admin", "manager", "scadmin"],
@@ -130,6 +132,22 @@ const Analytics: React.FC = () => {
       "codoctor",
       "doctor",
       "wgdoctor",
+    ],
+    techArtifact: [
+      "admin",
+      "manager",
+      "wgdoctor",
+      "scadmin",
+      "technician",
+      "codoctor",
+    ],
+    reportArtifact: [
+      "admin",
+      "manager",
+      "wgdoctor",
+      "scadmin",
+      "technician",
+      "codoctor",
     ],
   } as const;
 
@@ -558,13 +576,17 @@ const Analytics: React.FC = () => {
           </div>
         )}
 
-        <div className="w-full">
-          <ArtifactsPie data={techArtifacts} label="Tech Artifact" />
-        </div>
+        {!handleComponentAccess("techArtifact") && (
+          <div className="w-full">
+            <ArtifactsPie data={techArtifacts} label="Tech Artifact" />
+          </div>
+        )}
 
-        <div className="w-full">
-          <ArtifactsPie data={reportArtifacts} label="Report Artifact" />
-        </div>
+        {!handleComponentAccess("reportArtifact") && (
+          <div className="w-full">
+            <ArtifactsPie data={reportArtifacts} label="Report Artifact" />
+          </div>
+        )}
       </div>
     </div>
   );

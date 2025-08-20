@@ -4,9 +4,11 @@ import GridNumber200 from "@/components/ui/CustomComponents/GridNumber200";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash, X } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ReportQuestion } from "../Report";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
+import TextEditor from "@/components/TextEditor";
+import { LesionsVal } from "./LesionsRightString";
 
 interface Props {
   reportFormData: ReportQuestion[];
@@ -15,6 +17,8 @@ interface Props {
   mainQId: number;
   DataQId: number;
   other?: boolean;
+  textEditorVal?: string;
+  textEditorOnChange?: (value: string) => void;
 }
 
 const LesionsOptions: React.FC<Props> = ({
@@ -24,9 +28,54 @@ const LesionsOptions: React.FC<Props> = ({
   mainQId,
   DataQId,
   other,
+  textEditorVal,
+  textEditorOnChange,
 }) => {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
+
+  const [sectionVal, setSectionVal] = useState<keyof LesionsVal | null>(null);
+  const [editorVal, setEditorVal] = useState<LesionsVal>({
+    "simple cyst": [],
+    "complex cystic structure": [],
+    "heterogeneous tissue prominence": [],
+    "hypertrophic tissue with microcysts": [],
+    "fibronodular density": [],
+    "multiple simple cysts": [],
+    others: [],
+  });
+
+  useEffect(() => {
+    // Set sectionVal based on LabelVal
+    setSectionVal(LabelVal.toLowerCase() as keyof LesionsVal);
+
+    // Safely parse editor value or fallback to empty LesionsVal
+    try {
+      const parsed: LesionsVal = textEditorVal
+        ? JSON.parse(textEditorVal)
+        : {
+            "simple cyst": [],
+            "complex cystic structure": [],
+            "heterogeneous tissue prominence": [],
+            "hypertrophic tissue with microcysts": [],
+            "fibronodular density": [],
+            "multiple simple cysts": [],
+            others: [],
+          };
+      setEditorVal(parsed);
+    } catch (err) {
+      console.error("Invalid JSON in textEditorVal:", err);
+      setEditorVal({
+        "simple cyst": [],
+        "complex cystic structure": [],
+        "heterogeneous tissue prominence": [],
+        "hypertrophic tissue with microcysts": [],
+        "fibronodular density": [],
+        "multiple simple cysts": [],
+        others: [],
+      });
+    }
+  }, [LabelVal, textEditorVal, reportFormData]);
 
   return (
     <>
@@ -69,6 +118,7 @@ const LesionsOptions: React.FC<Props> = ({
                     locationclockpositionto: string;
                     locationLevelPercentageto: string;
                     atleast: string;
+                    ImageText: string;
                   }[] = [];
 
                   try {
@@ -132,6 +182,7 @@ const LesionsOptions: React.FC<Props> = ({
                       locationclockpositionto: "",
                       locationLevelPercentageto: "",
                       atleast: "",
+                      ImageText: "",
                     },
                   ];
                   handleReportInputChange(DataQId, JSON.stringify(updated));
@@ -410,8 +461,7 @@ const LesionsOptions: React.FC<Props> = ({
                                   value={data.atleast}
                                   onChange={(e) => {
                                     const updated = [...dataArray];
-                                    updated[index].atleast =
-                                      e.target.value;
+                                    updated[index].atleast = e.target.value;
                                     handleReportInputChange(
                                       DataQId,
                                       JSON.stringify(updated)
@@ -780,6 +830,45 @@ const LesionsOptions: React.FC<Props> = ({
                           }}
                         />
                       </div>
+                    </div>
+                    <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
+                      <div className="flex items-center justify-between mb-2">
+                        {" "}
+                        <span className="text-2xl">Report Preview</span>
+                      </div>
+                      {sectionVal && (
+                        <TextEditor
+                          value={editorVal[sectionVal]?.[index] || ""}
+                          onChange={(val) => {
+                            const updated = { ...editorVal };
+                            updated[sectionVal] = [
+                              ...(updated[sectionVal] || []),
+                            ];
+                            updated[sectionVal][index] = val;
+
+                            textEditorOnChange?.(JSON.stringify(updated));
+                          }}
+                        />
+                      )}
+                    </div>
+                    <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
+                      <div className="flex items-center justify-between mb-2">
+                        {" "}
+                        <span className="text-2xl">Image Preview</span>
+                      </div>
+                      {sectionVal && (
+                        <TextEditor
+                          value={data.ImageText}
+                          onChange={(e) => {
+                            const updated = [...dataArray];
+                            updated[index].ImageText = e;
+                            handleReportInputChange(
+                              DataQId,
+                              JSON.stringify(updated)
+                            );
+                          }}
+                        />
+                      )}
                     </div>
                     {index !== dataArray.length - 1 && <hr />}
                   </div>

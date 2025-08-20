@@ -27,8 +27,17 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
 import { FinalAddendumText, reportService } from "@/services/reportService";
+import { LesionsVal } from "./Lisons/LesionsRightString";
 
 interface TextEditorProps {
+  patientHistory: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  breastImplantImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   breastImplant: {
     value: string;
     onChange: (value: string) => void;
@@ -37,11 +46,23 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  breastDensityandImageRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   nippleAreolaSkinRight: {
     value: string;
     onChange: (value: string) => void;
   };
+  nippleAreolaSkinRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   LesionsRight: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LesionsRightImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -53,7 +74,15 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  grandularAndDuctalTissueRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   LymphNodesRight: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LymphNodesRightImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -74,6 +103,10 @@ interface TextEditorProps {
     onChange: (value: string) => void;
   };
   grandularAndDuctalTissueLeft: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  breastDensityandImageLeftImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -137,6 +170,22 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  nippleAreolaSkinLeftImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  grandularAndDuctalTissueLeftImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LymphNodesLeftImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  symmetryImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
 }
 
 interface ReportQuestion {
@@ -185,7 +234,7 @@ const NotesReport: React.FC<Props> = ({
   ScancenterCode,
   studyTime,
   patientDetails,
-  // readOnly,
+  readOnly,
   patientHistory,
   ScanCenterImg,
   ScancenterAddress,
@@ -197,6 +246,7 @@ const NotesReport: React.FC<Props> = ({
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
+
   const breastDensityRight =
     getAnswer(breastDensityandImageRightQuestions.breastSelect) == "Present"
       ? true
@@ -239,14 +289,53 @@ const NotesReport: React.FC<Props> = ({
     getAnswer(LymphNodesLeftQuestions.Intramammaryr) == "Present"
       ? true
       : false;
-  const comparisonLeft =
+  const comparisonLeftVal =
     getAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) == "Present"
       ? true
       : false;
 
   useEffect(() => {
     if (syncStatus.Notes) {
-      setNotes(`
+      let lesionsVal: LesionsVal = {} as LesionsVal;
+
+      try {
+        lesionsVal = JSON.parse(textEditor.LesionsRight.value) as LesionsVal;
+      } catch (err) {
+        console.log(err);
+        lesionsVal = {} as LesionsVal;
+      }
+
+      let lesionsValLeft: LesionsVal = {} as LesionsVal;
+
+      try {
+        lesionsValLeft = JSON.parse(textEditor.LesionsLeft.value) as LesionsVal;
+      } catch (err) {
+        console.log(err);
+        lesionsValLeft = {} as LesionsVal;
+      }
+
+      let comparison: string[] = [];
+
+      try {
+        comparison = JSON.parse(textEditor.ComparisonPrior.value) as string[];
+      } catch (err) {
+        console.log(err);
+        comparison = [] as string[];
+      }
+
+      let comparisonLeft: string[] = [];
+
+      try {
+        comparisonLeft = JSON.parse(
+          textEditor.ComparisonPriorLeft.value
+        ) as string[];
+      } catch (err) {
+        console.log(err);
+        comparisonLeft = [] as string[];
+      }
+
+      setNotes(
+        `
        <div>
     ${
       ScanCenterImg?.base64Data
@@ -295,13 +384,19 @@ const NotesReport: React.FC<Props> = ({
   <br />
   <div><strong>BREAST IMPLANTS:</strong><br />${
     textEditor.breastImplant.value
-  }</div>
+  }${
+          textEditor.breastImplantImage.value
+            ? textEditor.breastImplantImage.value
+            : ""
+        }</div>
 
   ${
     textEditor.symmetry.value
       ? `
     <br />
-  <div>${textEditor.symmetry.value}</div>
+  <div>${textEditor.symmetry.value}${
+          textEditor.symmetryImage.value ? textEditor.symmetryImage.value : ""
+        }</div>
     `
       : ``
   }
@@ -310,36 +405,207 @@ const NotesReport: React.FC<Props> = ({
   ${
     getAnswer(130) === "Present"
       ? `
-    <p><strong>RIGHT BREAST FINDINGS:</strong></p><br />
+    <p><strong>RIGHT BREAST FINDINGS:</strong></p>
 
   ${
     breastDensityRight
-      ? `<p><strong>BREAST DENSITY & IMAGE QUALITY:</strong><br />${textEditor.breastDensityandImageRight.value}</p><br />`
+      ? `<strong>BREAST DENSITY & IMAGE QUALITY:</strong><br /><span>${
+          textEditor.breastDensityandImageRight.value
+        }</span>${
+          textEditor.breastDensityandImageRightImage.value.length > 7
+            ? `<span>${textEditor.breastDensityandImageRightImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     nippleAreolaRight
-      ? `<p><strong>NIPPLE, AREOLA & SKIN:</strong><br />${textEditor.nippleAreolaSkinRight.value}</p><br />`
+      ? `<h4><strong>NIPPLE, AREOLA & SKIN:</strong></h4>${
+          textEditor.nippleAreolaSkinRight.value
+        }${
+          textEditor.nippleAreolaSkinRightImage.value.length > 7
+            ? `<span>${textEditor.nippleAreolaSkinRightImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     glandularRight
-      ? `<p><strong>GLANDULAR AND DUCTAL TISSUE:</strong><br />${textEditor.grandularAndDuctalTissueRight.value}</p><br />`
+      ? `<h4><strong>GLANDULAR AND DUCTAL TISSUE:</strong></h4>${
+          textEditor.grandularAndDuctalTissueRight.value
+        }${
+          textEditor.grandularAndDuctalTissueRightImage.value.length > 7
+            ? `<span>${textEditor.grandularAndDuctalTissueRightImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     lessionsRight
-      ? `<p><strong>LESIONS:</strong><br />${textEditor.LesionsRight.value}</p><br />`
+      ? `<h4><strong>LESIONS:</strong></h4>${
+          lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
+            ? lesionsVal["simple cyst"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(lesionsRightQuestions.simplecrstDatar);
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("<br/>")
+            : ""
+        }${
+          lesionsVal["complex cystic structure"] &&
+          lesionsVal["complex cystic structure"].length > 0
+            ? lesionsVal["complex cystic structure"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(lesionsRightQuestions.complexcrstDatar);
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
+          lesionsVal["heterogeneous tissue prominence"] &&
+          lesionsVal["heterogeneous tissue prominence"].length > 0
+            ? lesionsVal["heterogeneous tissue prominence"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsRightQuestions.HeterogeneousDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
+          lesionsVal["hypertrophic tissue with microcysts"] &&
+          lesionsVal["hypertrophic tissue with microcysts"].length > 0
+            ? lesionsVal["hypertrophic tissue with microcysts"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsRightQuestions.HypertrophicDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
+          lesionsVal["fibronodular density"] &&
+          lesionsVal["fibronodular density"].length > 0
+            ? lesionsVal["fibronodular density"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsRightQuestions.fibronodulardensityDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
+          lesionsVal["multiple simple cysts"] &&
+          lesionsVal["multiple simple cysts"].length > 0
+            ? lesionsVal["multiple simple cysts"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsRightQuestions.multipleCystsDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
+          lesionsVal["others"] && lesionsVal["others"].length > 0
+            ? lesionsVal["others"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(lesionsRightQuestions.OtherDatar);
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    "<br />" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }<br/>`
       : ``
   }
   ${
     lymphRight
-      ? `<p><strong>LYMPH NODES:</strong><br />${textEditor.LymphNodesRight.value}</p><br />`
+      ? `<h4><strong>LYMPH NODES:</strong></h4>${
+          textEditor.LymphNodesRight.value
+        }${
+          textEditor.LymphNodesRightImage.value.length > 7
+            ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     comparisonRight
-      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPrior.value}</p><br />`
+      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${comparison
+          .map((data, index) => {
+            let dataArray: any[] = [];
+            const raw = getAnswer(ComparisonPriorRightQuestion.LesionCompTable);
+            dataArray = raw ? JSON.parse(raw) : [];
+
+            return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
+          })
+          .join("<br/>")}</p>`
       : ``
   }
     `
@@ -353,32 +619,206 @@ const NotesReport: React.FC<Props> = ({
 
   ${
     breastDensityLeft
-      ? `<p><strong>BREAST DENSITY & IMAGE QUALITY:</strong><br />${textEditor.breastDensityandImageLeft.value}</p><br />`
+      ? `<strong>BREAST DENSITY & IMAGE QUALITY:</strong><br /><span>${
+          textEditor.breastDensityandImageLeft.value
+        }</span>${
+          textEditor.breastDensityandImageLeftImage.value.length > 7
+            ? `<span>${textEditor.breastDensityandImageLeftImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     nippleAreolaLeft
-      ? `<p><strong>NIPPLE, AREOLA & SKIN:</strong><br />${textEditor.nippleAreolaSkinLeft.value}</p><br />`
+      ? `<h4><strong>NIPPLE, AREOLA & SKIN:</strong></h4>${
+          textEditor.nippleAreolaSkinLeft.value
+        }${
+          textEditor.nippleAreolaSkinLeftImage.value.length > 7
+            ? `<span>${textEditor.nippleAreolaSkinLeftImage.value}<br/><span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
     glandularLeft
-      ? `<p><strong>GLANDULAR AND DUCTAL TISSUE:</strong><br />${textEditor.grandularAndDuctalTissueLeft.value}</p><br />`
+      ? `<h4><strong>GLANDULAR AND DUCTAL TISSUE:</strong></h4>${
+          textEditor.grandularAndDuctalTissueLeft.value
+        }${
+          textEditor.grandularAndDuctalTissueLeftImage.value.length > 7
+            ? `<span>${textEditor.grandularAndDuctalTissueLeftImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
-  ${
-    lessionsLeft
-      ? `<p><strong>LESIONS:</strong><br />${textEditor.LesionsLeft.value}</p><br />`
-      : ``
-  }
+    ${
+      lessionsLeft
+        ? `<h4><strong>LESIONS:</strong></h4>${
+            lesionsValLeft["simple cyst"] &&
+            lesionsValLeft["simple cyst"].length > 0
+              ? lesionsValLeft["simple cyst"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(lesionsLeftQuestions.simplecrstDatar);
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("<br/>")
+              : ""
+          }${
+            lesionsValLeft["complex cystic structure"] &&
+            lesionsValLeft["complex cystic structure"].length > 0
+              ? lesionsValLeft["complex cystic structure"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.complexcrstDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
+            lesionsValLeft["heterogeneous tissue prominence"] &&
+            lesionsValLeft["heterogeneous tissue prominence"].length > 0
+              ? lesionsValLeft["heterogeneous tissue prominence"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.HeterogeneousDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
+            lesionsValLeft["hypertrophic tissue with microcysts"] &&
+            lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
+              ? lesionsValLeft["hypertrophic tissue with microcysts"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.HypertrophicDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
+            lesionsValLeft["fibronodular density"] &&
+            lesionsValLeft["fibronodular density"].length > 0
+              ? lesionsValLeft["fibronodular density"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.fibronodulardensityDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
+            lesionsValLeft["multiple simple cysts"] &&
+            lesionsValLeft["multiple simple cysts"].length > 0
+              ? lesionsValLeft["multiple simple cysts"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.multipleCystsDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
+            lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
+              ? lesionsValLeft["others"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(lesionsLeftQuestions.OtherDatar);
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      "<br />" +
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }`
+        : ``
+    }
   ${
     lymphLeft
-      ? `<p><strong>LYMPH NODES:</strong><br />${textEditor.LymphNodesLeft.value}</p><br />`
+      ? `<h4><strong>LYMPH NODES:</strong></h4>${
+          textEditor.LymphNodesLeft.value
+        }${
+          textEditor.LymphNodesLeftImage.value.length > 7
+            ? `<span>${textEditor.LymphNodesLeftImage.value}<br/></span>`
+            : "<p><br/></p>"
+        }`
       : ``
   }
   ${
-    comparisonLeft
-      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${textEditor.ComparisonPriorLeft.value}</p><br />`
+    comparisonLeftVal
+      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${comparisonLeft
+          .map((data, index) => {
+            let dataArray: any[] = [];
+            const raw = getAnswer(ComparisonPriorLeftQuestion.LesionCompTable);
+            dataArray = raw ? JSON.parse(raw) : [];
+
+            return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
+          })
+          .join("<br/>")}</p>`
       : ``
   }
     `
@@ -392,7 +832,11 @@ const NotesReport: React.FC<Props> = ({
     <h3><strong>RIGHT BREAST:</strong></h3>
   <p><strong>IMPRESSION:</strong></p>
   <p>${textEditor.ImpressionTextRight.value}</p>
- <p> ${textEditor.OptionalImpressionTextRight.value}</p>
+  ${
+    textEditor.OptionalImpressionTextRight.value.length > 7
+      ? ` <p> ${textEditor.OptionalImpressionTextRight.value}</p>`
+      : ""
+  }
 
  ${
    textEditor.CommonImpresRecommTextRightVal.value === "A" ||
@@ -406,7 +850,11 @@ const NotesReport: React.FC<Props> = ({
 
   <br/><p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationTextRight.value}</p>
-  <p>${textEditor.OptionalRecommendationTextRight.value}</p>
+  ${
+    textEditor.OptionalRecommendationTextRight.value.length > 7
+      ? `<p>${textEditor.OptionalRecommendationTextRight.value}</p>`
+      : ""
+  }
 
    ${
      textEditor.CommonImpresRecommTextRightVal.value !== "A" &&
@@ -414,7 +862,7 @@ const NotesReport: React.FC<Props> = ({
      textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "N" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "T"
-       ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p><br/>`
+       ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p>`
        : ``
    }
 <br/>
@@ -428,35 +876,41 @@ const NotesReport: React.FC<Props> = ({
         <h3><strong>LEFT BREAST:</strong></h3>
   <p><strong>IMPRESSION:</strong></p>
   <p>${textEditor.ImpressionText.value}</p>
- <p> ${textEditor.OptionalImpressionText.value}</p>
+  ${
+    textEditor.OptionalImpressionText.value.length > 7
+      ? ` <p> ${textEditor.OptionalImpressionText.value}</p>`
+      : ""
+  }
+
  ${
    textEditor.CommonImpresRecommTextVal.value === "A" ||
    textEditor.CommonImpresRecommTextVal.value === "B" ||
    textEditor.CommonImpresRecommTextVal.value === "I" ||
    textEditor.CommonImpresRecommTextVal.value === "N" ||
    textEditor.CommonImpresRecommTextVal.value === "T"
-     ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
+     ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
   <br/><p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationText.value}</p>
-  <p>${textEditor.OptionalRecommendationText.value}</p>
-
+ ${
+   textEditor.OptionalRecommendationText.value.length > 7
+     ? `<p>${textEditor.OptionalRecommendationText.value}</p>`
+     : ""
+ }
+  
   ${
     textEditor.CommonImpresRecommTextVal.value !== "A" &&
     textEditor.CommonImpresRecommTextVal.value !== "B" &&
     textEditor.CommonImpresRecommTextVal.value !== "I" &&
     textEditor.CommonImpresRecommTextVal.value !== "N" &&
     textEditor.CommonImpresRecommTextVal.value !== "T"
-      ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p><br/>`
+      ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p>`
       : ``
   }
- 
     `
       : ``
   }
-
-
   <strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
   <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
   <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
@@ -466,14 +920,27 @@ const NotesReport: React.FC<Props> = ({
   </p></i>
   <i><p>QT’s first blinded trial: Malik B, Iuanow E, Klock J. An Exploratory Multi-reader, Multicase Study Comparing Transmission Ultrasound to Mammography on Recall Rates and Detection Rates for Breast Cancer Lesions. Academic Radiology February 2021. https://www.sciencedirect.com/science/article/pii/S1076633220306462 ; https://doi.org/10.1016/j.acra.2020.11.011 </p></i>
   <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
-`+ (textEditor.addendumText.value.length > 0 ? "<br/><h3><strong>ADDENDUM:</strong></h3>" + textEditor.addendumText.value : ""));
+` +
+          (textEditor.addendumText.value.length > 0
+            ? "<br/><h3><strong>ADDENDUM:</strong></h3>" +
+              textEditor.addendumText.value
+            : "")
+      );
+    } else {
+      setNotes(
+        Notes.split("<h3><strong>ADDENDUM:</strong></h3>")[0] +
+          (textEditor.addendumText.value.length > 0
+            ? "<h3><strong>ADDENDUM:</strong></h3>" +
+              textEditor.addendumText.value
+            : "")
+      );
     }
   }, [
     reportFormData,
     syncStatus,
     patientHistory,
     textEditor.breastImplant.value,
-    textEditor.addendumText.value
+    textEditor.addendumText.value,
   ]);
 
   const [addButton, setAddButton] = useState<boolean>(false);
@@ -488,16 +955,18 @@ const NotesReport: React.FC<Props> = ({
       );
 
       console.log(response);
-      
+
       setAddButton(false);
       setAddendumText("");
 
       if (response.status) {
         textEditor.addendumText.onChange(
-          response.data.map(
-            (data: FinalAddendumText) =>
-              `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
-          ).join("<br/><br/>")
+          response.data
+            .map(
+              (data: FinalAddendumText) =>
+                `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
+            )
+            .join("<br/><br/>")
         );
       }
       // textEditor.addendumText.onChange("");
@@ -598,7 +1067,7 @@ const NotesReport: React.FC<Props> = ({
           <TextEditor
             value={Notes}
             onChange={setNotes}
-            readOnly={syncStatus.Notes}
+            readOnly={syncStatus.Notes || readOnly}
             height="60vh"
           />
 

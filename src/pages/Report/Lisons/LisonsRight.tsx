@@ -28,6 +28,8 @@ interface Props {
   handleReportInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
   label: string;
+  textEditorVal: string;
+  textEditorOnChange: (value: string) => void;
 }
 
 const LisonsRight: React.FC<Props> = ({
@@ -35,6 +37,8 @@ const LisonsRight: React.FC<Props> = ({
   reportFormData,
   handleReportInputChange,
   label,
+  textEditorVal,
+  textEditorOnChange,
 }) => {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
@@ -79,6 +83,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Simple Cyst"}
             mainQId={questionIds.simplecrstr}
             DataQId={questionIds.simplecrstDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           <LesionsOptions
@@ -87,6 +93,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Complex Cystic Structure"}
             mainQId={questionIds.complexcrstr}
             DataQId={questionIds.complexcrstDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           <LesionsOptions
@@ -95,6 +103,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Heterogeneous Tissue Prominence"}
             mainQId={questionIds.Heterogeneousstr}
             DataQId={questionIds.HeterogeneousDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           <LesionsOptions
@@ -103,6 +113,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Hypertrophic Tissue with Microcysts"}
             mainQId={questionIds.Hypertrophicstr}
             DataQId={questionIds.HypertrophicDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           <LesionsOptions
@@ -111,6 +123,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Fibronodular Density"}
             mainQId={questionIds.fibronodulardensitystr}
             DataQId={questionIds.fibronodulardensityDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           <LesionsOptions
@@ -119,6 +133,8 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Multiple Simple Cysts"}
             mainQId={questionIds.multipleCystsstr}
             DataQId={questionIds.multipleCystsDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
 
           {/* <LesionsOptionsOther
@@ -136,6 +152,8 @@ const LisonsRight: React.FC<Props> = ({
             mainQId={questionIds.Otherstr}
             DataQId={questionIds.OtherDatar}
             other={true}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
           />
         </>
       )}
