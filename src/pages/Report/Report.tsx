@@ -129,8 +129,37 @@ export interface FileData {
   contentType: string;
 }
 
+// type ChangedOneState = {
+//   reportQuestion: number[]; // or number[]
+//   reportTextContent: boolean;
+//   syncStatus: boolean;
+//   impression: boolean;
+//   recommendation: boolean;
+//   impressionaddtional: boolean;
+//   recommendationaddtional: boolean;
+//   commonImpressionRecommendation: boolean;
+//   impressionRight: boolean;
+//   recommendationRight: boolean;
+//   impressionaddtionalRight: boolean;
+//   recommendationaddtionalRight: boolean;
+//   commonImpressionRecommendationRight: boolean;
+//   artificatsLeft: boolean;
+//   artificatsRight: boolean;
+//   patienthistory: boolean;
+//   breastimplantImageText: boolean;
+//   symmetryImageText: boolean;
+//   breastdensityImageText: boolean;
+//   nippleareolaImageText: boolean;
+//   glandularImageText: boolean;
+//   lymphnodesImageText: boolean;
+//   breastdensityImageTextLeft: boolean;
+//   nippleareolaImageTextLeft: boolean;
+//   glandularImageTextLeft: boolean;
+//   lymphnodesImageTextLeft: boolean;
+// };
+
 const Report: React.FC = () => {
-  // const [changedOne, setChangedOne] = useState({
+  // const [changedOne, setChangedOne] = useState<ChangedOneState>({
   //   reportQuestion: [],
   //   reportTextContent: false,
   //   syncStatus: false,
@@ -241,7 +270,7 @@ const Report: React.FC = () => {
     } else navigate(-1);
   };
 
-  const [reportFormData, setReportFormData] = useState<ReportQuestion[]>([]); //current higgest question id: 131
+  const [reportFormData, setReportFormData] = useState<ReportQuestion[]>([]); //current higgest question id: 133
 
   const [syncStatus, setsyncStatus] = useState({
     breastImplant: true,
@@ -380,6 +409,10 @@ const Report: React.FC = () => {
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
+    // setChangedOne((prev) => ({
+    //   ...prev,
+    //   reportQuestion: [...prev.reportQuestion, questionId],
+    // }));
     setReportFormData((prevData) =>
       prevData.map((q) =>
         q.questionId === questionId ? { ...q, answer: value } : q
@@ -808,7 +841,7 @@ const Report: React.FC = () => {
           setReportFormData(response.reportIntakeFormData);
         } else {
           setReportFormData(
-            Array.from({ length: 131 }, (_, index) => ({
+            Array.from({ length: 133 }, (_, index) => ({
               questionId: 1 + index,
               answer: "",
             }))
@@ -1357,7 +1390,7 @@ const Report: React.FC = () => {
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
-  //     setTimeOut((prev) => !prev); // toggle value every 1.5s
+  //     setTimeOut((prev) => !prev); // toggle value every 10s
   //   }, 10000);
 
   //   return () => clearInterval(interval); // cleanup on unmount
