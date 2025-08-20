@@ -1,3 +1,4 @@
+import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ interface IntakeOption {
 interface QuestionIds {
   postscan: number;
   artifactsstaus: number;
-  artifactsother: number;
+  artifactsDirection: number;
   reprocessing: number;
   confirmation: number;
 }
@@ -135,9 +136,7 @@ const AddintionalNotes: React.FC<Props> = ({
           key={item.id}
           className={cn(
             "flex items-center flex-col lg:flex-row justify-between p-1 lg:mx-10 border rounded-md transition-all duration-200",
-            isFilledForm
-              ? "bg-green-50 border-green-400"
-              : ""
+            isFilledForm ? "bg-green-50 border-green-400" : ""
           )}
         >
           <span
@@ -154,17 +153,16 @@ const AddintionalNotes: React.FC<Props> = ({
 
           {isNoSelected && (
             <button
-  type="button" // important: prevents form submit
-  onClick={(e) => {
-    e.preventDefault(); // stop default form behaviour
-    // e.stopPropagation(); // stop parent click events
-    handleShift(parseInt(item.id));
-  }}
-  className="px-3 text-xs sm:text-sm rounded bg-yellow-100 min-w-30 self-end cursor-pointer text-yellow-800 hover:bg-yellow-200 transition-colors"
->
-  Fill Form
-</button>
-
+              type="button" // important: prevents form submit
+              onClick={(e) => {
+                e.preventDefault(); // stop default form behaviour
+                // e.stopPropagation(); // stop parent click events
+                handleShift(parseInt(item.id));
+              }}
+              className="px-3 text-xs sm:text-sm rounded bg-yellow-100 min-w-30 self-end cursor-pointer text-yellow-800 hover:bg-yellow-200 transition-colors"
+            >
+              Fill Form
+            </button>
           )}
         </div>
       );
@@ -262,8 +260,8 @@ const AddintionalNotes: React.FC<Props> = ({
               ["No", "Yes"]
             )}
             {getAnswer(questionIds.artifactsstaus) === "Yes" && (
-              <>
-                <Input
+              <div className="flex items-center space-x-2">
+                {/* <Input
                   placeholder="Specify"
                   className="w-full sm:w-88.5"
                   value={getAnswer(questionIds.artifactsother)}
@@ -273,8 +271,18 @@ const AddintionalNotes: React.FC<Props> = ({
                       e.target.value
                     )
                   }
-                />
-              </>
+                /> */}
+                <div className="text-gray-500">|</div>
+                <MultiRadioOptionalInputInline 
+                  questionId={questionIds.artifactsDirection}
+                  handleInputChange={handleInputChange}
+                  formData={technicianFormData}
+                  options={[
+                    {label: "Right", value:"Right"},
+                    {label: "Left", value:"Left"},
+                    {label: "Both", value:"Both"},
+                  ]}/>
+              </div>
             )}
           </div>
         </div>

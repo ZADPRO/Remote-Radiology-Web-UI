@@ -28,11 +28,23 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  breastDensityandImageRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   nippleAreolaSkinRight: {
     value: string;
     onChange: (value: string) => void;
   };
+  nippleAreolaSkinRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   LesionsRight: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LesionsRightImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -44,7 +56,15 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  grandularAndDuctalTissueRightImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   LymphNodesRight: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LymphNodesRightImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -144,10 +164,13 @@ const RightReport: React.FC<RightReportProps> = ({
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
-  console.log("aaaa", syncStatus.ComparisonPrior);
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
-      <div className={`flex gap-4 py-4 items-center mb-4 -ml-2 ${readOnly ? "pointer-events-none" : ""}`}>
+      <div
+        className={`flex gap-4 py-4 items-center mb-4 -ml-2 ${
+          readOnly ? "pointer-events-none" : ""
+        }`}
+      >
         <div>
           <Checkbox2
             checked={getAnswer(130) === "Present"}
@@ -176,24 +199,40 @@ const RightReport: React.FC<RightReportProps> = ({
             />
             {getAnswer(breastDensityandImageRightQuestions.breastSelect) ===
               "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+
+                  <TextEditor
+                    value={textEditor.breastDensityandImageRight.value}
+                    onChange={textEditor.breastDensityandImageRight.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.breastDensityandImageRight) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          breastDensityandImageRight: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
 
-                <TextEditor
-                  value={textEditor.breastDensityandImageRight.value}
-                  onChange={textEditor.breastDensityandImageRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.breastDensityandImageRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        breastDensityandImageRight: false,
-                      });
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+
+                  <TextEditor
+                    value={textEditor.breastDensityandImageRightImage.value}
+                    onChange={
+                      textEditor.breastDensityandImageRightImage.onChange
                     }
-                  }}
-                />
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -209,11 +248,12 @@ const RightReport: React.FC<RightReportProps> = ({
             />
             {getAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ===
               "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
-                  {/* {syncStatus.nippleAreolaSkinRight ? (
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                    {/* {syncStatus.nippleAreolaSkinRight ? (
                 <Button
                   className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
                   onClick={() => {
@@ -238,19 +278,31 @@ const RightReport: React.FC<RightReportProps> = ({
                   Sync
                 </Button>
               )} */}
+                  </div>
+                  <TextEditor
+                    value={textEditor.nippleAreolaSkinRight.value}
+                    onChange={textEditor.nippleAreolaSkinRight.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.nippleAreolaSkinRight) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          nippleAreolaSkinRight: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.nippleAreolaSkinRight.value}
-                  onChange={textEditor.nippleAreolaSkinRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.nippleAreolaSkinRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        nippleAreolaSkinRight: false,
-                      });
-                    }
-                  }}
-                />
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.nippleAreolaSkinRightImage.value}
+                    onChange={textEditor.nippleAreolaSkinRightImage.onChange}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -265,23 +317,38 @@ const RightReport: React.FC<RightReportProps> = ({
             {getAnswer(
               grandularAndDuctalTissueRightQuestions.grandularSelect
             ) === "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.grandularAndDuctalTissueRight.value}
+                    onChange={textEditor.grandularAndDuctalTissueRight.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.grandularAndDuctalTissueRight) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          grandularAndDuctalTissueRight: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.grandularAndDuctalTissueRight.value}
-                  onChange={textEditor.grandularAndDuctalTissueRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.grandularAndDuctalTissueRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        grandularAndDuctalTissueRight: false,
-                      });
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.grandularAndDuctalTissueRightImage.value}
+                    onChange={
+                      textEditor.grandularAndDuctalTissueRightImage.onChange
                     }
-                  }}
-                />
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -292,8 +359,10 @@ const RightReport: React.FC<RightReportProps> = ({
               reportFormData={reportFormData}
               handleReportInputChange={syncHandleReportChange}
               questionIds={lesionsRightQuestions}
+              textEditorVal={textEditor.LesionsRight.value}
+              textEditorOnChange={textEditor.LesionsRight.onChange}
             />
-            {getAnswer(lesionsRightQuestions.lesionsr) === "Present" && (
+            {/* {getAnswer(lesionsRightQuestions.lesionsr) === "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
                   {" "}
@@ -301,18 +370,18 @@ const RightReport: React.FC<RightReportProps> = ({
                 </div>
                 <TextEditor
                   value={textEditor.LesionsRight.value}
-                  onChange={textEditor.LesionsRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.LesionsRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        LesionsRight: false,
-                      });
-                    }
-                  }}
+                  // onChange={textEditor.LesionsRight.onChange}
+                  // onManualEdit={() => {
+                  //   if (syncStatus.LesionsRight) {
+                  //     setsyncStatus({
+                  //       ...syncStatus,
+                  //       LesionsRight: false,
+                  //     });
+                  //   }
+                  // }}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           <div className={`${readOnly ? "pointer-events-none" : ""}`}>
@@ -325,23 +394,36 @@ const RightReport: React.FC<RightReportProps> = ({
             />
             {getAnswer(LymphNodesRightQuestions.Intramammaryr) ===
               "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.LymphNodesRight.value}
+                    onChange={textEditor.LymphNodesRight.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.LymphNodesRight) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          LymphNodesRight: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.LymphNodesRight.value}
-                  onChange={textEditor.LymphNodesRight.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.LymphNodesRight) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        LymphNodesRight: false,
-                      });
-                    }
-                  }}
-                />
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.LymphNodesRightImage.value}
+                    onChange={textEditor.LymphNodesRightImage.onChange}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -353,8 +435,10 @@ const RightReport: React.FC<RightReportProps> = ({
               handleReportInputChange={syncHandleReportChange}
               questionIds={ComparisonPriorRightQuestion}
               side="Right"
+              textEditorVal={textEditor.ComparisonPrior.value}
+              textEditorOnChange={textEditor.ComparisonPrior.onChange}
             />
-            {getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ===
+            {/* {getAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ===
               "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
@@ -374,7 +458,7 @@ const RightReport: React.FC<RightReportProps> = ({
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </>
       )}

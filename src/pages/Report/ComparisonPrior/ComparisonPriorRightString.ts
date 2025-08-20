@@ -37,13 +37,21 @@ export function ComparisonPriorRightString(
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-  // ✅ Check if QuestionId 52 is "Present"
-  const isComparisonPresent = getAnswer(52);
-  if (isComparisonPresent !== "Present") {
-    return ""; // 🛑 Skip rendering if not Present
-  }
+  const comparisonVal: string[] = [];
 
-  let result = "";
+  // ✅ Check if QuestionId 52 is "Present"
+
+  if (side === "Right") {
+    const isComparisonPresent = getAnswer(52);
+    if (isComparisonPresent !== "Present") {
+      return ""; // 🛑 Skip rendering if not Present
+    }
+  } else if (side === "Left") {
+    const isComparisonPresent = getAnswer(105);
+    if (isComparisonPresent !== "Present") {
+      return ""; // 🛑 Skip rendering if not Present
+    }
+  }
 
   // const findingStatus = getAnswer(questionIds.FindingStatus);
   // const timeFrom = getAnswer(questionIds.doubletimefrom);
@@ -109,6 +117,8 @@ export function ComparisonPriorRightString(
     //   data.previous || ""
     // }</span><br />`;
 
+    let result = "";
+
     result += `${
       data.previous ||
       data.lesionStatus ||
@@ -144,7 +154,13 @@ export function ComparisonPriorRightString(
     } (previously: ${prevLoc}, P${
       data.locationpposition
     })</span><br /><br /></span>`;
+
+    comparisonVal.push(result);
+
+    result += "";
   });
 
-  return result.trim();
+  console.log("^^^^^^^^" + side, comparisonVal);
+
+  return JSON.stringify(comparisonVal);
 }

@@ -28,7 +28,15 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  breastDensityandImageLeftImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   nippleAreolaSkinLeft: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  nippleAreolaSkinLeftImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -44,7 +52,15 @@ interface TextEditorProps {
     value: string;
     onChange: (value: string) => void;
   };
+  grandularAndDuctalTissueLeftImage: {
+    value: string;
+    onChange: (value: string) => void;
+  };
   LymphNodesLeft: {
+    value: string;
+    onChange: (value: string) => void;
+  };
+  LymphNodesLeftImage: {
     value: string;
     onChange: (value: string) => void;
   };
@@ -146,7 +162,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
 
   return (
     <div className="p-5 h-[90vh] space-y-10 overflow-y-scroll">
-      <div className={`flex gap-4 py-4 items-center mb-4 -ml-2 ${readOnly ? "pointer-events-none" : ""}`}>
+      <div
+        className={`flex gap-4 py-4 items-center mb-4 -ml-2 ${
+          readOnly ? "pointer-events-none" : ""
+        }`}
+      >
         <div>
           <Checkbox2
             checked={getAnswer(131) === "Present"}
@@ -175,11 +195,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
             />
             {getAnswer(breastDensityandImageLeftQuestions.breastSelect) ===
               "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
-                  {/* {syncStatus.breastDensityandImageLeft ? (
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                    {/* {syncStatus.breastDensityandImageLeft ? (
               <Button
                 className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
                 onClick={() => {
@@ -204,19 +225,33 @@ const LeftReport: React.FC<LeftReportProps> = ({
                 Sync
               </Button>
             )} */}
+                  </div>
+                  <TextEditor
+                    value={textEditor.breastDensityandImageLeft.value}
+                    onChange={textEditor.breastDensityandImageLeft.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.breastDensityandImageLeft) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          breastDensityandImageLeft: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.breastDensityandImageLeft.value}
-                  onChange={textEditor.breastDensityandImageLeft.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.breastDensityandImageLeft) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        breastDensityandImageLeft: false,
-                      });
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.breastDensityandImageLeftImage.value}
+                    onChange={
+                      textEditor.breastDensityandImageLeftImage.onChange
                     }
-                  }}
-                />
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -232,23 +267,36 @@ const LeftReport: React.FC<LeftReportProps> = ({
             />
             {getAnswer(nippleAreolaSkinLeftQuestions.nippleSelect) ===
               "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.nippleAreolaSkinLeft.value}
+                    onChange={textEditor.nippleAreolaSkinLeft.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.nippleAreolaSkinLeft) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          nippleAreolaSkinLeft: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.nippleAreolaSkinLeft.value}
-                  onChange={textEditor.nippleAreolaSkinLeft.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.nippleAreolaSkinLeft) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        nippleAreolaSkinLeft: false,
-                      });
-                    }
-                  }}
-                />
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.nippleAreolaSkinLeftImage.value}
+                    onChange={textEditor.nippleAreolaSkinLeftImage.onChange}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -263,23 +311,38 @@ const LeftReport: React.FC<LeftReportProps> = ({
             {getAnswer(
               grandularAndDuctalTissueLeftQuestions.grandularSelect
             ) === "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.grandularAndDuctalTissueLeft.value}
+                    onChange={textEditor.grandularAndDuctalTissueLeft.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.grandularAndDuctalTissueLeft) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          grandularAndDuctalTissueLeft: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.grandularAndDuctalTissueLeft.value}
-                  onChange={textEditor.grandularAndDuctalTissueLeft.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.grandularAndDuctalTissueLeft) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        grandularAndDuctalTissueLeft: false,
-                      });
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.grandularAndDuctalTissueLeftImage.value}
+                    onChange={
+                      textEditor.grandularAndDuctalTissueLeftImage.onChange
                     }
-                  }}
-                />
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -290,8 +353,10 @@ const LeftReport: React.FC<LeftReportProps> = ({
               reportFormData={reportFormData}
               handleReportInputChange={syncHandleReportChange}
               questionIds={lesionsLeftQuestions}
+              textEditorVal={textEditor.LesionsLeft.value}
+              textEditorOnChange={textEditor.LesionsLeft.onChange}
             />
-            {getAnswer(lesionsLeftQuestions.lesionsr) === "Present" && (
+            {/* {getAnswer(lesionsLeftQuestions.lesionsr) === "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
                   {" "}
@@ -310,7 +375,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           <div className={`${readOnly ? "pointer-events-none" : ""}`}>
@@ -322,23 +387,36 @@ const LeftReport: React.FC<LeftReportProps> = ({
               questionIds={LymphNodesLeftQuestions}
             />
             {getAnswer(LymphNodesLeftQuestions.Intramammaryr) === "Present" && (
-              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
-                <div className="flex items-center justify-between mb-2">
-                  {" "}
-                  <span className="text-2xl">Report Preview</span>
+              <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Report Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.LymphNodesLeft.value}
+                    onChange={textEditor.LymphNodesLeft.onChange}
+                    onManualEdit={() => {
+                      if (syncStatus.LymphNodesLeft) {
+                        setsyncStatus({
+                          ...syncStatus,
+                          LymphNodesLeft: false,
+                        });
+                      }
+                    }}
+                  />
                 </div>
-                <TextEditor
-                  value={textEditor.LymphNodesLeft.value}
-                  onChange={textEditor.LymphNodesLeft.onChange}
-                  onManualEdit={() => {
-                    if (syncStatus.LymphNodesLeft) {
-                      setsyncStatus({
-                        ...syncStatus,
-                        LymphNodesLeft: false,
-                      });
-                    }
-                  }}
-                />
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    {" "}
+                    <span className="text-2xl">Image Preview</span>
+                  </div>
+                  <TextEditor
+                    value={textEditor.LymphNodesLeftImage.value}
+                    onChange={textEditor.LymphNodesLeftImage.onChange}
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -350,8 +428,10 @@ const LeftReport: React.FC<LeftReportProps> = ({
               handleReportInputChange={syncHandleReportChange}
               questionIds={ComparisonPriorLeftQuestion}
               side="Left"
+              textEditorVal={textEditor.ComparisonPriorLeft.value}
+              textEditorOnChange={textEditor.ComparisonPriorLeft.onChange}
             />
-            {getAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) ===
+            {/* {getAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) ===
               "Present" && (
               <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 leading-7">
                 <div className="flex items-center justify-between mb-2">
@@ -371,7 +451,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </>
       )}

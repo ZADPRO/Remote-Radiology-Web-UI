@@ -27,6 +27,17 @@ export interface AppointmentStatus {
   refAppointmentImpressionAdditionalRight: string;
   refAppointmentRecommendationAdditionalRight: string;
   refAppointmentCommonImpressionRecommendationRight: string;
+  refAppointmentPatietHistory: string;
+  refAppointmentBreastImplantImageText: string;
+  refAppointmentSymmetryImageText: string;
+  refAppointmentBreastdensityImageText: string;
+  refAppointmentNippleAreolaImageText: string;
+  refAppointmentGlandularImageText: string;
+  refAppointmentLymphnodeImageText: string;
+  refAppointmentBreastdensityImageTextLeft: string;
+  refAppointmentNippleAreolaImageTextLeft: string;
+  refAppointmentGlandularImageTextLeft: string;
+  refAppointmentLymphnodeImageTextLeft: string;
 }
 
 export interface ReportHistoryData {
@@ -44,13 +55,23 @@ export interface FinalPatientReport {
   refRTCText: string;
 }
 
+export interface FinalAddendumText {
+  refADCreatedAt: string;
+  refADID: number;
+  refADText: string;
+  refAppointmentId: string;
+  refUserId: number;
+  refUserCustId: string
+}
+
 export const reportService = {
   checkAccess: async (appointmentId: number) => {
     const token = localStorage.getItem("token");
     const payload = encrypt({ appointmentId: appointmentId }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/checkaccess`,
       { encryptedData: payload },
       {
@@ -71,7 +92,8 @@ export const reportService = {
     const payload = encrypt({ id: id }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/getReportFormate`,
       { encryptedData: payload },
       {
@@ -95,7 +117,8 @@ export const reportService = {
     );
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/uploadReportFormate`,
       { encryptedData: payload },
       {
@@ -117,7 +140,7 @@ export const reportService = {
     readOnly: boolean
   ) => {
     const token = localStorage.getItem("token");
-    console.log(appointmentId, patientId, readOnly)
+    console.log(appointmentId, patientId, readOnly);
     const payload = encrypt(
       {
         appointmentId: appointmentId,
@@ -128,7 +151,8 @@ export const reportService = {
     );
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/assignreport`,
       { encryptedData: payload },
       {
@@ -140,7 +164,7 @@ export const reportService = {
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    console.log(decryptedData+"________________________________???");
+    console.log(decryptedData + "________________________________???");
     return decryptedData;
   },
 
@@ -149,8 +173,32 @@ export const reportService = {
     const payload = encrypt(formData, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/submitReport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+   autosaveReport: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/autosaveReport`,
       { encryptedData: payload },
       {
         headers: {
@@ -171,7 +219,8 @@ export const reportService = {
     const payload = encrypt(formData, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/technicianintakeform/viewDicom`,
       { encryptedData: payload },
       {
@@ -194,8 +243,7 @@ export const reportService = {
     const payload = encrypt({ appintmentId }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
-      }/intakeform/getReportData`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/getReportData`,
       { encryptedData: payload },
       {
         headers: {
@@ -219,8 +267,7 @@ export const reportService = {
     const payload = encrypt({ appintmentId: appintmentId }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
-      }/intakeform/getConsentData`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/getConsentData`,
       { encryptedData: payload },
       {
         headers: {
@@ -230,7 +277,7 @@ export const reportService = {
       }
     );
     const decryptedData: {
-      data: { refAppointmentConsent: string, refAppointmentId: number }[],
+      data: { refAppointmentConsent: string; refAppointmentId: number }[];
       status: boolean;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
@@ -243,8 +290,7 @@ export const reportService = {
     const payload = encrypt(formData, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
-      }/reportintakeform/sendMail`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/reportintakeform/sendMail`,
       { encryptedData: payload },
       {
         headers: {
@@ -266,8 +312,37 @@ export const reportService = {
     const payload = encrypt({ id: fileId }, token);
 
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/downloadreport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  AddAddedum: async (addedumtext: string, appointmentId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        addAddendumText: addedumtext,
+        appointmentId: appointmentId,
+      },
+      token
+    );
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/addAddendum`,
       { encryptedData: payload },
       {
         headers: {

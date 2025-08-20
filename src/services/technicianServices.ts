@@ -110,6 +110,7 @@ export interface TechnicianPatientQueue {
     isHandleCorrect: boolean,
     isHandleEdited: boolean
   }
+  reportStatus: string;
 }
 
 export interface ResponseTechnicianForm {
