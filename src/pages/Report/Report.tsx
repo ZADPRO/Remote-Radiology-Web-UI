@@ -129,64 +129,64 @@ export interface FileData {
   contentType: string;
 }
 
-// type ChangedOneState = {
-//   reportQuestion: number[]; // or number[]
-//   reportTextContent: boolean;
-//   syncStatus: boolean;
-//   impression: boolean;
-//   recommendation: boolean;
-//   impressionaddtional: boolean;
-//   recommendationaddtional: boolean;
-//   commonImpressionRecommendation: boolean;
-//   impressionRight: boolean;
-//   recommendationRight: boolean;
-//   impressionaddtionalRight: boolean;
-//   recommendationaddtionalRight: boolean;
-//   commonImpressionRecommendationRight: boolean;
-//   artificatsLeft: boolean;
-//   artificatsRight: boolean;
-//   patienthistory: boolean;
-//   breastimplantImageText: boolean;
-//   symmetryImageText: boolean;
-//   breastdensityImageText: boolean;
-//   nippleareolaImageText: boolean;
-//   glandularImageText: boolean;
-//   lymphnodesImageText: boolean;
-//   breastdensityImageTextLeft: boolean;
-//   nippleareolaImageTextLeft: boolean;
-//   glandularImageTextLeft: boolean;
-//   lymphnodesImageTextLeft: boolean;
-// };
+export type ChangedOneState = {
+  reportQuestion: number[]; // or number[]
+  reportTextContent: boolean;
+  syncStatus: boolean;
+  impression: boolean;
+  recommendation: boolean;
+  impressionaddtional: boolean;
+  recommendationaddtional: boolean;
+  commonImpressionRecommendation: boolean;
+  impressionRight: boolean;
+  recommendationRight: boolean;
+  impressionaddtionalRight: boolean;
+  recommendationaddtionalRight: boolean;
+  commonImpressionRecommendationRight: boolean;
+  artificatsLeft: boolean;
+  artificatsRight: boolean;
+  patienthistory: boolean;
+  breastimplantImageText: boolean;
+  symmetryImageText: boolean;
+  breastdensityImageText: boolean;
+  nippleareolaImageText: boolean;
+  glandularImageText: boolean;
+  lymphnodesImageText: boolean;
+  breastdensityImageTextLeft: boolean;
+  nippleareolaImageTextLeft: boolean;
+  glandularImageTextLeft: boolean;
+  lymphnodesImageTextLeft: boolean;
+};
 
 const Report: React.FC = () => {
-  // const [changedOne, setChangedOne] = useState<ChangedOneState>({
-  //   reportQuestion: [],
-  //   reportTextContent: false,
-  //   syncStatus: false,
-  //   impression: false,
-  //   recommendation: false,
-  //   impressionaddtional: false,
-  //   recommendationaddtional: false,
-  //   commonImpressionRecommendation: false,
-  //   impressionRight: false,
-  //   recommendationRight: false,
-  //   impressionaddtionalRight: false,
-  //   recommendationaddtionalRight: false,
-  //   commonImpressionRecommendationRight: false,
-  //   artificatsLeft: false,
-  //   artificatsRight: false,
-  //   patienthistory: false,
-  //   breastimplantImageText: false,
-  //   symmetryImageText: false,
-  //   breastdensityImageText: false,
-  //   nippleareolaImageText: false,
-  //   glandularImageText: false,
-  //   lymphnodesImageText: false,
-  //   breastdensityImageTextLeft: false,
-  //   nippleareolaImageTextLeft: false,
-  //   glandularImageTextLeft: false,
-  //   lymphnodesImageTextLeft: false,
-  // });
+  const [changedOne, setChangedOne] = useState<ChangedOneState>({
+    reportQuestion: [],
+    reportTextContent: false,
+    syncStatus: false,
+    impression: false,
+    recommendation: false,
+    impressionaddtional: false,
+    recommendationaddtional: false,
+    commonImpressionRecommendation: false,
+    impressionRight: false,
+    recommendationRight: false,
+    impressionaddtionalRight: false,
+    recommendationaddtionalRight: false,
+    commonImpressionRecommendationRight: false,
+    artificatsLeft: false,
+    artificatsRight: false,
+    patienthistory: false,
+    breastimplantImageText: false,
+    symmetryImageText: false,
+    breastdensityImageText: false,
+    nippleareolaImageText: false,
+    glandularImageText: false,
+    lymphnodesImageText: false,
+    breastdensityImageTextLeft: false,
+    nippleareolaImageTextLeft: false,
+    glandularImageTextLeft: false,
+    lymphnodesImageTextLeft: false,
+  });
 
   const [tab, setTab] = useState<number>(4);
 
@@ -409,10 +409,14 @@ const Report: React.FC = () => {
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
-    // setChangedOne((prev) => ({
-    //   ...prev,
-    //   reportQuestion: [...prev.reportQuestion, questionId],
-    // }));
+    setChangedOne((prev) => ({
+      ...prev,
+      reportQuestion: prev.reportQuestion.includes(questionId)
+        ? prev.reportQuestion
+        : [...prev.reportQuestion, questionId],
+      artificatsLeft: prev.artificatsLeft || questionId === 121,
+      artificatsRight: prev.artificatsRight || questionId === 120,
+    }));
     setReportFormData((prevData) =>
       prevData.map((q) =>
         q.questionId === questionId ? { ...q, answer: value } : q
@@ -1386,7 +1390,35 @@ const Report: React.FC = () => {
     }
   };
 
-  // const [timeOut, setTimeOut] = useState(false);
+  const [timeOut, setTimeOut] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimer = (delay = 5000) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setTimeOut((prev) => !prev); // toggle timeout
+      startTimer(); // restart the loop
+    }, delay);
+  };
+
+  useEffect(() => {
+    // start timer on mount
+    startTimer();
+
+    const handleUserActivity = () => {
+      // extend the timer by +1s (so 11s instead of 10s)
+      startTimer(3000);
+    };
+
+    // listen for clicks & keypresses
+    window.addEventListener("click", handleUserActivity);
+    window.addEventListener("keydown", handleUserActivity);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      window.removeEventListener("click", handleUserActivity);
+      window.removeEventListener("keydown", handleUserActivity);
+    };
+  }, []);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -1396,233 +1428,273 @@ const Report: React.FC = () => {
   //   return () => clearInterval(interval); // cleanup on unmount
   // }, []);
 
-  // const fecthautosave = async () => {
-  //   const payload = {
-  //     reportIntakeForm: reportFormData,
-  //     reportTextContent: Notes,
-  //     appointmentId: stateData.appointmentId,
-  //     patientId: stateData.userId,
-  //     syncStatus: syncStatus.Notes,
-  //     impression: mainImpressionRecommendation.selectedImpressionId,
-  //     recommendation: mainImpressionRecommendation.selectedRecommendationId,
-  //     impressionaddtional:
-  //       optionalImpressionRecommendation.selectedImpressionId,
-  //     recommendationaddtional:
-  //       optionalImpressionRecommendation.selectedRecommendationId,
-  //     commonImpressionRecommendation: commonImpressRecomm.id,
-  //     impressionRight: mainImpressionRecommendation.selectedImpressionIdRight,
-  //     recommendationRight:
-  //       mainImpressionRecommendation.selectedRecommendationIdRight,
-  //     impressionaddtionalRight:
-  //       optionalImpressionRecommendation.selectedImpressionIdRight,
-  //     recommendationaddtionalRight:
-  //       optionalImpressionRecommendation.selectedRecommendationIdRight,
-  //     commonImpressionRecommendationRight: commonImpressRecomm.idRight,
-  //     artificatsLeft:
-  //       getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) ==
-  //       "Yes"
-  //         ? true
-  //         : false,
-  //     artificatsRight:
-  //       getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) ==
-  //       "Yes"
-  //         ? true
-  //         : false,
-  //     patienthistory: patientHistory,
-  //     breastimplantImageText: breastImplantImage,
-  //     symmetryImageText: symmentryImage,
-  //     breastdensityImageText: breastDensityandImageRightImage,
-  //     nippleareolaImageText: nippleAreolaSkinRightImage,
-  //     glandularImageText: grandularAndDuctalTissueRightImage,
-  //     lymphnodesImageText: LymphNodesRightImage,
-  //     breastdensityImageTextLeft: breastDensityandImageLeftImage,
-  //     nippleareolaImageTextLeft: nippleAreolaSkinLeftImage,
-  //     glandularImageTextLeft: grandularAndDuctalTissueLeftImage,
-  //     lymphnodesImageTextLeft: LymphNodesLeftImage,
-  //   };
+  let i = 0;
 
-  //   const response: {
-  //     appointmentStatus: AppointmentStatus[];
-  //     intakeFormData: ResponsePatientForm[];
-  //     reportIntakeFormData: ReportQuestion[];
-  //     reportTextContentData: TextEditorContent[];
-  //     status: boolean;
-  //     easeQTReportAccess: boolean;
-  //   } = await reportService.autosaveReport(payload);
+  const fecthautosave = async () => {
+    console.log("hello%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+    i++;
+    const payload = {
+      changedOne: changedOne,
+      reportIntakeForm:
+        changedOne.reportQuestion.length > 0
+          ? reportFormData.filter((item) =>
+              changedOne.reportQuestion.includes(item.questionId)
+            )
+          : [],
+      reportTextContent: Notes,
+      appointmentId: stateData.appointmentId,
+      patientId: stateData.userId,
+      syncStatus: syncStatus.Notes,
+      impression: mainImpressionRecommendation.selectedImpressionId,
+      recommendation: mainImpressionRecommendation.selectedRecommendationId,
+      impressionaddtional:
+        optionalImpressionRecommendation.selectedImpressionId,
+      recommendationaddtional:
+        optionalImpressionRecommendation.selectedRecommendationId,
+      commonImpressionRecommendation: commonImpressRecomm.id,
+      impressionRight: mainImpressionRecommendation.selectedImpressionIdRight,
+      recommendationRight:
+        mainImpressionRecommendation.selectedRecommendationIdRight,
+      impressionaddtionalRight:
+        optionalImpressionRecommendation.selectedImpressionIdRight,
+      recommendationaddtionalRight:
+        optionalImpressionRecommendation.selectedRecommendationIdRight,
+      commonImpressionRecommendationRight: commonImpressRecomm.idRight,
+      artificatsLeft:
+        getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) ==
+        "Yes"
+          ? true
+          : false,
+      artificatsRight:
+        getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) ==
+        "Yes"
+          ? true
+          : false,
+      patienthistory: patientHistory,
+      breastimplantImageText: breastImplantImage,
+      symmetryImageText: symmentryImage,
+      breastdensityImageText: breastDensityandImageRightImage,
+      nippleareolaImageText: nippleAreolaSkinRightImage,
+      glandularImageText: grandularAndDuctalTissueRightImage,
+      lymphnodesImageText: LymphNodesRightImage,
+      breastdensityImageTextLeft: breastDensityandImageLeftImage,
+      nippleareolaImageTextLeft: nippleAreolaSkinLeftImage,
+      glandularImageTextLeft: grandularAndDuctalTissueLeftImage,
+      lymphnodesImageTextLeft: LymphNodesLeftImage,
+    };
 
-  //   console.log("##################", payload);
+    const response: {
+      appointmentStatus: AppointmentStatus[];
+      intakeFormData: ResponsePatientForm[];
+      reportIntakeFormData: ReportQuestion[];
+      reportTextContentData: TextEditorContent[];
+      status: boolean;
+      easeQTReportAccess: boolean;
+    } = await reportService.autosaveReport(payload);
 
-  //   if (response.status) {
-  //     setAssignData({
-  //       appointmentStatus: response.appointmentStatus,
-  //       reportHistoryData: assignData?.reportHistoryData || [],
-  //       easeQTReportAccess: response.easeQTReportAccess || false,
-  //     });
+    console.log("##################", payload);
+    console.log("##################", response);
 
-  //     setMainImpressionRecommendation((prev) => ({
-  //       ...prev,
-  //       selectedImpressionId:
-  //         response.appointmentStatus[0].refAppointmentImpression,
-  //       selectedRecommendationId:
-  //         response.appointmentStatus[0].refAppointmentRecommendation,
-  //       selectedImpressionIdRight:
-  //         response.appointmentStatus[0].refAppointmentImpressionRight,
-  //       selectedRecommendationIdRight:
-  //         response.appointmentStatus[0].refAppointmentRecommendationRight,
-  //     }));
-  //     setOptionalImpressionRecommendation((prev) => ({
-  //       ...prev,
-  //       selectedImpressionId:
-  //         response.appointmentStatus[0].refAppointmentImpressionAdditional,
-  //       selectedRecommendationId:
-  //         response.appointmentStatus[0].refAppointmentRecommendationAdditional,
-  //       selectedImpressionIdRight:
-  //         response.appointmentStatus[0].refAppointmentImpressionAdditionalRight,
-  //       selectedRecommendationIdRight:
-  //         response.appointmentStatus[0]
-  //           .refAppointmentRecommendationAdditionalRight,
-  //     }));
+    if (response.status) {
+      setAssignData({
+        appointmentStatus: response.appointmentStatus,
+        reportHistoryData: assignData?.reportHistoryData || [],
+        easeQTReportAccess: response.easeQTReportAccess || false,
+      });
 
-  //     setShowOptional(() => ({
-  //       impression:
-  //         response.appointmentStatus[0].refAppointmentImpressionAdditional !=
-  //         "",
-  //       recommendation:
-  //         response.appointmentStatus[0]
-  //           .refAppointmentRecommendationAdditional != "",
-  //       impressionRight:
-  //         response.appointmentStatus[0]
-  //           .refAppointmentRecommendationAdditionalRight != "",
-  //       recommendationRight:
-  //         response.appointmentStatus[0]
-  //           .refAppointmentRecommendationAdditionalRight != "",
-  //     }));
+      setMainImpressionRecommendation((prev) => ({
+        ...prev,
+        selectedImpressionId:
+          response.appointmentStatus[0].refAppointmentImpression,
+        selectedRecommendationId:
+          response.appointmentStatus[0].refAppointmentRecommendation,
+        selectedImpressionIdRight:
+          response.appointmentStatus[0].refAppointmentImpressionRight,
+        selectedRecommendationIdRight:
+          response.appointmentStatus[0].refAppointmentRecommendationRight,
+      }));
+      setOptionalImpressionRecommendation((prev) => ({
+        ...prev,
+        selectedImpressionId:
+          response.appointmentStatus[0].refAppointmentImpressionAdditional,
+        selectedRecommendationId:
+          response.appointmentStatus[0].refAppointmentRecommendationAdditional,
+        selectedImpressionIdRight:
+          response.appointmentStatus[0].refAppointmentImpressionAdditionalRight,
+        selectedRecommendationIdRight:
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight,
+      }));
 
-  //     setCommonImpressRecomm((prev) => ({
-  //       ...prev,
-  //       id: response.appointmentStatus[0]
-  //         .refAppointmentCommonImpressionRecommendation,
-  //       idRight:
-  //         response.appointmentStatus[0]
-  //           .refAppointmentCommonImpressionRecommendationRight,
-  //     }));
+      setShowOptional(() => ({
+        impression:
+          response.appointmentStatus[0].refAppointmentImpressionAdditional !=
+          "",
+        recommendation:
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditional != "",
+        impressionRight:
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight != "",
+        recommendationRight:
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight != "",
+      }));
 
-  //     if (response.appointmentStatus[0].refAppointmentPatietHistory) {
-  //       setPatientHistory(
-  //         response.appointmentStatus[0].refAppointmentPatietHistory
-  //       );
-  //     }
+      setCommonImpressRecomm((prev) => ({
+        ...prev,
+        id: response.appointmentStatus[0]
+          .refAppointmentCommonImpressionRecommendation,
+        idRight:
+          response.appointmentStatus[0]
+            .refAppointmentCommonImpressionRecommendationRight,
+      }));
 
-  //     if (response.appointmentStatus[0].refAppointmentBreastImplantImageText) {
-  //       setBreastImplantImage(
-  //         response.appointmentStatus[0].refAppointmentBreastImplantImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentPatietHistory) {
+        setPatientHistory(
+          response.appointmentStatus[0].refAppointmentPatietHistory
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentSymmetryImageText) {
-  //       setSymmetryImage(
-  //         response.appointmentStatus[0].refAppointmentSymmetryImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentBreastImplantImageText) {
+        setBreastImplantImage(
+          response.appointmentStatus[0].refAppointmentBreastImplantImageText
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentBreastdensityImageText) {
-  //       setBreastDensityandImageRightImage(
-  //         response.appointmentStatus[0].refAppointmentBreastdensityImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentSymmetryImageText) {
+        setSymmetryImage(
+          response.appointmentStatus[0].refAppointmentSymmetryImageText
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentNippleAreolaImageText) {
-  //       setNippleAreolaSkinRightImage(
-  //         response.appointmentStatus[0].refAppointmentNippleAreolaImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentBreastdensityImageText) {
+        setBreastDensityandImageRightImage(
+          response.appointmentStatus[0].refAppointmentBreastdensityImageText
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentGlandularImageText) {
-  //       setGrandularAndDuctalTissueRightImage(
-  //         response.appointmentStatus[0].refAppointmentGlandularImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentNippleAreolaImageText) {
+        setNippleAreolaSkinRightImage(
+          response.appointmentStatus[0].refAppointmentNippleAreolaImageText
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentLymphnodeImageText) {
-  //       setLymphNodesRightImage(
-  //         response.appointmentStatus[0].refAppointmentLymphnodeImageText
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentGlandularImageText) {
+        setGrandularAndDuctalTissueRightImage(
+          response.appointmentStatus[0].refAppointmentGlandularImageText
+        );
+      }
 
-  //     if (
-  //       response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
-  //     ) {
-  //       setBreastDensityandImageLeftImage(
-  //         response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentLymphnodeImageText) {
+        setLymphNodesRightImage(
+          response.appointmentStatus[0].refAppointmentLymphnodeImageText
+        );
+      }
 
-  //     if (
-  //       response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
-  //     ) {
-  //       setNippleAreolaSkinLeftImage(
-  //         response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
-  //       );
-  //     }
+      if (
+        response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
+      ) {
+        setBreastDensityandImageLeftImage(
+          response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentGlandularImageTextLeft) {
-  //       setGrandularAndDuctalTissueLeftImage(
-  //         response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
-  //       );
-  //     }
+      if (
+        response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
+      ) {
+        setNippleAreolaSkinLeftImage(
+          response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
+        );
+      }
 
-  //     if (response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft) {
-  //       setLymphNodesLeftImage(
-  //         response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
-  //       );
-  //     }
+      if (response.appointmentStatus[0].refAppointmentGlandularImageTextLeft) {
+        setGrandularAndDuctalTissueLeftImage(
+          response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
+        );
+      }
 
-  //     if (response.reportTextContentData) {
-  //       setNotes(response.reportTextContentData[0]?.refRTCText);
-  //       setsyncStatus({
-  //         breastImplant: true,
-  //         breastDensityandImageRight: true,
-  //         nippleAreolaSkinRight: true,
-  //         LesionsRight: true,
-  //         ComparisonPrior: true,
-  //         grandularAndDuctalTissueRight: true,
-  //         LymphNodesRight: true,
-  //         breastDensityandImageLeft: true,
-  //         nippleAreolaSkinLeft: true,
-  //         LesionsLeft: true,
-  //         ComparisonPriorLeft: true,
-  //         grandularAndDuctalTissueLeft: true,
-  //         LymphNodesLeft: true,
-  //         Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
-  //         ImpressionsRecommendations: true,
-  //         symmetry: true,
-  //       });
-  //     }
+      if (response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft) {
+        setLymphNodesLeftImage(
+          response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
+        );
+      }
 
-  //     if (response.reportIntakeFormData) {
-  //       setReportFormData(response.reportIntakeFormData);
-  //     }
+      if (response.reportTextContentData) {
+        setNotes(response.reportTextContentData[0]?.refRTCText);
+        setsyncStatus({
+          breastImplant: true,
+          breastDensityandImageRight: true,
+          nippleAreolaSkinRight: true,
+          LesionsRight: true,
+          ComparisonPrior: true,
+          grandularAndDuctalTissueRight: true,
+          LymphNodesRight: true,
+          breastDensityandImageLeft: true,
+          nippleAreolaSkinLeft: true,
+          LesionsLeft: true,
+          ComparisonPriorLeft: true,
+          grandularAndDuctalTissueLeft: true,
+          LymphNodesLeft: true,
+          Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
+          ImpressionsRecommendations: true,
+          symmetry: true,
+        });
+      }
 
-  //     if (!response.easeQTReportAccess) {
-  //       setsyncStatus({
-  //         ...syncStatus,
-  //         Notes: false,
-  //       });
-  //     } else {
-  //       setsyncStatus({
-  //         ...syncStatus,
-  //         Notes:
-  //           response.reportTextContentData[0]?.refRTSyncStatus === null
-  //             ? true
-  //             : response.reportTextContentData[0]?.refRTSyncStatus,
-  //       });
-  //     }
-  //   }
-  // };
+      if (response.reportIntakeFormData) {
+        setReportFormData(response.reportIntakeFormData);
+      }
 
-  // useEffect(() => {
-  //   fecthautosave();
-  // }, [timeOut]);
+      if (!response.easeQTReportAccess) {
+        setsyncStatus({
+          ...syncStatus,
+          Notes: false,
+        });
+      } else {
+        setsyncStatus({
+          ...syncStatus,
+          Notes:
+            response.reportTextContentData[0]?.refRTSyncStatus === null
+              ? true
+              : response.reportTextContentData[0]?.refRTSyncStatus,
+        });
+      }
+
+      setChangedOne({
+        reportQuestion: [],
+        reportTextContent: false,
+        syncStatus: false,
+        impression: false,
+        recommendation: false,
+        impressionaddtional: false,
+        recommendationaddtional: false,
+        commonImpressionRecommendation: false,
+        impressionRight: false,
+        recommendationRight: false,
+        impressionaddtionalRight: false,
+        recommendationaddtionalRight: false,
+        commonImpressionRecommendationRight: false,
+        artificatsLeft: false,
+        artificatsRight: false,
+        patienthistory: false,
+        breastimplantImageText: false,
+        symmetryImageText: false,
+        breastdensityImageText: false,
+        nippleareolaImageText: false,
+        glandularImageText: false,
+        lymphnodesImageText: false,
+        breastdensityImageTextLeft: false,
+        nippleareolaImageTextLeft: false,
+        glandularImageTextLeft: false,
+        lymphnodesImageTextLeft: false,
+      });
+    }
+  };
+
+  useEffect(() => {
+    fecthautosave();
+  }, [timeOut]);
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -2254,6 +2326,8 @@ const Report: React.FC = () => {
             <>
               {subTab === 1 ? (
                 <GeneralReport
+                  changedOne={changedOne}
+                  setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
                   patientFormData={responsePatientInTake}
@@ -2287,6 +2361,8 @@ const Report: React.FC = () => {
                 />
               ) : subTab === 2 ? (
                 <RightReport
+                  changedOne={changedOne}
+                  setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
                   patientFormData={responsePatientInTake}
@@ -2342,6 +2418,8 @@ const Report: React.FC = () => {
                 />
               ) : subTab === 3 ? (
                 <LeftReport
+                  changedOne={changedOne}
+                  setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
                   patientFormData={responsePatientInTake}
@@ -2394,6 +2472,7 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
+                    setChangedOne={setChangedOne}
                     reportFormData={reportFormData}
                     responsePatientInTake={responsePatientInTake}
                     textEditor={{
@@ -2647,6 +2726,7 @@ const Report: React.FC = () => {
               ) : (
                 subTab === 5 && (
                   <Impression
+                    setChangedOne={setChangedOne}
                     mainImpressionRecommendation={mainImpressionRecommendation}
                     setMainImpressionRecommendation={
                       setMainImpressionRecommendation

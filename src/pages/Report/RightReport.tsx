@@ -17,6 +17,7 @@ import {
   nippleAreolaSkinRightQuestions,
 } from "./ReportQuestionsAssignment";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { ChangedOneState } from "./Report";
 
 interface ReportQuestion {
   questionId: number;
@@ -71,6 +72,8 @@ interface TextEditorProps {
 }
 
 interface RightReportProps {
+  changedOne: ChangedOneState;
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
@@ -89,6 +92,8 @@ interface RightReportProps {
 }
 
 const RightReport: React.FC<RightReportProps> = ({
+  changedOne,
+  setChangedOne,
   reportFormData,
   handleReportInputChange,
   patientFormData,
@@ -231,6 +236,12 @@ const RightReport: React.FC<RightReportProps> = ({
                     onChange={
                       textEditor.breastDensityandImageRightImage.onChange
                     }
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        breastdensityImageText: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -301,6 +312,12 @@ const RightReport: React.FC<RightReportProps> = ({
                   <TextEditor
                     value={textEditor.nippleAreolaSkinRightImage.value}
                     onChange={textEditor.nippleAreolaSkinRightImage.onChange}
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        nippleareolaImageText: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -347,6 +364,12 @@ const RightReport: React.FC<RightReportProps> = ({
                     onChange={
                       textEditor.grandularAndDuctalTissueRightImage.onChange
                     }
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        glandularImageText: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -422,6 +445,12 @@ const RightReport: React.FC<RightReportProps> = ({
                   <TextEditor
                     value={textEditor.LymphNodesRightImage.value}
                     onChange={textEditor.LymphNodesRightImage.onChange}
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        lymphnodesImageText: true,
+                      });
+                    }}
                   />
                 </div>
               </div>

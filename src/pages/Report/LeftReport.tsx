@@ -17,6 +17,7 @@ import {
   nippleAreolaSkinLeftQuestions,
 } from "./ReportQuestionsAssignment";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
+import { ChangedOneState } from "./Report";
 
 interface ReportQuestion {
   questionId: number;
@@ -67,6 +68,8 @@ interface TextEditorProps {
 }
 
 interface LeftReportProps {
+  changedOne: ChangedOneState;
+    setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
@@ -84,6 +87,8 @@ interface LeftReportProps {
 }
 
 const LeftReport: React.FC<LeftReportProps> = ({
+  changedOne,
+  setChangedOne,
   reportFormData,
   handleReportInputChange,
   patientFormData,
@@ -250,6 +255,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
                     onChange={
                       textEditor.breastDensityandImageLeftImage.onChange
                     }
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        breastdensityImageTextLeft: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -295,6 +306,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   <TextEditor
                     value={textEditor.nippleAreolaSkinLeftImage.value}
                     onChange={textEditor.nippleAreolaSkinLeftImage.onChange}
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        nippleareolaImageTextLeft: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -341,6 +358,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
                     onChange={
                       textEditor.grandularAndDuctalTissueLeftImage.onChange
                     }
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        glandularImageTextLeft: true,
+                      });
+                    }}
                   />
                 </div>
               </div>
@@ -415,6 +438,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   <TextEditor
                     value={textEditor.LymphNodesLeftImage.value}
                     onChange={textEditor.LymphNodesLeftImage.onChange}
+                    onManualEdit={() => {
+                      setChangedOne({
+                        ...changedOne,
+                        lymphnodesImageTextLeft: true,
+                      });
+                    }}
                   />
                 </div>
               </div>

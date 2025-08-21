@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { ReportQuestion } from "../Report";
+import {  ReportQuestion } from "../Report";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import TextEditor from "@/components/TextEditor";
 import { LesionsVal } from "./LesionsRightString";
@@ -860,6 +860,7 @@ const LesionsOptions: React.FC<Props> = ({
                         <TextEditor
                           value={data.ImageText}
                           onChange={(e) => {
+
                             const updated = [...dataArray];
                             updated[index].ImageText = e;
                             handleReportInputChange(

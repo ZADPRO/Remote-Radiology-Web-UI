@@ -1,13 +1,21 @@
 import TextEditor from "@/components/TextEditor";
 import { Label } from "@/components/ui/label";
 import React from "react";
+import { ChangedOneState } from "./Report";
 
 interface Props {
-    patientHistoryNotes: string;
-    setPatientHistoryNotes: (value: string) => void;
+  changedOne: ChangedOneState;
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
+  patientHistoryNotes: string;
+  setPatientHistoryNotes: (value: string) => void;
 }
 
-const PatientHistory: React.FC<Props> = ({patientHistoryNotes, setPatientHistoryNotes}) => {
+const PatientHistory: React.FC<Props> = ({
+  changedOne,
+  setChangedOne,
+  patientHistoryNotes,
+  setPatientHistoryNotes,
+}) => {
   return (
     <div className="w-full">
       <Label
@@ -25,14 +33,18 @@ const PatientHistory: React.FC<Props> = ({patientHistoryNotes, setPatientHistory
           value={patientHistoryNotes}
           onChange={setPatientHistoryNotes}
           readOnly={false}
-          // onManualEdit={() => {
-          //   if (syncStatus.sForm) {
-          //     setsyncStatus({
-          //       ...syncStatus,
-          //       sForm: false,
-          //     });
-          //   }
-          // }}
+          onManualEdit={() => {
+            setChangedOne({
+              ...changedOne,
+              patienthistory: true,
+            });
+            // if (syncStatus.sForm) {
+            //   setsyncStatus({
+            //     ...syncStatus,
+            //     sForm: false,
+            //   });
+            // }
+          }}
         />
       </div>
     </div>

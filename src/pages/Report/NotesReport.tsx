@@ -12,7 +12,7 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinRightQuestions,
 } from "./ReportQuestionsAssignment";
-import { FileData } from "./Report";
+import { ChangedOneState, FileData } from "./Report";
 import { Switch } from "@/components/ui/switch";
 import { ResponsePatientForm } from "../TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 import { Label } from "@/components/ui/label";
@@ -194,6 +194,7 @@ interface ReportQuestion {
 }
 
 type Props = {
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   responsePatientInTake: ResponsePatientForm[];
   textEditor: TextEditorProps;
@@ -221,6 +222,7 @@ type Props = {
 };
 
 const NotesReport: React.FC<Props> = ({
+  setChangedOne,
   textEditor,
   reportFormData,
   syncStatus,
@@ -1052,6 +1054,10 @@ const NotesReport: React.FC<Props> = ({
                       className="cursor-pointer"
                       checked={syncStatus.Notes}
                       onCheckedChange={(checked: boolean) => {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          syncStatus: true,
+                        }));
                         if (!checked) {
                           setsyncStatus({ ...syncStatus, Notes: checked });
                         } else {
@@ -1068,6 +1074,12 @@ const NotesReport: React.FC<Props> = ({
             value={Notes}
             onChange={setNotes}
             readOnly={syncStatus.Notes || readOnly}
+            onManualEdit={() => {
+              setChangedOne((prev) => ({
+                ...prev,
+                reportTextContent: true,
+              }));
+            }}
             height="60vh"
           />
 

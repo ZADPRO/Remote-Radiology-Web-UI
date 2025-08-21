@@ -11,9 +11,10 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { ReportQuestion } from "./Report";
+import { ChangedOneState, ReportQuestion } from "./Report";
 
 interface ImpressionProps {
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   mainImpressionRecommendation: {
     selectedImpressionId: string;
     selectedRecommendationId: string;
@@ -680,6 +681,7 @@ export const additionalOptions = [
 ];
 
 const ImpressionRecommendation: React.FC<ImpressionProps> = ({
+  setChangedOne,
   mainImpressionRecommendation,
   setMainImpressionRecommendation,
   optionalImpressionRecommendation,
@@ -889,6 +891,11 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             impressionRefsRight.current[content.id] = el;
                           }}
                           onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              impressionRight: true,
+                              recommendationRight: true,
+                            }));
                             setMainImpressionRecommendation((prev) => ({
                               ...prev,
                               selectedImpressionIdRight: content.id,
@@ -920,13 +927,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     })
                   )}
                 </div>
-
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
                   <Select
                     value={
                       mainImpressionRecommendation.selectedImpressionIdRight
                     }
                     onValueChange={(val) => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        impressionRight: true,
+                        recommendationRight: true,
+                      }));
                       const matched = impressionRecommendation
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
@@ -970,13 +981,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 >
                   <Button
                     variant="greenTheme"
-                    onClick={() =>
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        impressionaddtionalRight: true,
+                      }));
                       // setShowOptional((prev) => ({ ...prev, impression: true }))
                       setAdditionalImpressionRight((prev) => [
                         ...prev,
                         { id: "", text: "" },
-                      ])
-                    }
+                      ]);
+                    }}
                   >
                     <Plus />
                     <span>Add</span>
@@ -991,11 +1006,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         <h1>Add-On</h1>
                         <Button
                           variant="destructive"
-                          onClick={() =>
+                          onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              impressionaddtionalRight: true,
+                            }));
                             setAdditionalImpressionRight((prev) =>
                               prev.filter((_, i) => i !== index)
-                            )
-                          }
+                            );
+                          }}
                         >
                           <Trash />
                         </Button>
@@ -1003,6 +1022,11 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       <Select
                         value={data.id}
                         onValueChange={(val) => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            impressionaddtionalRight: true,
+                          }));
+
                           const matched = impressionRecommendation
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
@@ -1095,6 +1119,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       mainImpressionRecommendation.selectedRecommendationIdRight
                     }
                     onValueChange={(val) => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        recommendationRight: true,
+                      }));
                       const matched = impressionRecommendation
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
@@ -1136,13 +1164,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 >
                   <Button
                     variant="greenTheme"
-                    onClick={() =>
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        recommendationaddtionalRight: true,
+                      }));
                       // setShowOptional((prev) => ({ ...prev, impression: true }))
                       setAdditionalRecommendationRight((prev) => [
                         ...prev,
                         { id: "", text: "" },
-                      ])
-                    }
+                      ]);
+                    }}
                   >
                     <Plus />
                     <span>Add</span>
@@ -1157,11 +1189,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         <h1>Add-On</h1>
                         <Button
                           variant="destructive"
-                          onClick={() =>
+                          onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              recommendationaddtionalRight: true,
+                            }));
                             setAdditionalRecommendationRight((prev) =>
                               prev.filter((_, i) => i !== index)
-                            )
-                          }
+                            );
+                          }}
                         >
                           <Trash />
                         </Button>
@@ -1169,6 +1205,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       <Select
                         value={data.id}
                         onValueChange={(val) => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            recommendationaddtionalRight: true,
+                          }));
                           const matched = impressionRecommendation
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
@@ -1216,6 +1256,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
               <Select
                 value={commonImpressRecomm.idRight}
                 onValueChange={(value) => {
+                  setChangedOne((prev) => ({
+                    ...prev,
+                    commonImpressionRecommendationRight: true,
+                  }));
                   const selected = additionalOptions.find(
                     (opt) => opt.id === value
                   );
@@ -1297,6 +1341,11 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             impressionRefs.current[content.id] = el;
                           }}
                           onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              impression: true,
+                              recommendation: true,
+                            }));
                             setMainImpressionRecommendation((prev) => ({
                               ...prev,
                               selectedImpressionId: content.id,
@@ -1332,6 +1381,11 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   <Select
                     value={mainImpressionRecommendation.selectedImpressionId}
                     onValueChange={(val) => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        impression: true,
+                        recommendation: true,
+                      }));
                       const matched = impressionRecommendation
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
@@ -1374,13 +1428,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 >
                   <Button
                     variant="greenTheme"
-                    onClick={() =>
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        impressionaddtional: true,
+                      }));
                       // setShowOptional((prev) => ({ ...prev, impression: true }))
                       setAdditionalImpression((prev) => [
                         ...prev,
                         { id: "", text: "" },
-                      ])
-                    }
+                      ]);
+                    }}
                   >
                     <Plus />
                     <span>Add</span>
@@ -1395,11 +1453,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         <h1>Add-On</h1>
                         <Button
                           variant="destructive"
-                          onClick={() =>
+                          onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              impressionaddtional: true,
+                            }));
                             setAdditionalImpression((prev) =>
                               prev.filter((_, i) => i !== index)
-                            )
-                          }
+                            );
+                          }}
                         >
                           <Trash />
                         </Button>
@@ -1407,6 +1469,11 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       <Select
                         value={data.id}
                         onValueChange={(val) => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            impressionaddtional: true,
+                          }));
+
                           const matched = impressionRecommendation
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
@@ -1499,6 +1566,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       mainImpressionRecommendation.selectedRecommendationId
                     }
                     onValueChange={(val) => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        recommendation: true,
+                      }));
                       const matched = impressionRecommendation
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
@@ -1539,13 +1610,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 >
                   <Button
                     variant="greenTheme"
-                    onClick={() =>
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        recommendationaddtional: true,
+                      }));
                       // setShowOptional((prev) => ({ ...prev, impression: true }))
                       setAdditionalRecommendation((prev) => [
                         ...prev,
                         { id: "", text: "" },
-                      ])
-                    }
+                      ]);
+                    }}
                   >
                     <Plus />
                     <span>Add</span>
@@ -1560,11 +1635,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         <h1>Add-On</h1>
                         <Button
                           variant="destructive"
-                          onClick={() =>
+                          onClick={() => {
+                            setChangedOne((prev) => ({
+                              ...prev,
+                              recommendationaddtional: true,
+                            }));
                             setAdditionalRecommendation((prev) =>
                               prev.filter((_, i) => i !== index)
-                            )
-                          }
+                            );
+                          }}
                         >
                           <Trash />
                         </Button>
@@ -1572,6 +1651,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       <Select
                         value={data.id}
                         onValueChange={(val) => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            recommendationaddtional: true,
+                          }));
                           const matched = impressionRecommendation
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
@@ -1619,6 +1702,10 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
               <Select
                 value={commonImpressRecomm.id}
                 onValueChange={(value) => {
+                  setChangedOne((prev) => ({
+                    ...prev,
+                    commonImpressionRecommendation: true,
+                  }));
                   const selected = additionalOptions.find(
                     (opt) => opt.id === value
                   );
