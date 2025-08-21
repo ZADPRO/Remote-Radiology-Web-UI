@@ -62,7 +62,7 @@ export function AutoPopulateReport(
   getreportAnswer(breastImpantQuestions.rupture) === "" &&
     handleReportInputChange(breastImpantQuestions.rupture, "Absent");
 
-  getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+  getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" && getPatientAnswer(81).length > 0 &&
     handleReportInputChange(
       breastImpantQuestions.implantMaterialOther,
       getPatientAnswer(81)
@@ -77,7 +77,7 @@ export function AutoPopulateReport(
         ? "Asymmetry"
         : "Symmetrical size and shape"
     );
-  getreportAnswer(symmetryQuestions.symmetryLeft) == "" &&
+  getreportAnswer(symmetryQuestions.symmetryLeft) == "" && getTechnicianAnswer(20).length > 0 &&
     handleReportInputChange(
       symmetryQuestions.symmetryLeft,
       getTechnicianAnswer(20) === "Right"

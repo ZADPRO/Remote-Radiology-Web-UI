@@ -12,6 +12,7 @@ import {
   symmetryQuestions,
 } from "./ReportQuestionsAssignment";
 import PatientHistory from "./PatientHistory";
+import { ChangedOneState } from "./Report";
 
 interface ReportQuestion {
   questionId: number;
@@ -42,6 +43,8 @@ interface TextEditorProps {
 }
 
 interface RightReportProps {
+  changedOne: ChangedOneState;
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
@@ -57,6 +60,8 @@ interface RightReportProps {
 }
 
 const GeneralReport: React.FC<RightReportProps> = ({
+  changedOne,
+  setChangedOne,
   reportFormData,
   handleReportInputChange,
   patientFormData,
@@ -114,6 +119,8 @@ const GeneralReport: React.FC<RightReportProps> = ({
           /> */}
 
         <PatientHistory
+          changedOne={changedOne}
+          setChangedOne={setChangedOne}
           patientHistoryNotes={textEditor.patientHistory.value}
           setPatientHistoryNotes={textEditor.patientHistory.onChange}
         />
@@ -128,8 +135,8 @@ const GeneralReport: React.FC<RightReportProps> = ({
         <div className="w-full lg:w-[90%] mx-auto  rounded-2xl text-lg p-4 space-y-4 leading-7">
           <div>
             <div className="flex justify-between mb-2">
-            <span className="text-2xl">Report Preview</span>
-            {/* {syncStatus.breastImplantRight ? (
+              <span className="text-2xl">Report Preview</span>
+              {/* {syncStatus.breastImplantRight ? (
               <Button
                 className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
                 onClick={() => {
@@ -148,33 +155,40 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 Sync
               </Button>
             )} */}
-          </div>
-          <TextEditor
-            value={textEditor.breastImplant.value}
-            onChange={textEditor.breastImplant.onChange}
-            onManualEdit={() => {
-              if (syncStatus.breastImplant) {
-                setsyncStatus({
-                  ...syncStatus,
-                  breastImplant: false,
-                });
-              }
-            }}
-          />
+            </div>
+            <TextEditor
+              value={textEditor.breastImplant.value}
+              onChange={textEditor.breastImplant.onChange}
+              onManualEdit={() => {
+                
+                if (syncStatus.breastImplant) {
+                  setsyncStatus({
+                    ...syncStatus,
+                    breastImplant: false,
+                  });
+                }
+              }}
+            />
           </div>
 
           <div>
             <div className="flex justify-between mb-2">
-            <span className="text-2xl">Image Preview</span>
-          </div>
+              <span className="text-2xl">Image Preview</span>
+            </div>
 
-          <TextEditor
-            value={textEditor.breastImplantImage.value}
-            onChange={textEditor.breastImplantImage.onChange}
-          />
-          </div>
+            <TextEditor
+              value={textEditor.breastImplantImage.value}
+              onChange={textEditor.breastImplantImage.onChange}
+              onManualEdit={() => {
+                console.log("Changed!!!!!!!!!!")
+                setChangedOne({
+                  ...changedOne,
+                  breastimplantImageText: true,
+                });
 
-          
+              }}
+            />
+          </div>
         </div>
 
         <div className="w-full mt-3">
@@ -268,6 +282,12 @@ const GeneralReport: React.FC<RightReportProps> = ({
             <TextEditor
               value={textEditor.symmetryImage.value}
               onChange={textEditor.symmetryImage.onChange}
+              onManualEdit={() => {
+                setChangedOne({
+                  ...changedOne,
+                  symmetryImageText: true,
+                });
+              }}
             />
           </div>
         </div>

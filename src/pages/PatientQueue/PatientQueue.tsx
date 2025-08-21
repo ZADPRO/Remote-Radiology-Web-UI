@@ -830,36 +830,39 @@ const PatientQueue: React.FC = () => {
             number[]
           >([]);
 
-          if(row.original.refAppointmentComplete == "fillform") {
-            return (
-              <div>-</div>
-            )
+          if (row.original.refAppointmentComplete == "fillform") {
+            return <div>-</div>;
           } else {
-          return (
-            <>
-            <div
-              className="hover:underline cursor-pointer font-bold text-center"
-              onClick={() => {
-                setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
-                setConsentDialogOpen(true); // ✅ open dialog
-              }}
-            >
-              View
-            </div>
+            return (
+              <>
+                <div
+                  className="hover:underline cursor-pointer font-bold text-center"
+                  onClick={() => {
+                    setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
+                    setConsentDialogOpen(true); // ✅ open dialog
+                  }}
+                >
+                  View
+                </div>
 
-              {consentDialogOpen &&
-              <Dialog open={consentDialogOpen} onOpenChange={setConsentDialogOpen}>
-        <PatientConsentDialog
-          appointmentIds={selectedAppointmentIds}
-          patientConsentDialog={consentDialogOpen}
-          appointmentDate={row.original.refAppointmentDate}
-          patientCustId={row.original.refUserCustId ?? user?.refUserCustId}
-        />
-      </Dialog>
+                {consentDialogOpen && (
+                  <Dialog
+                    open={consentDialogOpen}
+                    onOpenChange={setConsentDialogOpen}
+                  >
+                    <PatientConsentDialog
+                      appointmentIds={selectedAppointmentIds}
+                      patientConsentDialog={consentDialogOpen}
+                      appointmentDate={row.original.refAppointmentDate}
+                      patientCustId={
+                        row.original.refUserCustId ?? user?.refUserCustId
+                      }
+                    />
+                  </Dialog>
+                )}
+              </>
+            );
           }
-            </>
-          )
-        }
         },
         enableColumnFilter: true,
       },
@@ -1463,22 +1466,23 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              // if (status.text == "Signed Off") {
-              //   setPatientReportDialog(true);
-              // } else {
-                navigate("/report", {
-                  state: {
-                    appointmentId: row.original.refAppointmentId,
-                    userId: row.original.refUserId,
-                    readOnly: true,
-                  },
-                });
+              navigate("/report", {
+                state: {
+                  appointmentId: row.original.refAppointmentId,
+                  userId: row.original.refUserId,
+                  readOnly: true,
+                },
+              });
               // }
             }
           };
 
           return (
-            <div className={`text-center ${row.original.reportStatus === "Urgent" ? "text-[red]" : ""} w-full`}>
+            <div
+              className={`text-center ${
+                row.original.reportStatus === "Urgent" ? "text-[red]" : ""
+              } w-full`}
+            >
               {!row.original.dicomFiles ||
               row.original.dicomFiles.length === 0 ? (
                 <span>-</span>
@@ -2310,7 +2314,12 @@ const PatientQueue: React.FC = () => {
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
-            hidden={role?.type !== "admin" && role?.type !== "scadmin" && role?.type !== "manager" && role?.type !== "wgdoctor"}
+            hidden={
+              role?.type !== "admin" &&
+              role?.type !== "scadmin" &&
+              role?.type !== "manager" &&
+              role?.type !== "wgdoctor"
+            }
           >
             <Download className="h-4 w-4" />
             Download Patient Consent
@@ -2543,8 +2552,6 @@ const PatientQueue: React.FC = () => {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };
