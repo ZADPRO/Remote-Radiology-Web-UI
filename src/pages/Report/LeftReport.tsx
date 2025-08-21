@@ -69,7 +69,7 @@ interface TextEditorProps {
 
 interface LeftReportProps {
   changedOne: ChangedOneState;
-    setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
+  setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
@@ -261,6 +261,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         breastdensityImageTextLeft: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -312,6 +313,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         nippleareolaImageTextLeft: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -364,6 +366,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         glandularImageTextLeft: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -444,6 +447,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         lymphnodesImageTextLeft: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>

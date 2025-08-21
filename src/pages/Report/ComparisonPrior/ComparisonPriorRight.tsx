@@ -604,6 +604,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                         JSON.stringify(updated)
                       );
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </>

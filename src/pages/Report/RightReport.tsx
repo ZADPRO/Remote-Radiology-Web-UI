@@ -242,6 +242,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         breastdensityImageText: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -318,6 +319,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         nippleareolaImageText: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -370,6 +372,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         glandularImageText: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
@@ -451,6 +454,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         lymphnodesImageText: true,
                       });
                     }}
+                    placeholder="Past image..."
                   />
                 </div>
               </div>
