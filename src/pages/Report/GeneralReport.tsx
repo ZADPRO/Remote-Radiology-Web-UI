@@ -160,7 +160,6 @@ const GeneralReport: React.FC<RightReportProps> = ({
               value={textEditor.breastImplant.value}
               onChange={textEditor.breastImplant.onChange}
               onManualEdit={() => {
-                
                 if (syncStatus.breastImplant) {
                   setsyncStatus({
                     ...syncStatus,
@@ -180,13 +179,12 @@ const GeneralReport: React.FC<RightReportProps> = ({
               value={textEditor.breastImplantImage.value}
               onChange={textEditor.breastImplantImage.onChange}
               onManualEdit={() => {
-                console.log("Changed!!!!!!!!!!")
                 setChangedOne({
                   ...changedOne,
                   breastimplantImageText: true,
                 });
-
               }}
+              placeholder="Past image..."
             />
           </div>
         </div>
@@ -288,6 +286,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   symmetryImageText: true,
                 });
               }}
+              placeholder="Past image..."
             />
           </div>
         </div>

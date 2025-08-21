@@ -222,33 +222,47 @@ const Report: React.FC = () => {
   useEffect(() => {
     if (stateData?.readOnly === false) {
       const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        if (changesDone && !allowNavigationRef.current) {
+      //   if (changesDone && !allowNavigationRef.current) {
+      //     e.preventDefault();
+      //     e.returnValue = ""; // triggers confirmation dialog
+      //   }
+      // };
+
+      if (!allowNavigationRef.current) {
           e.preventDefault();
           e.returnValue = ""; // triggers confirmation dialog
         }
       };
 
+      // const handlePopState = () => {
+      //   if (changesDone && !allowNavigationRef.current) {
+      //     setShowDialog(true);
+      //     history.replaceState({ fake: true }, "", window.location.href);
+      //     history.pushState(null, "", window.location.href);
+      //   }
+      // };
+
       const handlePopState = () => {
-        if (changesDone && !allowNavigationRef.current) {
+        if (!allowNavigationRef.current) {
           setShowDialog(true);
           history.replaceState({ fake: true }, "", window.location.href);
           history.pushState(null, "", window.location.href);
         }
       };
 
-      if (changesDone) {
+      // if (changesDone) {
         window.addEventListener("beforeunload", handleBeforeUnload);
         window.addEventListener("popstate", handlePopState);
         history.replaceState({ fake: true }, "", window.location.href);
         history.pushState(null, "", window.location.href);
-      }
+      // }
 
       return () => {
         window.removeEventListener("beforeunload", handleBeforeUnload);
         window.removeEventListener("popstate", handlePopState);
       };
     }
-  }, [changesDone]);
+  }, []);
 
   useEffect(() => {
     if (allowNavigationRef.current) {
