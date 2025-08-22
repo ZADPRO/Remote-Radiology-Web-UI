@@ -89,8 +89,23 @@ export function DaFormReportGenerator(
     217: { label: "Other", answer: "true", dependsOn: 218 },
   };
 
+  let methodofdetectionrawAnswer = [];
+
+  try {
+    methodofdetectionrawAnswer = getPatientAnswer(206)
+      ? JSON.parse(getPatientAnswer(206))
+      : [];
+  } catch (e) {
+    console.error(
+      "Invalid JSON in patient answer:",
+      methodofdetectionrawAnswer,
+      e
+    );
+    methodofdetectionrawAnswer = [];
+  }
+
   const methodofdetection = formSentenceReplacingOther({
-    values: JSON.parse(getPatientAnswer(206)),
+    values: methodofdetectionrawAnswer,
     otherValue: getPatientAnswer(207),
   });
 
