@@ -383,7 +383,10 @@ const NotesReport: React.FC<Props> = ({
 
   <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2. The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
 
-  <br />
+  ${
+    getAnswer(1) === "Present"
+      ? `
+    <br />
   <div><strong>BREAST IMPLANTS:</strong><br />${
     textEditor.breastImplant.value
   }${
@@ -391,6 +394,9 @@ const NotesReport: React.FC<Props> = ({
             ? textEditor.breastImplantImage.value
             : ""
         }</div>
+    `
+      : ``
+  }
 
   ${
     textEditor.symmetry.value
@@ -617,11 +623,11 @@ const NotesReport: React.FC<Props> = ({
   ${
     getAnswer(131) === "Present"
       ? `
-    <p><strong>LEFT BREAST FINDINGS:</strong></p><br />
+    <p><strong>LEFT BREAST FINDINGS:</strong></p>
 
   ${
     breastDensityLeft
-      ? `<strong>BREAST DENSITY & IMAGE QUALITY:</strong><br /><span>${
+      ? `<h4><strong>BREAST DENSITY & IMAGE QUALITY:</strong></h4><span>${
           textEditor.breastDensityandImageLeft.value
         }</span>${
           textEditor.breastDensityandImageLeftImage.value.length > 7
@@ -846,11 +852,11 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextRightVal.value === "I" ||
    textEditor.CommonImpresRecommTextRightVal.value === "N" ||
    textEditor.CommonImpresRecommTextRightVal.value === "T"
-     ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p>`
+     ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
      : ``
  }
 
-  <br/><p><strong>RECOMMENDATION:</strong></p>
+  <p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationTextRight.value}</p>
   ${
     textEditor.OptionalRecommendationTextRight.value.length > 7
@@ -864,7 +870,7 @@ const NotesReport: React.FC<Props> = ({
      textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "N" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "T"
-       ? `<br/><p>${textEditor.CommonImpresRecommTextRight.value}</p>`
+       ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
        : ``
    }
 <br/>
@@ -890,10 +896,10 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextVal.value === "I" ||
    textEditor.CommonImpresRecommTextVal.value === "N" ||
    textEditor.CommonImpresRecommTextVal.value === "T"
-     ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p>`
+     ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
-  <br/><p><strong>RECOMMENDATION:</strong></p>
+  <p><strong>RECOMMENDATION:</strong></p>
  <p> ${textEditor.RecommendationText.value}</p>
  ${
    textEditor.OptionalRecommendationText.value.length > 7
@@ -907,13 +913,13 @@ const NotesReport: React.FC<Props> = ({
     textEditor.CommonImpresRecommTextVal.value !== "I" &&
     textEditor.CommonImpresRecommTextVal.value !== "N" &&
     textEditor.CommonImpresRecommTextVal.value !== "T"
-      ? `<br/><p>${textEditor.CommonImpresRecommText.value}</p>`
+      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
       : ``
   }
     `
       : ``
   }
-  <strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
+  <br/><strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
   <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
   <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
   <i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Scars, dense breast tissue, and breast implants can obscure masses and other findings. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the QT Imaging Center where you receive your scan and discussed with your doctor. Even if the doctor reading the QT scan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QT scan findings. Consultation with the doctor reading your QT scan is also available if requested. </p></i>

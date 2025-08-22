@@ -52,6 +52,7 @@ interface RightReportProps {
   technicianFormData: ResponseTechnicianForm[];
   textEditor: TextEditorProps;
   syncStatus: {
+    patientHistory: boolean;
     breastImplant: boolean;
     symmetry: boolean;
   };
@@ -119,6 +120,8 @@ const GeneralReport: React.FC<RightReportProps> = ({
           /> */}
 
         <PatientHistory
+          syncStatus={syncStatus}
+          setsyncStatus={setsyncStatus}
           changedOne={changedOne}
           setChangedOne={setChangedOne}
           patientHistoryNotes={textEditor.patientHistory.value}

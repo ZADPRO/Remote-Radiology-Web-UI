@@ -287,7 +287,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
 
       {getAnswer(questionIds.grandularSelect) === "Present" && (
         <div className="py-4 lg:pl-10 space-y-4">
-          <MultiRadioOptionalInputInline
+          {/* <MultiRadioOptionalInputInline
             label="Glandular And Ductal tissue"
             labelClassname="lg:w-[12rem]"
             questionId={questionIds.grandularAndDuctalTissue}
@@ -297,7 +297,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
               { label: "Normal", value: "Normal" },
               { label: "Abnormal", value: "Abnormal" },
             ]}
-          />
+          /> */}
 
           <MultiRadioOptionalInputInline
             label="Benign Microcysts"
