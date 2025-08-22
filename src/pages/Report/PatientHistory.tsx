@@ -4,6 +4,10 @@ import React from "react";
 import { ChangedOneState } from "./Report";
 
 interface Props {
+  syncStatus: {
+    patientHistory: boolean;
+  };
+  setsyncStatus: (value: any) => void;
   changedOne: ChangedOneState;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   patientHistoryNotes: string;
@@ -11,6 +15,8 @@ interface Props {
 }
 
 const PatientHistory: React.FC<Props> = ({
+  syncStatus,
+  setsyncStatus,
   changedOne,
   setChangedOne,
   patientHistoryNotes,
@@ -38,12 +44,10 @@ const PatientHistory: React.FC<Props> = ({
               ...changedOne,
               patienthistory: true,
             });
-            // if (syncStatus.sForm) {
-            //   setsyncStatus({
-            //     ...syncStatus,
-            //     sForm: false,
-            //   });
-            // }
+            setsyncStatus({
+              ...syncStatus,
+              patientHistory: false,
+            });
           }}
         />
       </div>

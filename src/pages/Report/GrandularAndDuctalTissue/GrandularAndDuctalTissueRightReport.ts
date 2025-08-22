@@ -30,7 +30,7 @@ export function generateGrandularAndDuctalTissueReport(
   const microList = getParsedList(questionIds.microCalcificationsList);
   const calcifiedScar = getAnswer(questionIds.calcifiedScar);
   const scarList = getParsedList(questionIds.calcifiedScarList);
-  const ductalProminence = getAnswer(questionIds.ductalProminence);
+  // const ductalProminence = getAnswer(questionIds.ductalProminence);
   const ductalList = getParsedList(questionIds.ductalProminenceList);
 
   function getParsedList(questionId: number): any[] {
@@ -42,18 +42,18 @@ export function generateGrandularAndDuctalTissueReport(
     }
   }
 
-  const clock =
-    macroList[0]?.clock ||
-    microList[0]?.clock ||
-    scarList[0]?.clock ||
-    ductalList[0]?.clock ||
-    "";
-  const level =
-    macroList[0]?.level ||
-    microList[0]?.level ||
-    scarList[0]?.level ||
-    ductalList[0]?.level ||
-    "";
+  // const clock =
+  //   macroList[0]?.clock ||
+  //   microList[0]?.clock ||
+  //   scarList[0]?.clock ||
+  //   ductalList[0]?.clock ||
+  //   "";
+  // const level =
+  //   macroList[0]?.level ||
+  //   microList[0]?.level ||
+  //   scarList[0]?.level ||
+  //   ductalList[0]?.level ||
+  //   "";
 
   //glandularandductal
   const glandularandductaltext =
@@ -97,27 +97,31 @@ export function generateGrandularAndDuctalTissueReport(
       : "";
 
   // 5. Ductal Prominence
-  const ductalText =
-    ductalProminence === "Present" && ductalList.length > 0
-      ? `There is ductal prominence with ${ductalList
-          .map((d) => d.type)
-          .join(" and ")
-          .toLocaleLowerCase()} noted at ${
-          clock && level
-            ? `${clock} o'clock in coronal location P${level}.`
-            : ""
-        }`
-      : "";
+  // const ductalText =
+  //   ductalProminence === "Present" && ductalList.length > 0
+  //     ? `There is ductal prominence with ${ductalList
+  //         .map((d) => d.type)
+  //         .join(" and ")
+  //         .toLocaleLowerCase()} noted at ${
+  //         clock && level
+  //           ? `${clock} o'clock in coronal location P${level}.`
+  //           : ""
+  //       }`
+  //     : "";
+  const ductalText = generateCalcificationText(
+    ductalList,
+    "ductal prominence",
+    true
+  );
 
   return `
   ${glandularandductaltext}
-    <p><b>Benign Findings</b></p>
     <p>${benignText}</p>
-${macroText && `<p><b>Calcifications</b></p>`}
+${macroText && `<p></p>`}
     ${macroText}
 ${microText}
-${scarText && `<p><b>Calcified Scar</b></p>${scarText}`}
-${ductalText && `<p><b>Ductal Prominence</b></p>${ductalText}`}
+${scarText && `<p></p>${scarText}`}
+${ductalText && `<p></p>${ductalText}`}
   `;
 }
 

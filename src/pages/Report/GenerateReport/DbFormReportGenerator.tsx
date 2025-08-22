@@ -56,7 +56,8 @@ export function DbFormReportGenerator(
  
     function buildReportSentenceWithGetterVal(
         configs: Record<number, QuestionConfigVal>,
-        getAnswer: (id: number) => string
+        getAnswer: (id: number) => string,
+        mainQuestionId: number
     ): string {
         const groupedByMainQid: Record<number, string[]> = {};
  
@@ -77,7 +78,7 @@ export function DbFormReportGenerator(
                 labelText += ` (${depVal.trim()} ${config.anotherdependsOn ? `, ${getAnswer(config.anotherdependsOn)}` : ``})`;
             }
  
-            labelText += ` (done)`;
+            labelText += ` (${getPatientAnswer(mainQuestionId).toLocaleLowerCase()})`;
  
             groupedByMainQid[mainQid] ||= [];
             groupedByMainQid[mainQid].push(labelText);
@@ -170,19 +171,19 @@ export function DbFormReportGenerator(
         292: { label: "reconstruction", answer: "true", dependsOn: 293, mainQid: 284 },
     };
  
-    const surgery = buildReportSentenceWithGetterVal(surgeryAnswer, getPatientAnswer) + ",";
+    const surgery = buildReportSentenceWithGetterVal(surgeryAnswer, getPatientAnswer, 284) + ",";
  
     const NeoadjuvantAnswer = {
         297: { label: "chemotherapy (e.g., taxol, adriamycin, herceptin)", answer: "true", mainQid: 296 },
         298: { label: "hormonal therapy herceptin (for HER2-positive cancers), tamoxifen, aromatase inhibitors (e.g., anastrozole), or others", answer: "true", mainQid: 296 },
-        299: { label: "if yes, for how long and what was the outcome of the treatment?", answer: "true", dependsOn: 300, anotherdependsOn: 301, mainQid: 296 },
+        299: { label: "The duration and outcome of this treatment were reported as", answer: "true", dependsOn: 300, anotherdependsOn: 301, mainQid: 296 },
         302: { label: "bilateral mastectomy", answer: "true", mainQid: 296 },
         303: { label: "sentinel lymph node biopsy", answer: "true", mainQid: 296 },
         304: { label: "axillary lymph node dissection", answer: "true", mainQid: 296 },
         305: { label: "reconstruction", answer: "true", dependsOn: 293, mainQid: 296 },
     };
  
-    const Neoadjuvant = buildReportSentenceWithGetterVal(NeoadjuvantAnswer, getPatientAnswer) + ",";
+    const Neoadjuvant = buildReportSentenceWithGetterVal(NeoadjuvantAnswer, getPatientAnswer, 296) + ",";
  
     const adjuvantAnswer = {
         307: { label: "chemotherapy", answer: "true", mainQid: 306 },
@@ -192,15 +193,14 @@ export function DbFormReportGenerator(
         311: { label: "radiation therapy", answer: "true", mainQid: 306 },
     };
  
-    const adjuvant = buildReportSentenceWithGetterVal(adjuvantAnswer, getPatientAnswer);
+    const adjuvant = buildReportSentenceWithGetterVal(adjuvantAnswer, getPatientAnswer, 306);
  
     //Procedure
-    const Procedure = `
-    <p>
+    const Procedure = `${getPatientAnswer(283) === "Yes" ? `<p>
     Procedure ${surgery}
     ${Neoadjuvant}
     ${adjuvant}
-    </p>
+    .</p>` : ""}
     `
  
     // Final Report

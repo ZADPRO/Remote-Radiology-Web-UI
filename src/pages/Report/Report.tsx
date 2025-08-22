@@ -80,7 +80,6 @@ import {
   AutoPopulateReport,
   AutoPopulateReportImpressRecomm,
 } from "./AutoPopulateReport";
-import { downloadDocumentFile } from "@/lib/commonUtlis";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -218,17 +217,24 @@ const Report: React.FC = () => {
     }
   }, [location]);
 
+  const [openReportPreview, setOpenReportPreview] = useState(false);
+
+  const [openReportPreviewData, setOpenReportPreviewData] = useState({
+    base64Data: "",
+    contentType: "",
+  });
+
   // Handle browser reload and back navigation
   useEffect(() => {
     if (stateData?.readOnly === false) {
       const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      //   if (changesDone && !allowNavigationRef.current) {
-      //     e.preventDefault();
-      //     e.returnValue = ""; // triggers confirmation dialog
-      //   }
-      // };
+        //   if (changesDone && !allowNavigationRef.current) {
+        //     e.preventDefault();
+        //     e.returnValue = ""; // triggers confirmation dialog
+        //   }
+        // };
 
-      if (!allowNavigationRef.current) {
+        if (!allowNavigationRef.current) {
           e.preventDefault();
           e.returnValue = ""; // triggers confirmation dialog
         }
@@ -251,10 +257,10 @@ const Report: React.FC = () => {
       };
 
       // if (changesDone) {
-        window.addEventListener("beforeunload", handleBeforeUnload);
-        window.addEventListener("popstate", handlePopState);
-        history.replaceState({ fake: true }, "", window.location.href);
-        history.pushState(null, "", window.location.href);
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("popstate", handlePopState);
+      history.replaceState({ fake: true }, "", window.location.href);
+      history.pushState(null, "", window.location.href);
       // }
 
       return () => {
@@ -287,6 +293,7 @@ const Report: React.FC = () => {
   const [reportFormData, setReportFormData] = useState<ReportQuestion[]>([]); //current higgest question id: 133
 
   const [syncStatus, setsyncStatus] = useState({
+    patientHistory: true,
     breastImplant: true,
     breastDensityandImageRight: true,
     nippleAreolaSkinRight: true,
@@ -306,6 +313,44 @@ const Report: React.FC = () => {
   });
 
   useEffect(() => {
+    if (syncStatus.patientHistory) {
+      let reason = `<p><strong>HISTORY : </strong></p>`;
+      reason += SFormGeneration(responsePatientInTake);
+
+      const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
+
+      if (categoryId === 1) {
+        reason += `<div><br/><strong>Indication:</strong> Screening<br/>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getPatientAnswer(11)}</div>
+      `;
+        // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
+      } else if (categoryId === 2) {
+        reason += "" + DaFormReportGenerator(responsePatientInTake);
+        reason += `<div><br/><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getPatientAnswer(11)}</div>
+      `;
+        // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
+      } else if (categoryId === 3) {
+        reason += DbFormReportGenerator(responsePatientInTake);
+        reason += `<div><br/><strong>Indication:</strong> Biopsy Proven Disease<br/>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getPatientAnswer(11)}</div>
+      `;
+        // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
+      } else if (categoryId === 4) {
+        reason += DcFormGeneration(responsePatientInTake);
+        reason += `<div><br/><strong>Indication:</strong> Comparison to Prior<br/>
+        <div><strong>Reason for having this QT scan: </strong>
+        ${getPatientAnswer(11)}</div>
+      `;
+        // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
+      }
+
+      setPatientHistory(reason);
+    }
+
     if (syncStatus.breastDensityandImageRight) {
       setBreastDensityandImageRight(
         generateRightBreastReportText(
@@ -865,10 +910,14 @@ const Report: React.FC = () => {
             }))
           );
         }
+
+        console.log("$$$$", response.intakeFormData);
+
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportTextContentData) {
           setNotes(response.reportTextContentData[0]?.refRTCText);
           setsyncStatus({
+            patientHistory: false,
             breastImplant: true,
             breastDensityandImageRight: true,
             nippleAreolaSkinRight: true,
@@ -1050,56 +1099,54 @@ const Report: React.FC = () => {
     console.log(getReportAnswer(1));
   };
 
-  useEffect(() => {
-    const generatePatientHistory = async () => {
-      if (!responsePatientInTake) return;
+  // useEffect(() => {
+  //   const generatePatientHistory = async () => {
+  //     if (!responsePatientInTake) return;
 
-      const getPatientAnswer = (id: number) =>
-        responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
+  //     const getPatientAnswer = (id: number) =>
+  //       responsePatientInTake.find((q) => q.questionId === id)?.answer || "";
 
-      let reason = `<p><strong>HISTORY : </strong></p>`;
-      reason += await SFormGeneration(responsePatientInTake);
+  //     let reason = `<p><strong>HISTORY : </strong></p>`;
+  //     reason += await SFormGeneration(responsePatientInTake);
 
-      const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
+  //     const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
 
-      if (categoryId === 1) {
-        reason += `<div><h3><strong>Indications: </strong></h3>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
-        reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
-      } else if (categoryId === 2) {
-        reason += "" + (await DaFormReportGenerator(responsePatientInTake));
-        reason += ` <div><h3><strong>Indications: </strong></h3>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
-        reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
-      } else if (categoryId === 3) {
-        reason += await DbFormReportGenerator(responsePatientInTake);
-        reason += `
-        <div><h3><strong>Indications: </strong></h3>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
-        reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
-      } else if (categoryId === 4) {
-        reason += await DcFormGeneration(responsePatientInTake);
-        reason += `
-        <div><h3><strong>Indications: </strong></h3>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
-        reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
-      }
+  //     if (categoryId === 1) {
+  //       reason += `<div><br/><strong>Indication:</strong> Screening<br/>
+  //       <div><strong>Reason for having this QT scan: </strong>
+  //       ${getPatientAnswer(11)}</div>
+  //     `;
+  //       // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
+  //     } else if (categoryId === 2) {
+  //       reason += "" + (await DaFormReportGenerator(responsePatientInTake));
+  //       reason += `<div><br/><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
+  //       <div><strong>Reason for having this QT scan: </strong>
+  //       ${getPatientAnswer(11)}</div>
+  //     `;
+  //       // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
+  //     } else if (categoryId === 3) {
+  //       reason += await DbFormReportGenerator(responsePatientInTake);
+  //       reason += `<div><br/><strong>Indication:</strong> Biopsy Proven Disease<br/>
+  //       <div><strong>Reason for having this QT scan: </strong>
+  //       ${getPatientAnswer(11)}</div>
+  //     `;
+  //       // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
+  //     } else if (categoryId === 4) {
+  //       reason += await DcFormGeneration(responsePatientInTake);
+  //       reason += `<div><br/><strong>Indication:</strong> Comparison to Prior<br/>
+  //       <div><strong>Reason for having this QT scan: </strong>
+  //       ${getPatientAnswer(11)}</div>
+  //     `;
+  //       // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
+  //     }
 
-      await setPatientHistory(reason);
-    };
+  //     await setPatientHistory(reason);
+  //   };
 
-    if (!patientHistory) {
-      generatePatientHistory();
-    }
-  }, [responsePatientInTake]);
+  //   if (syncStatus.patientHistory && responsePatientInTake.length > 0) {
+  //     generatePatientHistory();
+  //   }
+  // }, [responsePatientInTake]);
 
   const uploadReportFormate = async () => {
     setPopoverLoading(true);
@@ -1389,11 +1436,17 @@ const Report: React.FC = () => {
       const res = await reportService.getPatientInTakeFormReport(fileId);
       if (res.status) {
         if (res.data.file) {
-          downloadDocumentFile(
-            res.data.file?.base64Data,
-            res.data.file?.contentType,
-            "Report"
-          );
+          setOpenReportPreview(true);
+          setOpenReportPreviewData({
+            base64Data: res.data.file?.base64Data,
+            contentType: res.data.file?.contentType,
+          });
+          console.log(res.data.file?.contentType);
+          // downloadDocumentFile(
+          //   res.data.file?.base64Data,
+          //   res.data.file?.contentType,
+          //   "Report"
+          // );
         }
       }
       console.log("ee", res);
@@ -1637,6 +1690,7 @@ const Report: React.FC = () => {
       if (response.reportTextContentData) {
         setNotes(response.reportTextContentData[0]?.refRTCText);
         setsyncStatus({
+          patientHistory: false,
           breastImplant: true,
           breastDensityandImageRight: true,
           nippleAreolaSkinRight: true,
@@ -1712,6 +1766,32 @@ const Report: React.FC = () => {
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
+      {true && (
+        <Dialog open={openReportPreview} onOpenChange={setOpenReportPreview}>
+          <DialogContent
+            style={{ background: "#fff" }}
+            className="w-[100vw] lg:w-[70vw] h-[90vh] overflow-y-auto p-0"
+          >
+            {openReportPreviewData.contentType === "application/pdf" ? (
+              <div>
+                <iframe
+                  src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
+                  title="Report Preview"
+                  className="w-full mt-10 h-[80vh] border rounded-md"
+                />
+              </div>
+            ) : (
+              <div className="w-full mt-10 h-[80vh]  flex items-center justify-center overflow-auto">
+                <img
+                  src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
+                  alt="Report Preview"
+                  className="w-full h-[80vh] object-contain border rounded-md"
+                />
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
       {loading && <LoadingOverlay />}
       <div className="w-full h-[10vh] bg-[#a3b1a0] flex shadow-sm">
         {/* Main Tabs */}
@@ -1868,7 +1948,21 @@ const Report: React.FC = () => {
                     return yesNoItem?.answer === "Yes";
                   });
 
-                  if (filteredReports.length === 0) {
+                  const availableReports = filteredReports.filter((report) => {
+                    const availabilityItem = responsePatientInTake.find(
+                      (item) => item.questionId === report.reportAvailableQId
+                    );
+                    const reportItem = responsePatientInTake.find(
+                      (item) => item.questionId === report.questionId
+                    );
+
+                    return (
+                      availabilityItem?.answer === "Available" &&
+                      reportItem?.answer !== ""
+                    );
+                  });
+
+                  if (availableReports.length === 0) {
                     return (
                       <tr className="bg-[#f9f2ea]">
                         <td
@@ -1881,10 +1975,7 @@ const Report: React.FC = () => {
                     );
                   }
 
-                  return filteredReports.map((report, idx) => {
-                    const availabilityItem = responsePatientInTake.find(
-                      (item) => item.questionId === report.reportAvailableQId
-                    );
+                  return availableReports.map((report, idx) => {
                     const reportItem = responsePatientInTake.find(
                       (item) => item.questionId === report.questionId
                     );
@@ -1896,20 +1987,15 @@ const Report: React.FC = () => {
                         </td>
                         <td className="px-1 py-2 text-left">{report.label}</td>
                         <td className="px-1 py-2 text-center">
-                          {availabilityItem?.answer === "Available" &&
-                          reportItem?.answer !== "" ? (
-                            <span
-                              className="hover:underline cursor-pointer text-blue-500 text-xs"
-                              onClick={() =>
-                                reportItem?.refITFId &&
-                                getPatientReport(reportItem.refITFId)
-                              }
-                            >
-                              Download
-                            </span>
-                          ) : (
-                            <span>Not Available</span>
-                          )}
+                          <span
+                            className="hover:underline cursor-pointer text-blue-500 text-xs"
+                            onClick={() =>
+                              reportItem?.refITFId &&
+                              getPatientReport(reportItem.refITFId)
+                            }
+                          >
+                            View
+                          </span>
                         </td>
                       </tr>
                     );

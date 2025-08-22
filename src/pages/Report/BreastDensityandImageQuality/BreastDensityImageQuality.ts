@@ -33,7 +33,7 @@ export function generateRightBreastReportText(
     else return "";
   }
 
-  reportText = `It's Image quality is ${imageQualityText().toLowerCase()}${artifactsPresent == "Yes" ? " with artifacts present" : ""}.\n`;
+  reportText = `The Image quality is ${imageQualityText().toLowerCase()}${artifactsPresent == "Yes" ? " with artifacts present" : ""}.\n`;
   reportText += `The breast is ${breastDensity.toLowerCase()} with a fibroglandular ratio of ${fibroglandularVolume.toLowerCase()}% and shows ${symmetry.toLowerCase()}.\n`;
 
   // if (nippleRetraction) {

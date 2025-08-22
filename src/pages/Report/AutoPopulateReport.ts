@@ -62,13 +62,18 @@ export function AutoPopulateReport(
   getreportAnswer(breastImpantQuestions.rupture) === "" &&
     handleReportInputChange(breastImpantQuestions.rupture, "Absent");
 
-  getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" && getPatientAnswer(81).length > 0 &&
+  getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+    getPatientAnswer(81).length > 0 &&
     handleReportInputChange(
       breastImpantQuestions.implantMaterialOther,
       getPatientAnswer(81)
     );
 
-  console.log("eeeeeeee", getTechnicianAnswer(19));
+  getreportAnswer(breastImpantQuestions.implantPositon) === "" &&
+    handleReportInputChange(
+      breastImpantQuestions.implantPositon,
+      "Subpectoral"
+    );
 
   getreportAnswer(symmetryQuestions.symmetry) == "" &&
     handleReportInputChange(
@@ -77,7 +82,8 @@ export function AutoPopulateReport(
         ? "Asymmetry"
         : "Symmetrical size and shape"
     );
-  getreportAnswer(symmetryQuestions.symmetryLeft) == "" && getTechnicianAnswer(20).length > 0 &&
+  getreportAnswer(symmetryQuestions.symmetryLeft) == "" &&
+    getTechnicianAnswer(20).length > 0 &&
     handleReportInputChange(
       symmetryQuestions.symmetryLeft,
       getTechnicianAnswer(20) === "Right"
@@ -160,7 +166,7 @@ export function AutoPopulateReport(
     getreportAnswer(questionIds.grandularSelect) === "" &&
       handleReportInputChange(questionIds.grandularSelect, "Present");
     getreportAnswer(questionIds.grandularAndDuctalTissue) === "" &&
-      handleReportInputChange(questionIds.grandularAndDuctalTissue, "Normal");
+      handleReportInputChange(questionIds.grandularAndDuctalTissue, "Abnormal");
     getreportAnswer(questionIds.benignMicroCysts) === "" &&
       handleReportInputChange(questionIds.benignMicroCysts, "Absent");
     getreportAnswer(questionIds.benignCapsular) === "" &&

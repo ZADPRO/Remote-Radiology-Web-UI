@@ -28,7 +28,7 @@ export function generateBreastImplantDetailsHTML(
 
   if (breastImplants == "") return "";
   if (breastImplants === "Absent") {
-    return `<span>The QT scan shows no breast implants.</span>`;
+    return ``;
   }
 
   const config = getAnswer(questionIds.implantConfiguration);
