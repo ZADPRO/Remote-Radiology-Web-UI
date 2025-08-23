@@ -261,7 +261,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         breastdensityImageTextLeft: true,
                       });
                     }}
-                    placeholder="Past image..."
+                    placeholder="📷 Paste image..."
                   />
                 </div>
               </div>
@@ -313,7 +313,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         nippleareolaImageTextLeft: true,
                       });
                     }}
-                    placeholder="Past image..."
+                    placeholder="📷 Paste image..."
                   />
                 </div>
               </div>
@@ -366,7 +366,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         glandularImageTextLeft: true,
                       });
                     }}
-                    placeholder="Past image..."
+                    placeholder="📷 Paste image..."
                   />
                 </div>
               </div>
@@ -447,7 +447,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         lymphnodesImageTextLeft: true,
                       });
                     }}
-                    placeholder="Past image..."
+                    placeholder="📷 Paste image..."
                   />
                 </div>
               </div>
