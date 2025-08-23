@@ -187,7 +187,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   breastimplantImageText: true,
                 });
               }}
-              placeholder="Past image..."
+              placeholder="📷 Paste image..."
             />
           </div>
         </div>
@@ -289,7 +289,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   symmetryImageText: true,
                 });
               }}
-              placeholder="Past image..."
+              placeholder="📷 Paste image..."
             />
           </div>
         </div>
