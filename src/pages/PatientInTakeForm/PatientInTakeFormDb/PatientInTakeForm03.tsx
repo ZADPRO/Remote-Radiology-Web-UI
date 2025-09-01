@@ -26,7 +26,7 @@ const PatientInTakeForm03: React.FC<Props> = ({
   readOnly,
 }) => {
   const options = [
-    "Biopsy or Cancer Diagnosis Details",
+    "Biopsy Diagnosis Details",
     "Receptor Status",
     "Treatment",
     "Future Monitoring Plan",
@@ -65,7 +65,7 @@ const PatientInTakeForm03: React.FC<Props> = ({
 
   const renderSectionComponent = () => {
     switch (selectedSection) {
-      case "Biopsy or Cancer Diagnosis Details":
+      case "Biopsy Diagnosis Details":
         return (
           <BiopsyorCancer
             formData={formData}

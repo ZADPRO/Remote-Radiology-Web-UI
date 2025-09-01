@@ -117,30 +117,41 @@ export function DbFormReportGenerator(
 
   let reportText = [];
 
+  const categoryId = getPatientAnswer(170);
+
+  if (categoryId != "3") {
+    return ``;
+  }
+
   //Biopsy or Cancer Diagnosis Details
   //Diahnosis
   let biopsyReport = [];
-  biopsyReport.push(
-    `${
-      biopsy.typediagnosis === "Other"
-        ? `${biopsy.typediagnosisother}`
-        : biopsy.typediagnosis === "Ductal Carcinoma in Situ (DCIS)"
-        ? `ductal carcinoma in situ (DCIS)`
-        : biopsy.typediagnosis === "Lobular Carcinoma in Situ (LCIS)"
-        ? `lobular carcinoma in situ (LCIS)`
-        : biopsy.typediagnosis === "Invasive Ductal Carcinoma (IDC)"
-        ? `invasive ductal carcinoma (IDC)`
-        : biopsy.typediagnosis === "Invasive Lobular Carcinoma (ILC)"
-        ? `invasive lobular carcinoma (ILC)`
-        : biopsy.typediagnosis === "Inflammatory Breast Cancer"
-        ? `inflammatory breast cancer`
-        : biopsy.typediagnosis === "Unknown"
-        ? `unknown`
-        : ``
-    }`
-  );
 
-  biopsyReport.push(`date: ${formatReadableDate(biopsy.datediagnosis)}`);
+  if (biopsy.typediagnosis) {
+    biopsyReport.push(
+      `${
+        biopsy.typediagnosis === "Other"
+          ? `${biopsy.typediagnosisother}`
+          : biopsy.typediagnosis === "Ductal Carcinoma in Situ (DCIS)"
+          ? `ductal carcinoma in situ (DCIS)`
+          : biopsy.typediagnosis === "Lobular Carcinoma in Situ (LCIS)"
+          ? `lobular carcinoma in situ (LCIS)`
+          : biopsy.typediagnosis === "Invasive Ductal Carcinoma (IDC)"
+          ? `invasive ductal carcinoma (IDC)`
+          : biopsy.typediagnosis === "Invasive Lobular Carcinoma (ILC)"
+          ? `invasive lobular carcinoma (ILC)`
+          : biopsy.typediagnosis === "Inflammatory Breast Cancer"
+          ? `inflammatory breast cancer`
+          : biopsy.typediagnosis === "Unknown"
+          ? `unknown`
+          : ``
+      }`
+    );
+  }
+
+  if (biopsy.datediagnosis !== "") {
+    biopsyReport.push(`date: ${formatReadableDate(biopsy.datediagnosis)}`);
+  }
 
   if (biopsy.grade !== "Unknown" && biopsy.grade !== "") {
     biopsyReport.push(`grade: ${biopsy.grade}`);
@@ -154,7 +165,9 @@ export function DbFormReportGenerator(
     biopsyReport.push(`tumor size: ${biopsy.tumersize} mm`);
   }
 
-  reportText.push(`Biopsy diagnosis of ${biopsyReport.join(", ")}.`);
+  if (biopsyReport.length > 0) {
+    reportText.push(`Biopsy diagnosis of ${biopsyReport.join(", ")}.`);
+  }
 
   //Location of cancer
   //Right
@@ -320,11 +333,15 @@ export function DbFormReportGenerator(
     }
     //Other
     if (treatment.other !== "Not Applicable" && treatment.other.length > 0) {
-      reportText.push(`${treatment.otherspecify} ${treatment.other.toLocaleLowerCase()}.`);
+      reportText.push(
+        `${treatment.otherspecify} ${treatment.other.toLocaleLowerCase()}.`
+      );
     }
     //Treatment timeline and details
     if (treatment.Treatmenttimeline.length > 0) {
-      reportText.push(`Treatment timeline and details: ${treatment.Treatmenttimeline}.`);
+      reportText.push(
+        `Treatment timeline and details: ${treatment.Treatmenttimeline}.`
+      );
     }
   }
 

@@ -99,6 +99,12 @@ export function DaFormReportGenerator(
     Pathology: getPatientAnswer(247),
   };
 
+  const categoryId = getPatientAnswer(170);
+
+  if (categoryId != "2") {
+    return ``;
+  }
+
   //AbnormalFindings
   const AbnormalFindingsTexttype = [];
 
@@ -290,7 +296,7 @@ export function DaFormReportGenerator(
   }
 
   //Pathology
-  if(biopsyinfo.Pathology.length > 0){
+  if (biopsyinfo.Pathology.length > 0) {
     report.push(`Pathology was recommended ${biopsyinfo.Pathology}.`);
   }
 

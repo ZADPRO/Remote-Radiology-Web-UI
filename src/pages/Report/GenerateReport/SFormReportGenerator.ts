@@ -745,13 +745,13 @@ export function SFormGeneration(
       return ``;
     }
 
-    return `
-   ${label}${
-      dateknown === "Known" ? ` performed on ${formatReadableDate(date)}` : ""
+    return `${label}${
+      dateknown === "Known" && date.length > 0
+        ? ` performed on ${formatReadableDate(date)}`
+        : ""
     }, result ${result.toLocaleLowerCase()}.${
       reportAvailable === "Not Available" ? ` Report not available.` : ``
-    }
-   `;
+    }`;
   };
 
   //Thermogram
@@ -772,7 +772,7 @@ export function SFormGeneration(
   if (previousImaging.mammogramYesNo === "Yes")
     report.push(
       generatepreviousImaging(
-        " Mammogram",
+        "Mammogram",
         previousImaging.mammogramYesNo,
         previousImaging.mammogramDateKnown,
         previousImaging.mammogramDate,
@@ -848,38 +848,38 @@ export function SFormGeneration(
 
   //Biopsy
   if (biopsy.previousBiopsy === "Yes" || biopsy.previousBiopsy === "Unknown") {
-    report.push(`
-        Previous biopsy:${
-          biopsy.previousBiopsy === "Yes"
-            ? ` Date: ${formatReadableDate(biopsy.previousBiopsyDate)}.`
-            : ""
-        }${
-      biopsy.biopsyResults === "Yes" ||
-      biopsy.biopsyResults === "Unknown" ||
-      biopsy.biopsyResults === "No"
-        ? ` Result: ${
-            biopsy.biopsyResults === "Yes"
-              ? `${biopsy.biopsyResultsDetails}.`
-              : `${biopsy.biopsyResults.toLowerCase()}.`
-          }`
-        : ""
-    }${
-      biopsy.biopsyLeft === "true"
-        ? ` Left ${biopsy.biopsyLeftType.toLocaleLowerCase()}.`
-        : ""
-    }${
-      biopsy.biopsyRight === "true"
-        ? ` Right ${biopsy.biopsyRightType.toLocaleLowerCase()}.`
-        : ""
-    }${
-      biopsy.reportAvailablity === "Not Available"
-        ? ` Report not available.`
-        : ""
-    }${
-      biopsy.additionalComments.length > 0
-        ? ` Additional comments: ${biopsy.additionalComments}.`
-        : ""
-    }`);
+    report.push(
+      `Previous biopsy:${
+        biopsy.previousBiopsy === "Yes"
+          ? ` Date: ${formatReadableDate(biopsy.previousBiopsyDate)}.`
+          : ""
+      }${
+        biopsy.biopsyResults === "Yes" ||
+        biopsy.biopsyResults === "Unknown"
+          ? ` Result: ${
+              biopsy.biopsyResults === "Yes"
+                ? `${biopsy.biopsyResultsDetails}.`
+                : `${biopsy.biopsyResults.toLowerCase()}.`
+            }`
+          : ""
+      }${
+        biopsy.biopsyLeft === "true"
+          ? ` Left ${biopsy.biopsyLeftType.toLocaleLowerCase()}.`
+          : ""
+      }${
+        biopsy.biopsyRight === "true"
+          ? ` Right ${biopsy.biopsyRightType.toLocaleLowerCase()}.`
+          : ""
+      }${
+        biopsy.reportAvailablity === "Not Available"
+          ? ` Report not available.`
+          : ""
+      }${
+        biopsy.additionalComments.length > 0
+          ? ` Additional comments: ${biopsy.additionalComments}.`
+          : ""
+      }`
+    );
   }
 
   return report.join("<br/>");

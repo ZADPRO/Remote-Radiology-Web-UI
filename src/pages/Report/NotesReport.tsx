@@ -447,7 +447,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     lessionsRight
-      ? `<h4><strong>LESIONS:</strong></h4>${
+      ? `${
           lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
             ? lesionsVal["simple cyst"]
                 .map((data, index) => {
@@ -463,7 +463,7 @@ const NotesReport: React.FC<Props> = ({
                       : "")
                   );
                 })
-                .join("<br/>")
+                .join("")
             : ""
         }${
           lesionsVal["complex cystic structure"] &&
@@ -475,7 +475,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -496,7 +495,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -517,7 +515,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -538,7 +535,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -559,7 +555,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -577,7 +572,6 @@ const NotesReport: React.FC<Props> = ({
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
-                    "<br />" +
                     data +
                     (dataArray[index]?.ImageText
                       ? dataArray[index].ImageText
@@ -586,16 +580,16 @@ const NotesReport: React.FC<Props> = ({
                 })
                 .join("")
             : ""
-        }<br/>`
+        }`
       : ``
   }
   ${
     lymphRight
-      ? `<strong>Lymph Nodes: </strong>${textEditor.LymphNodesRight.value}${
+      ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesRight.value}${
           textEditor.LymphNodesRightImage.value.length > 7
             ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
             : "<p><br/></p>"
-        }`
+        }<div>`
       : ``
   }
   ${
@@ -651,7 +645,7 @@ const NotesReport: React.FC<Props> = ({
   }
     ${
       lessionsLeft
-        ? `<h4><strong>LESIONS:</strong></h4>${
+        ? `${
             lesionsValLeft["simple cyst"] &&
             lesionsValLeft["simple cyst"].length > 0
               ? lesionsValLeft["simple cyst"]
@@ -668,7 +662,7 @@ const NotesReport: React.FC<Props> = ({
                         : "")
                     );
                   })
-                  .join("<br/>")
+                  .join("")
               : ""
           }${
             lesionsValLeft["complex cystic structure"] &&
@@ -682,7 +676,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -703,7 +696,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -724,7 +716,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -745,7 +736,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -766,7 +756,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -784,7 +773,6 @@ const NotesReport: React.FC<Props> = ({
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
-                      "<br />" +
                       data +
                       (dataArray[index]?.ImageText
                         ? dataArray[index].ImageText
@@ -798,11 +786,11 @@ const NotesReport: React.FC<Props> = ({
     }
   ${
     lymphLeft
-      ? `<strong>Lymph Nodes: </strong>${textEditor.LymphNodesLeft.value}${
+      ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesLeft.value}${
           textEditor.LymphNodesLeftImage.value.length > 7
             ? `<span>${textEditor.LymphNodesLeftImage.value}<br/></span>`
             : "<p><br/></p>"
-        }`
+        }</div>`
       : ``
   }
   ${
