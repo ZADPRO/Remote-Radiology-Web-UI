@@ -351,8 +351,6 @@ const Report: React.FC = () => {
     // if (hasProcessedRef.current.hash === currentHash) return; // nothing new
     // hasProcessedRef.current.hash = currentHash; // memoise
 
-    console.log("###6666");
-
     if (syncStatus.patientHistory) {
       let reason = ``;
       reason += `<p><strong>HISTORY : </strong></p>`;
@@ -368,21 +366,21 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
       } else if (categoryId === 2) {
         // reason += "" + DaFormReportGenerator(responsePatientInTake);
-        reason += `<div><br/><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
+        reason += `<div><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
           <div><strong>Reason for having this QT scan: </strong>
           ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
         // reason += DbFormReportGenerator(responsePatientInTake);
-        reason += `<div><br/><strong>Indication:</strong> Biopsy Proven Disease<br/>
+        reason += `<div><strong>Indication:</strong> Biopsy Proven Disease<br/>
           <div><strong>Reason for having this QT scan: </strong>
           ${getPatientAnswer(11)}</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
       } else if (categoryId === 4) {
         // reason += DcFormGeneration(responsePatientInTake);
-        reason += `<div><br/><strong>Indication:</strong> Comparison to Prior<br/>
+        reason += `<div><strong>Indication:</strong> Comparison to Prior<br/>
           <div><strong>Reason for having this QT scan: </strong>
           ${getPatientAnswer(11)}</div>
         `;

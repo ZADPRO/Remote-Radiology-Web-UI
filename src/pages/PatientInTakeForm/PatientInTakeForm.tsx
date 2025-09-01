@@ -133,7 +133,6 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
         userID,
         appointmentId
       );
-      console.log("---->", res);
 
       if (res.status) {
         if (controlData.apiUpdate && controlData.categoryId) {
@@ -152,6 +151,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           setFormData(updatedData);
         } else {
           if (controlData.OverrideStatus === "approved") {
+
+            
             const newData = Array.from({ length: 527 }, (_, index) => {
               const existing = res.data.find(
                 (q: any) => q.questionId === 1 + index
@@ -162,13 +163,12 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
               };
             });
 
+            console.log("Hello --------------->",newData)
             setFormData(newData);
           } else {
             setFormData(res.data);
           }
         }
-
-        console.log("Final formData:", res.data);
       }
     } catch (error) {
       console.log(error);
@@ -192,10 +192,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     const payload = {
       appointmentId: controlData.appointmentId,
       patientId: controlData.userId,
-      answers:
-        overide == true
-          ? formData.filter((item) => item.questionId <= 13)
-          : formData,
+      answers:formData,
       categoryId:
         parseInt(
           formData.find((item) => item.questionId === 170)?.answer || ""

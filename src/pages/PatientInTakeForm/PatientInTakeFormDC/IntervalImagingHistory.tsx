@@ -81,7 +81,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Interval Imaging History" className="uppercase" />
       <div className="bg-[#fff]">
         {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
@@ -330,7 +330,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
             <div className="pl-4 space-y-4">
               <Label>If yes,</Label>
 
-              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start min-h-10">
+              <div className="flex flex-col lg:flex-col gap-2 lg:gap-4 items-start min-h-10">
                 <div className="space-y-2">
                   <Label>Type</Label>
 

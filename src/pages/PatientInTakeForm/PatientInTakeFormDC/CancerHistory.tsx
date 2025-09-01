@@ -17,7 +17,7 @@ interface QuestionIds {
   cancerDate: number;
   cancerType: number;
   cancerTreatment: number;
-  cancerTreatmentOther:number;
+  cancerTreatmentOther: number;
   cancerTreatmentdate: number;
   cancerStatus: number;
   cancerFolowupDate: number;
@@ -45,7 +45,12 @@ const CancerHistory: React.FC<Props> = ({
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Cancer History" className="uppercase" />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
@@ -181,12 +186,15 @@ const CancerHistory: React.FC<Props> = ({
                 handleInputChange={handleInputChange}
                 formData={formData}
                 options={[
-                  { label: "In treatment", value: "In treatment" },
+                  { label: "Ongoing treatment", value: "Ongoing treatment" },
                   {
                     label: "Completed treatment",
                     value: "Completed treatment",
                   },
-                  { label: "Recurrence", value: "Recurrence" },
+                  {
+                    label: "Recurrence suspected",
+                    value: "Recurrence suspected",
+                  },
                 ]}
               />
 

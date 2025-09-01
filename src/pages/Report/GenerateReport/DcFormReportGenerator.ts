@@ -27,56 +27,56 @@ export function DcFormGeneration(
       .join(", ");
   }
 
-  const breastCancerSymptoms = {
-    breastCancerSymptoms: getPatientAnswer(322),
-    lumpOrThick: getPatientAnswer(323),
-    lumpLeft: getPatientAnswer(324),
-    lumpRight: getPatientAnswer(325),
-    lumpResult: getPatientAnswer(326),
-    lumpResultRight: getPatientAnswer(441),
-    lumpDate: getPatientAnswer(327),
-    lumpDateRight: getPatientAnswer(442),
-    lumpSize: getPatientAnswer(328),
-    lumpSizeRight: getPatientAnswer(443),
-    skinChanges: getPatientAnswer(329),
-    skinRight: getPatientAnswer(330),
-    skinLeft: getPatientAnswer(331),
-    skinDate: getPatientAnswer(332),
-    skinDateRight: getPatientAnswer(444),
-    skinResult: getPatientAnswer(333),
-    skinResultRight: getPatientAnswer(445),
-    nippleDischarge: getPatientAnswer(334),
-    nippleRight: getPatientAnswer(335),
-    nippleLeft: getPatientAnswer(336),
-    nippleDate: getPatientAnswer(337),
-    nippleDateRight: getPatientAnswer(449),
-    nippleResult: getPatientAnswer(338),
-    nippleResultRight: getPatientAnswer(450),
-    breastPain: getPatientAnswer(339),
-    breastPainRight: getPatientAnswer(340),
-    breastPainLeft: getPatientAnswer(341),
-    breastPainDate: getPatientAnswer(342),
-    breastPainDateRight: getPatientAnswer(439),
-    breastPainResult: getPatientAnswer(343),
-    breastPainResultRight: getPatientAnswer(446),
-    nipplePain: getPatientAnswer(344),
-    nipplePainRight: getPatientAnswer(345),
-    nipplePainLeft: getPatientAnswer(346),
-    nipplePainDate: getPatientAnswer(347),
-    nipplePainDateRight: getPatientAnswer(451),
-    nipplePainResult: getPatientAnswer(348),
-    nipplePainResultRight: getPatientAnswer(452),
-    lymphNodes: getPatientAnswer(349),
-    lymphNodesRight: getPatientAnswer(350),
-    lymphNodesLeft: getPatientAnswer(351),
-    lymphNodesDate: getPatientAnswer(352),
-    lymphNodesDateRight: getPatientAnswer(447),
-    lymphNodesResult: getPatientAnswer(353),
-    lymphNodesResultRight: getPatientAnswer(448),
-    others: getPatientAnswer(354),
-    othersDetails: getPatientAnswer(355),
-    additionalcomments: getPatientAnswer(523),
-  };
+  // const breastCancerSymptoms = {
+  //   breastCancerSymptoms: getPatientAnswer(322),
+  //   lumpOrThick: getPatientAnswer(323),
+  //   lumpLeft: getPatientAnswer(324),
+  //   lumpRight: getPatientAnswer(325),
+  //   lumpResult: getPatientAnswer(326),
+  //   lumpResultRight: getPatientAnswer(441),
+  //   lumpDate: getPatientAnswer(327),
+  //   lumpDateRight: getPatientAnswer(442),
+  //   lumpSize: getPatientAnswer(328),
+  //   lumpSizeRight: getPatientAnswer(443),
+  //   skinChanges: getPatientAnswer(329),
+  //   skinRight: getPatientAnswer(330),
+  //   skinLeft: getPatientAnswer(331),
+  //   skinDate: getPatientAnswer(332),
+  //   skinDateRight: getPatientAnswer(444),
+  //   skinResult: getPatientAnswer(333),
+  //   skinResultRight: getPatientAnswer(445),
+  //   nippleDischarge: getPatientAnswer(334),
+  //   nippleRight: getPatientAnswer(335),
+  //   nippleLeft: getPatientAnswer(336),
+  //   nippleDate: getPatientAnswer(337),
+  //   nippleDateRight: getPatientAnswer(449),
+  //   nippleResult: getPatientAnswer(338),
+  //   nippleResultRight: getPatientAnswer(450),
+  //   breastPain: getPatientAnswer(339),
+  //   breastPainRight: getPatientAnswer(340),
+  //   breastPainLeft: getPatientAnswer(341),
+  //   breastPainDate: getPatientAnswer(342),
+  //   breastPainDateRight: getPatientAnswer(439),
+  //   breastPainResult: getPatientAnswer(343),
+  //   breastPainResultRight: getPatientAnswer(446),
+  //   nipplePain: getPatientAnswer(344),
+  //   nipplePainRight: getPatientAnswer(345),
+  //   nipplePainLeft: getPatientAnswer(346),
+  //   nipplePainDate: getPatientAnswer(347),
+  //   nipplePainDateRight: getPatientAnswer(451),
+  //   nipplePainResult: getPatientAnswer(348),
+  //   nipplePainResultRight: getPatientAnswer(452),
+  //   lymphNodes: getPatientAnswer(349),
+  //   lymphNodesRight: getPatientAnswer(350),
+  //   lymphNodesLeft: getPatientAnswer(351),
+  //   lymphNodesDate: getPatientAnswer(352),
+  //   lymphNodesDateRight: getPatientAnswer(447),
+  //   lymphNodesResult: getPatientAnswer(353),
+  //   lymphNodesResultRight: getPatientAnswer(448),
+  //   others: getPatientAnswer(354),
+  //   othersDetails: getPatientAnswer(355),
+  //   additionalcomments: getPatientAnswer(523),
+  // };
 
   const cancerhistoy = {
     cancerHistory: getPatientAnswer(356),
@@ -123,32 +123,10 @@ export function DcFormGeneration(
     newFindingsDeatils: getPatientAnswer(400),
   };
 
-  //Current Breast Symptoms
-  if (breastCancerSymptoms.breastCancerSymptoms === "Yes") {
-    if (breastCancerSymptoms.lumpOrThick === "true") {
-      report.push(
-        `Current breast symptoms: Lump or thickening${
-          breastCancerSymptoms.lumpLeft.length > 0 ||
-          breastCancerSymptoms.lumpRight.length > 0 ||
-          (breastCancerSymptoms.lumpLeft.length > 0 &&
-            breastCancerSymptoms.lumpRight.length > 0)
-            ? ` in the ${
-                breastCancerSymptoms.lumpLeft.length > 0
-                  ? `left breast are ${breastCancerSymptoms.lumpResult.toLocaleLowerCase()} at ${formatBreastSymptoms(
-                      breastCancerSymptoms.lumpLeft
-                    )}${
-                      breastCancerSymptoms.lumpResult === "New"
-                        ? `, since ${breastCancerSymptoms.lumpDate} months`
-                        : ``
-                    }, size ${breastCancerSymptoms.lumpSize.toLocaleLowerCase()}${
-                      breastCancerSymptoms.lumpRight.length > 0 ? `, ` : ""
-                    }`
-                  : ""
-              }`
-            : ""
-        }.`
-      );
-    }
+   const categoryId = getPatientAnswer(170);
+
+  if (categoryId != "4") {
+    return ``;
   }
 
   //Cancer History
@@ -206,7 +184,7 @@ export function DcFormGeneration(
 
   if (IntervalImagingHistoryData.length > 0) {
     report.push(
-      ` Other breast imaging since last QT scan: ${IntervalImagingHistoryData.join(
+      `Other breast imaging since last QT scan: ${IntervalImagingHistoryData.join(
         ", "
       )}.`
     );
