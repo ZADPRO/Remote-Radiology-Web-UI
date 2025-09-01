@@ -12,7 +12,7 @@ import TechnicianPatientIntakeForm, {
 import { Button } from "@/components/ui/button";
 // import Mammoth from "mammoth";
 import { renderAsync } from "docx-preview";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppointmentStatus,
@@ -54,12 +54,8 @@ import {
   breastDensityandImageLeftQuestions,
   breastDensityandImageRightQuestions,
   breastImpantQuestions,
-  ComparisonPriorLeftQuestion,
-  ComparisonPriorRightQuestion,
   grandularAndDuctalTissueLeftQuestions,
   grandularAndDuctalTissueRightQuestions,
-  lesionsLeftQuestions,
-  lesionsRightQuestions,
   LymphNodesLeftQuestions,
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
@@ -67,19 +63,15 @@ import {
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
-import { LesionsRightString } from "./Lisons/LesionsRightString";
-import { ComparisonPriorRightString } from "./ComparisonPrior/ComparisonPriorRightString";
 import { LymphNodesGenerateString } from "./GenerateReport/LymphNodes";
-import { SFormGeneration } from "./GenerateReport/SFormReportGenerator";
-import { DaFormReportGenerator } from "./GenerateReport/DaFormReportGenerator";
-import { DcFormGeneration } from "./GenerateReport/DcFormReportGenerator";
-import { DbFormReportGenerator } from "./GenerateReport/DbFormReportGenerator";
 import { generateBreastImplantDetailsHTML } from "./BreastImplantDetails/BreastImplantDetailsEditor";
 import { SymmentryGenerator } from "./GenerateReport/SymmetryGenerator";
 import {
   AutoPopulateReport,
   AutoPopulateReportImpressRecomm,
 } from "./AutoPopulateReport";
+import { formatDateWithAge } from "@/utlis/calculateAge";
+import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -97,6 +89,35 @@ interface TextEditorContent {
   refRTCId: number;
   refRTCText: string;
   refRTSyncStatus: boolean;
+  refRTPatientHistorySyncStatus: boolean;
+  refRTBreastImplantSyncStatus: boolean;
+  refRTSymmetrySyncStatus: boolean;
+  refRTBreastDensityandImageRightSyncStatus: boolean;
+  refRTNippleAreolaSkinRightSyncStatus: boolean;
+  refRTLesionsRightSyncStatus: boolean;
+  refRTComparisonPriorSyncStatus: boolean;
+  refRTGrandularAndDuctalTissueRightSyncStatus: boolean;
+  refRTLymphNodesRightSyncStatus: boolean;
+  refRTBreastDensityandImageLeftSyncStatus: boolean;
+  refRTNippleAreolaSkinLeftSyncStatus: boolean;
+  refRTLesionsLeftSyncStatus: boolean;
+  refRTComparisonPriorLeftSyncStatus: boolean;
+  refRTGrandularAndDuctalTissueLeftSyncStatus: boolean;
+  refRTLymphNodesLeftSyncStatus: boolean;
+  refRTBreastImplantReportText: string;
+  refRTSymmetryReportText: string;
+  refRTBreastDensityandImageRightReportText: string;
+  refRTNippleAreolaSkinRightReportText: string;
+  refRTLesionsRightReportText: string;
+  refRTComparisonPriorReportText: string;
+  refRTGrandularAndDuctalTissueRightReportText: string;
+  refRTLymphNodesRightReportText: string;
+  refRTBreastDensityandImageLeftReportText: string;
+  refRTNippleAreolaSkinLeftReportText: string;
+  refRTLesionsLeftReportText: string;
+  refRTComparisonPriorLeftReportText: string;
+  refRTGrandularAndDuctalTissueLeftReportText: string;
+  refRTLymphNodesLeftReportText: string;
 }
 
 interface ReportTemplate {
@@ -104,6 +125,7 @@ interface ReportTemplate {
   refRFId: number;
   refRFCreatedBy: number;
   refRFCreatedAt: string;
+  refUserCustId: string;
 }
 
 type ReportStageLabel =
@@ -155,37 +177,41 @@ export type ChangedOneState = {
   nippleareolaImageTextLeft: boolean;
   glandularImageTextLeft: boolean;
   lymphnodesImageTextLeft: boolean;
+  breastImplantSyncStatus: boolean;
+  symmetrySyncStatus: boolean;
+  breastDensityandImageRightSyncStatus: boolean;
+  nippleAreolaSkinRightSyncStatus: boolean;
+  LesionsRightSyncStatus: boolean;
+  ComparisonPriorSyncStatus: boolean;
+  grandularAndDuctalTissueRightSyncStatus: boolean;
+  LymphNodesRightSyncStatus: boolean;
+  breastDensityandImageLeftSyncStatus: boolean;
+  nippleAreolaSkinLeftSyncStatus: boolean;
+  LesionsLeftSyncStatus: boolean;
+  ComparisonPriorLeftSyncStatus: boolean;
+  grandularAndDuctalTissueLeftSyncStatus: boolean;
+  LymphNodesLeftSyncStatus: boolean;
+  breastImplantReportText: boolean;
+  symmetryReportText: boolean;
+  breastDensityandImageRightReportText: boolean;
+  nippleAreolaSkinRightReportText: boolean;
+  LesionsRightReportText: boolean;
+  ComparisonPriorReportText: boolean;
+  grandularAndDuctalTissueRightReportText: boolean;
+  LymphNodesRightReportText: boolean;
+  breastDensityandImageLeftReportText: boolean;
+  nippleAreolaSkinLeftReportText: boolean;
+  LesionsLeftReportText: boolean;
+  ComparisonPriorLeftReportText: boolean;
+  grandularAndDuctalTissueLeftReportText: boolean;
+  LymphNodesLeftReportText: boolean;
 };
 
 const Report: React.FC = () => {
-  const [changedOne, setChangedOne] = useState<ChangedOneState>({
-    reportQuestion: [],
-    reportTextContent: false,
-    syncStatus: false,
-    impression: false,
-    recommendation: false,
-    impressionaddtional: false,
-    recommendationaddtional: false,
-    commonImpressionRecommendation: false,
-    impressionRight: false,
-    recommendationRight: false,
-    impressionaddtionalRight: false,
-    recommendationaddtionalRight: false,
-    commonImpressionRecommendationRight: false,
-    artificatsLeft: false,
-    artificatsRight: false,
-    patienthistory: false,
-    breastimplantImageText: false,
-    symmetryImageText: false,
-    breastdensityImageText: false,
-    nippleareolaImageText: false,
-    glandularImageText: false,
-    lymphnodesImageText: false,
-    breastdensityImageTextLeft: false,
-    nippleareolaImageTextLeft: false,
-    glandularImageTextLeft: false,
-    lymphnodesImageTextLeft: false,
-  });
+  useEffect(() => {
+    handleAssignUser();
+    // listDicomFiles();
+  }, []);
 
   const [tab, setTab] = useState<number>(4);
 
@@ -312,41 +338,58 @@ const Report: React.FC = () => {
     symmetry: true,
   });
 
+  // const hasProcessedRef = useRef<{ hash: string | null }>({ hash: null });
+
   useEffect(() => {
+    if (!reportFormData) return;
+
+    // const currentHash = JSON.stringify({
+    //   syncStatus,
+    //   answers: reportFormData.map((q) => [q.questionId, q.answer]),
+    // });
+
+    // if (hasProcessedRef.current.hash === currentHash) return; // nothing new
+    // hasProcessedRef.current.hash = currentHash; // memoise
+
+    console.log("###6666");
+
     if (syncStatus.patientHistory) {
-      let reason = `<p><strong>HISTORY : </strong></p>`;
-      reason += SFormGeneration(responsePatientInTake);
+      let reason = ``;
+      reason += `<p><strong>HISTORY : </strong></p>`;
+      // reason += SFormGeneration(responsePatientInTake);
 
       const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
 
       if (categoryId === 1) {
-        reason += `<div><br/><strong>Indication:</strong> Screening<br/>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
+        reason += `<div><strong>Indication:</strong> Screening<br/>
+          <div><strong>Reason for having this QT scan: </strong>
+          ${getPatientAnswer(11)}</div>
+        `;
         // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
       } else if (categoryId === 2) {
-        reason += "" + DaFormReportGenerator(responsePatientInTake);
+        // reason += "" + DaFormReportGenerator(responsePatientInTake);
         reason += `<div><br/><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
+          <div><strong>Reason for having this QT scan: </strong>
+          ${getPatientAnswer(11)}.</div>
+        `;
         // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
-        reason += DbFormReportGenerator(responsePatientInTake);
+        // reason += DbFormReportGenerator(responsePatientInTake);
         reason += `<div><br/><strong>Indication:</strong> Biopsy Proven Disease<br/>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
+          <div><strong>Reason for having this QT scan: </strong>
+          ${getPatientAnswer(11)}</div>
+        `;
         // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
       } else if (categoryId === 4) {
-        reason += DcFormGeneration(responsePatientInTake);
+        // reason += DcFormGeneration(responsePatientInTake);
         reason += `<div><br/><strong>Indication:</strong> Comparison to Prior<br/>
-        <div><strong>Reason for having this QT scan: </strong>
-        ${getPatientAnswer(11)}</div>
-      `;
+          <div><strong>Reason for having this QT scan: </strong>
+          ${getPatientAnswer(11)}</div>
+        `;
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
+
+      reason += PatientHistoryReportGenerator(responsePatientInTake) + "<br/>";
 
       setPatientHistory(reason);
     }
@@ -355,7 +398,8 @@ const Report: React.FC = () => {
       setBreastDensityandImageRight(
         generateRightBreastReportText(
           reportFormData,
-          breastDensityandImageRightQuestions
+          breastDensityandImageRightQuestions,
+          "Right"
         )
       );
     }
@@ -378,21 +422,22 @@ const Report: React.FC = () => {
       );
     }
 
-    if (syncStatus.LesionsRight) {
-      setLesionsRight(
-        LesionsRightString(reportFormData, lesionsRightQuestions)
-      );
-    }
+    // if (syncStatus.LesionsRight) {
+    // setLesionsRight(
+    //   LesionsRightString(reportFormData, lesionsRightQuestions, LesionsRight)
+    // );
+    // }
 
-    if (syncStatus.ComparisonPrior) {
-      setComparisonPrior(
-        ComparisonPriorRightString(
-          reportFormData,
-          ComparisonPriorRightQuestion,
-          "Right"
-        )
-      );
-    }
+    // if (syncStatus.ComparisonPrior) {
+    // setComparisonPrior(
+    //   ComparisonPriorRightString(
+    //     reportFormData,
+    //     ComparisonPriorRightQuestion,
+    //     "Right",
+    //     ComparisonPrior
+    //   )
+    // );
+    // }
 
     if (syncStatus.LymphNodesRight) {
       setLymphNodesRight(
@@ -408,7 +453,8 @@ const Report: React.FC = () => {
       setBreastDensityandImageLeft(
         generateRightBreastReportText(
           reportFormData,
-          breastDensityandImageLeftQuestions
+          breastDensityandImageLeftQuestions,
+          "Left"
         )
       );
     }
@@ -431,19 +477,22 @@ const Report: React.FC = () => {
       );
     }
 
-    if (syncStatus.LesionsLeft) {
-      setLesionsLeft(LesionsRightString(reportFormData, lesionsLeftQuestions));
-    }
+    // if (syncStatus.LesionsLeft) {
+    // setLesionsLeft(
+    //   LesionsRightString(reportFormData, lesionsLeftQuestions, LesionsLeft)
+    // );
+    // }
 
-    if (syncStatus.ComparisonPriorLeft) {
-      setComparisonPriorLeft(
-        ComparisonPriorRightString(
-          reportFormData,
-          ComparisonPriorLeftQuestion,
-          "Left"
-        )
-      );
-    }
+    // if (syncStatus.ComparisonPriorLeft) {
+    // setComparisonPriorLeft(
+    //   ComparisonPriorRightString(
+    //     reportFormData,
+    //     ComparisonPriorLeftQuestion,
+    //     "Left",
+    //     ComparisonPriorLeft
+    //   )
+    // );
+    // }
 
     if (syncStatus.LymphNodesLeft) {
       setLymphNodesLeft(
@@ -468,6 +517,8 @@ const Report: React.FC = () => {
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
+
+    console.log("^^^^", questionId);
     setChangedOne((prev) => ({
       ...prev,
       reportQuestion: prev.reportQuestion.includes(questionId)
@@ -527,6 +578,7 @@ const Report: React.FC = () => {
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingStatus, setLoadingStatus] = useState(0);
+  const [deleteLoadingStatus, setDeleteLoadingStatus] = useState(0);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [fileName, setFilename] = useState("");
   const [fileData, setFileData] = useState("");
@@ -682,6 +734,63 @@ const Report: React.FC = () => {
   const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
   const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
 
+  const [changedOne, setChangedOne] = useState<ChangedOneState>({
+    reportQuestion: [],
+    reportTextContent: false,
+    syncStatus: false,
+    impression: false,
+    recommendation: false,
+    impressionaddtional: false,
+    recommendationaddtional: false,
+    commonImpressionRecommendation: false,
+    impressionRight: false,
+    recommendationRight: false,
+    impressionaddtionalRight: false,
+    recommendationaddtionalRight: false,
+    commonImpressionRecommendationRight: false,
+    artificatsLeft: false,
+    artificatsRight: false,
+    patienthistory: false,
+    breastimplantImageText: false,
+    symmetryImageText: false,
+    breastdensityImageText: false,
+    nippleareolaImageText: false,
+    glandularImageText: false,
+    lymphnodesImageText: false,
+    breastdensityImageTextLeft: false,
+    nippleareolaImageTextLeft: false,
+    glandularImageTextLeft: false,
+    lymphnodesImageTextLeft: false,
+    breastImplantSyncStatus: false,
+    symmetrySyncStatus: false,
+    breastDensityandImageRightSyncStatus: false,
+    nippleAreolaSkinRightSyncStatus: false,
+    LesionsRightSyncStatus: false,
+    ComparisonPriorSyncStatus: false,
+    grandularAndDuctalTissueRightSyncStatus: false,
+    LymphNodesRightSyncStatus: false,
+    breastDensityandImageLeftSyncStatus: false,
+    nippleAreolaSkinLeftSyncStatus: false,
+    LesionsLeftSyncStatus: false,
+    ComparisonPriorLeftSyncStatus: false,
+    grandularAndDuctalTissueLeftSyncStatus: false,
+    LymphNodesLeftSyncStatus: false,
+    breastImplantReportText: false,
+    symmetryReportText: false,
+    breastDensityandImageRightReportText: false,
+    nippleAreolaSkinRightReportText: false,
+    LesionsRightReportText: false,
+    ComparisonPriorReportText: false,
+    grandularAndDuctalTissueRightReportText: false,
+    LymphNodesRightReportText: false,
+    breastDensityandImageLeftReportText: false,
+    nippleAreolaSkinLeftReportText: false,
+    LesionsLeftReportText: false,
+    ComparisonPriorLeftReportText: false,
+    grandularAndDuctalTissueLeftReportText: false,
+    LymphNodesLeftReportText: false,
+  });
+
   const patientReports = [
     {
       yesNocheckQId: 124,
@@ -762,11 +871,11 @@ const Report: React.FC = () => {
       if (response.status) {
         setScanCenterImg(response.ScanCenterImg);
         setScanCenterAddress(response.ScancenterAddress);
-        // setScanCenterImg(response.ScanCenterImg);
+        setScanCenterImg(response.ScanCenterImg);
         setAssignData({
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [],
-          easeQTReportAccess: response.easeQTReportAccess,
+          easeQTReportAccess: response.easeQTReportAccess || false,
         });
 
         setMainImpressionRecommendation((prev) => ({
@@ -898,6 +1007,157 @@ const Report: React.FC = () => {
           );
         }
 
+        //Breast Implant
+        if (
+          !(
+            response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
+            false
+          )
+        ) {
+          setBreastImplantRight(
+            response.reportTextContentData[0].refRTBreastImplantReportText
+          );
+        }
+
+        //symmentry
+        if (
+          !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
+        ) {
+          setSymmetry(
+            response.reportTextContentData[0].refRTSymmetryReportText
+          );
+        }
+
+        //breastDensity Right
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTBreastDensityandImageRightSyncStatus || false
+          )
+        ) {
+          setBreastDensityandImageRight(
+            response.reportTextContentData[0]
+              .refRTBreastDensityandImageRightReportText
+          );
+        }
+
+        //NippleAreola Right
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTNippleAreolaSkinRightSyncStatus || false
+          )
+        ) {
+          setNippleAreolaSkinRight(
+            response.reportTextContentData[0]
+              .refRTNippleAreolaSkinRightReportText
+          );
+        }
+
+        //Glandular Right
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTGrandularAndDuctalTissueRightSyncStatus || false
+          )
+        ) {
+          setGrandularAndDuctalTissueRight(
+            response.reportTextContentData[0]
+              .refRTGrandularAndDuctalTissueRightReportText
+          );
+        }
+
+        //Lymphnode Right
+        if (
+          !(
+            response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
+            false
+          )
+        ) {
+          setLymphNodesRight(
+            response.reportTextContentData[0].refRTLymphNodesRightReportText
+          );
+        }
+
+        // //Lesions Right
+        // if (
+        //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
+        // ) {
+        setLesionsRight(
+          response.reportTextContentData[0].refRTLesionsRightReportText
+        );
+        // }
+
+        //ComparisonPrior Right
+        setComparisonPrior(
+          response.reportTextContentData[0].refRTComparisonPriorReportText
+        );
+
+        //breastDensity Left
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTBreastDensityandImageLeftSyncStatus || false
+          )
+        ) {
+          setBreastDensityandImageLeft(
+            response.reportTextContentData[0]
+              .refRTBreastDensityandImageLeftReportText
+          );
+        }
+
+        //NippleAreola Left
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTNippleAreolaSkinLeftSyncStatus || false
+          )
+        ) {
+          setNippleAreolaSkinLeft(
+            response.reportTextContentData[0]
+              .refRTNippleAreolaSkinLeftReportText
+          );
+        }
+
+        //Glandular Left
+        if (
+          !(
+            response.reportTextContentData[0]
+              .refRTGrandularAndDuctalTissueLeftSyncStatus || false
+          )
+        ) {
+          setGrandularAndDuctalTissueLeft(
+            response.reportTextContentData[0]
+              .refRTGrandularAndDuctalTissueLeftReportText
+          );
+        }
+
+        //Lymphnode Left
+        if (
+          !(
+            response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
+            false
+          )
+        ) {
+          setLymphNodesLeft(
+            response.reportTextContentData[0].refRTLymphNodesLeftReportText
+          );
+        }
+
+        // //Lesions Left
+        // if (
+        //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
+        // ) {
+        setLesionsLeft(
+          response.reportTextContentData[0].refRTLesionsLeftReportText
+        );
+        // }
+
+        //ComparisonPrior Left
+        setComparisonPriorLeft(
+          response.reportTextContentData[0].refRTComparisonPriorLeftReportText
+        );
+
         setTemplates(response.reportFormateList || []);
         setTechnicianForm(response.technicianIntakeFormData || []);
         if (response.reportIntakeFormData) {
@@ -911,31 +1171,72 @@ const Report: React.FC = () => {
           );
         }
 
-        console.log("$$$$", response.intakeFormData);
-
         setResponsePatientInTake(response.intakeFormData || []);
         if (response.reportTextContentData) {
           setNotes(response.reportTextContentData[0]?.refRTCText);
-          setsyncStatus({
-            patientHistory: false,
-            breastImplant: true,
-            breastDensityandImageRight: true,
-            nippleAreolaSkinRight: true,
-            LesionsRight: true,
-            ComparisonPrior: true,
-            grandularAndDuctalTissueRight: true,
-            LymphNodesRight: true,
-            breastDensityandImageLeft: true,
-            nippleAreolaSkinLeft: true,
-            LesionsLeft: true,
-            ComparisonPriorLeft: true,
-            grandularAndDuctalTissueLeft: true,
-            LymphNodesLeft: true,
-            Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
-            ImpressionsRecommendations: true,
-            symmetry: true,
-          });
         }
+
+        let notesStatus = false;
+
+        if (response.easeQTReportAccess) {
+          if (
+            response.reportTextContentData[0]?.refRTSyncStatus === null ||
+            response.reportTextContentData[0]?.refRTSyncStatus
+          ) {
+            notesStatus = true;
+          }
+        }
+
+        setsyncStatus({
+          patientHistory:
+            response.reportTextContentData[0].refRTPatientHistorySyncStatus !==
+            false,
+          breastImplant:
+            response.reportTextContentData[0]?.refRTBreastImplantSyncStatus !==
+            false,
+          breastDensityandImageRight:
+            response.reportTextContentData[0]
+              ?.refRTBreastDensityandImageRightSyncStatus !== false,
+          nippleAreolaSkinRight:
+            response.reportTextContentData[0]
+              ?.refRTNippleAreolaSkinRightSyncStatus !== false,
+          LesionsRight:
+            response.reportTextContentData[0]?.refRTLesionsRightSyncStatus !==
+            false,
+          ComparisonPrior:
+            response.reportTextContentData[0]
+              ?.refRTComparisonPriorSyncStatus !== false,
+          grandularAndDuctalTissueRight:
+            response.reportTextContentData[0]
+              ?.refRTGrandularAndDuctalTissueRightSyncStatus !== false,
+          LymphNodesRight:
+            response.reportTextContentData[0]
+              ?.refRTLymphNodesRightSyncStatus !== false,
+          breastDensityandImageLeft:
+            response.reportTextContentData[0]
+              ?.refRTBreastDensityandImageLeftSyncStatus !== false,
+          nippleAreolaSkinLeft:
+            response.reportTextContentData[0]
+              ?.refRTNippleAreolaSkinLeftSyncStatus !== false,
+          LesionsLeft:
+            response.reportTextContentData[0]?.refRTLesionsLeftSyncStatus !==
+            false,
+          ComparisonPriorLeft:
+            response.reportTextContentData[0]
+              ?.refRTComparisonPriorLeftSyncStatus !== false,
+          grandularAndDuctalTissueLeft:
+            response.reportTextContentData[0]
+              ?.refRTGrandularAndDuctalTissueLeftSyncStatus !== false,
+          LymphNodesLeft:
+            response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
+            false,
+          Notes: notesStatus,
+          ImpressionsRecommendations: true,
+          symmetry:
+            response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
+            false,
+        });
+
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
 
@@ -947,20 +1248,22 @@ const Report: React.FC = () => {
             ).join("<br/><br/>") // extra line break between entries
           );
 
-        if (!response.easeQTReportAccess) {
-          setsyncStatus({
-            ...syncStatus,
-            Notes: false,
-          });
-        } else {
-          setsyncStatus({
-            ...syncStatus,
-            Notes:
-              response.reportTextContentData[0]?.refRTSyncStatus === null
-                ? true
-                : response.reportTextContentData[0]?.refRTSyncStatus,
-          });
-        }
+        // if (!response.easeQTReportAccess) {
+        //   setsyncStatus({
+        //     ...syncStatus,
+        //     Notes: false,
+        //     patientHistory: false,
+        //   });
+        // }
+        // else {
+        //   setsyncStatus({
+        //     ...syncStatus,
+        //     Notes:
+        //       response.reportTextContentData[0]?.refRTSyncStatus === null
+        //         ? true
+        //         : response.reportTextContentData[0]?.refRTSyncStatus,
+        //   });
+        // }
       }
     } catch (error) {
       console.log(error);
@@ -1154,19 +1457,21 @@ const Report: React.FC = () => {
       const response: {
         id: number;
         status: boolean;
+        refUserCustId: string;
       } = await reportService.uploadTemplate(fileName, fileData);
 
       console.log(response);
 
       if (response.status) {
         setTemplates((prev: any) => [
-          ...prev,
           {
             refRFName: fileName,
             refRFId: response.id,
             refRFCreatedBy: 0,
             refRFCreatedAt: "",
+            refUserCustId: response.refUserCustId,
           },
+          ...prev,
         ]);
         setPopoverOpen(false);
         setFileData("");
@@ -1176,6 +1481,22 @@ const Report: React.FC = () => {
       console.log(error);
     }
     setPopoverLoading(false);
+  };
+
+  const deleteTemplate = async (id: number) => {
+    setDeleteLoadingStatus(id);
+    try {
+      const response: {
+        status: boolean;
+      } = await reportService.deleteTemplate(id);
+
+      if (response.status) {
+        setTemplates((prev: any) => prev.filter((t: any) => t.refRFId !== id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setDeleteLoadingStatus(0);
   };
 
   const getTemplate = async (id: number) => {
@@ -1208,19 +1529,19 @@ const Report: React.FC = () => {
                       1
                     )}</td>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
-                      2
-                    )}</td>
+                    <td style="border: 1px solid #000; padding: 4px;">${
+                      getPatientAnswer(2)
+                        ? formatDateWithAge(getPatientAnswer(2))
+                        : ""
+                    }</td>
                                 </tr>
                                 <tr>
-                                    <td style="border: 1px solid #000; padding: 4px;"><strong>AGE / GENDER</strong></td>
-                                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
-                                      5
-                                    )} / ${
-            getPatientAnswer(6) === "female"
-              ? "F"
-              : getPatientAnswer(6).toUpperCase()
-          }</td>
+                                    <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
+                                    <td style="border: 1px solid #000; padding: 4px;"> ${
+                                      getPatientAnswer(6) === "female"
+                                        ? "F"
+                                        : getPatientAnswer(6).toUpperCase()
+                                    }</td>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refSCCustId
@@ -1297,6 +1618,11 @@ const Report: React.FC = () => {
 
             `
         );
+        setChangedOne((prev) => ({
+          ...prev,
+          syncStatus: true,
+          reportTextContent: true,
+        }));
         setLoadTemplateStatus(false);
       }
     } catch (error) {
@@ -1306,13 +1632,16 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    if (responsePatientInTake.length > 0 && technicianForm.length > 0)
+    console.log("###############", responsePatientInTake.length);
+
+    if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
       AutoPopulateReport(
         getPatientAnswer,
         getReportAnswer,
         getTechnicianAnswer,
         handleReportInputChange
       );
+    }
   }, [responsePatientInTake, technicianForm]);
 
   useEffect(() => {
@@ -1325,11 +1654,6 @@ const Report: React.FC = () => {
       setCommonImpressRecomm
     );
   }, [assignData]);
-
-  useEffect(() => {
-    handleAssignUser();
-    // listDicomFiles();
-  }, []);
 
   const [showMailDialog, setShowMailDialog] = useState(false);
   const [mailOption, setMailOption] = useState("none");
@@ -1473,7 +1797,7 @@ const Report: React.FC = () => {
 
     const handleUserActivity = () => {
       // extend the timer by +1s (so 11s instead of 10s)
-      startTimer(3000);
+      startTimer(5000);
     };
 
     // listen for clicks & keypresses
@@ -1495,11 +1819,14 @@ const Report: React.FC = () => {
   //   return () => clearInterval(interval); // cleanup on unmount
   // }, []);
 
-  let i = 0;
+  // let i = 0;
+
+  const [additionalChangesChangeStatus, setAdditionalChangesChangeStatus] =
+    useState(false);
 
   const fecthautosave = async () => {
     console.log("hello%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    i++;
+    // i++;
     const payload = {
       changedOne: changedOne,
       reportIntakeForm:
@@ -1548,6 +1875,38 @@ const Report: React.FC = () => {
       nippleareolaImageTextLeft: nippleAreolaSkinLeftImage,
       glandularImageTextLeft: grandularAndDuctalTissueLeftImage,
       lymphnodesImageTextLeft: LymphNodesLeftImage,
+      reportSyncStatus: {
+        breastImplantSyncStatus: syncStatus.breastImplant,
+        SymmetrySyncStatus: syncStatus.symmetry,
+        breastDensitySyncStatus: syncStatus.breastDensityandImageRight,
+        nippleAreolaSyncStatus: syncStatus.nippleAreolaSkinRight,
+        glandularSyncStatus: syncStatus.grandularAndDuctalTissueRight,
+        lymphnodesSyncStatus: syncStatus.LymphNodesRight,
+        lesionsSyncStatus: syncStatus.LesionsRight,
+        comparisonPriorSyncStatus: syncStatus.ComparisonPrior,
+        breastDensityLeftSyncStatus: syncStatus.breastDensityandImageLeft,
+        nippleAreolaLeftSyncStatus: syncStatus.nippleAreolaSkinLeft,
+        glandularLeftSyncStatus: syncStatus.grandularAndDuctalTissueLeft,
+        lymphnodesLeftSyncStatus: syncStatus.LymphNodesLeft,
+        lesionsLeftSyncStatus: syncStatus.LesionsLeft,
+        comparisonPriorLeftSyncStatus: syncStatus.ComparisonPriorLeft,
+      },
+      autoReportText: {
+        breastImplantReportText: breastImplantRight,
+        symmetryReportText: symmetry,
+        breastDensityReportText: breastDensityandImageRight,
+        nippleAreolaReportText: nippleAreolaSkinRight,
+        lesionsReportText: LesionsRight,
+        comparisonPriorReportText: ComparisonPrior,
+        grandularAndDuctalTissueReportText: grandularAndDuctalTissueRight,
+        lymphnodesReportText: LymphNodesRight,
+        breastDensityReportTextLeft: breastDensityandImageLeft,
+        nippleAreolaReportTextLeft: nippleAreolaSkinLeft,
+        lesionsReportTextLeft: LesionsLeft,
+        comparisonPriorReportTextLeft: ComparisonPriorLeft,
+        grandularAndDuctalTissueReportTextLeft: grandularAndDuctalTissueLeft,
+        lymphnodesReportTextLeft: LymphNodesLeft,
+      },
     };
 
     const response: {
@@ -1558,11 +1917,28 @@ const Report: React.FC = () => {
       status: boolean;
       easeQTReportAccess: boolean;
     } = await reportService.autosaveReport(payload);
-
-    console.log("##################", payload);
-    console.log("##################", response);
+    console.log("#########", payload.impressionaddtionalRight);
+    console.log(
+      "#########",
+      response.appointmentStatus[0].refAppointmentImpressionAdditionalRight
+    );
 
     if (response.status) {
+      if (
+        response.appointmentStatus[0]
+          .refAppointmentImpressionAdditionalRight !==
+          optionalImpressionRecommendation.selectedImpressionIdRight ||
+        response.appointmentStatus[0]
+          .refAppointmentRecommendationAdditionalRight !==
+          optionalImpressionRecommendation.selectedRecommendationIdRight ||
+        response.appointmentStatus[0].refAppointmentImpressionAdditional !==
+          optionalImpressionRecommendation.selectedImpressionId ||
+        response.appointmentStatus[0].refAppointmentRecommendationAdditional !==
+          optionalImpressionRecommendation.selectedRecommendationId
+      ) {
+        setAdditionalChangesChangeStatus(!additionalChangesChangeStatus);
+      }
+
       setAssignData({
         appointmentStatus: response.appointmentStatus,
         reportHistoryData: assignData?.reportHistoryData || [],
@@ -1617,7 +1993,10 @@ const Report: React.FC = () => {
             .refAppointmentCommonImpressionRecommendationRight,
       }));
 
-      if (response.appointmentStatus[0].refAppointmentPatietHistory) {
+      if (
+        response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
+        false
+      ) {
         setPatientHistory(
           response.appointmentStatus[0].refAppointmentPatietHistory
         );
@@ -1689,45 +2068,253 @@ const Report: React.FC = () => {
 
       if (response.reportTextContentData) {
         setNotes(response.reportTextContentData[0]?.refRTCText);
-        setsyncStatus({
-          patientHistory: false,
-          breastImplant: true,
-          breastDensityandImageRight: true,
-          nippleAreolaSkinRight: true,
-          LesionsRight: true,
-          ComparisonPrior: true,
-          grandularAndDuctalTissueRight: true,
-          LymphNodesRight: true,
-          breastDensityandImageLeft: true,
-          nippleAreolaSkinLeft: true,
-          LesionsLeft: true,
-          ComparisonPriorLeft: true,
-          grandularAndDuctalTissueLeft: true,
-          LymphNodesLeft: true,
-          Notes: response.reportTextContentData[0]?.refRTSyncStatus || false,
-          ImpressionsRecommendations: true,
-          symmetry: true,
-        });
       }
+
+      let notesStatus = false;
+
+      if (response.easeQTReportAccess) {
+        if (
+          response.reportTextContentData[0]?.refRTSyncStatus === null ||
+          response.reportTextContentData[0]?.refRTSyncStatus
+        ) {
+          notesStatus = true;
+        }
+      }
+
+      // console.log(
+      //   "***",
+      //   (response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
+      // );
+
+      //Breast Implant
+      if (
+        !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
+      ) {
+        setBreastImplantRight(
+          response.reportTextContentData[0].refRTBreastImplantReportText
+        );
+      }
+
+      //symmentry
+      if (
+        !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
+      ) {
+        setSymmetry(response.reportTextContentData[0].refRTSymmetryReportText);
+      }
+
+      //breastDensity Right
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTBreastDensityandImageRightSyncStatus || false
+        )
+      ) {
+        setBreastDensityandImageRight(
+          response.reportTextContentData[0]
+            .refRTBreastDensityandImageRightReportText
+        );
+      }
+
+      //NippleAreola Right
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTNippleAreolaSkinRightSyncStatus || false
+        )
+      ) {
+        setNippleAreolaSkinRight(
+          response.reportTextContentData[0].refRTNippleAreolaSkinRightReportText
+        );
+      }
+
+      //Glandular Right
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueRightSyncStatus || false
+        )
+      ) {
+        setGrandularAndDuctalTissueRight(
+          response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueRightReportText
+        );
+      }
+
+      //Lymphnode Right
+      if (
+        !(
+          response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
+          false
+        )
+      ) {
+        setLymphNodesRight(
+          response.reportTextContentData[0].refRTLymphNodesRightReportText
+        );
+      }
+
+      // //Lesions Right
+      // if (
+      //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
+      // ) {
+      setLesionsRight(
+        response.reportTextContentData[0].refRTLesionsRightReportText
+      );
+      // }
+
+      //ComparisonPrior Right
+      setComparisonPrior(
+        response.reportTextContentData[0].refRTComparisonPriorReportText
+      );
+
+      //breastDensity Left
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTBreastDensityandImageLeftSyncStatus || false
+        )
+      ) {
+        setBreastDensityandImageLeft(
+          response.reportTextContentData[0]
+            .refRTBreastDensityandImageLeftReportText
+        );
+      }
+
+      //NippleAreola Left
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTNippleAreolaSkinLeftSyncStatus || false
+        )
+      ) {
+        setNippleAreolaSkinLeft(
+          response.reportTextContentData[0].refRTNippleAreolaSkinLeftReportText
+        );
+      }
+
+      //Glandular Left
+      if (
+        !(
+          response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueLeftSyncStatus || false
+        )
+      ) {
+        setGrandularAndDuctalTissueLeft(
+          response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueLeftReportText
+        );
+      }
+
+      //Lymphnode Left
+      if (
+        !(
+          response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
+          false
+        )
+      ) {
+        setLymphNodesLeft(
+          response.reportTextContentData[0].refRTLymphNodesLeftReportText
+        );
+      }
+
+      // //Lesions Left
+      // if (
+      //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
+      // ) {
+      setLesionsLeft(
+        response.reportTextContentData[0].refRTLesionsLeftReportText
+      );
+      // }
+
+      //ComparisonPrior Left
+      setComparisonPriorLeft(
+        response.reportTextContentData[0].refRTComparisonPriorLeftReportText
+      );
+
+      if (
+        !(
+          response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
+          false
+        )
+      ) {
+        setBreastImplantRight(
+          response.reportTextContentData[0].refRTBreastImplantReportText
+        );
+      }
+
+      console.log(
+        "--->",
+        response.reportTextContentData[0]
+          ?.refRTBreastDensityandImageRightSyncStatus !== false
+      );
+
+      setsyncStatus({
+        patientHistory:
+          response.reportTextContentData[0].refRTPatientHistorySyncStatus !==
+          false,
+        breastImplant:
+          response.reportTextContentData[0]?.refRTBreastImplantSyncStatus !==
+          false,
+        breastDensityandImageRight:
+          response.reportTextContentData[0]
+            ?.refRTBreastDensityandImageRightSyncStatus !== false,
+        nippleAreolaSkinRight:
+          response.reportTextContentData[0]
+            ?.refRTNippleAreolaSkinRightSyncStatus !== false,
+        LesionsRight:
+          response.reportTextContentData[0]?.refRTLesionsRightSyncStatus !==
+          false,
+        ComparisonPrior:
+          response.reportTextContentData[0]?.refRTComparisonPriorSyncStatus !==
+          false,
+        grandularAndDuctalTissueRight:
+          response.reportTextContentData[0]
+            ?.refRTGrandularAndDuctalTissueRightSyncStatus !== false,
+        LymphNodesRight:
+          response.reportTextContentData[0]?.refRTLymphNodesRightSyncStatus !==
+          false,
+        breastDensityandImageLeft:
+          response.reportTextContentData[0]
+            ?.refRTBreastDensityandImageLeftSyncStatus !== false,
+        nippleAreolaSkinLeft:
+          response.reportTextContentData[0]
+            ?.refRTNippleAreolaSkinLeftSyncStatus !== false,
+        LesionsLeft:
+          response.reportTextContentData[0]?.refRTLesionsLeftSyncStatus !==
+          false,
+        ComparisonPriorLeft:
+          response.reportTextContentData[0]
+            ?.refRTComparisonPriorLeftSyncStatus !== false,
+        grandularAndDuctalTissueLeft:
+          response.reportTextContentData[0]
+            ?.refRTGrandularAndDuctalTissueLeftSyncStatus !== false,
+        LymphNodesLeft:
+          response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
+          false,
+        Notes: notesStatus,
+        ImpressionsRecommendations: true,
+        symmetry:
+          response.reportTextContentData[0]?.refRTSymmetrySyncStatus !== false,
+      });
 
       if (response.reportIntakeFormData) {
         setReportFormData(response.reportIntakeFormData);
       }
 
-      if (!response.easeQTReportAccess) {
-        setsyncStatus({
-          ...syncStatus,
-          Notes: false,
-        });
-      } else {
-        setsyncStatus({
-          ...syncStatus,
-          Notes:
-            response.reportTextContentData[0]?.refRTSyncStatus === null
-              ? true
-              : response.reportTextContentData[0]?.refRTSyncStatus,
-        });
-      }
+      // if (!response.easeQTReportAccess) {
+      //   setsyncStatus({
+      //     ...syncStatus,
+      //     Notes: false,
+      //   });
+      // }
+      // else {
+      //   setsyncStatus({
+      //     ...syncStatus,
+      //     Notes:
+      //       response.reportTextContentData[0]?.refRTSyncStatus === null
+      //         ? true
+      //         : response.reportTextContentData[0]?.refRTSyncStatus,
+      //   });
+      // }
 
       setChangedOne({
         reportQuestion: [],
@@ -1756,12 +2343,42 @@ const Report: React.FC = () => {
         nippleareolaImageTextLeft: false,
         glandularImageTextLeft: false,
         lymphnodesImageTextLeft: false,
+        breastImplantSyncStatus: false,
+        symmetrySyncStatus: false,
+        breastDensityandImageRightSyncStatus: false,
+        nippleAreolaSkinRightSyncStatus: false,
+        LesionsRightSyncStatus: false,
+        ComparisonPriorSyncStatus: false,
+        grandularAndDuctalTissueRightSyncStatus: false,
+        LymphNodesRightSyncStatus: false,
+        breastDensityandImageLeftSyncStatus: false,
+        nippleAreolaSkinLeftSyncStatus: false,
+        LesionsLeftSyncStatus: false,
+        ComparisonPriorLeftSyncStatus: false,
+        grandularAndDuctalTissueLeftSyncStatus: false,
+        LymphNodesLeftSyncStatus: false,
+        breastImplantReportText: false,
+        symmetryReportText: false,
+        breastDensityandImageRightReportText: false,
+        nippleAreolaSkinRightReportText: false,
+        LesionsRightReportText: false,
+        ComparisonPriorReportText: false,
+        grandularAndDuctalTissueRightReportText: false,
+        LymphNodesRightReportText: false,
+        breastDensityandImageLeftReportText: false,
+        nippleAreolaSkinLeftReportText: false,
+        LesionsLeftReportText: false,
+        ComparisonPriorLeftReportText: false,
+        grandularAndDuctalTissueLeftReportText: false,
+        LymphNodesLeftReportText: false,
       });
     }
   };
 
   useEffect(() => {
+    // if (!location?.readOnly) {
     fecthautosave();
+    // }
   }, [timeOut]);
 
   return (
@@ -1842,12 +2459,12 @@ const Report: React.FC = () => {
                   <div
                     key={label}
                     onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs 2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                    className={`flex-1 max-w-xl text-xs text-[#e06666] 2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
                       accessible
                         ? subTab === value
                           ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
                           : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
-                        : "border-[#e0e0e0] text-gray-400 cursor-not-allowed bg-gray-100"
+                        : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
                     }`}
                   >
                     {label}
@@ -1888,10 +2505,18 @@ const Report: React.FC = () => {
             </div>
 
             <div className="text-sm">
-              Age & Gender:{" "}
-              <span className="font-semibold">{getPatientAnswer(5)}</span> /{" "}
+              Gender:{" "}
               <span className="font-semibold capitalize">
                 {getPatientAnswer(6)}
+              </span>
+            </div>
+
+            <div className="text-sm">
+              DOB:{" "}
+              <span className="font-semibold capitalize">
+                {getPatientAnswer(2)
+                  ? formatDateWithAge(getPatientAnswer(2))
+                  : ""}
               </span>
             </div>
 
@@ -1932,7 +2557,7 @@ const Report: React.FC = () => {
               <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
                 <tr>
                   <th className="px-1 py-2 w-1/6 font-semibold">S.No</th>
-                  <th className="px-1 py-2 w-3/6 font-semibold text-left">
+                  <th className="px-1 py-2 w-3/6 font-semibold text-center">
                     Report Title
                   </th>
                   <th className="px-1 py-2 w-2/6 font-semibold">File</th>
@@ -2006,39 +2631,61 @@ const Report: React.FC = () => {
           </div>
 
           {/* Table Content */}
-          {role?.type &&
-            ["admin", "scribe", "radiologist", "wgdoctor"].includes(
+          {/* {role?.type &&
+            ["admin", "scribe", "radiologist", "wgdoctor", "manager"].includes(
               role?.type
-            ) && (
-              <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
-                <table className="min-w-full divide-y divide-gray-200  text-left">
-                  <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
-                    <tr>
-                      <th className="px-1 py-2 font-semibold">Created by</th>
-                      <th className="px-1 py-2 font-semibold">Start</th>
-                      <th className="px-1 py-2 font-semibold">End</th>
-                      <th className="px-1 py-2 font-semibold">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {assignData?.reportHistoryData &&
-                    assignData?.reportHistoryData.length > 0 ? (
-                      <>
-                        {assignData?.reportHistoryData.map((item, idx) => (
-                          <tr
-                            key={idx}
-                            className={
-                              idx % 2 === 0 ? "bg-white" : "bg-[#f9f2ea]"
-                            }
-                          >
-                            <td className="px-2 py-2 text-xs text-center">
-                              {item.HandleUserName}
-                            </td>
-                            <td className="px-2 py-2 text-[10px] text-center">
-                              <div className="space-y-1">
+            ) && ( */}
+          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
+            <table className="min-w-full divide-y divide-gray-200  text-left">
+              <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
+                <tr>
+                  <th className="px-1 py-2 font-semibold">Created by</th>
+                  <th className="px-1 py-2 font-semibold">Start</th>
+                  <th className="px-1 py-2 font-semibold">End</th>
+                  <th className="px-1 py-2 font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assignData?.reportHistoryData &&
+                assignData?.reportHistoryData.length > 0 ? (
+                  <>
+                    {assignData?.reportHistoryData.map((item, idx) => (
+                      <tr
+                        key={idx}
+                        className={idx % 2 === 0 ? "bg-white" : "bg-[#f9f2ea]"}
+                      >
+                        <td className="px-2 py-2 text-xs text-center">
+                          {item.HandleUserName}
+                        </td>
+                        <td className="px-2 py-2 text-[10px] text-center">
+                          <div className="space-y-1">
+                            <span className="block">
+                              {new Date(
+                                item.refRHHandleStartTime
+                              ).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                            <span className="block">
+                              {new Date(
+                                item.refRHHandleStartTime
+                              ).toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-2 py-2 text-[10px] text-center">
+                          <div className="space-y-1">
+                            {item.refRHHandleEndTime ? (
+                              <>
                                 <span className="block">
                                   {new Date(
-                                    item.refRHHandleStartTime
+                                    item.refRHHandleEndTime
                                   ).toLocaleDateString("en-GB", {
                                     day: "2-digit",
                                     month: "short",
@@ -2047,108 +2694,81 @@ const Report: React.FC = () => {
                                 </span>
                                 <span className="block">
                                   {new Date(
-                                    item.refRHHandleStartTime
+                                    item.refRHHandleEndTime
                                   ).toLocaleTimeString("en-GB", {
                                     hour: "2-digit",
                                     minute: "2-digit",
                                   })}
                                 </span>
-                              </div>
-                            </td>
+                              </>
+                            ) : (
+                              <span className="block">-</span>
+                            )}
+                          </div>
+                        </td>
 
-                            <td className="px-2 py-2 text-[10px] text-center">
-                              <div className="space-y-1">
-                                {item.refRHHandleEndTime ? (
-                                  <>
-                                    <span className="block">
-                                      {new Date(
-                                        item.refRHHandleEndTime
-                                      ).toLocaleDateString("en-GB", {
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                      })}
-                                    </span>
-                                    <span className="block">
-                                      {new Date(
-                                        item.refRHHandleEndTime
-                                      ).toLocaleTimeString("en-GB", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })}
-                                    </span>
-                                  </>
-                                ) : (
-                                  <span className="block">-</span>
-                                )}
-                              </div>
-                            </td>
-
-                            <td className="px-2 py-2 text-[10px] text-center font-semibold">
-                              <span
-                                className={
-                                  item.refRHHandleEndTime &&
-                                  item.refRHHandleStatus !== "Changes"
-                                    ? "text-green-600"
-                                    : "text-gray-400"
-                                }
-                              >
-                                {item.refRHHandleEndTime ? (
-                                  <>
-                                    <Dialog>
-                                      <form>
-                                        <DialogTrigger asChild>
-                                          <div className="cursor-pointer">
-                                            {item.refRHHandleStatus ===
-                                            "Changes"
-                                              ? "Saved Changes"
-                                              : item.refRHHandleStatus +
-                                                " Completed"}
-                                            {/* {item.refRHHandleStatus +
+                        <td className="px-2 py-2 text-[10px] text-center font-semibold">
+                          <span
+                            className={
+                              item.refRHHandleEndTime &&
+                              item.refRHHandleStatus !== "Changes"
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }
+                          >
+                            {item.refRHHandleEndTime ? (
+                              <>
+                                <Dialog>
+                                  <form>
+                                    <DialogTrigger asChild>
+                                      <div className="cursor-pointer">
+                                        {item.refRHHandleStatus === "Changes"
+                                          ? "Saved Changes"
+                                          : item.refRHHandleStatus +
+                                            " Completed"}
+                                        {/* {item.refRHHandleStatus +
                                               " Completed"} */}
-                                          </div>
-                                        </DialogTrigger>
-                                        <DialogContent className="">
-                                          <DialogHeader>
-                                            <DialogTitle>
-                                              History Preview
-                                            </DialogTitle>
-                                          </DialogHeader>
-                                          <div className="h-[70vh] overflow-y-auto w-[100%]">
-                                            <TextEditor
-                                              value={
-                                                item.refRHHandleContentText
-                                              }
-                                              // onChange={setNotes}
-                                              readOnly={syncStatus.Notes}
-                                            />
-                                          </div>
-                                        </DialogContent>
-                                      </form>
-                                    </Dialog>
-                                  </>
-                                ) : (
-                                  "-"
-                                )}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </>
-                    ) : (
-                      <tr className="bg-[#f9f2ea]">
-                        <td
-                          colSpan={4}
-                          className="px-2 py-2 text-xs text-center text-gray-500"
-                        >
-                          No Data Found
+                                      </div>
+                                    </DialogTrigger>
+                                    <DialogContent className="">
+                                      <DialogHeader>
+                                        <DialogTitle>
+                                          History Preview
+                                        </DialogTitle>
+                                      </DialogHeader>
+                                      <div className="h-[70vh] overflow-y-auto w-[100%]">
+                                        <TextEditor
+                                          value={item.refRHHandleContentText}
+                                          // onChange={setNotes}
+                                          readOnly={syncStatus.Notes}
+                                        />
+                                      </div>
+                                    </DialogContent>
+                                  </form>
+                                </Dialog>
+                              </>
+                            ) : (
+                              "-"
+                            )}
+                          </span>
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    ))}
+                  </>
+                ) : (
+                  <tr className="bg-[#f9f2ea]">
+                    <td
+                      colSpan={4}
+                      className="px-2 py-2 text-xs text-center text-gray-500"
+                    >
+                      No Data Found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          {/* )} */}
 
           {role?.type && (
             <div
@@ -2263,22 +2883,46 @@ const Report: React.FC = () => {
                         filteredTemplates.map((data: any) => (
                           <div
                             key={data.refRFId}
-                            className="text-xs px-3 py-2 rounded-sm border border-gray-200 flex justify-between items-center"
+                            className="text-xs px-3 py-2 rounded-sm border border-gray-200"
                           >
-                            <div>{data.refRFName}</div>
-                            <Button
-                              variant="greenTheme"
-                              className="text-xs text-white px-3 py-1 h-6"
-                              onClick={() => {
-                                !loadingStatus && getTemplate(data.refRFId);
-                              }}
-                            >
-                              {loadingStatus === data.refRFId ? (
-                                <Loader className="animate-spin w-4 h-4" />
-                              ) : (
-                                "Load"
-                              )}
-                            </Button>
+                            <div className=" flex justify-between items-center">
+                              <div>{data.refRFName}</div>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="greenTheme"
+                                  className="text-xs text-white px-3 py-1 h-6"
+                                  onClick={() => {
+                                    !loadingStatus && getTemplate(data.refRFId);
+                                  }}
+                                >
+                                  {loadingStatus === data.refRFId ? (
+                                    <Loader className="animate-spin w-4 h-4" />
+                                  ) : (
+                                    "Load"
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  className="text-xs text-white px-3 py-1 h-6"
+                                  onClick={() => {
+                                    !deleteLoadingStatus &&
+                                      deleteTemplate(data.refRFId);
+                                  }}
+                                >
+                                  {deleteLoadingStatus === data.refRFId ? (
+                                    <Loader className="animate-spin w-4 h-4" />
+                                  ) : (
+                                    <Trash />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                            {role.id === 1 && (
+                              <div>
+                                Created By:{" "}
+                                <strong>{data.refUserCustId}</strong>
+                              </div>
+                            )}
                           </div>
                         ))
                       ) : (
@@ -2795,7 +3439,6 @@ const Report: React.FC = () => {
                         ? "F"
                         : getPatientAnswer(6).toUpperCase()
                     }
-                    age={getPatientAnswer(5)}
                     studyTime={getPatientAnswer(2)}
                     ScancenterAddress={ScanCenterAddress}
                     AppointmentDate={
@@ -2826,6 +3469,9 @@ const Report: React.FC = () => {
               ) : (
                 subTab === 5 && (
                   <Impression
+                    additionalChangesChangeStatus={
+                      additionalChangesChangeStatus
+                    }
                     setChangedOne={setChangedOne}
                     mainImpressionRecommendation={mainImpressionRecommendation}
                     setMainImpressionRecommendation={

@@ -29,22 +29,22 @@ export function generateNippleAreolaBreastEditor(
   let result = "";
 
   // Skin + nipple section
-  if (skinChanges === "Normal") {
-    result += `The QT scan shows normal skin with ${nippleRetraction.toLowerCase()}. The QT scan shows normal skin with ${nippleDeformity.toLowerCase()}.`;
-  } else {
+  // if (skinChanges === "Normal") {
+  //   result += `The QT scan shows normal skin with ${nippleRetraction.toLowerCase()}. The QT scan shows normal skin with ${nippleDeformity.toLowerCase()}.`;
+  // } else {
     const skinText = skinChanges === "Other" ? skinChangesOther : skinChanges.toLocaleLowerCase();
-    result += `The QT scan shows ${skinText} in skin with ${nippleRetraction.toLowerCase()}, ${nippleDeformity.toLowerCase()}.`;
-  }
+    result += `The QT scan shows ${skinText} in skin with ${nippleRetraction.toLowerCase()} and ${nippleDeformity.toLowerCase()}.`;
+  // }
 
   // Architecture section
   result += " ";
   if (architecture === "Architectural Distortion") {
-    result += `The architectural distortion observed is attributed to post-operative changes.`;
+    result += `<br/><br/><strong>Vascular and connective tissues: </strong>The architectural distortion observed is attributed to post-operative changes.`;
   } else if (architecture === "Normal") {
-    result += `The architecture is normal.`;
+    result += `<br/><br/><strong>Vascular and connective tissues: </strong>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.`;
   } else {
-    result += `${architectureOther.toLowerCase()} is seen.`;
+    result += `<br/><br/><strong>Vascular and connective tissues: </strong>${architectureOther.toLowerCase()} is seen.`;
   }
 
-  return result.trim();
+  return "<strong>Nipple, areola, and skin: </strong>"+result.trim();
 }

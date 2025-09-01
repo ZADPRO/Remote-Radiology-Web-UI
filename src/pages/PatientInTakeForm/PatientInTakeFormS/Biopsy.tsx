@@ -10,6 +10,8 @@ import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
 import { parseLocalDate } from "@/lib/dateUtils";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   previousBiopsy: number;
@@ -45,7 +47,7 @@ const Biopsy: React.FC<Props> = ({
 
   const [selectedFileName, setSelectedFileName] = useState("");
   const uploadedFileName = getAnswer(questionIds.reportDetails);
-  const showBiopsyDetails = getAnswer(questionIds.previousBiopsy) === "Yes";
+  const showBiopsyDetails = getAnswer(questionIds.previousBiopsy) !== "No";
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -72,6 +74,9 @@ const Biopsy: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Biopsy" className="uppercase" />
+      <div className="bg-[#fff]">
+        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto p-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <div className="flex flex-col flex-wrap gap-x-4 gap-y-2">
@@ -120,7 +125,7 @@ const Biopsy: React.FC<Props> = ({
               </div>
 
               {/* Date */}
-              {showBiopsyDetails && (
+              {getAnswer(questionIds.previousBiopsy) === "Yes" && (
                 <div className="flex items-center gap-2">
                   <div>
                     <DatePicker
@@ -163,11 +168,11 @@ const Biopsy: React.FC<Props> = ({
             </div>
           </div>
 
-          {getAnswer(questionIds.previousBiopsy) === "Yes" && (
+          { (getAnswer(questionIds.previousBiopsy) === "Unknown" ||  getAnswer(questionIds.previousBiopsy) === "Yes") && (
             <div className="pl-4">
               <LabeledRadioWithOptionalInput
                 name="morphology-change"
-                label="If yes, were any results abnormal?"
+                label="Were any results abnormal?"
                 questionId={questionIds.biopsyResults}
                 optionalInputQuestionId={questionIds.biopsyResultsDetails}
                 formData={formData}

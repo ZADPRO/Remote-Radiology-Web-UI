@@ -15,7 +15,7 @@ export const description = "A pie chart with a legend";
 
 type ArtifactsPieProps = {
   data: TotalArtifacts[];
-  label: string
+  label: string;
 };
 
 export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
@@ -30,9 +30,9 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
   );
 
   const chartData = [
-    { key: "left", name: "Left", artifacts: totals.left, fill: "#741b47" },
-    { key: "right", name: "Right", artifacts: totals.right, fill: "#38761d" },
-    { key: "both", name: "Both", artifacts: totals.both, fill: "#1155cc" },
+    { key: "left", name: "Left", artifacts: totals.left, fill: "#d5a6bd" },
+    { key: "right", name: "Right", artifacts: totals.right, fill: "#b6d7a8" },
+    { key: "both", name: "Both", artifacts: totals.both, fill: "#a4c2f4" },
   ].filter((entry) => entry.artifacts > 0);
 
   const chartConfig = {
@@ -41,16 +41,16 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
     },
     left: {
       label: "Left",
-      color: "#741b47",
+      color: "#d5a6bd",
     },
     right: {
       label: "Right",
-      color: "#38761d",
+      color: "#b6d7a8",
     },
     both: {
       label: "Both",
-      color: "#1155cc",
-    }
+      color: "#a4c2f4",
+    },
   } satisfies ChartConfig;
 
   return (

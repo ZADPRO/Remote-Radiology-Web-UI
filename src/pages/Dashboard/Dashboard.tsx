@@ -9,7 +9,7 @@ import {
   User,
   UserCog,
   Stethoscope,
-  ShieldCheck,
+  ScrollText,
 } from "lucide-react";
 import React, { JSX, useEffect, useState } from "react";
 import { useAuth, UserProfile } from "../Routes/AuthContext";
@@ -260,8 +260,8 @@ const Dashboard: React.FC = () => {
       allowesUser: ["admin", "radiologist", "manager", "wgdoctor"],
     },
     {
-      role: "Admin",
-      icon: <ShieldCheck className="w-12 h-12 text-[#4e5b4d]" />,
+      role: "Invoice",
+      icon: <ScrollText className="w-12 h-12 text-[#4e5b4d]" />,
       options: [
         {
           label: "Invoices",

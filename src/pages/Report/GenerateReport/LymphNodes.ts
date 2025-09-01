@@ -47,9 +47,7 @@ export function LymphNodesGenerateString(
 
       const sentences = intramammaryList.map(
         (entry) =>
-          `There is ${
-            entry.locationLevel || ""
-          } intramammary lymph node identified${
+          `The soft tissue density identified ${
             entry.position
               ? `${
                   entry.position === "0"
@@ -61,12 +59,19 @@ export function LymphNodesGenerateString(
             entry.level && entry.level !== "unknown"
               ? ` on the ${entry.level.toLowerCase()}, ${levelState(
                   entry.level
-                ).toUpperCase()}${entry.levelpercentage}`
+                ).toUpperCase()}${entry.levelpercentage} is`
               : ``
-          }.`
+          } likely to represent at intramammary lymph node${
+            entry.locationLevel ? " with features of "+entry.locationLevel+"." : "."
+          }`
       );
 
-      result += sentences.join(" ") + " ";
+      if(intramammaryList.length > 0){
+        result += sentences.join(" ") + "<br/>";
+      }else{
+        result=""
+      }
+
     } catch (e) {
       console.error("Invalid JSON for IntramammaryDatar", e);
     }
@@ -75,7 +80,7 @@ export function LymphNodesGenerateString(
   // --- Axillary Nodes
   result +=
     axillarynodes != "" && axillarynodes != "unknown"
-      ? `The ${directionText.toLowerCase()} axillary nodes appear ${axillarynodes}. `
+      ? `The ${directionText.toLowerCase()} axillary nodes are ${axillarynodes} within the limited area of the region imaged.<br/>`
       : "";
 
   // --- Clips
@@ -91,7 +96,7 @@ export function LymphNodesGenerateString(
 
       const clipSentences = clipsList.map(
         (clip) =>
-          `Clips are ${clips.toLowerCase()} within the examined breast tissue${
+          `Clips are noted to be ${clips.toLowerCase()} within the examined breast tissue${
             clip.position
               ? `${
                   clip.position === "0"

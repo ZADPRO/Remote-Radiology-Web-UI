@@ -14,6 +14,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { ChangedOneState, ReportQuestion } from "./Report";
 
 interface ImpressionProps {
+  additionalChangesChangeStatus: boolean;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   mainImpressionRecommendation: {
     selectedImpressionId: string;
@@ -681,6 +682,7 @@ export const additionalOptions = [
 ];
 
 const ImpressionRecommendation: React.FC<ImpressionProps> = ({
+  additionalChangesChangeStatus,
   setChangedOne,
   mainImpressionRecommendation,
   setMainImpressionRecommendation,
@@ -782,7 +784,35 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
         ? JSON.parse(optionalImpressionRecommendation.selectedRecommendationId)
         : []
     );
-  }, []);
+  }, [additionalChangesChangeStatus]);
+
+  // useEffect(() => {
+  //   setAdditionalImpressionRight(
+  //     optionalImpressionRecommendation.selectedImpressionIdRight.length > 0
+  //       ? JSON.parse(optionalImpressionRecommendation.selectedImpressionIdRight)
+  //       : []
+  //   );
+
+  //   setAdditionalRecommendationRight(
+  //     optionalImpressionRecommendation.selectedRecommendationIdRight.length > 0
+  //       ? JSON.parse(
+  //           optionalImpressionRecommendation.selectedRecommendationIdRight
+  //         )
+  //       : []
+  //   );
+
+  //   setAdditionalImpression(
+  //     optionalImpressionRecommendation.selectedImpressionId.length > 0
+  //       ? JSON.parse(optionalImpressionRecommendation.selectedImpressionId)
+  //       : []
+  //   );
+
+  //   setAdditionalRecommendation(
+  //     optionalImpressionRecommendation.selectedRecommendationId.length > 0
+  //       ? JSON.parse(optionalImpressionRecommendation.selectedRecommendationId)
+  //       : []
+  //   );
+  // }, []);
 
   const selectedImpression = impressionRecommendation
     .flatMap((group) => group.data)

@@ -721,15 +721,14 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="edu-upload">
-            Upload Educational Certificates{" "}
-            <span className="text-red-500">*</span>
+            Upload Educational Certificates
           </Label>
 
           <FileUploadButton
             id="education-certificate-upload"
             label="Upload Certificates"
             multiple
-            required
+            // required
             isFilePresent={formData.education_certificate?.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;

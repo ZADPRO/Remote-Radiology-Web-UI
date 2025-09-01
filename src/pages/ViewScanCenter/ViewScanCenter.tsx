@@ -10,6 +10,13 @@ import {
 import { uploadService } from "@/services/commonServices";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { useAuth } from "../Routes/AuthContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface files {
   profile_img: File | null;
@@ -21,6 +28,8 @@ const ViewScanCenter: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const scanCenterId = id ? Number(id) : user?.refSCId;
+
+  const { role } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,6 +51,7 @@ const ViewScanCenter: React.FC = () => {
     refSCCustId: "",
     refSCProfile: "",
     refSCWebsite: "",
+    refSCStatus: false,
   });
 
   const [files, setFiles] = useState<files>({
@@ -54,7 +64,9 @@ const ViewScanCenter: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({ formImg: formDataImg });
+      const response = await uploadService.uploadImage({
+        formImg: formDataImg,
+      });
 
       if (response.status) {
         setFormData((prev) => ({
@@ -76,8 +88,8 @@ const ViewScanCenter: React.FC = () => {
   const getSpecificScanCenter = async () => {
     setLoading(true);
     try {
-      if(!scanCenterId) return;
-      console.log(scanCenterId)
+      if (!scanCenterId) return;
+      console.log(scanCenterId);
       const res = await scancenterService.getSpecificScanCenters(scanCenterId);
       console.log(res);
       if (res.status) {
@@ -85,13 +97,12 @@ const ViewScanCenter: React.FC = () => {
       }
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     try {
       const payload = {
         id: formData.refSCId,
@@ -104,10 +115,11 @@ const ViewScanCenter: React.FC = () => {
         telephone: formData.refSCPhoneNo1,
         appointments: formData.refSCAppointments,
         logo: formData.refSCProfile,
+        status: formData.refSCStatus,
       };
       const res = await scancenterService.updateScanCenter(payload);
       console.log(res);
-      if(res.status) {
+      if (res.status) {
         navigate(-1);
       } else {
         setError(res.message);
@@ -115,17 +127,20 @@ const ViewScanCenter: React.FC = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     getSpecificScanCenter();
   }, []);
 
   return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      handleSubmit();
-    }} className="lg:px-[2.5vh] flex flex-col">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className="lg:px-[2.5vh] flex flex-col"
+    >
       {loading && <LoadingOverlay />}
       {/* Header */}
       <div className="h-[10vh] flex items-center justify-start text-xl font-bold">
@@ -137,7 +152,7 @@ const ViewScanCenter: React.FC = () => {
 
       {/* Content */}
       <div className="h-[70vh] flex justify-center items-center">
-       <div className="bg-[#F9F4EC] overflow-scroll rounded-2xl shadow-md w-[95%] lg:w-[90%] max-w-screen-xl h-full p-4 lg:p-10 flex flex-col lg:flex-row gap-10 items-center justify-between">
+        <div className="bg-[#F9F4EC] overflow-scroll rounded-2xl shadow-md w-[95%] lg:w-[90%] max-w-screen-xl h-full p-4 lg:p-10 flex flex-col lg:flex-row gap-10 items-center justify-between">
           {/* Profile Image */}
           <div className="flex justify-center items-center lg:w-1/4">
             {formData.refSCProfile.length === 0 ? (
@@ -242,8 +257,13 @@ const ViewScanCenter: React.FC = () => {
                   key: "refSCCustId",
                 },
               ].map(({ label, value, key }, index) => (
-                <div key={index} className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
-                  <label className="font-semibold text-sm w-1/5">{label} :</label>
+                <div
+                  key={index}
+                  className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 "
+                >
+                  <label className="font-semibold text-sm w-1/5">
+                    {label} :
+                  </label>
                   <Input
                     value={value}
                     disabled={key === "refSCCustId"}
@@ -258,25 +278,82 @@ const ViewScanCenter: React.FC = () => {
                   />
                 </div>
               ))}
+              {(role?.type === "admin" || role?.type === "manager") && (
+                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
+                  <label className="font-semibold text-sm w-1/5">
+                    Active :
+                  </label>
+                  <div className="flex flex-col gap-1.5 w-full relative">
+                    <Select
+                      value={formData.refSCStatus ? "true" : "false"}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          refSCStatus: Boolean(value === "true"),
+                        }))
+                      }
+                      required
+                    >
+                      <SelectTrigger id="gender" className="bg-white w-full">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Active</SelectItem>
+                        <SelectItem value="false">InActive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col lg:flex-row justify-between items-center mt-6 w-full gap-4">
               <div className="flex flex-wrap gap-4">
-                {user?.refRTId != 3 &&
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageScanCenterAdmin", {state: formData.refSCId})}>
-                  Manage Center Manager
-                </Button>
-}
-                
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageTechnician", {state: formData.refSCId})}>
+                {user?.refRTId != 3 && (
+                  <Button
+                    type="button"
+                    className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto"
+                    onClick={() =>
+                      navigate("../manageScanCenterAdmin", {
+                        state: formData.refSCId,
+                      })
+                    }
+                  >
+                    Manage Center Manager
+                  </Button>
+                )}
+
+                <Button
+                  type="button"
+                  className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto"
+                  onClick={() =>
+                    navigate("../manageTechnician", { state: formData.refSCId })
+                  }
+                >
                   Manage Technician
                 </Button>
-                
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../managePerformingProvider", {state: formData.refSCId})}>
+
+                <Button
+                  type="button"
+                  className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto"
+                  onClick={() =>
+                    navigate("../managePerformingProvider", {
+                      state: formData.refSCId,
+                    })
+                  }
+                >
                   Manage Performing Provider
                 </Button>
-                <Button type="button" className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto" onClick={() => navigate("../manageCoReportingDoctor", {state: formData.refSCId})}>
+                <Button
+                  type="button"
+                  className="bg-[#A3B1A1] text-white hover:bg-[#91a191] w-full lg:w-auto"
+                  onClick={() =>
+                    navigate("../manageCoReportingDoctor", {
+                      state: formData.refSCId,
+                    })
+                  }
+                >
                   Manage Reviewer
                 </Button>
               </div>

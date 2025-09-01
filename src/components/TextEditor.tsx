@@ -4,20 +4,25 @@ import "react-quill-new/dist/quill.snow.css";
 // import TableUI from "quill-table-ui";
 // import "quill-table-ui/dist/index.css";
 import QuillToolbar, { createModules, formats } from "./QuillToolbar";
- 
+
 interface TextEditorProps {
   value: string;
-  onChange?: (value: string) => void;
+  onChange?: (
+    content: string,
+    delta: any,
+    source: "user" | "api" | "silent",
+    editor: any
+  ) => void;
   placeholder?: string;
   className?: string;
   readOnly?: boolean;
   onManualEdit?: () => void;
   height?: string;
 }
- 
+
 // Register the table UI module
 // Quill.register("modules/tableUI", TableUI);
- 
+
 // const modules = {
 //   toolbar: [
 //     [{ header: [1, 2, 3, false] }],
@@ -33,7 +38,7 @@ interface TextEditorProps {
 //   ],
 //   tableUI: true, // enable table UI module
 // };
- 
+
 // const formats = [
 //   "header",
 //   "bold",
@@ -50,7 +55,7 @@ interface TextEditorProps {
 //   "image",
 //   "table",
 // ];
- 
+
 const TextEditor: React.FC<TextEditorProps> = ({
   value,
   onChange,
@@ -61,19 +66,19 @@ const TextEditor: React.FC<TextEditorProps> = ({
   height,
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
-  const toolbarId = useId()
- 
+  const toolbarId = useId();
+
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
- 
+
     const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
       if (source === "user") {
         onManualEdit?.(); // trigger sync breaker
       }
       // console.log(delta, oldDelta, source)
     };
- 
+
     editor.on("text-change", handleTextChange);
     return () => {
       editor.off("text-change", handleTextChange);
@@ -91,7 +96,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
           height: ${height ? height : "auto"};
         }
       `}</style>
-      <QuillToolbar id={toolbarId}/>
+      <QuillToolbar id={toolbarId} />
       <ReactQuill
         ref={quillRef}
         value={value}
@@ -105,5 +110,5 @@ const TextEditor: React.FC<TextEditorProps> = ({
     </div>
   );
 };
- 
+
 export default TextEditor;

@@ -91,6 +91,7 @@ import {
 import PatientConsentDialog from "./PatientConsentDialog";
 import SendMailDialog from "./SendMailDialog";
 import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
+import { Label } from "@/components/ui/label";
 
 interface staffData {
   refUserCustId: string;
@@ -150,6 +151,11 @@ const PatientQueue: React.FC = () => {
           technicianForm: false,
         };
       case "technologistformfill":
+        return {
+          patientForm: true,
+          technicianForm: false,
+        };
+      case "noteligible":
         return {
           patientForm: true,
           technicianForm: false,
@@ -235,14 +241,8 @@ const PatientQueue: React.FC = () => {
           text: "Reviewed 2",
           report: true,
           color: "#bf9000",
-          editAccess: ["scribe", "admin", "doctor", "wgdoctor"],
-          readOnlyAccess: [
-            "scribe",
-            "admin",
-            "technician",
-            "codoctor",
-            "wgdoctor",
-          ],
+          editAccess: ["scribe", "admin", "doctor", "wgdoctor", "codoctor"],
+          readOnlyAccess: ["scribe", "admin", "technician", "wgdoctor"],
         };
       }
 
@@ -266,6 +266,39 @@ const PatientQueue: React.FC = () => {
           ],
         };
       }
+
+      if (status === "signed off (a)") {
+        return {
+          text: "Signed Off (A)",
+          report: true,
+          color: "#38761d",
+          editAccess: ["admin"],
+          readOnlyAccess: [
+            "scribe",
+            "admin",
+            "doctor",
+            "scadmin",
+            "technician",
+            "codoctor",
+            "radiologist",
+            "wgdoctor",
+            "patient",
+            "manager",
+          ],
+        };
+      }
+
+      console.log(status);
+
+      if (status === "noteligible") {
+        return {
+          text: "Not Eligible",
+          report: true,
+          color: "red",
+          editAccess: [],
+          readOnlyAccess: [],
+        };
+      }
     }
 
     // ✅ Default fallback for when role is undefined or status is unknown
@@ -285,6 +318,8 @@ const PatientQueue: React.FC = () => {
     "Reviewed 1",
     "Reviewed 2",
     "Signed Off",
+    "Signed Off (A)",
+    "Not Eligible",
   ];
 
   const listAllRemarks = async (appointmentId: number) => {
@@ -442,6 +477,20 @@ const PatientQueue: React.FC = () => {
   useEffect(() => {
     fetchPatientQueue();
   }, []);
+
+  const handleAllowOverride = async (appointmentId: number) => {
+    const response: {
+      status: boolean;
+    } = await reportService.allowOverRide(appointmentId);
+
+    if (response.status) {
+      // setAllowScan(false);
+      fetchPatientQueue();
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const handleCheckAccess = async (appointmentId: number) => {
     setLoading(true);
@@ -681,7 +730,10 @@ const PatientQueue: React.FC = () => {
               className="cursor-pointer text-grey font-semibold"
               onClick={column.getToggleSortingHandler()}
             >
-              Scan Centre
+              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+                <div>Scan</div>
+                <div>Centre</div>
+              </div>
             </span>
             {column.getCanFilter() && (
               <Popover>
@@ -728,7 +780,10 @@ const PatientQueue: React.FC = () => {
               className="cursor-pointer font-semibold "
               onClick={column.getToggleSortingHandler()}
             >
-              Patient ID
+              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+                <div>Patient</div>
+                <div>ID</div>
+              </div>
             </span>
             {column.getCanFilter() && (
               <Popover>
@@ -774,7 +829,10 @@ const PatientQueue: React.FC = () => {
               className="cursor-pointer font-semibold "
               onClick={column.getToggleSortingHandler()}
             >
-              Patient Name
+              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+                <div>Patient</div>
+                <div>Name</div>
+              </div>
             </span>
             {column.getCanFilter() && (
               <Popover>
@@ -808,13 +866,33 @@ const PatientQueue: React.FC = () => {
             )}
           </div>
         ),
+        cell: ({ row }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex w-full px-1 items-center justify-center">
+                {/* <div className="flex w-full px-1 items-center justify-center">
+                  <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
+                <Label className=" max-w-20 2xl:max-w-30 truncate">
+                  {row.original.refUserFirstName}
+                </Label>
+                </div>
+                {/* </div>
+                </div> */}
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs" side="bottom">
+                {row.original.refUserFirstName}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
         enableColumnFilter: true,
       },
       {
         accessorKey: "consentView",
         id: "consentView",
         header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
+          <div className="flex items-center justify-center px-1">
             <span
               className="cursor-pointer font-semibold "
               onClick={column.getToggleSortingHandler()}
@@ -949,7 +1027,11 @@ const PatientQueue: React.FC = () => {
             useState<boolean>(false);
 
           let statusContent: React.ReactNode = (
-            <span className="text-muted-foreground">Not Filled</span>
+            // <span className="text-muted-foreground">Not Filled</span>
+            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div>Not</div>
+              <div>Filled</div>
+            </div>
           );
 
           if (formStatus) {
@@ -967,6 +1049,7 @@ const PatientQueue: React.FC = () => {
                         row.original.refUserFirstName ?? user?.refUserFirstName,
                       custId: row.original.refUserCustId ?? user?.refUserCustId,
                       scancenterCustId: row.original.refSCCustId,
+                      OverrideStatus: row.original.refOverrideStatus,
                     },
                   })
                 }
@@ -993,7 +1076,16 @@ const PatientQueue: React.FC = () => {
           return (
             <div className="text-center">
               {(formName !== "Not Yet Started" || role?.type === "patient") && (
-                <span className="font-medium">{formName} - </span>
+                <span className="font-xs">
+                  {appointmentComplete === "noteligible" ? (
+                    <>
+                      <span style={{ color: "red" }}>Not Eligible</span>
+                    </>
+                  ) : (
+                    formName
+                  )}
+                  {} -{" "}
+                </span>
               )}
               {statusContent}
               {isEditDialogBroucherOpen && (
@@ -1030,6 +1122,7 @@ const PatientQueue: React.FC = () => {
                             row.original.refUserCustId ?? user?.refUserCustId,
                           scancenterCustId: row.original.refSCCustId,
                           consent: consent,
+                          OverrideStatus: row.original.refOverrideStatus,
                         },
                       })
                     }
@@ -1066,7 +1159,10 @@ const PatientQueue: React.FC = () => {
         id: "technicianForm",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            Tech Form
+            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div>Tech</div>
+              <div>Form</div>
+            </div>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1138,10 +1234,17 @@ const PatientQueue: React.FC = () => {
             );
           } else if (
             (currentUserRole === "technician" || currentUserRole === "admin") &&
-            appointmentComplete === "fillform"
+            (appointmentComplete === "fillform" ||
+              appointmentComplete === "noteligible")
           ) {
             // Form not started but technician has access and status is 'fillform'
-            return <div className="text-muted-foreground">Not Yet Started</div>;
+            return (
+              <div className="flex gap-x-1 gap-y-0 p-1 justify-center text-sm items-center flex-wrap">
+                <div>Not</div>
+                <div>Yet</div>
+                <div>Started</div>
+              </div>
+            );
           } else if (
             currentUserRole === "technician" ||
             currentUserRole === "admin"
@@ -1217,7 +1320,7 @@ const PatientQueue: React.FC = () => {
               }
             }
             return (
-              <div className="flex justify-center gap-4 items-center text-sm text-center">
+              <div className="flex justify-center gap-2 items-center text-sm text-center">
                 {/* Left DICOM */}
                 {leftDicom ? (
                   <Button
@@ -1332,9 +1435,9 @@ const PatientQueue: React.FC = () => {
             row.original.refAppointmentComplete === "reportformfill"
           ) {
             return (
-              <div className="text-center w-full">
+              <div className="text-center p-1">
                 <button
-                  className="hover:underline cursor-pointer text-xs font-bold"
+                  className="hover:underline flex justify-center items-center flex-wrap gap-2 cursor-pointer text-xs font-bold"
                   onClick={() =>
                     navigate("../uploadDicoms", {
                       state: {
@@ -1347,15 +1450,16 @@ const PatientQueue: React.FC = () => {
                     })
                   }
                 >
-                  Upload DICOM
+                  <div>Upload</div>
+                  <div>DICOM</div>
                 </button>
               </div>
             );
           } else if (isTechnician && hasDicom) {
             return (
-              <div className="text-center w-full">
+              <div className="text-center p-1">
                 <button
-                  className="hover:underline cursor-pointer text-xs font-bold"
+                  className="hover:underline flex justify-center items-center flex-wrap gap-1 cursor-pointer text-xs font-bold"
                   onClick={() =>
                     navigate("../uploadDicoms", {
                       state: {
@@ -1368,7 +1472,8 @@ const PatientQueue: React.FC = () => {
                     })
                   }
                 >
-                  View DICOM
+                  <div>View</div>
+                  <div>DICOM</div>
                 </button>
               </div>
             );
@@ -1441,6 +1546,7 @@ const PatientQueue: React.FC = () => {
 
           const handleViewClick = async () => {
             const currentUserId = currentUser;
+            console.log("hello");
             if (hasEditAccess) {
               const { status, accessId, custId } = await handleCheckAccess(
                 row.original.refAppointmentId
@@ -1466,6 +1572,7 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
+              console.log("hello11111");
               navigate("/report", {
                 state: {
                   appointmentId: row.original.refAppointmentId,
@@ -1621,12 +1728,10 @@ const PatientQueue: React.FC = () => {
         header: ({ column }) => {
           return (
             <div className="flex items-center justify-center gap-1">
-              <span
-                className="cursor-pointer"
-                onClick={column.getToggleSortingHandler()}
-              >
-                Report Status
-              </span>
+              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+                <div>Report</div>
+                <div>Status</div>
+              </div>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -1684,12 +1789,95 @@ const PatientQueue: React.FC = () => {
         },
         cell: ({ row }) => {
           const status = getStatus(row.original.refAppointmentComplete);
+          const [allowScan, setAllowScan] = useState(false);
           return (
             <div
-              className="text-center w-full uppercase text-xs font-semibold"
+              className="text-center flex flex-wrap justify-center items-center gap-1 uppercase text-xs font-semibold break-words"
               style={{ color: status?.color }}
             >
-              {status?.text}
+              {status?.text === "Signed Off" ? (
+                <>
+                  <div>Signed</div>
+                  <div>Off</div>
+                </>
+              ) : status?.text === "Signed Off (A)" ? (
+                <>
+                  <div>Signed</div>
+                  <div>Off</div>
+                  <div>(A)</div>
+                </>
+              ) : status?.text === "Yet to Report" ? (
+                <>
+                  <div>Yet</div>
+                  <div>To</div>
+                  <div>Report</div>
+                </>
+              ) : status?.text === "Reviewed 1" ? (
+                <>
+                  <div>Reviewed</div>
+                  <div>1</div>
+                </>
+              ) : status?.text === "Reviewed 2" ? (
+                <>
+                  <div>Reviewed</div>
+                  <div>2</div>
+                </>
+              ) : status?.text === "Not Eligible" ? (
+                <>
+                  <div>Not</div>
+                  <div>Eligible</div>
+                  {role?.type === "admin" ||
+                  role?.type === "scadmin" ||
+                  role?.type === "technician" ? (
+                    <>
+                      <br />{" "}
+                      <div
+                        onClick={() => {
+                          setAllowScan(true);
+                        }}
+                        className="text-[#364153] justify-center items-center flex flex-wrap gap-1 text-xs font-bold cursor-pointer hover:underline"
+                      >
+                        <div>Allow</div>
+                        <div>Scan</div>
+                      </div>
+                      <Dialog open={allowScan} onOpenChange={setAllowScan}>
+                        <DialogContent className="sm:max-w-[400px] ">
+                          <DialogHeader>
+                            <DialogTitle className="mt-2">
+                              Do you want to allow patient{" "}
+                              {row.original.refUserCustId}'s scan to be
+                              processed?
+                            </DialogTitle>
+                          </DialogHeader>
+
+                          <DialogFooter className="mt-4">
+                            <DialogClose asChild>
+                              <Button variant="outline">No</Button>
+                            </DialogClose>
+                            <Button
+                              variant="greenTheme"
+                              onClick={async () => {
+                                const allowed = await handleAllowOverride(
+                                  row.original.refAppointmentId
+                                );
+                                if (allowed) {
+                                  setAllowScan(false);
+                                }
+                              }}
+                            >
+                              Confirm
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </>
+                  ) : (
+                    ``
+                  )}
+                </>
+              ) : (
+                status?.text
+              )}
             </div>
           );
         },
@@ -1705,8 +1893,11 @@ const PatientQueue: React.FC = () => {
       {
         id: "patientReportMail",
         header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
-            Report Delivery
+          <div className="flex  items-center justify-center">
+            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div>Report</div>
+              <div>Delivery</div>
+            </div>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1765,7 +1956,17 @@ const PatientQueue: React.FC = () => {
                   className="hover:underline cursor-pointer text-xs font-bold"
                   onClick={() => setShowMailDialog(true)}
                 >
-                  {hasMailSent ? "Resend Mail" : "Send Mail"}
+                  {hasMailSent ? (
+                    <div className="flex justify-center gap-x-1 gap-y-1 flex-wrap">
+                      <div>Resend</div>
+                      <div>Mail</div>
+                    </div>
+                  ) : (
+                    <div className="flex justify-center gap-x-1 gap-y-1 flex-wrap">
+                      <div>Send</div>
+                      <div>Mail</div>
+                    </div>
+                  )}
                 </button>
               ) : (
                 <div className="text-center text-gray-400">-</div>
@@ -1798,10 +1999,14 @@ const PatientQueue: React.FC = () => {
       },
       {
         id: "assigned",
-        header: () => <div className="text-center w-full">Assigned</div>,
+        header: () => (
+          <div className="text-center flex  justify-center items-center">
+            Assigned
+          </div>
+        ),
         cell: ({ row }) => {
           return (
-            <div className="flex justify-center">
+            <div className="flex w-[100px] xl:w-full justify-center items-center px-1">
               <Select
                 value={
                   row.original.refAppointmentAssignedUserId === 0
@@ -1831,7 +2036,7 @@ const PatientQueue: React.FC = () => {
                   }
                 }}
               >
-                <SelectTrigger className="bg-white m-0 text-xs max-w-25">
+                <SelectTrigger className="bg-white m-0 text-xs w-full xl:w-25">
                   <SelectValue placeholder="Assign" />
                 </SelectTrigger>
 
@@ -2275,7 +2480,7 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
-      <div className="w-11/12 h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:py-6 lg:px-2 rounded-lg">
+      <div className="w-[98%] h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:py-6 lg:px-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button

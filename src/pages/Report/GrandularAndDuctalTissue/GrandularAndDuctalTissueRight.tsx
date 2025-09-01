@@ -50,7 +50,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
   ) => {
     const defaultType =
       label === "Ductal Prominence"
-        ? "No Mass Effect"
+        ? "Without Mass Effect"
         : label === "Macrocalcifications"
         ? "Clumped"
         : "";
@@ -74,6 +74,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
       type: string;
       clock: string;
       level: string;
+      position: string;
       distribution?: string;
       otherText?: string;
     }[];
@@ -83,6 +84,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
         type: string;
         clock: string;
         level: string;
+        position: string;
         distribution?: string;
       }[]
     ) => {
@@ -109,7 +111,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
             className="text-shite"
             onClick={() => {
               const getDefaultType = () => {
-                if (label === "Ductal Prominence") return "No Mass Effect";
+                if (label === "Ductal Prominence") return "Without Mass Effect";
                 if (label === "Macrocalcifications") return "Clumped";
                 return "";
               };
@@ -118,6 +120,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                 type: getDefaultType(),
                 clock: "",
                 level: "",
+                position: "",
                 ...(showDistributions && { distribution: "Non Segmental" }),
                 ...(enableOtherInput && { otherText: "" }),
               };
@@ -178,28 +181,78 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
               />
             )}
             <span className="text-xs">o'clock, level</span>
-            <GridNumber200
-              className="w-14"
-              value={item.level}
-              onChange={(val) => {
-                const updated = [...parsedList];
-                updated[index].level = val;
-                updateList(updated);
-              }}
-            />
-            {item.level && (
-              <X
-                className="cursor-pointer"
-                onClick={() => {
+            {label === "Ductal Prominence" && (
+              <CustomSelect
+                className="min-w-28 w-38"
+                value={item.position}
+                onChange={(val) => {
                   const updated = [...parsedList];
-                  updated[index].level = "";
+                  updated[index].position = val;
                   updateList(updated);
                 }}
-                width={13}
-                height={13}
-                color="red"
+                options={["Coronal Level", "Axial", "Sagital", "Unknown"]}
+                required
               />
             )}
+            {label === "Ductal Prominence" ? (
+              <>
+                {item.position !== "Unknown" && (
+                  <>
+                  {
+                item.position === "Coronal Level" ? "P - ": item.position === "Axial" ? "S - " : item.position === "Sagital" && "M/L - "
+              }
+                    <GridNumber200
+                      className="w-14"
+                      value={item.level}
+                      onChange={(val) => {
+                        const updated = [...parsedList];
+                        updated[index].level = val;
+                        updateList(updated);
+                      }}
+                    />
+                    {item.level && (
+                      <X
+                        className="cursor-pointer"
+                        onClick={() => {
+                          const updated = [...parsedList];
+                          updated[index].level = "";
+                          updateList(updated);
+                        }}
+                        width={13}
+                        height={13}
+                        color="red"
+                      />
+                    )}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <GridNumber200
+                  className="w-14"
+                  value={item.level}
+                  onChange={(val) => {
+                    const updated = [...parsedList];
+                    updated[index].level = val;
+                    updateList(updated);
+                  }}
+                />
+                {item.level && (
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      const updated = [...parsedList];
+                      updated[index].level = "";
+                      updateList(updated);
+                    }}
+                    width={13}
+                    height={13}
+                    color="red"
+                  />
+                )}
+              </>
+            )}
+
             {showDistributions && (
               <>
                 <span className="text-xs">, distribution</span>
@@ -352,7 +405,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
               {renderCalcificationList(
                 "Ductal Prominence",
                 questionIds.ductalProminenceList,
-                ["No Mass Effect", "Mass Effect"]
+                ["Without Mass Effect", "With Mass Effect"]
               )}
             </div>
           )}

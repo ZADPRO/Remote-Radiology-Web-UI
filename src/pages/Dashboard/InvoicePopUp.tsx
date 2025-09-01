@@ -30,6 +30,7 @@ import {
 } from "@/services/invoiceService";
 import InvoiceDownloadButton from "../Invoice/InvoiceDownloadButton";
 import { useAuth } from "../Routes/AuthContext";
+import InvoiceOverAllTable from "./InvoiceOverAllTable";
 
 type Props = {};
 
@@ -59,6 +60,9 @@ const InvoicePopUp: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
 
   const { user, role } = useAuth();
+  const [overallInvoiceHistory, setOverallInvoiceHistory] = useState<
+    InvoiceHistory[]
+  >([]);
 
   useEffect(() => {
     setLoading(true);
@@ -105,6 +109,9 @@ const InvoicePopUp: React.FC<Props> = () => {
         });
       getUserInvoiceHistory(1, user?.refSCId ?? 0);
     } else {
+      if(role?.id === 9){
+         setType("2");
+      }
       invoiceServie
         .getAmount()
         .then((res) => {
@@ -122,6 +129,14 @@ const InvoicePopUp: React.FC<Props> = () => {
           console.log(err);
         });
     }
+
+    invoiceServie.getOverallInvoiceHistory().then((res) => {
+      console.log(res);
+      if (res.status) {
+        setOverallInvoiceHistory(res.invoiceHistory);
+        console.log(res);
+      }
+    });
 
     setLoading(false);
   }, []);
@@ -174,7 +189,7 @@ const InvoicePopUp: React.FC<Props> = () => {
         background:
           "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
       }}
-      className="h-[90vh] w-[95vw] sm:w-[90vw] lg:w-[70vw] max-w-4xl overflow-y-auto p-0"
+      className="h-[90vh] w-[95vw] sm:w-[90vw] lg:w-[90vw] overflow-y-auto p-0"
     >
       {loading && <LoadingOverlay />}
       <div className="w-full">
@@ -202,22 +217,24 @@ const InvoicePopUp: React.FC<Props> = () => {
         <div className="flex items-center justify-center px-4 sm:px-6 lg:px-10 py-3 sm:py-4 lg:py-5">
           {(role?.id === 1 || role?.id === 9) && (
             <div className="flex gap-2 sm:gap-3 lg:gap-4 flex-wrap justify-center">
-              <div
-                onClick={() => {
-                  setType("1");
-                  setDate(null);
-                  setSelectedScanCenter(null);
-                  setSelectedUser(null);
-                  setInvoiceHistory([]);
-                }}
-                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
-                  type === "1"
-                    ? "bg-[#a3b1a0] text-white"
-                    : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
-                }`}
-              >
-                Scan Center
-              </div>
+              {role.id === 1 && (
+                <div
+                  onClick={() => {
+                    setType("1");
+                    setDate(null);
+                    setSelectedScanCenter(null);
+                    setSelectedUser(null);
+                    setInvoiceHistory([]);
+                  }}
+                  className={`text-xs sm:text-sm w-[80px] sm:w-[120px] lg:w-[160px] text-center h-10 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
+                    type === "1"
+                      ? "bg-[#a3b1a0] text-white"
+                      : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
+                  }`}
+                >
+                  Scan Center
+                </div>
+              )}
               <div
                 onClick={() => {
                   setType("2");
@@ -226,7 +243,7 @@ const InvoicePopUp: React.FC<Props> = () => {
                   setSelectedUser(null);
                   setInvoiceHistory([]);
                 }}
-                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
+                className={`text-xs sm:text-sm w-[80px] sm:w-[120px] lg:w-[160px] text-center h-10 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
                   type === "2"
                     ? "bg-[#a3b1a0] text-white"
                     : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
@@ -234,21 +251,39 @@ const InvoicePopUp: React.FC<Props> = () => {
               >
                 User
               </div>
+              {role.id === 1 && (
+                <div
+                  onClick={() => {
+                    setType("3");
+                    setDate(null);
+                    setSelectedScanCenter(null);
+                    setSelectedUser(null);
+                    setInvoiceHistory([]);
+                  }}
+                  className={`text-xs sm:text-sm w-[80px] sm:w-[120px] lg:w-[160px] text-center h-10 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
+                    type === "3"
+                      ? "bg-[#a3b1a0] text-white"
+                      : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
+                  }`}
+                >
+                  Edit Amount
+                </div>
+              )}
               <div
                 onClick={() => {
-                  setType("3");
+                  setType("4");
                   setDate(null);
                   setSelectedScanCenter(null);
                   setSelectedUser(null);
                   setInvoiceHistory([]);
                 }}
-                className={`text-xs sm:text-sm w-[80px] sm:w-[90px] lg:w-[100px] h-10 sm:h-12 lg:h-14 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
-                  type === "3"
+                className={`text-xs sm:text-sm w-[80px] sm:w-[160px] lg:w-[200px] text-center h-10 font-bold flex justify-center items-center px-1 sm:px-2 rounded-sm cursor-pointer transition-colors ${
+                  type === "4"
                     ? "bg-[#a3b1a0] text-white"
                     : "bg-[#f6ede7] border-2 border-[#a3b1a0]"
                 }`}
               >
-                Edit Amount
+                Over All Invoice
               </div>
             </div>
           )}
@@ -397,10 +432,9 @@ const InvoicePopUp: React.FC<Props> = () => {
                           role?.id === 1 ||
                           role?.id === 6 ||
                           role?.id === 7 ||
-                          role?.id === 10
-                        ) && (
+                          role?.id === 10) && (
                           <>
-                            <div className="w-full sm:w-auto">
+                            <div className="w-full m:w-auto">
                               <PopoverDialog>
                                 <PopoverTriggerDialog asChild>
                                   <Button
@@ -555,6 +589,16 @@ const InvoicePopUp: React.FC<Props> = () => {
               </Button>
             </div>
           </form>
+        )}
+
+        {/* OverAll Invoice Table */}
+        {type === "4" && (
+          <>
+            <InvoiceOverAllTable
+              overallInvoiceHistory={overallInvoiceHistory}
+              setLoading={setLoading}
+            />
+          </>
         )}
       </div>
     </DialogContent>

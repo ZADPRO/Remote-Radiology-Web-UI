@@ -38,6 +38,7 @@ type Props = {
   LocationOtherSpecify?: number;
   LocationOtherDuration?: number;
   LocationOtherSize?: number;
+  requiredStatus?: boolean;
 };
 
 const BreastInputLocation: React.FC<Props> = (Props) => {
@@ -263,8 +264,7 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
         </DialogContent>
       </Dialog>
       <div className="flex items-center justify-center flex-row lg:flex-col gap-6">
-        <div className="w-full flex flex-col lg:flex-row items-center lg:space-x-2
-">
+        <div className="w-full flex flex-col lg:flex-row items-center lg:space-x-2">
           <div className="flex justify-start flex-row w-[100%] lg:w-[25%] items-center space-x-2">
             <Checkbox2
               checked={getAnswerByQuestionId(Props.checkStatusQId) === "true"}
@@ -283,6 +283,7 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                   }
                 }
               }}
+              required={!Props.requiredStatus}
             />
             <Label className="font-semibold text-base">{Props.label}</Label>
           </div>

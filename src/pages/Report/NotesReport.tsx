@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
 import { FinalAddendumText, reportService } from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
+import { formatDateWithAge } from "@/utlis/calculateAge";
 
 interface TextEditorProps {
   patientHistory: {
@@ -207,7 +208,6 @@ type Props = {
   setNotes: any;
   name: string;
   gender: string;
-  age: string;
   AppointmentDate: string;
   ScancenterCode: string;
   studyTime: string;
@@ -231,7 +231,6 @@ const NotesReport: React.FC<Props> = ({
   setNotes,
   name,
   gender,
-  age,
   AppointmentDate,
   ScancenterCode,
   studyTime,
@@ -345,17 +344,19 @@ const NotesReport: React.FC<Props> = ({
         : ""
     }
       </div>
-    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <table width="100%" style="width: 100%; border-collapse: collapse; font-size: 14px;">
       <tbody>
         <tr>
           <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
           <td style="border: 1px solid #000; padding: 4px;">${name}</td>
           <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-          <td style="border: 1px solid #000; padding: 4px;">${studyTime}</td>
+          <td style="border: 1px solid #000; padding: 4px;">${
+            studyTime ? formatDateWithAge(studyTime) : ""
+          }</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 4px;"><strong>AGE/GENDER</strong></td>
-          <td style="border: 1px solid #000; padding: 4px;">${age} / ${gender}</td>
+          <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
+          <td style="border: 1px solid #000; padding: 4px;">${gender}</td>
           <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
           <td style="border: 1px solid #000; padding: 4px;">${ScancenterCode}, ${ScancenterAddress}</td>
         </tr>
@@ -372,7 +373,7 @@ const NotesReport: React.FC<Props> = ({
 
   <br/>
   
-  <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
+  <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
   
   <br/>
   
@@ -417,9 +418,7 @@ const NotesReport: React.FC<Props> = ({
 
   ${
     breastDensityRight
-      ? `<strong>BREAST DENSITY & IMAGE QUALITY:</strong><br /><span>${
-          textEditor.breastDensityandImageRight.value
-        }</span>${
+      ? `<span>${textEditor.breastDensityandImageRight.value}</span>${
           textEditor.breastDensityandImageRightImage.value.length > 7
             ? `<span>${textEditor.breastDensityandImageRightImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -428,9 +427,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     nippleAreolaRight
-      ? `<h4><strong>NIPPLE, AREOLA & SKIN:</strong></h4>${
-          textEditor.nippleAreolaSkinRight.value
-        }${
+      ? `${textEditor.nippleAreolaSkinRight.value}${
           textEditor.nippleAreolaSkinRightImage.value.length > 7
             ? `<span>${textEditor.nippleAreolaSkinRightImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -439,7 +436,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     glandularRight
-      ? `<h4><strong>GLANDULAR AND DUCTAL TISSUE:</strong></h4>${
+      ? `<strong>Glandular and ductal tissue: </strong>${
           textEditor.grandularAndDuctalTissueRight.value
         }${
           textEditor.grandularAndDuctalTissueRightImage.value.length > 7
@@ -594,9 +591,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     lymphRight
-      ? `<h4><strong>LYMPH NODES:</strong></h4>${
-          textEditor.LymphNodesRight.value
-        }${
+      ? `<strong>Lymph Nodes: </strong>${textEditor.LymphNodesRight.value}${
           textEditor.LymphNodesRightImage.value.length > 7
             ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -605,7 +600,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     comparisonRight
-      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${comparison
+      ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
           .map((data, index) => {
             let dataArray: any[] = [];
             const raw = getAnswer(ComparisonPriorRightQuestion.LesionCompTable);
@@ -627,9 +622,7 @@ const NotesReport: React.FC<Props> = ({
 
   ${
     breastDensityLeft
-      ? `<h4><strong>BREAST DENSITY & IMAGE QUALITY:</strong></h4><span>${
-          textEditor.breastDensityandImageLeft.value
-        }</span>${
+      ? `<span>${textEditor.breastDensityandImageLeft.value}</span>${
           textEditor.breastDensityandImageLeftImage.value.length > 7
             ? `<span>${textEditor.breastDensityandImageLeftImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -638,9 +631,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     nippleAreolaLeft
-      ? `<h4><strong>NIPPLE, AREOLA & SKIN:</strong></h4>${
-          textEditor.nippleAreolaSkinLeft.value
-        }${
+      ? `${textEditor.nippleAreolaSkinLeft.value}${
           textEditor.nippleAreolaSkinLeftImage.value.length > 7
             ? `<span>${textEditor.nippleAreolaSkinLeftImage.value}<br/><span>`
             : "<p><br/></p>"
@@ -649,7 +640,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     glandularLeft
-      ? `<h4><strong>GLANDULAR AND DUCTAL TISSUE:</strong></h4>${
+      ? `<strong>Glandular and ductal tissue: </strong>${
           textEditor.grandularAndDuctalTissueLeft.value
         }${
           textEditor.grandularAndDuctalTissueLeftImage.value.length > 7
@@ -807,9 +798,7 @@ const NotesReport: React.FC<Props> = ({
     }
   ${
     lymphLeft
-      ? `<h4><strong>LYMPH NODES:</strong></h4>${
-          textEditor.LymphNodesLeft.value
-        }${
+      ? `<strong>Lymph Nodes: </strong>${textEditor.LymphNodesLeft.value}${
           textEditor.LymphNodesLeftImage.value.length > 7
             ? `<span>${textEditor.LymphNodesLeftImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -818,7 +807,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     comparisonLeftVal
-      ? `<p><strong>COMPARISON TO PRIOR STUDIES:</strong><br />${comparisonLeft
+      ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
           .map((data, index) => {
             let dataArray: any[] = [];
             const raw = getAnswer(ComparisonPriorLeftQuestion.LesionCompTable);
@@ -837,9 +826,13 @@ const NotesReport: React.FC<Props> = ({
   ${
     getAnswer(132) === "Present"
       ? `
-    <h3><strong>RIGHT BREAST:</strong></h3>
-  <p><strong>IMPRESSION:</strong></p>
-  <p>${textEditor.ImpressionTextRight.value}</p>
+  <p><strong>RIGHT BREAST:</strong></p>
+  <strong>Impression:</strong>
+  ${
+    textEditor.ImpressionTextRight.value
+      ? `<br/><p>${textEditor.ImpressionTextRight.value}</p>`
+      : "<p></p>"
+  }
   ${
     textEditor.OptionalImpressionTextRight.value.length > 7
       ? ` <p> ${textEditor.OptionalImpressionTextRight.value}</p>`
@@ -856,8 +849,12 @@ const NotesReport: React.FC<Props> = ({
      : ``
  }
 
-  <p><strong>RECOMMENDATION:</strong></p>
- <p> ${textEditor.RecommendationTextRight.value}</p>
+  <p><strong>Recommendation:</strong></p>
+${
+  textEditor.RecommendationTextRight.value
+    ? `<p>${textEditor.RecommendationTextRight.value}</p>`
+    : ""
+}
   ${
     textEditor.OptionalRecommendationTextRight.value.length > 7
       ? `<p>${textEditor.OptionalRecommendationTextRight.value}</p>`
@@ -873,7 +870,6 @@ const NotesReport: React.FC<Props> = ({
        ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
        : ``
    }
-<br/>
     `
       : ``
   }
@@ -881,9 +877,13 @@ const NotesReport: React.FC<Props> = ({
   ${
     getAnswer(133) === "Present"
       ? `
-        <h3><strong>LEFT BREAST:</strong></h3>
-  <p><strong>IMPRESSION:</strong></p>
-  <p>${textEditor.ImpressionText.value}</p>
+        <br/><p><strong>LEFT BREAST:</strong></p>
+  <p><strong>Impression:</strong></p>
+  ${
+    textEditor.ImpressionText.value
+      ? `<p>${textEditor.ImpressionText.value}</p>`
+      : ``
+  }
   ${
     textEditor.OptionalImpressionText.value.length > 7
       ? ` <p> ${textEditor.OptionalImpressionText.value}</p>`
@@ -899,7 +899,7 @@ const NotesReport: React.FC<Props> = ({
      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
-  <p><strong>RECOMMENDATION:</strong></p>
+  <p><strong>Recommendation:</strong></p>
  <p> ${textEditor.RecommendationText.value}</p>
  ${
    textEditor.OptionalRecommendationText.value.length > 7
@@ -961,8 +961,6 @@ const NotesReport: React.FC<Props> = ({
         addendumText,
         AppointmentId
       );
-
-      console.log(response);
 
       setAddButton(false);
       setAddendumText("");
@@ -1051,7 +1049,7 @@ const NotesReport: React.FC<Props> = ({
                 <div className="self-start mt-2">
                   <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                     <div>
-                      <Label className="font-semibold text-base">
+                      <Label className="font-semibold text-[#e06666] text-base">
                         Ease QT 10.10 Auto Report
                       </Label>
                     </div>
@@ -1060,14 +1058,17 @@ const NotesReport: React.FC<Props> = ({
                       className="cursor-pointer"
                       checked={syncStatus.Notes}
                       onCheckedChange={(checked: boolean) => {
-                        setChangedOne((prev) => ({
-                          ...prev,
-                          syncStatus: true,
-                        }));
-                        if (!checked) {
-                          setsyncStatus({ ...syncStatus, Notes: checked });
-                        } else {
-                          setDialog(true);
+                        if (!readOnly) {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            syncStatus: true,
+                            reportTextContent: true,
+                          }));
+                          if (!checked) {
+                            setsyncStatus({ ...syncStatus, Notes: checked });
+                          } else {
+                            setDialog(true);
+                          }
                         }
                       }}
                     />

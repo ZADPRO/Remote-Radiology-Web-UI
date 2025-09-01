@@ -12,28 +12,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
-import { ListScanCenter, scancenterService } from "@/services/scancenterService";
-import { Plus } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-// // 🧪 Sample data (18 mock scan centers)
-// const sampleScanCenters: ListScanCenter[] = Array.from({ length: 18 }).map(
-//   (_, index) => ({
-//     profileImgFile: null,
-//     refSCAddress: "123 Health Street",
-//     refSCAppointments: true,
-//     refSCCustId: `CUST${index}`,
-//     refSCEmail: `scancenter${index}@mail.com`,
-//     refSCId: index,
-//     refSCName: `Sample Scan Centre ${index + 1}`,
-//     refSCPhoneNo1: "9876543210",
-//     refSCPhoneNo1CountryCode: "+91",
-//     refSCPhoneNo2: "",
-//     refSCProfile: "",
-//     refSCWebsite: "www.example.com",
-//   })
-// );
+import {
+  ListScanCenter,
+  scancenterService,
+} from "@/services/scancenterService";
+import { Plus, ArrowLeft } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useAuth } from "../Routes/AuthContext";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -42,41 +32,23 @@ const ManageScanCenter: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [scanCenters, setScanCenters] = useState<ListScanCenter[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError] = useState<string | null>(null); // State for error messages
-
-  // useEffect(() => {
-  //   // Simulate API call
-  //   setTimeout(() => {
-  //     setScanCenters(sampleScanCenters);
-  //     setLoading(false);
-  //   }, 1000);
-  // }, []);
-  
-  const totalPages = Math.ceil(scanCenters.length / ITEMS_PER_PAGE);
-  const paginatedCenters = scanCenters.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const [error, setError] = useState<string | null>(null);
+  const [seletedTab, setSelectedTab] = useState(true); // true = Active, false = Inactive
 
   const getScanCenters = async () => {
     setLoading(true);
-    setError(null); // Clear previous errors
+    setError(null);
     try {
       const res = await scancenterService.getAllScanCenters();
-      console.log(res);
       if (res.status) {
-        // Ensure that scanCenters is always an array to prevent crashes.
-        // If res.data is null or undefined, it will default to an empty array.
         setScanCenters(res.data || []);
       } else {
-        console.log(res.message);
         setError(res.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError("Failed to fetch scan centers");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -85,6 +57,24 @@ const ManageScanCenter: React.FC = () => {
     getScanCenters();
   }, []);
 
+  // 🔍 Normalize and filter by status
+  const filteredCenters = scanCenters.filter((center) => {
+    const status = String(center.refSCStatus).toLowerCase(); // normalize
+    if (seletedTab) {
+      return status === "active" || status === "1" || status === "true";
+    } else {
+      return status === "inactive" || status === "0" || status === "false";
+    }
+  });
+
+  // 🔢 Pagination
+  const totalPages = Math.ceil(filteredCenters.length / ITEMS_PER_PAGE);
+  const paginatedCenters = filteredCenters.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const { role } = useAuth();
 
   return (
     <div className="w-full">
@@ -104,8 +94,38 @@ const ManageScanCenter: React.FC = () => {
         </h1>
       </div>
 
-      {/* Add Scan Center Button */}
-      <div className="flex justify-end px-20 pt-6">
+      {/* Tabs + Add Button */}
+      <div className="flex justify-between px-20 pt-6">
+        {(role?.type === "admin" || role?.type === "manager") && (
+          <div className="flex gap-2">
+            <div
+              onClick={() => {
+                setSelectedTab(true);
+                setCurrentPage(1);
+              }}
+              className={`text-xs sm:text-sm w-[80px] sm:w-[120px] lg:w-[120px] text-center h-8 font-bold flex justify-center items-center px-1 sm:px-2 rounded-lg cursor-pointer transition-colors ${
+                seletedTab
+                  ? "bg-[#a3b1a0] text-white"
+                  : "bg-[#f6ede7] border-1 border-[#a3b1a0]"
+              }`}
+            >
+              Active
+            </div>
+            <div
+              onClick={() => {
+                setSelectedTab(false);
+                setCurrentPage(1);
+              }}
+              className={`text-xs sm:text-sm w-[80px] sm:w-[120px] lg:w-[120px] text-center h-8 font-bold flex justify-center items-center px-1 sm:px-2 rounded-lg cursor-pointer transition-colors ${
+                !seletedTab
+                  ? "bg-[#a3b1a0] text-white"
+                  : "bg-[#f6ede7] border-1 border-[#a3b1a0]"
+              }`}
+            >
+              Inactive
+            </div>
+          </div>
+        )}
         <button
           className="bg-[#A3B1A1] text-white flex items-center gap-2 p-2 cursor-pointer rounded-full hover:bg-[#91a191]"
           onClick={() => navigate("../addScanCenter")}
@@ -115,8 +135,8 @@ const ManageScanCenter: React.FC = () => {
       </div>
 
       {/* Cards Grid */}
-      <div className="px-20 py-4"> {/* Added py-4 for vertical spacing */}
-        {scanCenters.length === 0 && !loading && !error ? (
+      <div className="px-20 py-4">
+        {filteredCenters.length === 0 && !loading && !error ? (
           <div className="text-center text-gray-500 text-lg py-10">
             No scan centers found.
           </div>
@@ -144,18 +164,22 @@ const ManageScanCenter: React.FC = () => {
                     {center.refSCName}
                   </p>
 
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p className="text-xs text-gray-400 font-semibold mt-1 line-clamp-2 cursor-pointer">
-                      {center.refSCAddress}
-                    </p>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-xs break-words">
-                    {center.refSCAddress}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-xs text-gray-400 font-semibold mt-1 line-clamp-2 cursor-pointer">
+                          {center.refSCAddress}
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="left"
+                        className="max-w-xs break-words"
+                      >
+                        {center.refSCAddress}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
                   <Button
                     variant="link"
                     className="p-0 text-sm"
@@ -175,42 +199,44 @@ const ManageScanCenter: React.FC = () => {
       {error && <div className="text-center text-red-500">{error}</div>}
 
       {/* Pagination */}
-      <Pagination className="justify-center mt-4 mb-6">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={
-                currentPage === 1 ? "pointer-events-none opacity-50" : ""
-              }
-            />
-          </PaginationItem>
-
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
-                isActive={currentPage === index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </PaginationLink>
+      {totalPages > 1 && (
+        <Pagination className="justify-center mt-4 mb-6">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
+              />
             </PaginationItem>
-          ))}
 
-          <PaginationItem>
-            <PaginationNext
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              className={
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : ""
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  isActive={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };

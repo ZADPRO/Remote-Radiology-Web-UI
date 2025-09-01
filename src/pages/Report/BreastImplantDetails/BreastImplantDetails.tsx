@@ -3,6 +3,7 @@ import { ReportQuestion } from "../Report";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import { Label } from "@/components/ui/label";
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
+import { Input } from "@/components/ui/input";
 
 interface QuestionIds {
   breastImplants: number;
@@ -19,6 +20,7 @@ interface QuestionIds {
   ruptureSigns: number;
   ruptureSignsOther: number;
   ruptureType: number;
+  bilateraldissimilar: number;
 }
 
 interface Props {
@@ -75,6 +77,25 @@ const BreastImplantDetails: React.FC<Props> = ({
                 },
               ]}
             />
+            {reportFormData.find(
+              (q) => q.questionId === questionIds.implantConfiguration
+            )?.answer === "Bilateral Dissimilar" && (
+              <Input
+                className="w-[300px] ml-[12.5rem]"
+                placeholder="Specify"
+                value={
+                  reportFormData.find(
+                    (q) => q.questionId === questionIds.bilateraldissimilar
+                  )?.answer
+                }
+                onChange={(e) => {
+                  handleReportInputChange(
+                    questionIds.bilateraldissimilar,
+                    e.target.value
+                  );
+                }}
+              />
+            )}
 
             <MultiRadioOptionalInputInline
               label="Implant Position"

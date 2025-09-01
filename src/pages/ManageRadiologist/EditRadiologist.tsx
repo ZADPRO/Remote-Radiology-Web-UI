@@ -850,7 +850,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="mbbsRegNo">
-                MBBS Registration Number <span className="text-red-500">*</span>
+                MBBS Registration Number
               </Label>
               <Input
                 id="mbbsRegNo"
@@ -864,12 +864,12 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     refRAMBBSRegNo: e.target.value,
                   }))
                 }
-                required
+                // required
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="specialization">
-                Specialization <span className="text-red-500">*</span>
+                Specialization
               </Label>
               <Input
                 id="specialization"
@@ -883,24 +883,24 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     refRASpecialization: e.target.value,
                   }))
                 }
-                required
+                // required
               />
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium" htmlFor="license-upload">
-                License <span className="text-red-500">*</span>
+                License
               </Label>
 
               <FileUploadButton
                 id="license-upload"
                 label="Upload Licenses"
                 multiple
-                required={
-                  !(
-                    formData.licenseFiles?.length > 0 ||
-                    files.license_files.length > 0
-                  )
-                }
+                // required={
+                //   !(
+                //     formData.licenseFiles?.length > 0 ||
+                //     files.license_files.length > 0
+                //   )
+                // }
                 isFilePresent={files.license_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
@@ -1028,7 +1028,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="mdRegNo">
-                MD Registration Number <span className="text-red-500">*</span>
+                MD Registration Number
               </Label>
               <Input
                 id="mdRegNo"
@@ -1042,22 +1042,22 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     refRAMDRegNo: e.target.value,
                   }))
                 }
-                required
+                // required
               />
             </div>
 
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium" htmlFor="cv-upload">
-                CV <span className="text-red-500">*</span>
+                CV
               </Label>
 
               <FileUploadButton
                 id="cv-upload"
                 label="Upload CV Files"
                 multiple
-                required={
-                  !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
-                }
+                // required={
+                //   !(formData.cvFiles?.length > 0 || files.cv_files.length > 0)
+                // }
                 isFilePresent={files.cv_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
@@ -1183,14 +1183,14 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 className="text-sm font-medium"
                 htmlFor="malpractice-upload"
               >
-                Malpractice Insurance <span className="text-red-500">*</span>
+                Malpractice Insurance
               </Label>
 
               <FileUploadButton
                 id="malpractice-upload"
                 label="Upload Malpractice Insurance Files"
                 multiple
-                required={formData.malpracticeinsureance_files.length === 0}
+                // required={formData.malpracticeinsureance_files.length === 0}
                 isFilePresent={files.malpracticeinsureance_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;
@@ -1321,16 +1321,16 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
 
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm" htmlFor="digital-signature-upload">
-                Digital Signature <span className="text-red-500">*</span>
+                Digital Signature
               </Label>
 
               <FileUploadButton
                 id="digital-signature-upload"
                 label="Upload Digital Signature"
                 accept="image/png, image/jpeg, image/jpg"
-                required={
-                  !formData.refRADigitalSignature && !files.digital_signature
-                }
+                // required={
+                //   !formData.refRADigitalSignature && !files.digital_signature
+                // }
                 isFilePresent={!!files.digital_signature}
                 onChange={(e) => {
                   const file = e.target.files?.[0];

@@ -561,8 +561,7 @@ const AddWGPerformingProvider: React.FC = () => {
             <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm " htmlFor="mbbs_register_number">
-                  MBBS Registration Number{" "}
-                  <span className="text-red-500">*</span>
+                  MBBS Registration Number
                 </Label>
                 <Input
                   id="mbbs_register_number"
@@ -576,13 +575,13 @@ const AddWGPerformingProvider: React.FC = () => {
                       mbbs_register_number: e.target.value,
                     }))
                   }
-                  required
+                  // required
                 />
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm " htmlFor="specialization">
-                  Specialization <span className="text-red-500">*</span>
+                  Specialization
                 </Label>
                 <Input
                   id="specialization"
@@ -596,20 +595,20 @@ const AddWGPerformingProvider: React.FC = () => {
                       specialization: e.target.value,
                     }))
                   }
-                  required
+                  // required
                 />
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="license-upload">
-                  Upload License <span className="text-red-500">*</span>
+                  Upload License
                 </Label>
 
                 <FileUploadButton
                   id="license-upload"
                   label="Upload License Files"
                   multiple
-                  required={formData.license_files.length === 0}
+                  // required={formData.license_files.length === 0}
                   isFilePresent={formData.license_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
@@ -717,7 +716,7 @@ const AddWGPerformingProvider: React.FC = () => {
             <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm " htmlFor="md_register_number">
-                  MD Registration Number <span className="text-red-500">*</span>
+                  MD Registration Number
                 </Label>
                 <Input
                   id="md_register_number"
@@ -731,20 +730,20 @@ const AddWGPerformingProvider: React.FC = () => {
                       md_register_number: e.target.value,
                     }))
                   }
-                  required
+                  // required
                 />
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="cv-upload">
-                  Upload CV <span className="text-red-500">*</span>
+                  Upload CV
                 </Label>
 
                 <FileUploadButton
                   id="cv-upload"
                   label="Upload CV Files"
                   multiple
-                  required={formData.cv_files.length === 0}
+                  // required={formData.cv_files.length === 0}
                   isFilePresent={formData.cv_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
@@ -799,15 +798,14 @@ const AddWGPerformingProvider: React.FC = () => {
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="malpractice-upload">
-                  Upload Malpractice Insurance{" "}
-                  <span className="text-red-500">*</span>
+                  Upload Malpractice Insurance
                 </Label>
 
                 <FileUploadButton
                   id="malpractice-upload"
                   label="Upload Malpractice Insurance Files"
                   multiple
-                  required={formData.malpracticeinsureance_files.length === 0}
+                  // required={formData.malpracticeinsureance_files.length === 0}
                   isFilePresent={
                     formData.malpracticeinsureance_files.length > 0
                   }
@@ -871,14 +869,14 @@ const AddWGPerformingProvider: React.FC = () => {
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="digital-signature-upload">
-                  Digital Signature <span className="text-red-500">*</span>
+                  Digital Signature
                 </Label>
 
                 <FileUploadButton
                   id="digital-signature-upload"
                   label="Upload Digital Signature"
                   accept="image/png, image/jpeg, image/jpg"
-                  required={formData.digital_signature?.length === 0}
+                  // required={formData.digital_signature?.length === 0}
                   isFilePresent={formData.digital_signature?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];

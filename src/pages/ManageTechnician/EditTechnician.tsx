@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/select";
 import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
-import { ListSpecificTechnician, technicianService } from "@/services/technicianServices";
+import {
+  ListSpecificTechnician,
+  technicianService,
+} from "@/services/technicianServices";
 import { Camera, FileText, Pencil, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -60,41 +63,40 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
   }, [error]);
 
   const [formData, setFormData] = useState<ListSpecificTechnician>({
-  drivingLicenseFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  profileImgFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  digitalSignatureFile: {
-    base64Data: "",
-    contentType: "",
-  },
+    drivingLicenseFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    digitalSignatureFile: {
+      base64Data: "",
+      contentType: "",
+    },
 
-  licenseFiles: [],
+    licenseFiles: [],
 
-  refCODOEmail: "",
-  refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "",
+    refCODOEmail: "",
+    refCODOPhoneNo1: "",
+    refCODOPhoneNo1CountryCode: "",
 
-  refRTId: 0,
-  refTDDrivingLicense: "",
-  refTDDigitalSignature: "",
-  refTDSSNo: "",
-  refTDTrainedEaseQTStatus: false,
+    refRTId: 0,
+    refTDDrivingLicense: "",
+    refTDDigitalSignature: "",
+    refTDSSNo: "",
+    refTDTrainedEaseQTStatus: false,
 
-  refUserAgreementStatus: false,
-  refUserCustId: "",
-  refUserDOB: "",
-  refUserFirstName: "",
-  refUserId: 0,
-  refUserLastName: "",
-  refUserProfileImg: "",
-  refUserStatus: false,
-});
-
+    refUserAgreementStatus: false,
+    refUserCustId: "",
+    refUserDOB: "",
+    refUserFirstName: "",
+    refUserId: 0,
+    refUserLastName: "",
+    refUserProfileImg: "",
+    refUserStatus: false,
+  });
 
   const [files, setFiles] = useState<TempFilesState>({
     profile_img: null,
@@ -107,7 +109,10 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
   const getSpecificTechnician = async () => {
     setLoading(true);
     try {
-      const res = await technicianService.getSpecificTechnician(scanCenterId, technicianId);
+      const res = await technicianService.getSpecificTechnician(
+        scanCenterId,
+        technicianId
+      );
       console.log(res);
       setFormData(res.data[0]);
     } catch (error) {
@@ -252,39 +257,39 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
 
     // Optional: revoke URL after some delay
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  const handleDigitalSignatureUpload = async (file: File) => {
+    const formDataImg = new FormData();
+    formDataImg.append("profileImage", file);
+    setError("");
+    try {
+      const response = await uploadService.uploadImage({
+        formImg: formDataImg,
+      });
+
+      if (response.status) {
+        setFormData((prev) => ({
+          ...prev,
+          refTDDigitalSignature: response.fileName,
+          digitalSignatureFile: null,
+        }));
+
+        setFiles((prev) => ({
+          ...prev,
+          digital_signature: file,
+        }));
+      } else {
+        setError("Digital signature upload failed.");
+      }
+    } catch (err) {
+      setError("Error uploading digital signature.");
+    }
   };
 
-  const handleDigitalSignatureUpload = async (
-      file: File,
-    ) => {
-      const formDataImg = new FormData();
-      formDataImg.append("profileImage", file);
-      setError("");
-      try {
-        const response = await uploadService.uploadImage({
-          formImg: formDataImg,
-        });
-    
-        if (response.status) {
-          setFormData((prev) => ({
-            ...prev,
-            refTDDigitalSignature: response.fileName,
-            digitalSignatureFile: null,
-          }));
-    
-          setFiles((prev) => ({
-            ...prev,
-            digital_signature: file,
-          }));
-        } else {
-          setError("Digital signature upload failed.");
-        }
-      } catch (err) {
-        setError("Error uploading digital signature.");
-      }
-    };
-
-    const handleRemoveSingleFile = (key: "profile_img" | "pan" | "aadhar" | "digital_signature") => {
+  const handleRemoveSingleFile = (
+    key: "profile_img" | "pan" | "aadhar" | "digital_signature"
+  ) => {
     setFiles((prev) => ({
       ...prev,
       [key]: null,
@@ -328,8 +333,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
-      }
-      else {
+      } else {
         setError(res.message);
       }
     } catch (error) {
@@ -538,10 +542,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                 }
                 disabled
               >
-                <SelectTrigger
-                  disabled
-                  className="bg-white "
-                >
+                <SelectTrigger disabled className="bg-white ">
                   <SelectValue placeholder="Country Code" />
                 </SelectTrigger>
                 <SelectContent>
@@ -577,7 +578,9 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
+                formData.refUserDOB
+                  ? parseLocalDate(formData.refUserDOB)
+                  : undefined
               }
               className="pointer-events-auto"
               onChange={(val) => {
@@ -596,10 +599,10 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
               className="text-sm font-medium"
               htmlFor="drivers-license-upload"
             >
-              Driving License
+              Driving License <span className="text-red-500">*</span>
             </Label>
 
-             <FileUploadButton
+            <FileUploadButton
               id="drivers-license-upload"
               label="Upload Driving License"
               isFilePresent={!!formData.refTDDrivingLicense}
@@ -618,6 +621,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                   });
                 }
               }}
+              required
             />
 
             {/* Show uploaded or existing Driving License file */}
@@ -662,36 +666,36 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
           <div className="flex flex-col gap-1.5 w-full">
             <Label className="text-sm font-medium" htmlFor="license-upload">
-              Licenseaaa <span className="text-red-500">*</span>
+              License
             </Label>
 
             <FileUploadButton
-                            id="license-upload"
-                            label="Upload License Files"
-                            multiple
-                            required={
-                              !(
-                                formData.licenseFiles?.length > 0 ||
-                                files.license_files.length > 0
-                              )
-                            }
-                            isFilePresent={files.license_files.length > 0}
-                            onChange={async (e) => {
-                              const filesSelected = e.target.files;
-                              if (!filesSelected) return;
-            
-                              const selectedFiles = Array.from(filesSelected);
-                              const filteredFiles = selectedFiles.filter(
-                                (file) =>
-                                  file.size <= 10 * 1024 * 1024 &&
-                                  !files.license_files.some((f) => f.name === file.name)
-                              );
-            
-                              for (const file of filteredFiles) {
-                                await uploadAndStoreFile(file, "license_files");
-                              }
-                            }}
-                          />
+              id="license-upload"
+              label="Upload License Files"
+              multiple
+              // required={
+              //   !(
+              //     formData.licenseFiles?.length > 0 ||
+              //     files.license_files.length > 0
+              //   )
+              // }
+              isFilePresent={files.license_files.length > 0}
+              onChange={async (e) => {
+                const filesSelected = e.target.files;
+                if (!filesSelected) return;
+
+                const selectedFiles = Array.from(filesSelected);
+                const filteredFiles = selectedFiles.filter(
+                  (file) =>
+                    file.size <= 10 * 1024 * 1024 &&
+                    !files.license_files.some((f) => f.name === file.name)
+                );
+
+                for (const file of filteredFiles) {
+                  await uploadAndStoreFile(file, "license_files");
+                }
+              }}
+            />
 
             {/* Uploaded License Files */}
             {files.license_files?.length > 0 && (
@@ -776,8 +780,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                           );
                           return {
                             ...prev,
-                            license_files:
-                              updatedLicenseFiles || [],
+                            license_files: updatedLicenseFiles || [],
                           };
                         });
 
@@ -803,79 +806,79 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
 
         <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
           <div className="flex flex-col gap-1.5 w-full">
-                        <Label className="text-sm" htmlFor="digital-signature-upload">
-                          Digital Signature <span className="text-red-500">*</span>
-                        </Label>
-          
-                        <FileUploadButton
-                id="digital-signature-upload"
-                label="Upload Digital Signature"
-                accept="image/png, image/jpeg, image/jpg"
-                required={
-                  !formData.refTDDigitalSignature && !files.digital_signature
+            <Label className="text-sm" htmlFor="digital-signature-upload">
+              Digital Signature
+            </Label>
+
+            <FileUploadButton
+              id="digital-signature-upload"
+              label="Upload Digital Signature"
+              accept="image/png, image/jpeg, image/jpg"
+              // required={
+              //   !formData.refTDDigitalSignature && !files.digital_signature
+              // }
+              isFilePresent={!!files.digital_signature}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                  setError("Digital signature image must be less than 5MB.");
+                  return;
                 }
-                isFilePresent={!!files.digital_signature}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
 
-                  const maxSize = 5 * 1024 * 1024; // 5MB
-                  if (file.size > maxSize) {
-                    setError("Digital signature image must be less than 5MB.");
-                    return;
-                  }
+                handleDigitalSignatureUpload(file); // updates files.digital_signature
+                setError(null);
+              }}
+            />
 
-                  handleDigitalSignatureUpload(file); // updates files.digital_signature
-                  setError(null);
-                }}
-              />
-          
-                        {/* Show newly uploaded signature */}
-                        {files.digital_signature && (
-                          <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
-                            <img
-                              src={URL.createObjectURL(files.digital_signature)}
-                              alt="Digital Signature"
-                              className="h-16 w-auto rounded border object-contain"
-                            />
-          
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSingleFile("digital_signature")}
-                              className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        )}
-          
-                        {/* Show existing digital signature from backend */}
-                        {!files.digital_signature &&
-                          formData.refTDDigitalSignature &&
-                          formData.digitalSignatureFile && (
-                            <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
-                              <img
-                                src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
-                                alt="Digital Signature"
-                                className="h-16 w-auto rounded border object-contain"
-                              />
-          
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    refTDDigitalSignature: "",
-                                    digitalSignatureFile: null,
-                                  }));
-                                }}
-                                className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                            </div>
-                          )}
-                      </div>
+            {/* Show newly uploaded signature */}
+            {files.digital_signature && (
+              <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
+                <img
+                  src={URL.createObjectURL(files.digital_signature)}
+                  alt="Digital Signature"
+                  className="h-16 w-auto rounded border object-contain"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSingleFile("digital_signature")}
+                  className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Show existing digital signature from backend */}
+            {!files.digital_signature &&
+              formData.refTDDigitalSignature &&
+              formData.digitalSignatureFile && (
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
+                  <img
+                    src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
+                    alt="Digital Signature"
+                    className="h-16 w-auto rounded border object-contain"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        refTDDigitalSignature: "",
+                        digitalSignatureFile: null,
+                      }));
+                    }}
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+          </div>
         </div>
       </div>
 

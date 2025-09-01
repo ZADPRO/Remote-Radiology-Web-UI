@@ -1,223 +1,332 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
- 
-interface QuestionConfig {
-    label: string;
-    answer: string;
-    dependsOn?: number;
-}
- 
-interface QuestionConfigVal {
-    label: string;
-    answer: string;
-    dependsOn?: number;
-    anotherdependsOn?: number;
-    mainQid: number;
-}
- 
- 
+import { formatReadableDate } from "@/utlis/calculateAge";
+// interface QuestionConfig {
+//     label: string;
+//     answer: string;
+//     dependsOn?: number;
+// }
+
+// interface QuestionConfigVal {
+//     label: string;
+//     answer: string;
+//     dependsOn?: number;
+//     anotherdependsOn?: number;
+//     mainQid: number;
+// }
+
 export function DbFormReportGenerator(
-    patientInTakeForm: ResponsePatientForm[]
+  patientInTakeForm: ResponsePatientForm[]
 ): string {
- 
-    const getPatientAnswer = (id: number) =>
-        patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
- 
-    function buildReportSentenceWithGetter(
-        configs: Record<number, QuestionConfig>,
-        getAnswer: (id: number) => string
-    ): string {
-        const results: string[] = [];
- 
-        for (const key in configs) {
-            const id = Number(key);
-            const config = configs[id];
-            const ans = getAnswer(id);
- 
-            if (!config || ans === "") continue;
- 
-            if (ans === config.answer) {
-                if (config.dependsOn) {
-                    const depVal = getAnswer(config.dependsOn);
-                    if (depVal && depVal.trim()) {
-                        results.push(`${config.label} (${depVal.trim().toLowerCase()})`);
-                    }
-                } else {
-                    results.push(config.label);
-                }
-            }
-        }
- 
-        if (results.length === 0) return "";
- 
-        if (results.length === 1) return results[0];
- 
-        return `${results.slice(0, -1).join(", ")} and ${results[results.length - 1]}`;
+  const getPatientAnswer = (id: number) =>
+    patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
+
+  function formatBreastSymptoms(input: string): string {
+    if (!input) return "";
+
+    const values = input.split(",").map((v) => v.trim());
+
+    // If only "0"
+    if (values.length === 1 && values[0] === "0") {
+      return "nipple";
     }
- 
-    function buildReportSentenceWithGetterVal(
-        configs: Record<number, QuestionConfigVal>,
-        getAnswer: (id: number) => string,
-        mainQuestionId: number
-    ): string {
-        const groupedByMainQid: Record<number, string[]> = {};
- 
-        for (const key in configs) {
-            const id = Number(key);
-            const config = configs[id];
-            const ans = getAnswer(id);
- 
-            if (!config || ans !== config.answer) continue;
- 
-            const mainQid = config.mainQid ?? id;
- 
-            let labelText = config.label;
- 
-            if (config.dependsOn) {
-                const depVal = getAnswer(config.dependsOn);
-                if (!depVal?.trim()) continue;
-                labelText += ` (${depVal.trim()} ${config.anotherdependsOn ? `, ${getAnswer(config.anotherdependsOn)}` : ``})`;
-            }
- 
-            labelText += ` (${getPatientAnswer(mainQuestionId).toLocaleLowerCase()})`;
- 
-            groupedByMainQid[mainQid] ||= [];
-            groupedByMainQid[mainQid].push(labelText);
-        }
- 
-        const finalSentences: string[] = [];
- 
-        for (const mainQid in groupedByMainQid) {
-            const labels = groupedByMainQid[mainQid];
- 
-            if (labels.length === 1) {
-                finalSentences.push(labels[0].toLowerCase());
-            } else {
-                const sentence = `${labels.slice(0, -1).join(", ")} and ${labels.at(-1)}`;
-                finalSentences.push(sentence.toLowerCase());
-            }
-        }
- 
-        return finalSentences.join(", ");
+
+    return values
+      .map((val) => {
+        if (val === "0") return "nipple";
+        return `${val} o'clock`;
+      })
+      .join(", ");
+  }
+
+  const biopsy = {
+    datediagnosis: getPatientAnswer(254),
+    typediagnosis: getPatientAnswer(255),
+    typediagnosisother: getPatientAnswer(256),
+    grade: getPatientAnswer(257),
+    stage: getPatientAnswer(258),
+    tumersize: getPatientAnswer(259),
+    breast: getPatientAnswer(260),
+    breastRight: getPatientAnswer(469),
+    upperOuterQuadrant: getPatientAnswer(261),
+    upperInnerQuadrant: getPatientAnswer(262),
+    lowerOuterQuadrant: getPatientAnswer(263),
+    lowerInnerQuadrant: getPatientAnswer(264),
+    centralNippleOuterQuadrant: getPatientAnswer(265),
+    unknownQuadrant: getPatientAnswer(266),
+    clockposition: getPatientAnswer(267),
+    clockpositionstatus: getPatientAnswer(268),
+    distancenippleStatus: getPatientAnswer(269),
+    distancenipple: getPatientAnswer(270),
+
+    upperOuterQuadrantRight: getPatientAnswer(470),
+    upperInnerQuadrantRight: getPatientAnswer(471),
+    lowerOuterQuadrantRight: getPatientAnswer(472),
+    lowerInnerQuadrantRight: getPatientAnswer(473),
+    centralNippleOuterQuadrantRight: getPatientAnswer(474),
+    unknownQuadrantRight: getPatientAnswer(475),
+    clockpositionstatusRight: getPatientAnswer(476),
+    clockpositionRight: getPatientAnswer(477),
+    distancenippleStatusRight: getPatientAnswer(478),
+    distancenippleRight: getPatientAnswer(479),
+
+    Lymph: getPatientAnswer(271),
+    positivenode: getPatientAnswer(272),
+    Metastasis: getPatientAnswer(273),
+    location: getPatientAnswer(274),
+
+    LymphRight: getPatientAnswer(480),
+    positivenodeRight: getPatientAnswer(481),
+    MetastasisRight: getPatientAnswer(483),
+    locationRight: getPatientAnswer(484),
+  };
+
+  const treatment = {
+    treatmentstatus: getPatientAnswer(283),
+    Surgical: getPatientAnswer(284),
+    surgery: getPatientAnswer(285),
+    successfulStatus: getPatientAnswer(286),
+    successful: getPatientAnswer(287),
+    Mastectomy: getPatientAnswer(288),
+    Bilateral: getPatientAnswer(289),
+    Sentinel: getPatientAnswer(290),
+    Axillary: getPatientAnswer(291),
+    Reconstruction: getPatientAnswer(292),
+    ReconstructionType: getPatientAnswer(293),
+    Neoadjuvant: getPatientAnswer(296),
+    Chemotherapy: getPatientAnswer(297),
+    Hormonal: getPatientAnswer(298),
+    outcome: getPatientAnswer(299),
+    outcomeDuration: getPatientAnswer(300),
+    outcomeSpecify: getPatientAnswer(301),
+    Targeted: getPatientAnswer(302),
+    Immunotherapy: getPatientAnswer(303),
+    NeoAxillary: getPatientAnswer(304),
+    Radiation: getPatientAnswer(305),
+    Adjuvant: getPatientAnswer(306),
+    AdjChemotherapy: getPatientAnswer(307),
+    AdjHormonal: getPatientAnswer(308),
+    AdjTargeted: getPatientAnswer(309),
+    AdjImmunotherapy: getPatientAnswer(310),
+    AdjRadiation: getPatientAnswer(311),
+    cryoblation: getPatientAnswer(520),
+    other: getPatientAnswer(521),
+    otherspecify: getPatientAnswer(522),
+    Treatmenttimeline: getPatientAnswer(312),
+    sideeffects: getPatientAnswer(313),
+  };
+
+  let reportText = [];
+
+  //Biopsy or Cancer Diagnosis Details
+  //Diahnosis
+  let biopsyReport = [];
+  biopsyReport.push(
+    `${
+      biopsy.typediagnosis === "Other"
+        ? `${biopsy.typediagnosisother}`
+        : biopsy.typediagnosis === "Ductal Carcinoma in Situ (DCIS)"
+        ? `ductal carcinoma in situ (DCIS)`
+        : biopsy.typediagnosis === "Lobular Carcinoma in Situ (LCIS)"
+        ? `lobular carcinoma in situ (LCIS)`
+        : biopsy.typediagnosis === "Invasive Ductal Carcinoma (IDC)"
+        ? `invasive ductal carcinoma (IDC)`
+        : biopsy.typediagnosis === "Invasive Lobular Carcinoma (ILC)"
+        ? `invasive lobular carcinoma (ILC)`
+        : biopsy.typediagnosis === "Inflammatory Breast Cancer"
+        ? `inflammatory breast cancer`
+        : biopsy.typediagnosis === "Unknown"
+        ? `unknown`
+        : ``
+    }`
+  );
+
+  biopsyReport.push(`date: ${formatReadableDate(biopsy.datediagnosis)}`);
+
+  if (biopsy.grade !== "Unknown" && biopsy.grade !== "") {
+    biopsyReport.push(`grade: ${biopsy.grade}`);
+  }
+
+  if (biopsy.stage !== "Unknown" && biopsy.stage !== "") {
+    biopsyReport.push(`stage: ${biopsy.stage}`);
+  }
+
+  if (biopsy.tumersize.length > 0) {
+    biopsyReport.push(`tumor size: ${biopsy.tumersize} mm`);
+  }
+
+  reportText.push(`Biopsy diagnosis of ${biopsyReport.join(", ")}.`);
+
+  //Location of cancer
+  //Right
+  if (biopsy.breastRight === "true") {
+    const sentence = [];
+
+    sentence.push(`Located in the right breast`);
+
+    biopsy.upperOuterQuadrantRight === "true" &&
+      sentence.push(`upper outer quadrant`);
+    biopsy.upperInnerQuadrantRight === "true" &&
+      sentence.push(`upper inner quadrant`);
+    biopsy.lowerOuterQuadrantRight === "true" &&
+      sentence.push(`lower outer quadrant`);
+    biopsy.lowerInnerQuadrantRight === "true" &&
+      sentence.push(`lower inner quadrant`);
+    biopsy.centralNippleOuterQuadrantRight === "true" &&
+      sentence.push(`central/nipple outer quadrant`);
+    biopsy.unknownQuadrantRight === "true" && sentence.push(`unknown quadrant`);
+
+    biopsy.clockpositionstatusRight === "known" &&
+      sentence.push(
+        `clock position ${formatBreastSymptoms(biopsy.clockpositionRight)}`
+      );
+
+    biopsy.distancenippleStatusRight === "known" &&
+      sentence.push(`${biopsy.distancenippleRight} cm from nipple`);
+
+    biopsy.LymphRight === "Yes" &&
+      sentence.push(`lymph node involvement present`);
+
+    biopsy.MetastasisRight === "Yes" &&
+      sentence.push(
+        `metastasis present${
+          biopsy.locationRight ? ` at ${biopsy.locationRight}` : ``
+        }`
+      );
+
+    reportText.push(sentence.join(", ") + ".");
+  }
+
+  //Left
+  if (biopsy.breast === "true") {
+    const sentence = [];
+
+    sentence.push(`Located in the left breast`);
+
+    biopsy.upperOuterQuadrant === "true" &&
+      sentence.push(`upper outer quadrant`);
+    biopsy.upperInnerQuadrant === "true" &&
+      sentence.push(`upper inner quadrant`);
+    biopsy.lowerOuterQuadrant === "true" &&
+      sentence.push(`lower outer quadrant`);
+    biopsy.lowerInnerQuadrant === "true" &&
+      sentence.push(`lower inner quadrant`);
+    biopsy.centralNippleOuterQuadrant === "true" &&
+      sentence.push(`central/nipple outer quadrant`);
+    biopsy.unknownQuadrant === "true" && sentence.push(`unknown quadrant`);
+
+    biopsy.clockpositionstatus === "known" &&
+      sentence.push(
+        `clock position ${formatBreastSymptoms(biopsy.clockposition)}`
+      );
+
+    biopsy.distancenippleStatus === "known" &&
+      sentence.push(`${biopsy.distancenipple} cm from nipple`);
+
+    biopsy.Lymph === "Yes" && sentence.push(`lymph node involvement present`);
+
+    biopsy.Metastasis === "Yes" &&
+      sentence.push(
+        `metastasis present${biopsy.location ? ` at ${biopsy.location}` : ``}`
+      );
+
+    reportText.push(sentence.join(", ") + ".");
+  }
+
+  //Treatement
+  if (treatment.treatmentstatus === "Yes") {
+    //Surgical approach
+    if (
+      treatment.Surgical !== "Not Applicable" &&
+      treatment.Surgical.length > 0
+    ) {
+      const sentence = [];
+
+      if (treatment.surgery === "true") {
+        sentence.push(`lumpectomy/breast-conserving surgery`);
+      }
+
+      if (treatment.successfulStatus === "true") {
+        sentence.push(
+          `surgery was${
+            treatment.successful === "Yes" ? "" : " not"
+          } successful in removing all of the tumor`
+        );
+      }
+
+      if (treatment.Mastectomy === "true") {
+        sentence.push(`mastectomy (partial or segmental)`);
+      }
+
+      if (treatment.Bilateral === "true") {
+        sentence.push(`bilateral mastectomy`);
+      }
+
+      if (treatment.Sentinel === "true") {
+        sentence.push(`sentinel lymph node biopsy`);
+      }
+
+      if (treatment.Axillary === "true") {
+        sentence.push(`axillary lymph node dissection`);
+      }
+
+      if (treatment.Reconstruction === "true") {
+        sentence.push(
+          `reconstruction${
+            treatment.ReconstructionType.length > 0 &&
+            treatment.ReconstructionType !== "None"
+              ? ` (${treatment.ReconstructionType.toLocaleLowerCase()})`
+              : ""
+          }`
+        );
+      }
+
+      if (sentence.length > 0) {
+        let text = `${sentence.join(", ")} ${
+          sentence.length === 1 ? "is" : "are"
+        } being ${treatment.Surgical.toLowerCase()}.`;
+
+        // Capitalize the first letter
+        text = text.charAt(0).toUpperCase() + text.slice(1);
+
+        reportText.push(text);
+      }
     }
- 
- 
-    const rightQuadrantanswer = {
-        470: { label: "upper outer", answer: "true" },
-        471: { label: "upper inner", answer: "true" },
-        472: { label: "lower outer", answer: "true" },
-        473: { label: "lower inner", answer: "true" },
-        474: { label: "central/nipple outer", answer: "true" },
-        475: { label: "unknown", answer: "true" },
-    };
-    const leftQuadrantanswer = {
-        261: { label: "upper outer", answer: "true" },
-        262: { label: "upper inner", answer: "true" },
-        263: { label: "lower outer", answer: "true" },
-        264: { label: "lower inner", answer: "true" },
-        265: { label: "central/nipple outer", answer: "true" },
-        266: { label: "unknown", answer: "true" },
-    };
- 
-    const rightQuadrant = buildReportSentenceWithGetter(rightQuadrantanswer, getPatientAnswer);
-    const LeftQuadrant = buildReportSentenceWithGetter(leftQuadrantanswer, getPatientAnswer);
-    const rightclockpostion = getPatientAnswer(476).toLowerCase() === "known" ? getPatientAnswer(477) + "'o clock" : "unknown"
-    const Leftclockpostion = getPatientAnswer(268).toLowerCase() === "known" ? getPatientAnswer(267) + "'o clock" : "unknown"
-    const rightdistancefromnipple = getPatientAnswer(478).toLowerCase() === "known" ? getPatientAnswer(479) + "cm" : "unknown"
-    const leftdistancefromnipple = getPatientAnswer(269).toLowerCase() === "known" ? getPatientAnswer(270) + "cm" : "unknown"
-    const rightlymphnode = `with ${getPatientAnswer(481)} lymph node ${(getPatientAnswer(480) === "Yes" && getPatientAnswer(483) === "Yes") && "involvement"}`;
-    const rightmetastasis = `with metastasis in ${getPatientAnswer(484)}`;
-    const leftlymphnode = `with ${getPatientAnswer(272)} lymph node ${(getPatientAnswer(271) === "Yes" && getPatientAnswer(273) === "Yes") && "involvement"}`;
-    const lefttmetastasis = `with metastasis in ${getPatientAnswer(274)}`;
- 
-    //Right Form
-    const rightForm = `
-    <p>
-    Diagnosis of ${getPatientAnswer(255).toLowerCase() === "other" ? getPatientAnswer(256) : getPatientAnswer(255).toLowerCase()}
-    ${getPatientAnswer(257).toLowerCase() === "unknown" ? "unknown" : getPatientAnswer(257)} grade
-    ${getPatientAnswer(258).toLowerCase() === "unknown" ? "unknown" : getPatientAnswer(258)} stage of
-    ${getPatientAnswer(259)}cm size at right breast at ${rightQuadrant} quadrant at ${rightclockpostion} position
-    ${rightdistancefromnipple} from nipple ${rightlymphnode} ${rightmetastasis}
-    </p>
-    `;
- 
-    //Left Form
-    const leftForm = `
-    <p>
-    Diagnosis of ${getPatientAnswer(255).toLowerCase() === "other" ? getPatientAnswer(256) : getPatientAnswer(255).toLowerCase()}
-    ${getPatientAnswer(257).toLowerCase() === "unknown" ? "unknown" : getPatientAnswer(257)} grade
-    ${getPatientAnswer(258).toLowerCase() === "unknown" ? "unknown" : getPatientAnswer(258)} stage of
-    ${getPatientAnswer(259)}cm size at left breast at ${LeftQuadrant} quadrant at ${Leftclockpostion} position
-    ${leftdistancefromnipple} from nipple ${leftlymphnode} ${lefttmetastasis}
-    </p>
-    `
- 
-    //Receptor status
-    const receptorstatus = `
-    <p>Receptor Status:</p>
-    ${getPatientAnswer(276) === "Positive" ? `<p>Estrogen Receptor (ER): ${getPatientAnswer(277)}%</p>` : ``}
-    ${getPatientAnswer(278) === "Positive" ? `<p>Progesterone Receptor (PR): ${getPatientAnswer(279)}%</p>` : ``}
-    ${getPatientAnswer(280) === "Positive" ? `<p>HER2/neu: ${getPatientAnswer(281)}%</p>` : ``}
-    ${getPatientAnswer(282) === "Known" ? `<p>Ki-67: ${getPatientAnswer(420)}%</p>` : ``}
-    ${getPatientAnswer(421) === "Yes" ? `<p>Oncotype DX or other genomic testing: ${getPatientAnswer(422)}%</p>` : ``}
-    `
- 
-    const surgeryAnswer = {
-        285: { label: "lumpectomy/breast-conserving surgery", answer: "true", mainQid: 284 },
-        286: { label: "was the surgery successful in removing all of the tumor?", answer: "true", dependsOn: 287, mainQid: 284 },
-        288: { label: "mastectomy (partial or segmental)", answer: "true", mainQid: 284 },
-        289: { label: "bilateral mastectomy", answer: "true", mainQid: 284 },
-        290: { label: "sentinel lymph node biopsy", answer: "true", mainQid: 284 },
-        291: { label: "axillary lymph node dissection", answer: "true", mainQid: 284 },
-        292: { label: "reconstruction", answer: "true", dependsOn: 293, mainQid: 284 },
-    };
- 
-    const surgery = buildReportSentenceWithGetterVal(surgeryAnswer, getPatientAnswer, 284) + ",";
- 
-    const NeoadjuvantAnswer = {
-        297: { label: "chemotherapy (e.g., taxol, adriamycin, herceptin)", answer: "true", mainQid: 296 },
-        298: { label: "hormonal therapy herceptin (for HER2-positive cancers), tamoxifen, aromatase inhibitors (e.g., anastrozole), or others", answer: "true", mainQid: 296 },
-        299: { label: "The duration and outcome of this treatment were reported as", answer: "true", dependsOn: 300, anotherdependsOn: 301, mainQid: 296 },
-        302: { label: "bilateral mastectomy", answer: "true", mainQid: 296 },
-        303: { label: "sentinel lymph node biopsy", answer: "true", mainQid: 296 },
-        304: { label: "axillary lymph node dissection", answer: "true", mainQid: 296 },
-        305: { label: "reconstruction", answer: "true", dependsOn: 293, mainQid: 296 },
-    };
- 
-    const Neoadjuvant = buildReportSentenceWithGetterVal(NeoadjuvantAnswer, getPatientAnswer, 296) + ",";
- 
-    const adjuvantAnswer = {
-        307: { label: "chemotherapy", answer: "true", mainQid: 306 },
-        308: { label: "hormonal therapy", answer: "true", mainQid: 306 },
-        309: { label: "targeted therapy", answer: "true", mainQid: 306 },
-        310: { label: "immunotherapy", answer: "true", mainQid: 306 },
-        311: { label: "radiation therapy", answer: "true", mainQid: 306 },
-    };
- 
-    const adjuvant = buildReportSentenceWithGetterVal(adjuvantAnswer, getPatientAnswer, 306);
- 
-    //Procedure
-    const Procedure = `${getPatientAnswer(283) === "Yes" ? `<p>
-    Procedure ${surgery}
-    ${Neoadjuvant}
-    ${adjuvant}
-    .</p>` : ""}
-    `
- 
-    // Final Report
-    let reportText = `
-  <br/><p>Biopsy/cancer diagnosis on ${getPatientAnswer(254)}</p>
-   ${getPatientAnswer(469) === "true" ? rightForm : ""}
-  ${(getPatientAnswer(469) === "true" && getPatientAnswer(260) === "true") ? "" : ""}
-  ${getPatientAnswer(260) === "true" ? leftForm : ""}
-  ${getPatientAnswer(275) === "Yes" ? "<br/>" + receptorstatus : ""}
-  ${getPatientAnswer(284) === "Not Applicable" &&
-            getPatientAnswer(296) === "Not Applicable" &&
-            getPatientAnswer(306) === "Not Applicable"
-            ? ""
-            : Procedure
-        }
-`;
- 
- 
-    return reportText;
+    //Neoadjuvant treatment planned (before surgery)
+    if (
+      treatment.Neoadjuvant !== "Not Applicable" &&
+      treatment.Neoadjuvant.length > 0
+    ) {
+      reportText.push(
+        `Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}.`
+      );
+    }
+    //Adjuvant treatment planned (after surgery)
+    if (
+      treatment.Adjuvant !== "Not Applicable" &&
+      treatment.Adjuvant.length > 0
+    ) {
+      reportText.push(
+        `Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}.`
+      );
+    }
+    //Cryoablation
+    if (
+      treatment.cryoblation !== "Not Applicable" &&
+      treatment.cryoblation.length > 0
+    ) {
+      reportText.push(
+        `Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}.`
+      );
+    }
+    //Other
+    if (treatment.other !== "Not Applicable" && treatment.other.length > 0) {
+      reportText.push(`${treatment.otherspecify} ${treatment.other.toLocaleLowerCase()}.`);
+    }
+    //Treatment timeline and details
+    if (treatment.Treatmenttimeline.length > 0) {
+      reportText.push(`Treatment timeline and details: ${treatment.Treatmenttimeline}.`);
+    }
+  }
+
+  return reportText.join("<br/>");
 }

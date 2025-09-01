@@ -27,9 +27,10 @@ export interface ListScanCenter {
   refSCPhoneNo2: string;
   refSCProfile: string;
   refSCWebsite: string;
+  refSCStatus: boolean;
 }
 
-export interface ListSpecificScanCenter { 
+export interface ListSpecificScanCenter {
   profileImgFile: FileData | null;
   refSCAddress: string;
   refSCAppointments: boolean;
@@ -42,8 +43,8 @@ export interface ListSpecificScanCenter {
   refSCCustId: string;
   refSCProfile: string; // This appears to be a filename or UUID for an image.
   refSCWebsite: string;
+  refSCStatus: boolean;
 }
-
 
 export const scancenterService = {
   getAllScanCenters: async () => {
@@ -83,6 +84,7 @@ export const scancenterService = {
         },
       }
     );
+    console.log("HEllo --->", decrypt(res.data.data, res.data.token));
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     return decryptedData;
@@ -126,7 +128,7 @@ export const scancenterService = {
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     return decryptedData;
-  }
+  },
 };
 
 export interface NewScanCenterAdmin {
@@ -212,8 +214,11 @@ export const scanCenterAdminService = {
     return decryptedData;
   },
   getSpecificScanCenterAdmin: async (scanCenterId: number, userId: number) => {
-     const token = localStorage.getItem("token");
-    const payload = encrypt({ refSCId: scanCenterId, refUserId: userId }, token);
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      { refSCId: scanCenterId, refUserId: userId },
+      token
+    );
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_PROFILESERVICE
@@ -248,5 +253,5 @@ export const scanCenterAdminService = {
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     return decryptedData;
-  }
-}
+  },
+};

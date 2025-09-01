@@ -53,6 +53,21 @@ export function AutoPopulateReport(
   //     getPatientAnswer(80)
   //   );
 
+  if (getPatientAnswer(79) === "Yes") {
+    getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
+      handleReportInputChange(breastImpantQuestions.breastImplants, "Present");
+    getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+      handleReportInputChange(
+        breastImpantQuestions.implantMaterial,
+        getPatientAnswer(80)
+      );
+    getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+      handleReportInputChange(
+        breastImpantQuestions.implantMaterialOther,
+        getPatientAnswer(81)
+      );
+  }
+
   getreportAnswer(breastImpantQuestions.displacement) === "" &&
     handleReportInputChange(breastImpantQuestions.displacement, "None");
 

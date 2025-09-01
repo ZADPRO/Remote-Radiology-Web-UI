@@ -13,6 +13,7 @@ export const breastImpantQuestions = {
   ruptureSignsOther: 12,
   ruptureType: 13,
   implantMaterialOther: 116,
+  bilateraldissimilar:62,
 };
 
 export const symmetryQuestions = {

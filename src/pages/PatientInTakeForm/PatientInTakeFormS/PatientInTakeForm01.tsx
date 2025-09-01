@@ -23,6 +23,7 @@ interface Props {
   handleFormSwitch: (formNumber: number) => void;
   openSubmitDialog: () => void;
   readOnly: boolean;
+  OverrideStatus: string;
 }
 
 const PatientInTakeForm01: React.FC<Props> = ({
@@ -31,6 +32,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
   handleFormSwitch,
   openSubmitDialog,
   readOnly,
+  OverrideStatus,
 }) => {
   const navigate = useNavigate();
 
@@ -103,6 +105,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               reason: 11,
               weightType: 12,
             }}
+            OverrideStatus={OverrideStatus}
           />
         );
       case "Risk Stratification":
@@ -422,7 +425,11 @@ const PatientInTakeForm01: React.FC<Props> = ({
       if (eligibleAnswer.toUpperCase() === "YES") {
         setButtonText("Next");
       } else {
-        setButtonText("Submit");
+        if (OverrideStatus === "approved") {
+          setButtonText("Next");
+        } else {
+          setButtonText("Submit");
+        }
       }
     } else {
       setButtonText("Next"); // Default to "Next" when disabled
@@ -586,14 +593,16 @@ const PatientInTakeForm01: React.FC<Props> = ({
 
           {/* Submit / Next Button */}
           {/* {!isNextButtonDisabled && ( */}
-          <button
-            type="submit" // Changed to type="submit" to trigger form onSubmit
-            className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 mr-2 mb-[2px] max-w-[10rem] rounded-md"
-            // disabled={isNextButtonDisabled}
-          >
-            {buttonText}
-            <ChevronRight className="ml-1 h-4 w-4" />
-          </button>
+          {OverrideStatus !== "pending" && (
+            <button
+              type="submit" // Changed to type="submit" to trigger form onSubmit
+              className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 mr-2 mb-[2px] max-w-[10rem] rounded-md"
+              // disabled={isNextButtonDisabled}
+            >
+              {buttonText}
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </button>
+          )}
           {/* )} */}
         </div>
       </div>

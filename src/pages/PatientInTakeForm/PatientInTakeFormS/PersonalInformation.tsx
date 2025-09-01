@@ -16,7 +16,10 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import { IntakeOption } from "../PatientInTakeForm";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { useAuth } from "@/pages/Routes/AuthContext";
-import { parseLocalDate } from "@/lib/dateUtils";
+import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
+import { calculateAge } from "@/utlis/calculateAge";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   fullName: number;
@@ -39,6 +42,7 @@ interface Props {
   handleInputChange: (questionId: number, value: string) => void;
   questionIds: QuestionIds;
   readOnly: boolean;
+  OverrideStatus: string;
 }
 
 const PersonalInformation: React.FC<Props> = ({
@@ -46,6 +50,7 @@ const PersonalInformation: React.FC<Props> = ({
   handleInputChange,
   questionIds,
   readOnly,
+  OverrideStatus,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -140,6 +145,7 @@ const PersonalInformation: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Personal Information" className="uppercase" />
+      <div className="bg-[#fff]">{<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}</div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* Row 1 */}
@@ -176,12 +182,18 @@ const PersonalInformation: React.FC<Props> = ({
                     ? parseLocalDate(getAnswer(questionIds.dob))
                     : undefined
                 }
-                onChange={(val) =>
+                onChange={(val) => {
                   handleInputChange(
                     questionIds.dob,
-                    val?.toLocaleDateString("en-CA") || ""
-                  )
-                }
+                    val ? formatLocalDate(val) : ""
+                  );
+                  if (val) {
+                    handleInputChange(
+                      questionIds.age,
+                      String(calculateAge(formatLocalDate(val)) || 0)
+                    );
+                  }
+                }}
                 disabledDates={(date) => date > new Date()}
                 required
               />
@@ -258,9 +270,9 @@ const PersonalInformation: React.FC<Props> = ({
                 className="font-semibold text-base flex flex-wrap gap-1"
               >
                 Age <span className="text-red-500">*</span>
-                <span className="text-xs text-muted-foreground font-normal">
+                {/* <span className="text-xs text-muted-foreground font-normal">
                   (If &lt; 18 yrs – Scan is contraindicated)
-                </span>
+                </span> */}
               </Label>
               <Input
                 type="number"
@@ -271,6 +283,7 @@ const PersonalInformation: React.FC<Props> = ({
                 onChange={(e) =>
                   handleInputChange(questionIds.age, e.target.value)
                 }
+                readOnly
                 required
               />
             </div>
@@ -312,13 +325,13 @@ const PersonalInformation: React.FC<Props> = ({
                 <div className="flex items-center gap-1">
                   Weight <span className="text-red-500">*</span>
                 </div>
-                <span className="text-xs text-muted-foreground font-normal">
+                {/* <span className="text-xs text-muted-foreground font-normal">
                   (If more than 350 lbs - Scan is contraindicated)
-                </span>
+                </span> */}
               </Label>
               <div className="flex gap-2">
                 <Input
-                type="number"
+                  type="number"
                   id="weight"
                   placeholder="Weight"
                   value={getAnswer(questionIds.weight)}
@@ -352,9 +365,9 @@ const PersonalInformation: React.FC<Props> = ({
                 <div className="flex items-center gap-1">
                   Bra Size <span className="text-red-500">*</span>
                 </div>
-                <span className="text-xs text-muted-foreground font-normal">
+                {/* <span className="text-xs text-muted-foreground font-normal">
                   (If &gt; DDD – Scan is contraindicated)
-                </span>
+                </span> */}
               </Label>
 
               <ValidatedSelect
@@ -374,7 +387,7 @@ const PersonalInformation: React.FC<Props> = ({
               <MultiOptionRadioGroup
                 label="Currently Pregnant/Lactating"
                 required
-                description="If Yes - Scan is contraindicated"
+                // description="If Yes - Scan is contraindicated"
                 questionId={questionIds.pregnant}
                 formData={formData}
                 handleInputChange={handleInputChange}
@@ -426,17 +439,18 @@ const PersonalInformation: React.FC<Props> = ({
       </div>
 
       {/* Note */}
-      {getAnswer(questionIds.eligible) === "NO" && (
-        <div className="flex items-start justify-center mt-2 px-3 py-2 rounded-md">
-          <p className="text-sm">
-            <span className="font-semibold text-red-600">Note:</span>{" "}
-            <span className="text-gray-800">
-              Please contact Center Manager to evaluate your eligibility for the
-              scan.
-            </span>
-          </p>
-        </div>
-      )}
+      {getAnswer(questionIds.eligible) === "NO" &&
+        OverrideStatus !== "approved" && (
+          <div className="flex items-start justify-center mt-2 px-3 py-2 rounded-md">
+            <p className="text-sm">
+              <span className="font-semibold text-red-600">Note:</span>{" "}
+              <span className="text-gray-800">
+                Please contact Center Manager to evaluate your eligibility for
+                the scan.
+              </span>
+            </p>
+          </div>
+        )}
     </div>
   );
 };

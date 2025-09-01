@@ -15,6 +15,7 @@ interface QuestionIds {
   ruptureSigns: number;
   ruptureSignsOther: number;
   ruptureType: number;
+  bilateraldissimilar: number;
 }
 
 export function generateBreastImplantDetailsHTML(
@@ -45,7 +46,7 @@ export function generateBreastImplantDetailsHTML(
   // const ruptureSignsOther = getAnswer(questionIds.ruptureSignsOther);
   const ruptureType = getAnswer(questionIds.ruptureType);
 
-  let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
+  let html = `<span>The QT scan shows ${config.toLowerCase()}${config === "Bilateral Dissimilar" ? ` (${getAnswer(questionIds.bilateraldissimilar)})`:""}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
     html += ` implants`;

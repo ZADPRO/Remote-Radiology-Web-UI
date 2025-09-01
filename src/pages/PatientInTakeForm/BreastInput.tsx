@@ -36,6 +36,7 @@ type Props = {
   setPatientData?: any;
   OtherInputQId?: number;
   nameLabelColor?: string;
+  requiredStatus?: boolean;
 };
 
 const BreastInput: React.FC<Props> = (Props) => {
@@ -291,6 +292,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                   setModal(true);
                 }
               }}
+              required={!Props.requiredStatus}
             />
             <Label
               className={`font-semibold text-base ${

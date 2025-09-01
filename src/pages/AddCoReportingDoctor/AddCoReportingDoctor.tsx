@@ -26,7 +26,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   doctorService,
   MedicalLicenseSecurity,
-  NewCoReportingDoctor
+  NewCoReportingDoctor,
 } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
@@ -72,11 +72,11 @@ const AddCoReportingDoctor: React.FC = () => {
   console.log(formData);
 
   useEffect(() => {
-      setFormData((prev) => ({
-        ...prev,
-        refSCId: scanCenterId,
-      }));
-    }, []);
+    setFormData((prev) => ({
+      ...prev,
+      refSCId: scanCenterId,
+    }));
+  }, []);
 
   const [files, setFiles] = useState<TempFilesState>({
     profile_img: null,
@@ -142,8 +142,7 @@ const AddCoReportingDoctor: React.FC = () => {
       }
     } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -503,7 +502,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
 
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="drivers-license-upload">
-            Driver's License
+            Driver's License <span className="text-red-500">*</span>
           </Label>
 
           <FileUploadButton
@@ -526,6 +525,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "drivers_license",
               });
             }}
+            required
           />
 
           {/* Uploaded Driver's License */}
@@ -685,7 +685,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="npi">
-            NPI 
+            NPI
             {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
@@ -702,7 +702,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm " htmlFor="specialization">
-            Specialization 
+            Specialization
             {/* <span className="text-red-500">*</span> */}
           </Label>
           <Input
@@ -722,14 +722,14 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="license-upload">
-            Upload License <span className="text-red-500">*</span>
+            Upload License
           </Label>
 
           <FileUploadButton
             id="license-upload"
             label="Upload License Files"
             multiple
-            required={formData.license_files.length === 0}
+            // required={formData.license_files.length === 0}
             isFilePresent={formData.license_files.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;
@@ -780,7 +780,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="malpractice-upload">
-            Upload Malpractice Insurance 
+            Upload Malpractice Insurance
             {/* <span className="text-red-500">*</span> */}
           </Label>
 
@@ -849,7 +849,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="digital-signature-upload">
-            Digital Signature 
+            Digital Signature
             {/* <span className="text-red-500">*</span> */}
           </Label>
 

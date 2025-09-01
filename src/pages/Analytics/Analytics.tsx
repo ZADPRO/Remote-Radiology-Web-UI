@@ -15,6 +15,8 @@ import {
   ImpressionModel,
   IntakeFormAnalytics,
   ListScanAppointmentCount,
+  OverAllAnalytics,
+  OverAllScanCenterAnalytics,
   TATStats,
   TotalArtifacts,
   TotalCorrectEdit,
@@ -35,6 +37,9 @@ import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/calendar";
 import { ChevronDown, User } from "lucide-react";
 import { ArtifactsPie } from "./ArtifactsPieChart";
+import OverAllAnalyticsTable from "./UsersOverAllAnalyticsTable";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ScanCenterOverAllAnalyticsTable from "./ScanCenterOverAllAnalaytics";
 
 const Analytics: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -42,7 +47,6 @@ const Analytics: React.FC = () => {
     to: endOfMonth(new Date()),
   });
 
-  console.log(dateRange);
   const [open, setOpen] = React.useState(false);
 
   const handleSelect = (range: DateRange | undefined) => {
@@ -52,11 +56,14 @@ const Analytics: React.FC = () => {
     }
   };
 
+   const { user, role } = useAuth();
+
   const [centerSelectedValue, setCenterSelectedValue] = useState<number | null>(
-    null
+    role?.type === "scadmin" && user?.refSCId ? user.refSCId : 0
   );
+
   const [userSelectedValue, setUserSelectedValue] = useState<number | null>(
-    null
+    role?.type === "scadmin" ? 0 : null
   );
 
   const [appointmentCase, setAppointmentCase] = useState<AppointmentCases[]>(
@@ -84,12 +91,17 @@ const Analytics: React.FC = () => {
 
   const [reportArtifacts, setReportArtifacts] = useState<TotalArtifacts[]>([]);
 
+  const [UsersOverAllAnalaytics, setUserOverAllAnalaytics] = useState<
+    OverAllAnalytics[]
+  >([]);
+
+  const [ScanCenterOverAllAnalaytics, setScanCenterOverAllAnalaytics] =
+    useState<OverAllScanCenterAnalytics[]>([]);
+
   const [tempRole, setTempRole] = useState({
     id: 0,
     type: "",
   });
-
-  const { user, role } = useAuth();
 
   type AccessKey =
     | "userselect"
@@ -108,10 +120,17 @@ const Analytics: React.FC = () => {
   const accessMap: Record<AccessKey, UserRole[]> = {
     userselect: ["admin", "manager", "scadmin"],
     scancenterselect: ["admin", "manager"],
-    totalCorrect: ["radiologist", "wgdoctor"],
-    totalEdit: ["radiologist", "wgdoctor"],
-    recoCodeCount: ["admin", "wgdoctor"],
-    TAT: ["radiologist", "technician", "codoctor", "doctor", "wgdoctor"],
+    totalCorrect: ["admin", "radiologist", "wgdoctor", "codoctor"],
+    totalEdit: ["admin", "radiologist", "wgdoctor", "codoctor"],
+    recoCodeCount: ["admin", "manager", "wgdoctor", "scadmin"],
+    TAT: [
+      "admin",
+      "radiologist",
+      "technician",
+      "codoctor",
+      "doctor",
+      "wgdoctor",
+    ],
     totalCaseCountPopover: ["radiologist"],
     previousMonth: [
       "admin",
@@ -183,7 +202,6 @@ const Analytics: React.FC = () => {
 
   const fetchOverallScanCenter = async (scId: number) => {
     try {
-      console.log(scId);
       if (!dateRange.from || !dateRange.to) {
         console.error("Date range is incomplete.");
         return;
@@ -195,17 +213,16 @@ const Analytics: React.FC = () => {
         format(dateRange.to, "yyyy-MM-dd")
       );
 
-      console.log("overall", res);
-
       if (res.status) {
-        setAppointmentCase(res.AdminOverallAnalaytics);
-        setAllScanCenters(res.AllScaCenter);
-        setAllUsers(res.UserListIds);
-        setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics);
-        setRecode(res.ImpressionModel);
+        setScanCenterOverAllAnalaytics(res.OverAllAnalytics || []);
+        setAppointmentCase(res.AdminOverallAnalaytics || []);
+        setAllScanCenters(res.AllScaCenter || []);
+        setAllUsers(res.UserListIds || []);
+        setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics || []);
+        setRecode(res.ImpressionModel || []);
         setTatStats([]);
-        setTechArtifacts(res.TechArtificate);
-        setReportArtifacts(res.ReportArtificate);
+        setTechArtifacts(res.TechArtificate || []);
+        setReportArtifacts(res.ReportArtificate || []);
       }
     } catch (error) {
       console.log(error);
@@ -230,19 +247,32 @@ const Analytics: React.FC = () => {
         format(dateRange?.from, "yyyy-MM-dd"),
         format(dateRange?.to, "yyyy-MM-dd")
       );
-
-      console.log("peruser", res);
-
       if (res.status) {
-        setAppointmentCase(res.AdminOverallAnalaytics);
-        setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics);
-        setListScanAppointmentCount(res.ListScanAppointmentCount);
-        setUserAccessTiming(res.UserAccessTiming);
-        setRecode(res.ImpressionModel);
-        setTotalCorrectEdits(res.TotalCorrectEdit);
-        setTatStats(res.DurationBucketModel);
-        setReportArtifacts(res.ReportArtificate);
-        setTechArtifacts(res.TechArtificate);
+        console.log("---->", res);
+
+        setUserOverAllAnalaytics(
+          res.OverAllAnalytics ? res.OverAllAnalytics : []
+        );
+
+        setAppointmentCase(
+          res.AdminOverallAnalaytics.length > 0
+            ? res.AdminOverallAnalaytics
+            : []
+        );
+        setIntakeFormAnalytics(
+          res.AdminOverallScanIndicatesAnalaytics.length > 0
+            ? res.AdminOverallScanIndicatesAnalaytics
+            : []
+        );
+        setListScanAppointmentCount(
+          res.ListScanAppointmentCount ? res.ListScanAppointmentCount : []
+        );
+        setUserAccessTiming(res.UserAccessTiming ? res.UserAccessTiming : []);
+        setRecode(res.ImpressionModel ? res.ImpressionModel : []);
+        setTotalCorrectEdits(res.TotalCorrectEdit ? res.TotalCorrectEdit : []);
+        setTatStats(res.DurationBucketModel ? res.DurationBucketModel : []);
+        setReportArtifacts(res.ReportArtificate ? res.ReportArtificate : []);
+        setTechArtifacts(res.TechArtificate ? res.TechArtificate : []);
       }
     } catch (error) {
       console.log(error);
@@ -268,12 +298,17 @@ const Analytics: React.FC = () => {
           tempRole.id ? tempRole.id : role?.id
         );
       } else {
-        setUserSelectedValue(null);
-        fetchOverallScanCenter(
-          centerSelectedValue || centerSelectedValue == 0
-            ? Number(centerSelectedValue)
-            : user.refSCId
-        );
+        if (userSelectedValue === 0) {
+          setUserSelectedValue(0);
+          fetchAnalyticsPeruser(0, tempRole.id ? tempRole.id : role?.id);
+        } else {
+          setUserSelectedValue(null);
+          fetchOverallScanCenter(
+            centerSelectedValue || centerSelectedValue == 0
+              ? Number(centerSelectedValue)
+              : user.refSCId
+          );
+        }
       }
     } else {
       setCenterSelectedValue(null);
@@ -288,16 +323,20 @@ const Analytics: React.FC = () => {
   }, [dateRange]);
 
   useEffect(() => {
-    (centerSelectedValue || centerSelectedValue == 0) &&
+    if (centerSelectedValue) {
       fetchOverallScanCenter(Number(centerSelectedValue));
+    } else if (centerSelectedValue === 0) {
+      fetchOverallScanCenter(0);
+    }
   }, [centerSelectedValue]);
 
   useEffect(() => {
-    userSelectedValue &&
+    if (userSelectedValue) {
       fetchAnalyticsPeruser(Number(userSelectedValue), tempRole.id);
+    } else if (userSelectedValue === 0) {
+      fetchAnalyticsPeruser(0, tempRole.id);
+    }
   }, [userSelectedValue]);
-
-  console.log(centerSelectedValue, userSelectedValue);
 
   return (
     <div className="w-11/12 mx-auto flex flex-col justify-center gap-4 my-5 mt-10 relative">
@@ -324,7 +363,7 @@ const Analytics: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem key={0} value="0">
-                All
+                Over All
               </SelectItem>
               {allScanCenters?.map((option) => (
                 <SelectItem
@@ -369,6 +408,13 @@ const Analytics: React.FC = () => {
               <SelectValue placeholder="Users" />
             </SelectTrigger>
             <SelectContent>
+              {(role?.type === "admin" ||
+                role?.type === "manager" ||
+                role?.type === "scadmin") && (
+                <SelectItem key={0} value="0">
+                  Over All
+                </SelectItem>
+              )}
               {allUsers?.map((option) => (
                 <SelectItem
                   key={option.refUserId}
@@ -457,6 +503,38 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
+      {/* <div className="w-full h-[70vh] bg-[#f9f4ed] rounded-lg overflow-y-auto">
+          <span className="leading-tight text-sx font-bold pb-2">
+            OverAll Users Analaytics
+          </span>
+          <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
+        </div> */}
+      {userSelectedValue === 0 &&
+        (role?.type === "admin" || role?.type === "manager") && (
+          <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
+            <CardHeader className="">
+              <CardTitle>Users OverAll Analytics</CardTitle>
+            </CardHeader>
+            <CardContent className="w-full h-[70vh] overflow-auto">
+              <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
+            </CardContent>
+          </Card>
+        )}
+
+      {centerSelectedValue === 0 &&
+        (role?.type === "admin" || role?.type === "manager") && (
+          <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
+            <CardHeader className="">
+              <CardTitle>Scan Center OverAll Analytics</CardTitle>
+            </CardHeader>
+            <CardContent className="w-full h-[70vh] overflow-auto">
+              <ScanCenterOverAllAnalyticsTable
+                analyticsData={ScanCenterOverAllAnalaytics}
+              />
+            </CardContent>
+          </Card>
+        )}
+
       <div className="flex flex-wrap w-full gap-4">
         <div className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4 relative">
           {/* 🔽 Arrow icon as popover trigger */}
@@ -498,41 +576,45 @@ const Analytics: React.FC = () => {
           </span>
         </div>
 
-        <div
-          className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
-          hidden={handleComponentAccess("totalCorrect")}
-        >
-          <span className="w-2/3 leading-tight text-sx font-semibold">
-            Total Correct
-          </span>
-          <span className="w-1/3 font-bold text-3xl">
-            {totalCorrectEdits[0]?.totalCorrect}
-          </span>
-        </div>
+        {userSelectedValue !== 0 && userSelectedValue !== null && (
+          <>
+            <div
+              className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
+              hidden={handleComponentAccess("totalCorrect")}
+            >
+              <span className="w-2/3 leading-tight text-sx font-semibold">
+                Total Correct
+              </span>
+              <span className="w-1/3 font-bold text-3xl">
+                {totalCorrectEdits[0]?.totalCorrect}
+              </span>
+            </div>
 
-        <div
-          className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
-          hidden={handleComponentAccess("totalEdit")}
-        >
-          <span className="w-2/3 leading-tight text-sx font-semibold">
-            Total Edit
-          </span>
-          <span className="w-1/3 font-bold text-3xl">
-            {totalCorrectEdits[0]?.totalEdit}
-          </span>
-        </div>
-
-        <div
-          className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
-          hidden={handleComponentAccess("TAT")}
-        >
-          <span className="w-1/3 leading-tight text-sx font-semibold">
-            Total Time
-          </span>
-          <span className="w-2/3 font-bold text-3xl">
-            {userAccessTiming ? userAccessTiming[0]?.total_hours : 0} Hrs
-          </span>
-        </div>
+            <div
+              className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
+              hidden={handleComponentAccess("totalEdit")}
+            >
+              <span className="w-2/3 leading-tight text-sx font-semibold">
+                Total Edit
+              </span>
+              <span className="w-1/3 font-bold text-3xl">
+                {totalCorrectEdits[0]?.totalEdit}
+              </span>
+            </div>
+            <div
+              className="bg-[#a3b1a0] p-4 flex-1 max-w-3xs rounded-lg flex items-center justify-between gap-4"
+              hidden={handleComponentAccess("TAT")}
+            >
+              <span className="w-1/3 leading-tight text-sx font-semibold">
+                Total Time
+              </span>
+              <span className="w-2/3 font-bold text-xl">
+                {userAccessTiming ? userAccessTiming[0]?.total_hours || 0 : 0}{" "}
+                Hrs
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ---------- Row 1 ---------- */}
@@ -546,48 +628,56 @@ const Analytics: React.FC = () => {
                   userSelectedValue != null
                 )
                   ? "w-full"
-                  : "w-full lg:w-2/3"
+                  : `w-full ${userSelectedValue !== 0 ? "lg:w-2/3" : ""}`
               }
             >
               <TotalAppointmentCase appointmentData={appointmentCase} />
             </div>
           )}
 
-          {!handleComponentAccess("turnaroundTime") &&
-            userSelectedValue != null && (
-              <div className="w-full lg:w-1/3">
-                <TATPieChart data={tatStats} />
-              </div>
-            )}
+          {userSelectedValue !== 0 && (
+            <>
+              {!handleComponentAccess("turnaroundTime") &&
+                userSelectedValue != null && (
+                  <div className="w-full lg:w-1/3">
+                    <TATPieChart data={tatStats} />
+                  </div>
+                )}
+            </>
+          )}
         </div>
       </div>
 
       {/* ---------- Row 2 ---------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-5xl mx-auto">
-        {!handleComponentAccess("scanIndications") && (
-          <div className="w-full">
-            <ScanIndicationsPie data={intakeFormAnalytics} />
-          </div>
-        )}
+      {userSelectedValue !== 0 && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-5xl mx-auto">
+            {!handleComponentAccess("scanIndications") && (
+              <div className="w-full">
+                <ScanIndicationsPie data={intakeFormAnalytics} />
+              </div>
+            )}
 
-        {!handleComponentAccess("recoCodeCount") && (
-          <div className="w-full">
-            <RecoCodeCountPie ImpressionModel={recoCode} />
-          </div>
-        )}
+            {!handleComponentAccess("recoCodeCount") && (
+              <div className="w-full">
+                <RecoCodeCountPie ImpressionModel={recoCode} />
+              </div>
+            )}
 
-        {!handleComponentAccess("techArtifact") && (
-          <div className="w-full">
-            <ArtifactsPie data={techArtifacts} label="Tech Artifact" />
-          </div>
-        )}
+            {!handleComponentAccess("techArtifact") && (
+              <div className="w-full">
+                <ArtifactsPie data={techArtifacts} label="Tech Artifact" />
+              </div>
+            )}
 
-        {!handleComponentAccess("reportArtifact") && (
-          <div className="w-full">
-            <ArtifactsPie data={reportArtifacts} label="Report Artifact" />
+            {!handleComponentAccess("reportArtifact") && (
+              <div className="w-full">
+                <ArtifactsPie data={reportArtifacts} label="Report Artifact" />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };

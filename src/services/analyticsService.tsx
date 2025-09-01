@@ -36,7 +36,7 @@ export interface UserAccessTiming {
 
 export interface ImpressionModel {
   impression: string;
-  count: number
+  count: number;
 }
 
 export interface TotalCorrectEdit {
@@ -58,10 +58,47 @@ export interface TotalArtifacts {
   rightartifacts: number;
 }
 
+export interface OverAllAnalytics {
+  refUserCustId: string;
+  refUserId: number;
+  reportartificatsleft: number;
+  reportartificatsright: number;
+  techartificatsleft: number;
+  techartificatsright: number;
+  totalcase: number;
+  totaldaform: number;
+  totaldbform: number;
+  totaldcform: number;
+  totalreportcorrect: number;
+  totalreportedit: number;
+  totalsform: number;
+  totaltiming: number; // or float, but in TS just use number
+}
+
+export interface OverAllScanCenterAnalytics {
+  refSCId: number;
+  refSCCustId: string;
+  reportartificatsleft: number;
+  reportartificatsright: number;
+  techartificatsleft: number;
+  techartificatsright: number;
+  totalcase: number;
+  totaldaform: number;
+  totaldbform: number;
+  totaldcform: number;
+}
+
 export const analyticsService = {
-  overallScanCenter: async (SCId: number, startDate: string, endDate: string) => {
+  overallScanCenter: async (
+    SCId: number,
+    startDate: string,
+    endDate: string
+  ) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({ SCId, startDate: startDate, endDate: endDate }, token);
+    const payload = encrypt(
+      { SCId, startDate: startDate, endDate: endDate },
+      token
+    );
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
@@ -83,23 +120,30 @@ export const analyticsService = {
       ImpressionModel: ImpressionModel[];
       ReportArtificate: TotalArtifacts[];
       TechArtificate: TotalArtifacts[];
+      OverAllAnalytics: OverAllScanCenterAnalytics[];
     } = decrypt(res.data.data, res.data.token);
-    console.log(decryptedData)
+    console.log(decryptedData);
     tokenService.setToken(res.data.token);
     return decryptedData;
   },
 
-  analyticsPerUser: async (userId: number, roleId: number, startDate: string, endDate: string) => {
+  analyticsPerUser: async (
+    userId: number,
+    roleId: number,
+    startDate: string,
+    endDate: string
+  ) => {
     const token = localStorage.getItem("token");
 
-    const payload = encrypt({ userId, roleId, startDate: startDate, endDate: endDate }, token); 
+    const payload = encrypt(
+      { userId, roleId, startDate: startDate, endDate: endDate },
+      token
+    );
 
-    console.log(userId, roleId, startDate, endDate)
+    console.log(userId, roleId, startDate, endDate);
 
-     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_USERSERVICE
-      }/analaytics/oneuser`,
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/analaytics/oneuser`,
       { encryptedData: payload },
       {
         headers: {
@@ -119,9 +163,9 @@ export const analyticsService = {
       TotalCorrectEdit: TotalCorrectEdit[];
       ReportArtificate: TotalArtifacts[];
       TechArtificate: TotalArtifacts[];
+      OverAllAnalytics: OverAllAnalytics[];
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    console.log(decryptedData)
     return decryptedData;
-  }
+  },
 };
