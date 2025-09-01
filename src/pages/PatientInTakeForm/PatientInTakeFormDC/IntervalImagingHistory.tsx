@@ -8,6 +8,8 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
 import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   noneCheckbox: number;
@@ -35,7 +37,6 @@ interface QuestionIds {
   intervalBiopsyResult: number;
 }
 
-
 interface Props {
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
@@ -47,7 +48,7 @@ const IntervalImagingHistory: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -81,296 +82,308 @@ const IntervalImagingHistory: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <FormHeader
-        FormTitle="Interval Imaging History"
-        className="uppercase"
-      />
+      <FormHeader FormTitle="Interval Imaging History" className="uppercase" />
+      <div className="bg-[#fff]">
+        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
-      <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
-        <div className="flex flex-col gap-4">
-          <Label className="text-base font-semibold">
-            A. Additional breast imaging since last QT scan (check all that
-            apply):
-          </Label>
+        <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
+          <div className="flex flex-col gap-4">
+            <Label className="text-base font-semibold">
+              A. Additional breast imaging since last QT scan (check all that
+              apply):
+            </Label>
 
-          <div className="flex flex-col gap-4 pl-4">
-            {/* None */}
-            <div className="flex items-center gap-4 min-h-10">
-              <div className="flex items-center w-full lg:w-64 gap-2">
-                <Checkbox2
-                  checked={isNoneSelected}
-                  onCheckedChange={(checked) =>
-                    handleNoneToggle(Boolean(checked))
-                  }
-                />
-                <label>None</label>
+            <div className="flex flex-col gap-4 pl-4">
+              {/* None */}
+              <div className="flex items-center gap-4 min-h-10">
+                <div className="flex items-center w-full lg:w-64 gap-2">
+                  <Checkbox2
+                    checked={isNoneSelected}
+                    onCheckedChange={(checked) =>
+                      handleNoneToggle(Boolean(checked))
+                    }
+                  />
+                  <label>None</label>
+                </div>
               </div>
-            </div>
 
-            {/* Mammogram */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
-              <div className="flex items-center w-full lg:w-64 gap-2">
-                <Checkbox2
-                  disabled={isNoneSelected}
-                  checked={isChecked(questionIds.mammogramCheckbox)}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(
-                      questionIds.mammogramCheckbox,
-                      String(checked)
-                    )
-                  }
-                />
-                <label>Mammogram</label>
-              </div>
-              {isChecked(questionIds.mammogramCheckbox) && !isNoneSelected && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
-                  <div className="w-full sm:w-48">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.mammogramDate)
-                          ? parseLocalDate(getAnswer(questionIds.mammogramDate))
-                          : undefined
-                      }
-                      onChange={(val) =>
-                        handleInputChange(
-                          questionIds.mammogramDate,
-                          val?.toLocaleDateString("en-CA") || ""
-                        )
-                      }
-                      disabledDates={dateDisablers.noFuture}
-                    />
-                  </div>
-                  <Input
-                    placeholder="Results"
-                    value={getAnswer(questionIds.mammogramResult)}
-                    onChange={(e) =>
+              {/* Mammogram */}
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
+                <div className="flex items-center w-full lg:w-64 gap-2">
+                  <Checkbox2
+                    disabled={isNoneSelected}
+                    checked={isChecked(questionIds.mammogramCheckbox)}
+                    onCheckedChange={(checked) =>
                       handleInputChange(
-                        questionIds.mammogramResult,
-                        e.target.value
+                        questionIds.mammogramCheckbox,
+                        String(checked)
                       )
                     }
-                    className="w-full sm:w-64"
                   />
+                  <label>Mammogram</label>
                 </div>
-              )}
-            </div>
-
-            {/* Ultrasound */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
-              <div className="flex items-center w-full lg:w-64 gap-2">
-                <Checkbox2
-                  disabled={isNoneSelected}
-                  checked={isChecked(questionIds.ultrasoundCheckbox)}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(
-                      questionIds.ultrasoundCheckbox,
-                      String(checked)
-                    )
-                  }
-                />
-                <label>Ultrasound</label>
+                {isChecked(questionIds.mammogramCheckbox) &&
+                  !isNoneSelected && (
+                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
+                      <div className="w-full sm:w-48">
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.mammogramDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.mammogramDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(val) =>
+                            handleInputChange(
+                              questionIds.mammogramDate,
+                              val?.toLocaleDateString("en-CA") || ""
+                            )
+                          }
+                          disabledDates={dateDisablers.noFuture}
+                        />
+                      </div>
+                      <Input
+                        placeholder="Results"
+                        value={getAnswer(questionIds.mammogramResult)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.mammogramResult,
+                            e.target.value
+                          )
+                        }
+                        className="w-full sm:w-64"
+                      />
+                    </div>
+                  )}
               </div>
-              {isChecked(questionIds.ultrasoundCheckbox) && !isNoneSelected && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
-                  <div className="w-full sm:w-48">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.ultrasoundDate)
-                          ? parseLocalDate(getAnswer(questionIds.ultrasoundDate))
-                          : undefined
-                      }
-                      onChange={(val) =>
-                        handleInputChange(
-                          questionIds.ultrasoundDate,
-                          val?.toLocaleDateString("en-CA") || ""
-                        )
-                      }
-                      disabledDates={(date) => date > new Date()}
-                    />
-                  </div>
-                  <Input
-                    placeholder="Results"
-                    value={getAnswer(questionIds.ultrasoundResult)}
-                    onChange={(e) =>
+
+              {/* Ultrasound */}
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
+                <div className="flex items-center w-full lg:w-64 gap-2">
+                  <Checkbox2
+                    disabled={isNoneSelected}
+                    checked={isChecked(questionIds.ultrasoundCheckbox)}
+                    onCheckedChange={(checked) =>
                       handleInputChange(
-                        questionIds.ultrasoundResult,
-                        e.target.value
+                        questionIds.ultrasoundCheckbox,
+                        String(checked)
                       )
                     }
-                    className="w-full sm:w-64"
                   />
+                  <label>Ultrasound</label>
                 </div>
-              )}
-            </div>
-
-            {/* MRI */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
-              <div className="flex items-center w-full lg:w-64 gap-2">
-                <Checkbox2
-                  disabled={isNoneSelected}
-                  checked={isChecked(questionIds.mriCheckbox)}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.mriCheckbox, String(checked))
-                  }
-                />
-                <label>MRI</label>
+                {isChecked(questionIds.ultrasoundCheckbox) &&
+                  !isNoneSelected && (
+                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
+                      <div className="w-full sm:w-48">
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.ultrasoundDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.ultrasoundDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(val) =>
+                            handleInputChange(
+                              questionIds.ultrasoundDate,
+                              val?.toLocaleDateString("en-CA") || ""
+                            )
+                          }
+                          disabledDates={(date) => date > new Date()}
+                        />
+                      </div>
+                      <Input
+                        placeholder="Results"
+                        value={getAnswer(questionIds.ultrasoundResult)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.ultrasoundResult,
+                            e.target.value
+                          )
+                        }
+                        className="w-full sm:w-64"
+                      />
+                    </div>
+                  )}
               </div>
-              {isChecked(questionIds.mriCheckbox) && !isNoneSelected && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
-                  <div className="w-full sm:w-48">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.mriDate)
-                          ? parseLocalDate(getAnswer(questionIds.mriDate))
-                          : undefined
+
+              {/* MRI */}
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
+                <div className="flex items-center w-full lg:w-64 gap-2">
+                  <Checkbox2
+                    disabled={isNoneSelected}
+                    checked={isChecked(questionIds.mriCheckbox)}
+                    onCheckedChange={(checked) =>
+                      handleInputChange(
+                        questionIds.mriCheckbox,
+                        String(checked)
+                      )
+                    }
+                  />
+                  <label>MRI</label>
+                </div>
+                {isChecked(questionIds.mriCheckbox) && !isNoneSelected && (
+                  <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
+                    <div className="w-full sm:w-48">
+                      <DatePicker
+                        value={
+                          getAnswer(questionIds.mriDate)
+                            ? parseLocalDate(getAnswer(questionIds.mriDate))
+                            : undefined
+                        }
+                        onChange={(val) =>
+                          handleInputChange(
+                            questionIds.mriDate,
+                            val?.toLocaleDateString("en-CA") || ""
+                          )
+                        }
+                        disabledDates={(date) => date > new Date()}
+                      />
+                    </div>
+                    <Input
+                      placeholder="Results"
+                      value={getAnswer(questionIds.mriResult)}
+                      onChange={(e) =>
+                        handleInputChange(questionIds.mriResult, e.target.value)
                       }
-                      onChange={(val) =>
-                        handleInputChange(
-                          questionIds.mriDate,
-                          val?.toLocaleDateString("en-CA") || ""
-                        )
-                      }
-                      disabledDates={(date) => date > new Date()}
+                      className="w-full sm:w-64"
                     />
                   </div>
-                  <Input
-                    placeholder="Results"
-                    value={getAnswer(questionIds.mriResult)}
-                    onChange={(e) =>
-                      handleInputChange(questionIds.mriResult, e.target.value)
+                )}
+              </div>
+
+              {/* Other */}
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
+                <div className="flex items-center w-full lg:w-64 gap-2">
+                  <Checkbox2
+                    disabled={isNoneSelected}
+                    checked={isChecked(questionIds.otherCheckbox)}
+                    onCheckedChange={(checked) =>
+                      handleInputChange(
+                        questionIds.otherCheckbox,
+                        String(checked)
+                      )
                     }
-                    className="w-full sm:w-64"
+                  />
+                  <Input
+                    placeholder="Other"
+                    className="w-full"
+                    disabled={
+                      !isChecked(questionIds.otherCheckbox) || isNoneSelected
+                    }
+                    value={getAnswer(questionIds.otherText)}
+                    onChange={(e) =>
+                      handleInputChange(questionIds.otherText, e.target.value)
+                    }
                   />
                 </div>
-              )}
-            </div>
-
-            {/* Other */}
-            <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center min-h-10">
-              <div className="flex items-center w-full lg:w-64 gap-2">
-                <Checkbox2
-                  disabled={isNoneSelected}
-                  checked={isChecked(questionIds.otherCheckbox)}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(
-                      questionIds.otherCheckbox,
-                      String(checked)
-                    )
-                  }
-                />
-                <Input
-                  placeholder="Other"
-                  className="w-full"
-                  disabled={
-                    !isChecked(questionIds.otherCheckbox) || isNoneSelected
-                  }
-                  value={getAnswer(questionIds.otherText)}
-                  onChange={(e) =>
-                    handleInputChange(questionIds.otherText, e.target.value)
-                  }
-                />
-              </div>
-              {isChecked(questionIds.otherCheckbox) && !isNoneSelected && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
-                  <div className="w-full sm:w-48">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.otherDate)
-                          ? parseLocalDate(getAnswer(questionIds.otherDate))
-                          : undefined
-                      }
-                      onChange={(val) =>
+                {isChecked(questionIds.otherCheckbox) && !isNoneSelected && (
+                  <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
+                    <div className="w-full sm:w-48">
+                      <DatePicker
+                        value={
+                          getAnswer(questionIds.otherDate)
+                            ? parseLocalDate(getAnswer(questionIds.otherDate))
+                            : undefined
+                        }
+                        onChange={(val) =>
+                          handleInputChange(
+                            questionIds.otherDate,
+                            val?.toLocaleDateString("en-CA") || ""
+                          )
+                        }
+                        disabledDates={(date) => date > new Date()}
+                      />
+                    </div>
+                    <Input
+                      placeholder="Results"
+                      value={getAnswer(questionIds.otherResult)}
+                      onChange={(e) =>
                         handleInputChange(
-                          questionIds.otherDate,
-                          val?.toLocaleDateString("en-CA") || ""
+                          questionIds.otherResult,
+                          e.target.value
                         )
                       }
-                      disabledDates={(date) => date > new Date()}
+                      className="w-full sm:w-64"
                     />
                   </div>
-                  <Input
-                    placeholder="Results"
-                    value={getAnswer(questionIds.otherResult)}
-                    onChange={(e) =>
-                      handleInputChange(questionIds.otherResult, e.target.value)
-                    }
-                    className="w-full sm:w-64"
-                  />
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
+
+          <MultiOptionRadioGroup
+            label="B. Interval biopsy or procedure"
+            questionId={questionIds.intervalBiopsy}
+            handleInputChange={handleInputChange}
+            formData={formData}
+            options={[
+              { label: "No", value: "No" },
+              { label: "Yes", value: "Yes" },
+            ]}
+          />
+
+          {getAnswer(questionIds.intervalBiopsy) === "Yes" && (
+            <div className="pl-4 space-y-4">
+              <Label>If yes,</Label>
+
+              <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start min-h-10">
+                <div className="space-y-2">
+                  <Label>Type</Label>
+
+                  <Textarea
+                    placeholder="Type"
+                    value={getAnswer(questionIds.intervalBiopsyType)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.intervalBiopsyType,
+                        e.target.value
+                      )
+                    }
+                    className="w-64"
+                  />
+                </div>
+
+                <div className="w-full space-y-2 sm:w-48">
+                  <Label>Date</Label>
+                  <DatePicker
+                    value={
+                      getAnswer(questionIds.intervalBiopsyDate)
+                        ? parseLocalDate(
+                            getAnswer(questionIds.intervalBiopsyDate)
+                          )
+                        : undefined
+                    }
+                    onChange={(val) =>
+                      handleInputChange(
+                        questionIds.intervalBiopsyDate,
+                        val?.toLocaleDateString("en-CA") || ""
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Results</Label>
+                  <Textarea
+                    placeholder="Results"
+                    value={getAnswer(questionIds.intervalBiopsyResult)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        questionIds.intervalBiopsyResult,
+                        e.target.value
+                      )
+                    }
+                    className="w-full sm:w-64"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-
-        <MultiOptionRadioGroup
-              label="B. Interval biopsy or procedure"
-              questionId={questionIds.intervalBiopsy}
-              handleInputChange={handleInputChange}
-              formData={formData}
-              options={[
-                { label: "No", value: "No" },
-                { label: "Yes", value: "Yes" },
-              ]}
-            />
-
-        {getAnswer(questionIds.intervalBiopsy) === "Yes" && (
-  <div className="pl-4 space-y-4">
-    <Label>If yes,</Label>
-
-    <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-start min-h-10">
-      <div className="space-y-2">
-              <Label>Type</Label>
-
-        <Textarea
-          placeholder="Type"
-          value={getAnswer(questionIds.intervalBiopsyType)}
-          onChange={(e) =>
-            handleInputChange(
-              questionIds.intervalBiopsyType,
-              e.target.value
-            )
-          }
-          className="w-64"
-        />
-      </div>
-
-      <div className="w-full space-y-2 sm:w-48">
-        <Label>Date</Label>
-        <DatePicker
-          value={
-            getAnswer(questionIds.intervalBiopsyDate)
-              ? parseLocalDate(getAnswer(questionIds.intervalBiopsyDate))
-              : undefined
-          }
-          onChange={(val) =>
-            handleInputChange(
-              questionIds.intervalBiopsyDate,
-              val?.toLocaleDateString("en-CA") || ""
-            )
-          }
-        />
-      </div>
-
-          <div className="space-y-2">
-            <Label>Results</Label>
-            <Textarea
-        placeholder="Results"
-        value={getAnswer(questionIds.intervalBiopsyResult)}
-        onChange={(e) =>
-          handleInputChange(
-            questionIds.intervalBiopsyResult,
-            e.target.value
-          )
-        }
-        className="w-full sm:w-64"
-      />
-          </div>
-      
-    </div>
-  </div>
-)}
-
-      </div>
       </div>
     </div>
   );

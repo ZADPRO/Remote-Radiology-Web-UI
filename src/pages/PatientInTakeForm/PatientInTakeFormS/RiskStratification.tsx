@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   ibisScore: number;
@@ -46,6 +48,7 @@ const RiskStratification: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="RISK STRATIFICATION" />
+       <div className="bg-[#fff]">{<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}</div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* A. IBIS Calculator */}

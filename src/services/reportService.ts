@@ -48,6 +48,7 @@ export interface ReportHistoryData {
   refRHId: number;
   refRHHandleContentText: string;
   refRHHandleStatus: string;
+  HandlerRTId: number;
 }
 
 export interface FinalPatientReport {
@@ -61,7 +62,7 @@ export interface FinalAddendumText {
   refADText: string;
   refAppointmentId: string;
   refUserId: number;
-  refUserCustId: string
+  refUserCustId: string;
 }
 
 export const reportService = {
@@ -134,6 +135,50 @@ export const reportService = {
     return decryptedData;
   },
 
+  deleteTemplate: async (id: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: id }, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/deleteReportFormate`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  allowOverRide: async (appointmentId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ appintmentId: appointmentId }, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/intakeform/allowoverride`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
   assignReport: async (
     appointmentId: number,
     patientId: number,
@@ -191,7 +236,7 @@ export const reportService = {
     return decryptedData;
   },
 
-   autosaveReport: async (formData: any) => {
+  autosaveReport: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
 

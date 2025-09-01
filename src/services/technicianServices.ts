@@ -111,6 +111,7 @@ export interface TechnicianPatientQueue {
     isHandleEdited: boolean
   }
   reportStatus: string;
+  refOverrideStatus: string;
 }
 
 export interface ResponseTechnicianForm {

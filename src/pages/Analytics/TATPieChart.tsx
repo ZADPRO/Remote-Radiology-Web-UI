@@ -31,11 +31,11 @@ export function TATPieChart({ data }: TATPieChartProps) {
     stat.le_10_days;
 
   const chartData = [
-    { label: ">10 Days", value: stat.gt_10_days, fill: "var(--chart-1)" },
-    { label: "≤1 Day", value: stat.le_1_day, fill: "var(--chart-2)" },
-    { label: "≤3 Days", value: stat.le_3_days, fill: "var(--chart-3)" },
-    { label: "≤7 Days", value: stat.le_7_days, fill: "var(--chart-4)" },
-    { label: "≤10 Days", value: stat.le_10_days, fill: "var(--chart-5)" },
+    { label: ">10 Days", value: stat.gt_10_days, fill: "#dd7e6b" },
+    { label: "≤1 Day", value: stat.le_1_day, fill: "#b6d7a8" },
+    { label: "≤3 Days", value: stat.le_3_days, fill: "#a2c4c9" },
+    { label: "≤7 Days", value: stat.le_7_days, fill: "#ffe599" },
+    { label: "≤10 Days", value: stat.le_10_days, fill: "#f9cb9c" },
   ]
     .filter((item) => item.value > 0)
     .map((item) => ({

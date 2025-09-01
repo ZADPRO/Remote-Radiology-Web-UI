@@ -710,14 +710,14 @@ const EditScribe: React.FC<EditScribeProps> = ({
         <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
           <div className="flex flex-col gap-1.5 w-full">
             <Label className="text-sm font-medium" htmlFor="license-upload">
-              Education Certificate <span className="text-red-500">*</span>
+              Education Certificate
             </Label>
 
             <FileUploadButton
             id="edu-certs-upload"
             label="Upload Education Certificates"
             multiple
-            required={false}
+            // required={false}
             isFilePresent={files.education_certificate.length > 0}
             onChange={async (e) => {
               const selectedFiles = e.target.files;

@@ -390,7 +390,7 @@ const AddTechnician: React.FC = () => {
 
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="drivers-license-upload">
-                  Driver's License
+                  Driver's License <span className="text-red-500">*</span>
                 </Label>
 
                 <FileUploadButton
@@ -413,6 +413,7 @@ const AddTechnician: React.FC = () => {
                       tempFileKey: "drivers_license",
                     });
                   }}
+                  required
                 />
 
                 {/* Uploaded Driver's License */}
@@ -456,14 +457,14 @@ const AddTechnician: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="license-upload">
-                  Upload License <span className="text-red-500">*</span>
+                  Upload License
                 </Label>
 
                 <FileUploadButton
                   id="license-upload"
                   label="Upload License Files"
                   multiple
-                  required={formData.license_files.length === 0}
+                  // required={formData.license_files.length === 0}
                   isFilePresent={formData.license_files.length > 0}
                   onChange={async (e) => {
                     const filesSelected = e.target.files;
@@ -513,14 +514,14 @@ const AddTechnician: React.FC = () => {
             <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
               <div className="flex flex-col gap-1.5 w-full">
                 <Label className="text-sm" htmlFor="digital-signature-upload">
-                  Digital Signature <span className="text-red-500">*</span>
+                  Digital Signature
                 </Label>
 
                 <FileUploadButton
                   id="digital-signature-upload"
                   label="Upload Digital Signature"
                   accept="image/png, image/jpeg, image/jpg"
-                  required={formData.digital_signature?.length === 0}
+                  // required={formData.digital_signature?.length === 0}
                   isFilePresent={formData.digital_signature?.length > 0}
                   onChange={(e) => {
                     const file = e.target.files?.[0];

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ReportQuestion } from "../Report";
 import { Label } from "@/components/ui/label";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 // import LesionsOptionsOther from "./LesionsOptionsOther";
 import LesionsOptions from "./LesionsOptions";
+import { LesionsRightString } from "./LesionsRightString";
 
 interface QuestionIds {
   lesionsr: number;
@@ -48,6 +49,44 @@ const LisonsRight: React.FC<Props> = ({
   //     getAnswer(questionIds.lesionsr) === "" &&
   //         handleReportInputChange(questionIds.lesionsr, "Present");
   // }, []);
+
+  useEffect(() => {
+    if (!reportFormData || reportFormData.length === 0) return;
+    textEditorOnChange(
+      LesionsRightString(reportFormData, questionIds, textEditorVal)
+    );
+    console.log("Lesions Calling ?");
+  }, [
+    reportFormData.find((q) => q.questionId === questionIds.lesionsr)?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.simplecrstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.simplecrstDatar)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.complexcrstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.complexcrstDatar)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.Heterogeneousstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.HeterogeneousDatar)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.Hypertrophicstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.HypertrophicDatar)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.Otherstr)?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.OtherDatar)?.answer,
+    reportFormData.find(
+      (q) => q.questionId === questionIds.fibronodulardensitystr
+    )?.answer,
+    reportFormData.find(
+      (q) => q.questionId === questionIds.fibronodulardensityDatar
+    )?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.multipleCystsstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.multipleCystsDatar)
+      ?.answer,
+  ]);
 
   return (
     <div className="w-full">

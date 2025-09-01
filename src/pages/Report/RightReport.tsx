@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BreastDensityandImageQualityRight from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
 import NippleAreolaSkin from "./NippleAreolaSkin/NippleAreolaSkin";
 import GrandularAndDuctalTissueRight from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRight";
@@ -164,9 +164,45 @@ const RightReport: React.FC<RightReportProps> = ({
       });
     }
 
+    setChangedOne({
+      ...changedOne,
+      breastDensityandImageRightSyncStatus: isBreastDensityRight ? true : false,
+      breastDensityandImageRightReportText: isBreastDensityRight ? true : false,
+      nippleAreolaSkinRightSyncStatus: isNippleAreolaRight ? true : false,
+      nippleAreolaSkinRightReportText: isNippleAreolaRight ? true : false,
+      grandularAndDuctalTissueRightSyncStatus: isGrandularRight ? true : false,
+      grandularAndDuctalTissueRightReportText: isGrandularRight ? true : false,
+      LesionsRightSyncStatus: isLesionsRight ? true : false,
+      LesionsRightReportText: isLesionsRight ? true : false,
+      LymphNodesRightSyncStatus: isLymphNodesRight ? true : false,
+      LymphNodesRightReportText: isLymphNodesRight ? true : false,
+      ComparisonPriorSyncStatus: isComparisonPriorRight ? true : false,
+      ComparisonPriorReportText: isComparisonPriorRight ? true : false,
+    });
+
     handleReportInputChange(questionId, value);
   };
 
+  useEffect(()=>{
+
+     setChangedOne({
+      ...changedOne,
+      LesionsRightSyncStatus: true,
+      LesionsRightReportText: true,
+    });
+
+  },[textEditor.LesionsRight.value])
+
+  useEffect(()=>{
+
+     setChangedOne({
+      ...changedOne,
+      ComparisonPriorSyncStatus: true,
+      ComparisonPriorReportText: true,
+    });
+
+  },[textEditor.ComparisonPrior.value])
+  
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
   return (
@@ -221,6 +257,11 @@ const RightReport: React.FC<RightReportProps> = ({
                           breastDensityandImageRight: false,
                         });
                       }
+                      setChangedOne({
+                        ...changedOne,
+                        breastDensityandImageRightSyncStatus: true,
+                        breastDensityandImageRightReportText: true,
+                      });
                     }}
                   />
                 </div>
@@ -301,6 +342,11 @@ const RightReport: React.FC<RightReportProps> = ({
                           nippleAreolaSkinRight: false,
                         });
                       }
+                      setChangedOne({
+                        ...changedOne,
+                        nippleAreolaSkinRightSyncStatus: true,
+                        nippleAreolaSkinRightReportText: true,
+                      });
                     }}
                   />
                 </div>
@@ -352,6 +398,11 @@ const RightReport: React.FC<RightReportProps> = ({
                           grandularAndDuctalTissueRight: false,
                         });
                       }
+                      setChangedOne({
+                        ...changedOne,
+                        grandularAndDuctalTissueRightSyncStatus: true,
+                        grandularAndDuctalTissueRightReportText: true,
+                      });
                     }}
                   />
                 </div>
@@ -436,6 +487,11 @@ const RightReport: React.FC<RightReportProps> = ({
                           LymphNodesRight: false,
                         });
                       }
+                      setChangedOne({
+                        ...changedOne,
+                        LymphNodesRightSyncStatus: true,
+                        LymphNodesRightReportText: true,
+                      });
                     }}
                   />
                 </div>

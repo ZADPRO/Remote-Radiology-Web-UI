@@ -530,7 +530,7 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium" htmlFor="drivers-license-upload">
-                Drivers License
+                Drivers License <span className="text-red-500">*</span>
               </Label>
 
                <FileUploadButton
@@ -552,6 +552,7 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                   });
                 }
               }}
+              required
             />
 
               {/* Show uploaded or existing Driving License file */}

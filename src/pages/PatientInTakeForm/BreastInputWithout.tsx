@@ -24,6 +24,7 @@ type Props = {
   patientData?: any;
   setPatientData?: any;
   nameLabelColor?: string;
+  requiredStatus?: boolean;
 };
 
 const BreastInputWithout: React.FC<Props> = (Props) => {
@@ -80,8 +81,15 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                   // setDate(undefined);
                 }
               }}
+              required={!Props.requiredStatus}
             />
-            <Label className={`font-semibold text-base ${Props.nameLabelColor ? `${Props.nameLabelColor}` : ""}`}>{Props.label}</Label>
+            <Label
+              className={`font-semibold text-base ${
+                Props.nameLabelColor ? `${Props.nameLabelColor}` : ""
+              }`}
+            >
+              {Props.label}
+            </Label>
           </div>
           {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
             <div className="h-full w-full space-y-2">
@@ -130,7 +138,9 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Right")
                             }
-                            disabled={getAnswerByQuestionId(Props.RQID) != "true"}
+                            disabled={
+                              getAnswerByQuestionId(Props.RQID) != "true"
+                            }
                           />
                           <Label>Bigger Side</Label>
                         </div>
@@ -158,7 +168,9 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
                             required
-                            disabled={getAnswerByQuestionId(Props.RQID) != "true"}
+                            disabled={
+                              getAnswerByQuestionId(Props.RQID) != "true"
+                            }
                           />
                         )}
                     </div>
@@ -176,8 +188,9 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           updateAnswer(Props.SDateRight, e.target.value);
                         }}
                         required={
-                          getAnswerByQuestionId(Props.RQID) == "true" &&
-                          getAnswerByQuestionId(Props.SDateRight) == ""
+                          Props.label !== "Deformity / Asymmetry" &&
+                          getAnswerByQuestionId(Props.RQID) === "true" &&
+                          getAnswerByQuestionId(Props.SDateRight) === ""
                         }
                         disabled={getAnswerByQuestionId(Props.RQID) != "true"}
                       />
@@ -225,7 +238,9 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Left")
                             }
-                            disabled={getAnswerByQuestionId(Props.LQID) != "true"}
+                            disabled={
+                              getAnswerByQuestionId(Props.LQID) != "true"
+                            }
                           />
                           <Label>Bigger Side</Label>
                         </div>
@@ -253,11 +268,13 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             inputWidth="w-32"
                             className="ml-0 mt-0 flex-row items-center gap-x-4"
                             required
-                            disabled={getAnswerByQuestionId(Props.LQID) != "true"}
+                            disabled={
+                              getAnswerByQuestionId(Props.LQID) != "true"
+                            }
                           />
                         )}
                     </div>
-                    
+
                     <div className="flex items-center w-48 space-x-2">
                       <Label htmlFor="date" className="">
                         Duration (Months)
@@ -271,6 +288,7 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           updateAnswer(Props.SDate, e.target.value);
                         }}
                         required={
+                          Props.label !== "Deformity / Asymmetry" &&
                           getAnswerByQuestionId(Props.LQID) == "true" &&
                           getAnswerByQuestionId(Props.SDate) == ""
                         }

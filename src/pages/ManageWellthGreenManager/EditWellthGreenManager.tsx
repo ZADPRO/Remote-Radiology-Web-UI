@@ -618,13 +618,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
         <div className="flex flex-col gap-4 2xl:gap-6 w-full">
           <Label htmlFor="edu-certs-upload">
             Educational Certificates (multiple, max 10MB each){" "}
-            <span className="text-red-500">*</span>
+            
           </Label>
           <FileUploadButton
             id="edu-certs-upload"
             label="Upload Education Certificates"
             multiple
-            required={false}
+            // required={false}
             isFilePresent={files.education_certificate.length > 0}
             onChange={async (e) => {
               const selectedFiles = e.target.files;

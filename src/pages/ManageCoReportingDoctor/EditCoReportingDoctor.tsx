@@ -638,7 +638,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 className="text-sm font-medium"
                 htmlFor="drivers-license-upload"
               >
-                Driving License
+                Driving License <span className="text-red-500">*</span>
               </Label>
 
               <FileUploadButton
@@ -660,6 +660,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                     });
                   }
                 }}
+                required
               />
 
               {/* Show uploaded or existing Driving License file */}
@@ -740,19 +741,19 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium" htmlFor="license-upload">
-                License <span className="text-red-500">*</span>
+                License
               </Label>
 
               <FileUploadButton
                 id="license-upload"
                 label="Upload License Files"
                 multiple
-                required={
-                  !(
-                    formData.licenseFiles?.length > 0 ||
-                    files.license_files.length > 0
-                  )
-                }
+                // required={
+                //   !(
+                //     formData.licenseFiles?.length > 0 ||
+                //     files.license_files.length > 0
+                //   )
+                // }
                 isFilePresent={files.license_files.length > 0}
                 onChange={async (e) => {
                   const filesSelected = e.target.files;

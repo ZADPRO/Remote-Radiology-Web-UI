@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { IntakeOption } from "../PatientInTakeForm";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
 import { parseLocalDate } from "@/lib/dateUtils";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   thermogramYesNo: number;
@@ -374,6 +376,9 @@ const PreviousImaging: React.FC<Props> = ({
         FormTitle="Previous Imaging in past 3 years"
         className="uppercase"
       />
+      <div className="bg-[#fff]">
+              {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+            </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
           {imagingSections.map((sectionProps) => (

@@ -1,181 +1,251 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
+import { formatReadableDate } from "@/utlis/calculateAge";
 
-export function DcFormGeneration(patientInTakeForm: ResponsePatientForm[]): string {
-  const getAnswer = (questionId: number) =>
-    patientInTakeForm.find((q) => q.questionId === questionId)?.answer?.trim() || "";
+export function DcFormGeneration(
+  patientInTakeForm: ResponsePatientForm[]
+): string {
+  const getPatientAnswer = (id: number) =>
+    patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
 
-  let reportText = "";
+  let report = [];
 
-  const lumpMain = getAnswer(323); // lumpOrThick
-  const lumpLeft = getAnswer(324);
-  const lumpRight = getAnswer(325);
+  function formatBreastSymptoms(input: string): string {
+    if (!input) return "";
 
-  const skinMain = getAnswer(329);
-  const skinLeft = getAnswer(331);
-  const skinRight = getAnswer(330);
+    const values = input.split(",").map((v) => v.trim());
 
-  const nippleMain = getAnswer(334);
-  const nippleLeft = getAnswer(336);
-  const nippleRight = getAnswer(335);
+    // If only "0"
+    if (values.length === 1 && values[0] === "0") {
+      return "nipple";
+    }
 
-  const painMain = getAnswer(339);
-  const painLeft = getAnswer(341);
-  const painRight = getAnswer(340);
-
-  const sentenceParts: string[] = [];
-
-  const formatSides = (left: string, right: string) => {
-    if (left && right) return `left at ${left} and right at ${right}`;
-    if (left) return `left at ${left}`;
-    if (right) return `right at ${right}`;
-    return "";
-  };
-
-  function formatClockLabels(input: string): string {
-    if (!input.trim()) return "";
-    return input
-      .split(",")
-      .map((item) => item.trim())
-      .filter((item) => item !== "")
-      .map(Number)
-      .filter((n) => !isNaN(n))
-      .map((num) => (num === 0 ? "Nipple" : `${num}'o Clock`))
+    return values
+      .map((val) => {
+        if (val === "0") return "nipple";
+        return `${val} o'clock`;
+      })
       .join(", ");
   }
 
-  // Lump or thickening
-  if (lumpMain === "true") {
-    const lumpText = formatSides(formatClockLabels(lumpLeft), formatClockLabels(lumpRight));
-    if (lumpText) sentenceParts.push(`lump or thickening in ${lumpText}`);
-  }
+  const breastCancerSymptoms = {
+    breastCancerSymptoms: getPatientAnswer(322),
+    lumpOrThick: getPatientAnswer(323),
+    lumpLeft: getPatientAnswer(324),
+    lumpRight: getPatientAnswer(325),
+    lumpResult: getPatientAnswer(326),
+    lumpResultRight: getPatientAnswer(441),
+    lumpDate: getPatientAnswer(327),
+    lumpDateRight: getPatientAnswer(442),
+    lumpSize: getPatientAnswer(328),
+    lumpSizeRight: getPatientAnswer(443),
+    skinChanges: getPatientAnswer(329),
+    skinRight: getPatientAnswer(330),
+    skinLeft: getPatientAnswer(331),
+    skinDate: getPatientAnswer(332),
+    skinDateRight: getPatientAnswer(444),
+    skinResult: getPatientAnswer(333),
+    skinResultRight: getPatientAnswer(445),
+    nippleDischarge: getPatientAnswer(334),
+    nippleRight: getPatientAnswer(335),
+    nippleLeft: getPatientAnswer(336),
+    nippleDate: getPatientAnswer(337),
+    nippleDateRight: getPatientAnswer(449),
+    nippleResult: getPatientAnswer(338),
+    nippleResultRight: getPatientAnswer(450),
+    breastPain: getPatientAnswer(339),
+    breastPainRight: getPatientAnswer(340),
+    breastPainLeft: getPatientAnswer(341),
+    breastPainDate: getPatientAnswer(342),
+    breastPainDateRight: getPatientAnswer(439),
+    breastPainResult: getPatientAnswer(343),
+    breastPainResultRight: getPatientAnswer(446),
+    nipplePain: getPatientAnswer(344),
+    nipplePainRight: getPatientAnswer(345),
+    nipplePainLeft: getPatientAnswer(346),
+    nipplePainDate: getPatientAnswer(347),
+    nipplePainDateRight: getPatientAnswer(451),
+    nipplePainResult: getPatientAnswer(348),
+    nipplePainResultRight: getPatientAnswer(452),
+    lymphNodes: getPatientAnswer(349),
+    lymphNodesRight: getPatientAnswer(350),
+    lymphNodesLeft: getPatientAnswer(351),
+    lymphNodesDate: getPatientAnswer(352),
+    lymphNodesDateRight: getPatientAnswer(447),
+    lymphNodesResult: getPatientAnswer(353),
+    lymphNodesResultRight: getPatientAnswer(448),
+    others: getPatientAnswer(354),
+    othersDetails: getPatientAnswer(355),
+    additionalcomments: getPatientAnswer(523),
+  };
 
-  // Skin changes
-  if (skinMain === "true") {
-    const skinText = formatSides(formatClockLabels(skinLeft), formatClockLabels(skinRight));
-    if (skinText) sentenceParts.push(`skin changes in ${skinText}`);
-  }
+  const cancerhistoy = {
+    cancerHistory: getPatientAnswer(356),
+    historyPosition: getPatientAnswer(357),
+    historyclockposition: getPatientAnswer(524),
+    cancerDate: getPatientAnswer(358),
+    cancerType: getPatientAnswer(359),
+    cancerTreatment: getPatientAnswer(360),
+    cancerTreatmentOther: getPatientAnswer(526),
+    cancerTreatmentdate: getPatientAnswer(525),
+    cancerStatus: getPatientAnswer(361),
+    cancerFolowupDate: getPatientAnswer(362),
+  };
 
-  // Nipple discharge (no clock position)
-  if (nippleMain === "true") {
-    const left = nippleLeft ? "left" : "";
-    const right = nippleRight ? "right" : "";
-    const sides = [left, right].filter(Boolean).join(" and ");
-    if (sides) sentenceParts.push(`nipple discharge in ${sides} side`);
-  }
+  const IntervalImagingHistory = {
+    noneCheckbox: getPatientAnswer(375),
+    mammogramCheckbox: getPatientAnswer(376),
+    mammogramDate: getPatientAnswer(377),
+    mammogramResult: getPatientAnswer(378),
+    ultrasoundCheckbox: getPatientAnswer(379),
+    ultrasoundDate: getPatientAnswer(380),
+    ultrasoundResult: getPatientAnswer(381),
+    mriCheckbox: getPatientAnswer(382),
+    mriDate: getPatientAnswer(383),
+    mriResult: getPatientAnswer(384),
+    otherCheckbox: getPatientAnswer(385),
+    otherText: getPatientAnswer(386),
+    otherDate: getPatientAnswer(387),
+    otherResult: getPatientAnswer(388),
+    intervalBiopsy: getPatientAnswer(389),
+    intervalBiopsyType: getPatientAnswer(390),
+    intervalBiopsyDate: getPatientAnswer(391),
+    intervalBiopsyResult: getPatientAnswer(392),
+  };
 
-  // Breast pain
-  if (painMain === "true") {
-    const painText = formatSides(formatClockLabels(painLeft), formatClockLabels(painRight));
-    if (painText) sentenceParts.push(`breast pain in ${painText}`);
-  }
+  const ChangesSincePreviousQTImaging = {
+    changesFindings: getPatientAnswer(393),
+    sizeChange: getPatientAnswer(394),
+    currentSize: getPatientAnswer(395),
+    currentSizeType: getPatientAnswer(396),
+    morphologyChange: getPatientAnswer(397),
+    morphologyChangeDetails: getPatientAnswer(398),
+    newFindings: getPatientAnswer(399),
+    newFindingsDeatils: getPatientAnswer(400),
+  };
 
-  // Add symptom summary
-  if (sentenceParts.length > 0) {
-    reportText += `Patient states ${sentenceParts.join(", ")}.<br/>`;
-  }
-
-  // Cancer History Section
-  const cancerMain = getAnswer(356);
-  const historyPosition = getAnswer(357); // e.g., "left" or "right"
-  const cancerTreatment = getAnswer(360);
-  const cancerStatus = getAnswer(361);
-
-  if (cancerMain === "Yes") {
-    const type = getAnswer(359); // cancer type
-    const treatment = cancerTreatment || "no treatment recorded";
-    const status = cancerStatus || "status unknown";
-
-    reportText += `History of ${type} breast cancer on ${historyPosition == "Both" ? `${historyPosition.toLowerCase()} sides` : `${historyPosition.toLowerCase()} side`}. `;
-    reportText += `Treatment: ${treatment}. `;
-    reportText += `Current status: ${status}.`;
-  }
-
-    const previousQTPurpose = getAnswer(371);
-  const previousQTResult = getAnswer(372);
-  const previousQTPosRight = getAnswer(373);
-  const previousQTPosLeft = getAnswer(438);
-
- const formattedPrevQTPos = (() => {
-  const left = previousQTPosLeft === "1" ? "left" : "";
-  const right = previousQTPosRight === "1" ? "right" : "";
-
-  if (left && right) return "Left and Right";
-  if (left) return "Left";
-  if (right) return "Right";
-  return "";
-})();
-
-
-  if (previousQTPurpose || previousQTResult || formattedPrevQTPos) {
-    let qtSentence = "<br/>Previous QT Exam Details:";
-
-    if (previousQTPurpose) {
-      qtSentence += ` Purpose: ${previousQTPurpose}`;
+  //Current Breast Symptoms
+  if (breastCancerSymptoms.breastCancerSymptoms === "Yes") {
+    if (breastCancerSymptoms.lumpOrThick === "true") {
+      report.push(
+        `Current breast symptoms: Lump or thickening${
+          breastCancerSymptoms.lumpLeft.length > 0 ||
+          breastCancerSymptoms.lumpRight.length > 0 ||
+          (breastCancerSymptoms.lumpLeft.length > 0 &&
+            breastCancerSymptoms.lumpRight.length > 0)
+            ? ` in the ${
+                breastCancerSymptoms.lumpLeft.length > 0
+                  ? `left breast are ${breastCancerSymptoms.lumpResult.toLocaleLowerCase()} at ${formatBreastSymptoms(
+                      breastCancerSymptoms.lumpLeft
+                    )}${
+                      breastCancerSymptoms.lumpResult === "New"
+                        ? `, since ${breastCancerSymptoms.lumpDate} months`
+                        : ``
+                    }, size ${breastCancerSymptoms.lumpSize.toLocaleLowerCase()}${
+                      breastCancerSymptoms.lumpRight.length > 0 ? `, ` : ""
+                    }`
+                  : ""
+              }`
+            : ""
+        }.`
+      );
     }
-
-    if (previousQTResult) {
-      qtSentence += `${previousQTPurpose ? "," : ""} Findings: ${previousQTResult}`;
-    }
-
-    if (formattedPrevQTPos) {
-      qtSentence += `${previousQTPurpose || previousQTResult ? "," : ""} Location: ${formattedPrevQTPos}`;
-    }
-
-    reportText += ` ${qtSentence.trim()}`;
   }
 
-  const previousImaging = getAnswer(393);
-const sizeChange = getAnswer(394);
-const currentSize = getAnswer(395);
-const currentSizeType = getAnswer(396);
-const morphologyChange = getAnswer(397);
-const morphologyChangeDetails = getAnswer(398);
-const newFindings = getAnswer(399);
-const newFindingsDetails = getAnswer(400);
-
-let previousImagingText = "";
-if (previousImaging?.toLowerCase() === "known") {
-  previousImagingText = "Changes Since Previous QT Imaging";
-} else if (previousImaging?.toLowerCase() === "unknown") {
-  previousImagingText = "Changes Since Previous QT Imaging: Unknown";
-}
-
-// Build size change text
-let sizeChangeText = "";
-if (sizeChange && sizeChange !== "Unknown") {
-  sizeChangeText = `<br/>&nbsp;&nbsp;&nbspSize change: ${sizeChange}`;
-}
-
-// Build current size text
-let currentSizeText = "";
-if (currentSize && currentSizeType) {
-  currentSizeText = `<br/>&nbsp;&nbsp;&nbspCurrent size (if known): ${currentSize} ${currentSizeType}`;
-}
-
-// Build morphology change text
-let morphologyText = "";
-if (morphologyChange) {
-  morphologyText = `<br/>&nbsp;&nbsp;&nbsp;Morphology change: ${morphologyChange}`;
-  if (morphologyChange !== "No" && morphologyChange !== "Unknown" && morphologyChangeDetails) {
-    morphologyText += ` - ${morphologyChangeDetails}`;
+  //Cancer History
+  if (cancerhistoy.cancerHistory === "Yes") {
+    report.push(
+      `History of ${cancerhistoy.historyPosition.toLowerCase()}${
+        cancerhistoy.cancerType.length > 0
+          ? ` (${cancerhistoy.cancerType})`
+          : ""
+      }${
+        cancerhistoy.historyclockposition.length > 0
+          ? ` ${formatBreastSymptoms(cancerhistoy.historyclockposition)}`
+          : ``
+      }${
+        cancerhistoy.cancerDate.length > 0
+          ? `, diagnosed on ${formatReadableDate(cancerhistoy.cancerDate)}`
+          : ``
+      }.`
+    );
   }
-}
 
-let newFindingsText = "";
-if (newFindings) {
-  newFindingsText = `<br/>&nbsp;&nbsp;&nbsp;New findings: ${newFindings}`;
-  if (newFindings !== "No" && newFindings !== "Unknown" && newFindingsDetails) {
-    newFindingsText += ` - ${newFindingsDetails}`;
+  //Treatment Recieved
+  if (cancerhistoy.cancerTreatment.length > 0) {
+    report.push(
+      `${
+        cancerhistoy.cancerTreatment === "Other"
+          ? `${cancerhistoy.cancerTreatmentOther}`
+          : `${cancerhistoy.cancerTreatment}`
+      } treatment was recieved${
+        cancerhistoy.cancerTreatmentdate.length > 0
+          ? ` on ${formatReadableDate(cancerhistoy.cancerTreatmentdate)}`
+          : ``
+      }.`
+    );
   }
-}
 
-let fullImagingText = [previousImagingText, sizeChangeText, currentSizeText, morphologyText, newFindingsText]
-  .filter(Boolean)
-  .join("\n");
+  //Current Status
+  if (cancerhistoy.cancerStatus.length > 0) {
+    report.push(`Currently ${cancerhistoy.cancerStatus.toLocaleLowerCase()}.`);
+  }
 
-// Append to reportText
-reportText += `<br/>${fullImagingText}\n`;
+  //IntervalImagingHistory
+  let IntervalImagingHistoryData = [];
 
-  
-  return reportText.trim();
+  if (IntervalImagingHistory.noneCheckbox !== "true") {
+    IntervalImagingHistory.mammogramCheckbox === "true" &&
+      IntervalImagingHistoryData.push(`mammogram`);
+    IntervalImagingHistory.ultrasoundCheckbox === "true" &&
+      IntervalImagingHistoryData.push(`ultrasound`);
+    IntervalImagingHistory.mriCheckbox === "true" &&
+      IntervalImagingHistoryData.push(`MRI`);
+    IntervalImagingHistory.otherText.length > 0 &&
+      IntervalImagingHistoryData.push(`${IntervalImagingHistory.otherText}`);
+  }
+
+  if (IntervalImagingHistoryData.length > 0) {
+    report.push(
+      ` Other breast imaging since last QT scan: ${IntervalImagingHistoryData.join(
+        ", "
+      )}.`
+    );
+  }
+
+  //BiopsyResult
+  if (
+    IntervalImagingHistory.intervalBiopsy === "Yes" &&
+    IntervalImagingHistory.intervalBiopsyResult.length > 0
+  ) {
+    report.push(
+      `Interval Biopsy results: ${IntervalImagingHistory.intervalBiopsyResult}.`
+    );
+  }
+
+  //Changes Since Previous QT Imaging
+  if (
+    ChangesSincePreviousQTImaging.changesFindings === "Known" &&
+    ChangesSincePreviousQTImaging.sizeChange.length > 0 &&
+    ChangesSincePreviousQTImaging.sizeChange !== "Unknown"
+  ) {
+    report.push(
+      `Change since prior scan: ${ChangesSincePreviousQTImaging.sizeChange}.`
+    );
+  }
+
+  //New Finding
+  if (
+    ChangesSincePreviousQTImaging.changesFindings === "Known" &&
+    ChangesSincePreviousQTImaging.newFindings.length > 0
+  ) {
+    report.push(
+      `New findings: ${
+        ChangesSincePreviousQTImaging.newFindings === "Yes"
+          ? `${ChangesSincePreviousQTImaging.newFindingsDeatils}`
+          : `${ChangesSincePreviousQTImaging.newFindings}`
+      }.`
+    );
+  }
+
+  return report.join("<br/>");
 }

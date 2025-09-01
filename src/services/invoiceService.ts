@@ -63,6 +63,8 @@ export interface InvoiceHistory {
   refIHCreatedBy: number;
   refIHToAddress: string;
   refIHSignatureFile: FileData;
+  refSCCustId?: string;
+  refUserCustId?: string;
 }
 
 export interface TakenDate {
@@ -175,6 +177,30 @@ export const invoiceServie = {
     const payload = encrypt({ type: type, id: id }, token);
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/invoice/getInvoiceHistory`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      status: boolean;
+      invoiceHistory: InvoiceHistory[];
+      invoiceHistoryTakenDate: TakenDate[];
+    } = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  getOverallInvoiceHistory: async () => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ fromDate: "", toDate: "" }, token);
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/invoice/getOverallInvoiceHistory`,
       { encryptedData: payload },
       {
         headers: {

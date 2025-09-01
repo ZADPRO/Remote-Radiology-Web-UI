@@ -78,8 +78,8 @@ const PatientInTakeForm04: React.FC<Props> = ({
             questionIds={{
               breastCancerSymptoms: 322,
               lumpOrThick: 323,
-              lumpLeft: 324,
-              lumpRight: 325,
+              lumpLeft: 325,
+              lumpRight: 324,
               lumpResult: 326,
               lumpResultRight: 441,
               lumpDate: 327,
@@ -123,6 +123,7 @@ const PatientInTakeForm04: React.FC<Props> = ({
               lymphNodesResultRight: 448,
               others: 354,
               othersDetails: 355,
+              additionalcomments: 523,
             }}
           />
         );
@@ -136,9 +137,12 @@ const PatientInTakeForm04: React.FC<Props> = ({
             questionIds={{
               cancerHistory: 356,
               historyPosition: 357,
+              historyclockposition:524,
               cancerDate: 358,
               cancerType: 359,
               cancerTreatment: 360,
+              cancerTreatmentOther: 526,
+              cancerTreatmentdate: 525,
               cancerStatus: 361,
               cancerFolowupDate: 362,
             }}

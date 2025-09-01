@@ -9,6 +9,8 @@ import { IntakeOption } from "../PatientInTakeForm";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
 import DatePicker from "@/components/date-picker";
 import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+import TextEditor from "@/components/TextEditor";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -70,6 +72,9 @@ const PersonalMedicalHistory: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="PERSONAL MEDICAL HISTORY" className="uppercase" />
+      <div className="bg-[#fff]">
+        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <MultiOptionRadioGroup
@@ -312,7 +317,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
 
           <div className="space-y-2">
             <MultiOptionRadioGroup
-              label="B. Implants"
+              label="B. Breast Implants"
               required
               questionId={questionIds.implants}
               formData={formData}
@@ -495,7 +500,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   />
 
                                   <Label className="text-sm font-medium">
-                                    Years
+                                    Years ago
                                   </Label>
                                 </div>
                               )}
@@ -512,14 +517,19 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       <Checkbox2
                         id="implantLeft"
                         checked={getAnswer(questionIds.implantLeft) === "true"}
-                        onCheckedChange={() =>
+                        onCheckedChange={() => {
                           handleInputChange(
                             questionIds.implantLeft,
                             getAnswer(questionIds.implantLeft) === "true"
                               ? "false"
                               : "true"
-                          )
-                        }
+                          );
+                          handleInputChange(
+                            questionIds.implantBothDirection,
+                            "false"
+                          );
+                          handleInputChange(questionIds.implantRight, "false");
+                        }}
                         required={
                           getAnswer(questionIds.implants) === "Yes" &&
                           ((getAnswer(questionIds.implantLeft) === "true" &&
@@ -555,12 +565,16 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                     getAnswer(questionIds.implantsSpecify) ===
                                     value
                                   }
-                                  onChange={(e) =>
+                                  onChange={(e) => {
                                     handleInputChange(
                                       questionIds.implantsSpecify,
                                       e.target.value
-                                    )
-                                  }
+                                    );
+                                    handleInputChange(
+                                      questionIds.implantsRightSpecify,
+                                      e.target.value
+                                    );
+                                  }}
                                   required
                                 />
                                 <Label htmlFor={id}>{value}</Label>
@@ -575,12 +589,16 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 questionIds.implantsOthersSpecify
                               )}
                               className="w-64"
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 handleInputChange(
                                   questionIds.implantsOthersSpecify,
                                   e.target.value
-                                )
-                              }
+                                );
+                                handleInputChange(
+                                  questionIds.implantsRightOthersSpecify,
+                                  e.target.value
+                                );
+                              }}
                             />
                           )}
                         </div>
@@ -591,12 +609,16 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             placeholder="Duration"
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateLeft)}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              handleInputChange(
+                                questionIds.implantDateRight,
+                                e.target.value
+                              );
                               handleInputChange(
                                 questionIds.implantDateLeft,
                                 e.target.value
-                              )
-                            }
+                              );
+                            }}
                             required
                           />
 
@@ -650,7 +672,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   />
 
                                   <Label className="text-sm font-medium">
-                                    Years
+                                    Years ago
                                   </Label>
                                 </div>
                               )}
@@ -666,14 +688,20 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       <Checkbox2
                         id="implantRight"
                         checked={getAnswer(questionIds.implantRight) === "true"}
-                        onCheckedChange={() =>
+                        onCheckedChange={() => {
                           handleInputChange(
                             questionIds.implantRight,
                             getAnswer(questionIds.implantRight) === "true"
                               ? "false"
                               : "true"
-                          )
-                        }
+                          );
+
+                          handleInputChange(
+                            questionIds.implantBothDirection,
+                            "false"
+                          );
+                          handleInputChange(questionIds.implantLeft, "false");
+                        }}
                         required={
                           getAnswer(questionIds.implants) === "Yes" &&
                           ((getAnswer(questionIds.implantLeft) === "true" &&
@@ -746,12 +774,16 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             placeholder="Duration"
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateRight)}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleInputChange(
                                 questionIds.implantDateRight,
                                 e.target.value
-                              )
-                            }
+                              );
+                              handleInputChange(
+                                questionIds.implantDateLeft,
+                                e.target.value
+                              );
+                            }}
                           />
                           <Label className="text-sm font-medium">Years</Label>
                         </div>
@@ -759,7 +791,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                         <div className="flex flex-col gap-2">
                           <MultiRadioOptionalInputInline
                             label="Explants"
-                            questionId={questionIds.explantsRight}
+                            questionId={questionIds.explants}
                             formData={formData}
                             handleInputChange={handleInputChange}
                             options={[
@@ -768,11 +800,11 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             ]}
                             className="w-auto"
                           />
-                          {getAnswer(questionIds.explantsRight) === "Yes" && (
+                          {getAnswer(questionIds.explants) === "Yes" && (
                             <div className="flex flex-wrap gap-1 lg:gap-4 w-full">
                               <MultiRadioOptionalInputInline
                                 label="Is the date known?"
-                                questionId={questionIds.explantsDateRightKnown}
+                                questionId={questionIds.explantsDateKnown}
                                 formData={formData}
                                 handleInputChange={handleInputChange}
                                 options={[
@@ -782,7 +814,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 className="w-auto"
                               />
 
-                              {getAnswer(questionIds.explantsDateRightKnown) ===
+                              {getAnswer(questionIds.explantsDateKnown) ===
                                 "Yes" && (
                                 <div className="flex gap-2">
                                   <Input
@@ -792,17 +824,21 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                     value={getAnswer(
                                       questionIds.explantsDateRight
                                     )}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
                                       handleInputChange(
-                                        questionIds.explantsDateRight,
+                                        questionIds.implantDateRight,
                                         e.target.value
-                                      )
-                                    }
+                                      );
+                                      handleInputChange(
+                                        questionIds.implantDateLeft,
+                                        e.target.value
+                                      );
+                                    }}
                                     required
                                   />
 
                                   <Label className="text-sm font-medium">
-                                    Years
+                                    Years ago
                                   </Label>
                                 </div>
                               )}

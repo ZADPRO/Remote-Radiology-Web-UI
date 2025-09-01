@@ -616,7 +616,7 @@ const NewInvoice: React.FC<Props> = () => {
                     variant="greenTheme"
                     className="text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
                   >
-                    <span className="hidden sm:inline">Generate Report</span>
+                    <span className="hidden sm:inline">Generate Invoice</span>
                     <span className="sm:hidden">Generate</span>
                   </Button>
                 </div>

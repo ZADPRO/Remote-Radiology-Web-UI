@@ -3,11 +3,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import DatePicker from "@/components/date-picker";
-import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { IntakeOption } from "../PatientInTakeForm";
 import { parseLocalDate } from "@/lib/dateUtils";
+import TextEditor from "@/components/TextEditor";
+import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
+import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   datediagnosis: number;
@@ -61,7 +63,7 @@ const BiopsyorCancer: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -114,9 +116,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
     return (
       <div className="space-y-4">
-        <Label className="font-semibold text-base">
-          Clock Position
-        </Label>
+        <Label className="font-semibold text-base">Clock Position</Label>
         <div className="flex gap-4 items-center mt-2 pl-4">
           {["Unknown", "known"].map((val) => (
             <div className="flex items-center gap-2" key={val}>
@@ -132,18 +132,25 @@ const BiopsyorCancer: React.FC<Props> = ({
           ))}
 
           {isKnown && (
-            <ValidatedSelect
-              label=""
-              questionId={valueId}
-              formData={formData}
-              className="w-30"
-              handleInputChange={handleInputChange}
-              options={Array.from({ length: 12 }, (_, i) => ({
-                label: `${i + 1}'o Clock`,
-                value: `${i + 1}`,
-              }))}
-              required
-            />
+            // <ValidatedSelect
+            //   label=""
+            //   questionId={valueId}
+            //   formData={formData}
+            //   className="w-30"
+            //   handleInputChange={handleInputChange}
+            //   options={Array.from({ length: 12 }, (_, i) => ({
+            //     label: `${i + 1}'o Clock`,
+            //     value: `${i + 1}`,
+            //   }))}
+            //   required
+            // />
+            <SingleBreastPositionPicker
+                value={getAnswer(valueId)}
+                onChange={(e) => {
+                  handleInputChange(valueId, e);
+                }}
+                singleSelect={true}
+              />
           )}
         </div>
       </div>
@@ -159,9 +166,7 @@ const BiopsyorCancer: React.FC<Props> = ({
 
     return (
       <div className="space-y-4">
-        <Label className="font-semibold text-base">
-          Distance from Nipple
-        </Label>
+        <Label className="font-semibold text-base">Distance from Nipple</Label>
         <div className="flex gap-4 items-center mt-2 pl-4">
           {["Unknown", "known"].map((val) => (
             <div className="flex items-center gap-2" key={val}>
@@ -200,434 +205,450 @@ const BiopsyorCancer: React.FC<Props> = ({
         FormTitle="Biopsy or Cancer Diagnosis Details"
         className="uppercase"
       />
+      <div className="bg-[#fff]">
+        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
-      <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
-        {/*A. Date of diagnosis */}
-        <div className="flex flex-col lg:flex-row gap-2 lg:gap-5 mt-2">
-          <Label className="font-semibold text-base">
-            A. Date of diagnosis <span className="text-red-500">*</span>
-          </Label>
-          <div className="w-45 ml-4 lg:ml-0">
-            <DatePicker
-              value={
-                getAnswer(questionIds.datediagnosis)
-                  ? parseLocalDate(getAnswer(questionIds.datediagnosis))
-                  : undefined
-              }
-              onChange={(val) =>
-                handleInputChange(
-                  questionIds.datediagnosis,
-                  val?.toLocaleDateString("en-CA") || ""
-                )
-              }
-              disabledDates={(date) => date > new Date()}
-              required
-            />
+        <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
+          {/*A. Date of diagnosis */}
+          <div className="flex flex-col lg:flex-row gap-2 lg:gap-5 mt-2">
+            <Label className="font-semibold text-base">
+              A. Date of diagnosis <span className="text-red-500">*</span>
+            </Label>
+            <div className="w-45 ml-4 lg:ml-0">
+              <DatePicker
+                value={
+                  getAnswer(questionIds.datediagnosis)
+                    ? parseLocalDate(getAnswer(questionIds.datediagnosis))
+                    : undefined
+                }
+                onChange={(val) =>
+                  handleInputChange(
+                    questionIds.datediagnosis,
+                    val?.toLocaleDateString("en-CA") || ""
+                  )
+                }
+                disabledDates={(date) => date > new Date()}
+                required
+              />
+            </div>
           </div>
-        </div>
 
-        {/*B. Interest in support resources*/}
-        <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-semibold text-base">
-            B. Type of diagnosis <span className="text-red-500">*</span>{" "}
-          </Label>
-          <div className="flex flex-col gap-5">
-            {[
-              "Ductal Carcinoma in Situ (DCIS)",
-              "Invasive Ductal Carcinoma (IDC)",
-              "Invasive Lobular Carcinoma (ILC)",
-              "Inflammatory Breast Cancer",
-              "Other",
-              "Unknown",
-            ].map((option) => (
-              <div
-                key={option}
-                className="ml-4 flex gap-3 lg:gap-0 flex-col lg:flex-row space-x-2 h-[auto] lg:h-[20px]"
-              >
-                <div className="flex space-x-2">
+          {/*B. Interest in support resources*/}
+          <div className="flex -mt-2 flex-col gap-4">
+            <Label className="font-semibold text-base">
+              B. Type of diagnosis <span className="text-red-500">*</span>{" "}
+            </Label>
+            <div className="flex flex-col gap-5">
+              {[
+                "Ductal Carcinoma in Situ (DCIS)",
+                "Lobular Carcinoma in Situ (LCIS)",
+                "Invasive Ductal Carcinoma (IDC)",
+                "Invasive Lobular Carcinoma (ILC)",
+                "Inflammatory Breast Cancer",
+                "Other",
+                "Unknown",
+              ].map((option) => (
+                <div
+                  key={option}
+                  className="ml-4 flex gap-3 lg:gap-0 flex-col lg:flex-row space-x-2 h-[auto] lg:h-[20px]"
+                >
+                  <div className="flex space-x-2">
+                    <input
+                      type="radio"
+                      name="Type"
+                      value={option}
+                      checked={getAnswer(questionIds.typediagnosis) === option}
+                      onChange={() =>
+                        handleInputChange(questionIds.typediagnosis, option)
+                      }
+                      className="custom-radio"
+                      id={option === "Other" ? "SupportOther" : option}
+                      required
+                    />
+                    <Label
+                      htmlFor={option === "Other" ? "SupportOther" : option}
+                      className="w-[230px]"
+                    >
+                      {option}
+                    </Label>
+                  </div>
+                  {option === "Other" &&
+                    getAnswer(questionIds.typediagnosis) === "Other" && (
+                      <Input
+                        type="text"
+                        value={getAnswer(questionIds.typediagnosisother)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.typediagnosisother,
+                            e.target.value
+                          )
+                        }
+                        placeholder="Specify"
+                        required
+                        className="w-64 text-sm"
+                      />
+                    )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/*C. Grade*/}
+          <div className="flex -mt-2 flex-col gap-4">
+            <Label className="font-semibold text-base">C. Grade</Label>
+            <div className="flex flex-row flex-wrap gap-5">
+              {["1", "2", "3", "Unknown"].map((option) => (
+                <div
+                  key={option}
+                  className="ml-4.5 flex items-center space-x-2 h-[20px]"
+                >
                   <input
                     type="radio"
-                    name="Type"
+                    name="Grade"
                     value={option}
-                    checked={getAnswer(questionIds.typediagnosis) === option}
+                    checked={getAnswer(questionIds.grade) === option}
                     onChange={() =>
-                      handleInputChange(questionIds.typediagnosis, option)
+                      handleInputChange(questionIds.grade, option)
                     }
                     className="custom-radio"
                     id={option === "Other" ? "SupportOther" : option}
-                    required
                   />
                   <Label
                     htmlFor={option === "Other" ? "SupportOther" : option}
-                    className="w-[230px]"
+                    className="w-[50px]"
                   >
                     {option}
                   </Label>
                 </div>
-                {option === "Other" &&
-                  getAnswer(questionIds.typediagnosis) === "Other" && (
-                    <Input
-                      type="text"
-                      value={getAnswer(questionIds.typediagnosisother)}
-                      onChange={(e) =>
-                        handleInputChange(
-                          questionIds.typediagnosisother,
-                          e.target.value
-                        )
-                      }
-                      placeholder="Specify"
-                      required
-                      className="w-64 text-sm"
-                    />
-                  )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/*C. Grade*/}
-        <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-semibold text-base">C. Grade</Label>
-          <div className="flex flex-row flex-wrap gap-5">
-            {["1", "2", "3", "Unknown"].map((option) => (
-              <div
-                key={option}
-                className="ml-4.5 flex items-center space-x-2 h-[20px]"
-              >
-                <input
-                  type="radio"
-                  name="Grade"
-                  value={option}
-                  checked={getAnswer(questionIds.grade) === option}
-                  onChange={() => handleInputChange(questionIds.grade, option)}
-                  className="custom-radio"
-                  id={option === "Other" ? "SupportOther" : option}
-                />
-                <Label
-                  htmlFor={option === "Other" ? "SupportOther" : option}
-                  className="w-[50px]"
+          {/*D. Stage*/}
+          <div className="flex -mt-2 flex-col gap-4">
+            <Label className="font-semibold text-base">D. Stage</Label>
+            <div className="flex flex-row flex-wrap gap-5">
+              {["0", "I", "II", "III", "IV", "Unknown"].map((option) => (
+                <div
+                  key={option}
+                  className="ml-4.5 flex items-center space-x-2 h-[20px]"
                 >
-                  {option}
-                </Label>
-              </div>
-            ))}
+                  <input
+                    type="radio"
+                    name="stage"
+                    value={option}
+                    checked={getAnswer(questionIds.stage) === option}
+                    onChange={() =>
+                      handleInputChange(questionIds.stage, option)
+                    }
+                    className="custom-radio"
+                    id={option === "Other" ? "SupportOther" : option}
+                  />
+                  <Label
+                    htmlFor={option === "Other" ? "SupportOther" : option}
+                    className="w-[50px]"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/*D. Stage*/}
-        <div className="flex -mt-2 flex-col gap-4">
-          <Label className="font-semibold text-base">D. Stage</Label>
-          <div className="flex flex-row flex-wrap gap-5">
-            {["0", "I", "II", "III", "IV", "Unknown"].map((option) => (
-              <div
-                key={option}
-                className="ml-4.5 flex items-center space-x-2 h-[20px]"
-              >
-                <input
-                  type="radio"
-                  name="stage"
-                  value={option}
-                  checked={getAnswer(questionIds.stage) === option}
-                  onChange={() => handleInputChange(questionIds.stage, option)}
-                  className="custom-radio"
-                  id={option === "Other" ? "SupportOther" : option}
-                />
-                <Label
-                  htmlFor={option === "Other" ? "SupportOther" : option}
-                  className="w-[50px]"
-                >
-                  {option}
-                </Label>
-              </div>
-            ))}
+          {/*E.Tumor size */}
+          <div className="flex items-center gap-5 mt-2">
+            <Label className="font-semibold text-base">E. Tumor size</Label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                value={getAnswer(questionIds.tumersize)}
+                onChange={(e) =>
+                  handleInputChange(questionIds.tumersize, e.target.value)
+                }
+                className="w-20 text-sm"
+                placeholder="Size"
+              />
+              <Label className="font-normal text-base">mm</Label>
+            </div>
           </div>
-        </div>
 
-        {/*E.Tumor size */}
-        <div className="flex items-center gap-5 mt-2">
-          <Label className="font-semibold text-base">E. Tumor size</Label>
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              value={getAnswer(questionIds.tumersize)}
-              onChange={(e) =>
-                handleInputChange(questionIds.tumersize, e.target.value)
-              }
-              className="w-20 text-sm"
-              placeholder="Size"
-            />
-            <Label className="font-normal text-base">cm</Label>
-          </div>
-        </div>
-
-        {/*F.Location of cancer*/}
-        <div className="flex flex-col gap-4 -mt-2">
-          <Label className="font-semibold text-base">F. Location of cancer</Label>
-          {/* a. Breast */}
-          <div className="ml-4">
-            {/* <Label className="font-semibold text-base mb-2">a. Breast</Label> */}
-            <div className="flex flex-col items-start gap-4 relative">
-              <div className="flex items-center gap-2">
-                <Checkbox2
-                  name="breastRight"
-                  checked={getAnswer(questionIds.breastRight) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(
-                      questionIds.breastRight,
-                      checked ? "true" : ""
-                    )
-                  }
-                />
-                <Label htmlFor="breastRight">Right Breast</Label>
-              </div>
-              {/* --- RIGHT SIDE DETAILS --- */}
-              {getAnswer(questionIds.breastRight) === "true" && (
-                <div className="ml-6 flex flex-col gap-4 border-b-2 border-gray-200 pb-4">
-                  {/* <Label className="font-semibold text-base">
+          {/*F.Location of cancer*/}
+          <div className="flex flex-col gap-4 -mt-2">
+            <Label className="font-semibold text-base">
+              F. Location of cancer
+            </Label>
+            {/* a. Breast */}
+            <div className="ml-4">
+              {/* <Label className="font-semibold text-base mb-2">a. Breast</Label> */}
+              <div className="flex flex-col items-start gap-4 relative">
+                <div className="flex items-center gap-2">
+                  <Checkbox2
+                    name="breastRight"
+                    checked={getAnswer(questionIds.breastRight) === "true"}
+                    onCheckedChange={(checked) =>
+                      handleInputChange(
+                        questionIds.breastRight,
+                        checked ? "true" : ""
+                      )
+                    }
+                  />
+                  <Label htmlFor="breastRight">Right Breast</Label>
+                </div>
+                {/* --- RIGHT SIDE DETAILS --- */}
+                {getAnswer(questionIds.breastRight) === "true" && (
+                  <div className="ml-6 flex flex-col gap-4 border-b-2 border-gray-200 pb-4">
+                    {/* <Label className="font-semibold text-base">
                     Right Side Details
                   </Label> */}
-                  {/* Quadrant */}
-                  {renderQuadrantSection("Right", {
-                    upperOuter: questionIds.upperOuterQuadrantRight,
-                    upperInner: questionIds.upperInnerQuadrantRight,
-                    lowerOuter: questionIds.lowerOuterQuadrantRight,
-                    lowerInner: questionIds.lowerInnerQuadrantRight,
-                    centralNipple: questionIds.centralNippleOuterQuadrantRight,
-                    unknown: questionIds.unknownQuadrantRight,
-                  })}
+                    {/* Quadrant */}
+                    {renderQuadrantSection("Right", {
+                      upperOuter: questionIds.upperOuterQuadrantRight,
+                      upperInner: questionIds.upperInnerQuadrantRight,
+                      lowerOuter: questionIds.lowerOuterQuadrantRight,
+                      lowerInner: questionIds.lowerInnerQuadrantRight,
+                      centralNipple:
+                        questionIds.centralNippleOuterQuadrantRight,
+                      unknown: questionIds.unknownQuadrantRight,
+                    })}
 
-                  {/* Clock Position */}
-                  {renderClockPositionSection(
-                    "Right",
-                    questionIds.clockpositionstatusRight,
-                    questionIds.clockpositionRight
-                  )}
+                    {/* Clock Position */}
+                    {renderClockPositionSection(
+                      "Right",
+                      questionIds.clockpositionstatusRight,
+                      questionIds.clockpositionRight
+                    )}
 
-                  {/* Distance from Nipple */}
-                  {renderDistanceFromNippleSection(
-                    "Right",
-                    questionIds.distancenippleStatusRight,
-                    questionIds.distancenippleRight
-                  )}
+                    {/* Distance from Nipple */}
+                    {renderDistanceFromNippleSection(
+                      "Right",
+                      questionIds.distancenippleStatusRight,
+                      questionIds.distancenippleRight
+                    )}
 
-                  {/*G. Lymph node involvement*/}
-                  <div className="flex flex-col gap-3">
-                    <MultiOptionRadioGroup
-                      label="Lymph node involvement"
-                      questionId={questionIds.LymphRight}
-                      handleInputChange={handleInputChange}
-                      formData={formData}
-                      options={[
-                        { label: "No", value: "No" },
-                        { label: "Yes", value: "Yes" },
-                        { label: "Unknown", value: "Unknown" },
-                      ]}
-                      required
-                    />
+                    {/*G. Lymph node involvement*/}
+                    <div className="flex flex-col gap-3">
+                      <MultiOptionRadioGroup
+                        label="Lymph node involvement"
+                        questionId={questionIds.LymphRight}
+                        handleInputChange={handleInputChange}
+                        formData={formData}
+                        options={[
+                          { label: "No", value: "No" },
+                          { label: "Yes", value: "Yes" },
+                          { label: "Unknown", value: "Unknown" },
+                        ]}
+                        required
+                      />
 
-                    {getAnswer(questionIds.LymphRight) === "Yes" && (
-                      <>
-                        <div className="ml-6 -mt-2">
-                          <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
-                            <Label className="font-semibold text-sm">
-                              If yes, number of positive nodes
-                            </Label>
-                            <div className="w-45">
-                              <Input
-                                type="number"
-                                value={getAnswer(questionIds.positivenodeRight)}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.positivenodeRight,
-                                    e.target.value
-                                  )
-                                }
-                                required
-                                className="w-64 text-sm"
-                                placeholder="Specify"
-                              />
+                      {getAnswer(questionIds.LymphRight) === "Yes" && (
+                        <>
+                          <div className="ml-6 -mt-2">
+                            <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
+                              <Label className="font-semibold text-sm">
+                                If yes, number of positive nodes
+                              </Label>
+                              <div className="w-45">
+                                <Input
+                                  type="number"
+                                  value={getAnswer(
+                                    questionIds.positivenodeRight
+                                  )}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      questionIds.positivenodeRight,
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                  className="w-64 text-sm"
+                                  placeholder="Specify"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      )}
+                    </div>
 
-                  {/*H. Metastasis*/}
-                  <div className="flex flex-col gap-3">
-                    <MultiOptionRadioGroup
-                      label="Metastasis"
-                      questionId={questionIds.MetastasisRight}
-                      handleInputChange={handleInputChange}
-                      formData={formData}
-                      options={[
-                        { label: "No", value: "No" },
-                        { label: "Yes", value: "Yes" },
-                        { label: "Unknown", value: "Unknown" },
-                      ]}
-                      required
-                    />
+                    {/*H. Metastasis*/}
+                    <div className="flex flex-col gap-3">
+                      <MultiOptionRadioGroup
+                        label="Metastasis"
+                        questionId={questionIds.MetastasisRight}
+                        handleInputChange={handleInputChange}
+                        formData={formData}
+                        options={[
+                          { label: "No", value: "No" },
+                          { label: "Yes", value: "Yes" },
+                          { label: "Unknown", value: "Unknown" },
+                        ]}
+                        required
+                      />
 
-                    {getAnswer(questionIds.MetastasisRight) === "Yes" && (
-                      <>
-                        <div className="ml-6 -mt-2">
-                          <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
-                            <Label className="font-semibold text-sm">
-                              If yes, location(s)
-                            </Label>
-                            <div className="w-45">
-                              <Input
-                                type="text"
-                                value={getAnswer(questionIds.locationRight)}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.locationRight,
-                                    e.target.value
-                                  )
-                                }
-                                required
-                                className="w-64 text-sm"
-                                placeholder="Specify"
-                              />
+                      {getAnswer(questionIds.MetastasisRight) === "Yes" && (
+                        <>
+                          <div className="ml-6 -mt-2">
+                            <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
+                              <Label className="font-semibold text-sm">
+                                If yes, location(s)
+                              </Label>
+                              <div className="w-45">
+                                <Input
+                                  type="text"
+                                  value={getAnswer(questionIds.locationRight)}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      questionIds.locationRight,
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                  className="w-64 text-sm"
+                                  placeholder="Specify"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Checkbox2
+                    name="breastLeft"
+                    checked={getAnswer(questionIds.breast) === "true"}
+                    onCheckedChange={(checked) =>
+                      handleInputChange(
+                        questionIds.breast,
+                        checked ? "true" : ""
+                      )
+                    }
+                  />
+                  <Label htmlFor="breastLeft">Left Breast</Label>
                 </div>
-              )}
-              <div className="flex items-center gap-2">
-                <Checkbox2
-                  name="breastLeft"
-                  checked={getAnswer(questionIds.breast) === "true"}
-                  onCheckedChange={(checked) =>
-                    handleInputChange(questionIds.breast, checked ? "true" : "")
-                  }
-                />
-                <Label htmlFor="breastLeft">Left Breast</Label>
-              </div>
-              {/* --- LEFT SIDE DETAILS --- */}
-              {getAnswer(questionIds.breast) === "true" && (
-                <div className="ml-6 flex flex-col gap-4">
-                  {/* <Label className="font-semibold text-base">
+                {/* --- LEFT SIDE DETAILS --- */}
+                {getAnswer(questionIds.breast) === "true" && (
+                  <div className="ml-6 flex flex-col gap-4">
+                    {/* <Label className="font-semibold text-base">
                     Left Side Details
                   </Label> */}
-                  {/* Quadrant */}
-                  {renderQuadrantSection("Left", {
-                    upperOuter: questionIds.upperOuterQuadrant,
-                    upperInner: questionIds.upperInnerQuadrant,
-                    lowerOuter: questionIds.lowerOuterQuadrant,
-                    lowerInner: questionIds.lowerInnerQuadrant,
-                    centralNipple: questionIds.centralNippleOuterQuadrant,
-                    unknown: questionIds.unknownQuadrant,
-                  })}
+                    {/* Quadrant */}
+                    {renderQuadrantSection("Left", {
+                      upperOuter: questionIds.upperOuterQuadrant,
+                      upperInner: questionIds.upperInnerQuadrant,
+                      lowerOuter: questionIds.lowerOuterQuadrant,
+                      lowerInner: questionIds.lowerInnerQuadrant,
+                      centralNipple: questionIds.centralNippleOuterQuadrant,
+                      unknown: questionIds.unknownQuadrant,
+                    })}
 
-                  {/* Clock Position */}
-                  {renderClockPositionSection(
-                    "Left",
-                    questionIds.clockpositionstatus,
-                    questionIds.clockposition
-                  )}
+                    {/* Clock Position */}
+                    {renderClockPositionSection(
+                      "Left",
+                      questionIds.clockpositionstatus,
+                      questionIds.clockposition
+                    )}
 
-                  {/* Distance from Nipple */}
-                  {renderDistanceFromNippleSection(
-                    "Left",
-                    questionIds.distancenippleStatus,
-                    questionIds.distancenipple
-                  )}
+                    {/* Distance from Nipple */}
+                    {renderDistanceFromNippleSection(
+                      "Left",
+                      questionIds.distancenippleStatus,
+                      questionIds.distancenipple
+                    )}
 
-                  {/*G. Lymph node involvement*/}
-                  <div className="flex flex-col gap-3">
-                    <MultiOptionRadioGroup
-                      label="Lymph node involvement"
-                      questionId={questionIds.Lymph}
-                      handleInputChange={handleInputChange}
-                      formData={formData}
-                      options={[
-                        { label: "No", value: "No" },
-                        { label: "Yes", value: "Yes" },
-                        { label: "Unknown", value: "Unknown" },
-                      ]}
-                      required
-                    />
+                    {/*G. Lymph node involvement*/}
+                    <div className="flex flex-col gap-3">
+                      <MultiOptionRadioGroup
+                        label="Lymph node involvement"
+                        questionId={questionIds.Lymph}
+                        handleInputChange={handleInputChange}
+                        formData={formData}
+                        options={[
+                          { label: "No", value: "No" },
+                          { label: "Yes", value: "Yes" },
+                          { label: "Unknown", value: "Unknown" },
+                        ]}
+                        required
+                      />
 
-                    {getAnswer(questionIds.Lymph) === "Yes" && (
-                      <>
-                        <div className="ml-6 -mt-2">
-                          <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
-                            <Label className="font-semibold text-sm">
-                              If yes, number of positive nodes
-                            </Label>
-                            <div className="w-45">
-                              <Input
-                                type="number"
-                                value={getAnswer(questionIds.positivenode)}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.positivenode,
-                                    e.target.value
-                                  )
-                                }
-                                required
-                                className="w-64 text-sm"
-                                placeholder="Specify"
-                              />
+                      {getAnswer(questionIds.Lymph) === "Yes" && (
+                        <>
+                          <div className="ml-6 -mt-2">
+                            <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
+                              <Label className="font-semibold text-sm">
+                                If yes, number of positive nodes
+                              </Label>
+                              <div className="w-45">
+                                <Input
+                                  type="number"
+                                  value={getAnswer(questionIds.positivenode)}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      questionIds.positivenode,
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                  className="w-64 text-sm"
+                                  placeholder="Specify"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      )}
+                    </div>
 
-                  {/*H. Metastasis*/}
-                  <div className="flex flex-col gap-3">
-                    <MultiOptionRadioGroup
-                      label="Metastasis"
-                      questionId={questionIds.Metastasis}
-                      handleInputChange={handleInputChange}
-                      formData={formData}
-                      options={[
-                        { label: "No", value: "No" },
-                        { label: "Yes", value: "Yes" },
-                        { label: "Unknown", value: "Unknown" },
-                      ]}
-                      required
-                    />
+                    {/*H. Metastasis*/}
+                    <div className="flex flex-col gap-3">
+                      <MultiOptionRadioGroup
+                        label="Metastasis"
+                        questionId={questionIds.Metastasis}
+                        handleInputChange={handleInputChange}
+                        formData={formData}
+                        options={[
+                          { label: "No", value: "No" },
+                          { label: "Yes", value: "Yes" },
+                          { label: "Unknown", value: "Unknown" },
+                        ]}
+                        required
+                      />
 
-                    {getAnswer(questionIds.Metastasis) === "Yes" && (
-                      <>
-                        <div className="ml-6 -mt-2">
-                          <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
-                            <Label className="font-semibold text-sm">
-                              If yes, location(s)
-                            </Label>
-                            <div className="w-45">
-                              <Input
-                                type="text"
-                                value={getAnswer(questionIds.location)}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    questionIds.location,
-                                    e.target.value
-                                  )
-                                }
-                                required
-                                className="w-64 text-sm"
-                                placeholder="Specify"
-                              />
+                      {getAnswer(questionIds.Metastasis) === "Yes" && (
+                        <>
+                          <div className="ml-6 -mt-2">
+                            <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
+                              <Label className="font-semibold text-sm">
+                                If yes, location(s)
+                              </Label>
+                              <div className="w-45">
+                                <Input
+                                  type="text"
+                                  value={getAnswer(questionIds.location)}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      questionIds.location,
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                  className="w-64 text-sm"
+                                  placeholder="Specify"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ export function generateGrandularAndDuctalTissueReport(
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
-  const glandularandductal = getAnswer(questionIds.grandularAndDuctalTissue);
+  // const glandularandductal = getAnswer(questionIds.grandularAndDuctalTissue);
 
   const benignMicroCysts = getAnswer(questionIds.benignMicroCysts);
   const benignCapsular = getAnswer(questionIds.benignCapsular);
@@ -30,7 +30,7 @@ export function generateGrandularAndDuctalTissueReport(
   const microList = getParsedList(questionIds.microCalcificationsList);
   const calcifiedScar = getAnswer(questionIds.calcifiedScar);
   const scarList = getParsedList(questionIds.calcifiedScarList);
-  // const ductalProminence = getAnswer(questionIds.ductalProminence);
+  const ductalProminence = getAnswer(questionIds.ductalProminence);
   const ductalList = getParsedList(questionIds.ductalProminenceList);
 
   function getParsedList(questionId: number): any[] {
@@ -48,33 +48,44 @@ export function generateGrandularAndDuctalTissueReport(
   //   scarList[0]?.clock ||
   //   ductalList[0]?.clock ||
   //   "";
-  // const level =
-  //   macroList[0]?.level ||
-  //   microList[0]?.level ||
-  //   scarList[0]?.level ||
-  //   ductalList[0]?.level ||
-  //   "";
+  const level =
+    macroList[0]?.level ||
+    microList[0]?.level ||
+    scarList[0]?.level ||
+    ductalList[0]?.level ||
+    "";
 
   //glandularandductal
-  const glandularandductaltext =
-    glandularandductal === "Normal"
-      ? "<p>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.</p>"
-      : "";
+  // const glandularandductaltext =
+  //   glandularandductal === "Normal"
+  //     ? "<p>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.</p>"
+  //     : "";
 
+  let benignText = "";
   // 1. Benign Findings
-  const benignFindings: string[] = [];
-  if (benignMicroCysts === "Present") benignFindings.push("benign microcysts");
+  // const benignFindings: string[] = [];
+  if (benignMicroCysts === "Present")
+    benignText += `There are multiple benign microcysts throughout the breast.`;
   if (benignCapsular === "Present")
-    benignFindings.push("benign capsular microcalcifications");
+    benignText += `${
+      benignText.length > 0 ? " " : ""
+    }There are multiple benign-appearing capsular microcalcifications.`;
   if (benignFibronodular === "Present")
-    benignFindings.push("benign fibronodular densities");
+    benignText += `${
+      benignText.length > 0 ? " " : ""
+    }There are multiple benign-appearing fibronodular densities in the breast.`;
 
-  const benignText =
-    benignFindings.length > 0
-      ? `There are multiple ${benignFindings.join(", ").toLocaleLowerCase()} ${
-          benignFindings.length > 1 ? "are " : "is "
-        } noted. Otherwise, the breast tissue appears normal.`
-      : "The breast tissue appears unremarkable.";
+  // benignFindings.map((data) => {
+  //   benignText +=
+  //     benignFindings.length > 0
+  //       ? `There are multiple ${data} throughout the breast.`
+  //       : "";
+  // });
+
+  // const benignText =
+  //   benignFindings.length > 0
+  //     ? `There are multiple ${benignFindings} throughout the breast.`
+  //     : "";
 
   // 2. Macrocalcifications
   const macroText = generateCalcificationText(
@@ -96,26 +107,28 @@ export function generateGrandularAndDuctalTissueReport(
       ? generateCalcificationText(scarList, "calcified scar", false)
       : "";
 
-  // 5. Ductal Prominence
-  // const ductalText =
-  //   ductalProminence === "Present" && ductalList.length > 0
-  //     ? `There is ductal prominence with ${ductalList
-  //         .map((d) => d.type)
-  //         .join(" and ")
-  //         .toLocaleLowerCase()} noted at ${
-  //         clock && level
-  //           ? `${clock} o'clock in coronal location P${level}.`
-  //           : ""
-  //       }`
-  //     : "";
-  const ductalText = generateCalcificationText(
-    ductalList,
-    "ductal prominence",
-    true
-  );
+  let ductalText = "";
 
+  console.log("----->",ductalList)
+
+  // 5. Ductal Prominence
+  ductalList.map((data) => {
+    ductalText +=
+      ductalProminence === "Present" && ductalList.length > 0
+        ? `There is ductal prominence ${data.type.toLowerCase()}${
+            data.clock
+              ? ` noted at ${data.clock} o'clock`
+              : ""
+          }${data.position !== "Unknown" && data.position ? ` in ${data.position}${data.position ? `
+             ${
+                          data.position === "Coronal Level" ? "P": data.position === "Axial" ? "S" : data.position === "Sagital" && "M/L"
+                        }${level}`:""}
+                        ` : ""}.`
+        : "";
+  });
+
+  // ${glandularandductaltext}
   return `
-  ${glandularandductaltext}
     <p>${benignText}</p>
 ${macroText && `<p></p>`}
     ${macroText}
@@ -141,7 +154,7 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There are ${
+      const base = `There is a ${
         type.toLowerCase() === "other" ? item.otherText : type.toLowerCase()
       } ${label} noted`;
       const distText =
@@ -153,7 +166,7 @@ function generateCalcificationText(
         : "";
       location += level ? ` in coronal location P${level}` : "";
 
-      return `<p>${base}${distText}${location}.</p>`;
+      return `${base}${distText}${location}`;
     })
     .join("\n");
 }

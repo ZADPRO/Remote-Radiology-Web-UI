@@ -94,6 +94,14 @@ const GeneralReport: React.FC<RightReportProps> = ({
       });
     }
 
+    setChangedOne({
+      ...changedOne,
+      breastImplantSyncStatus: isBreastImplant ? true : false,
+      breastImplantReportText: isBreastImplant ? true : false,
+      symmetrySyncStatus: symmentry ? true : false,
+      symmetryReportText: symmentry ? true : false,
+    });
+
     handleReportInputChange(questionId, value);
   };
 
@@ -169,6 +177,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
                     breastImplant: false,
                   });
                 }
+                setChangedOne({
+                  ...changedOne,
+                  breastImplantSyncStatus: true,
+                  breastImplantReportText: true,
+                });
               }}
             />
           </div>
@@ -271,6 +284,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
                     symmetry: false,
                   });
                 }
+                setChangedOne({
+                  ...changedOne,
+                  symmetrySyncStatus: true,
+                  symmetryReportText: true,
+                });
               }}
             />
           </div>

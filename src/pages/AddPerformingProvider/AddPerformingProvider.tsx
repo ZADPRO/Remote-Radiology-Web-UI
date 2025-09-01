@@ -503,7 +503,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
 
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="drivers-license-upload">
-            Driver's License
+            Driver's License <span className="text-red-500">*</span>
           </Label>
 
           <FileUploadButton
@@ -526,6 +526,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "drivers_license",
               });
             }}
+            required
           />
 
           {/* Uploaded Driver's License */}
@@ -724,14 +725,13 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="license-upload">
             Upload License
-            <span className="text-red-500">*</span>
           </Label>
 
           <FileUploadButton
             id="license-upload"
             label="Upload License Files"
             multiple
-            required={formData.license_files.length === 0}
+            // required={formData.license_files.length === 0}
             isFilePresent={formData.license_files.length > 0}
             onChange={async (e) => {
               const filesSelected = e.target.files;

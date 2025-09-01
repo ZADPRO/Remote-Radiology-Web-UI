@@ -30,6 +30,7 @@ export interface PatientInTakeFormNavigationState {
   scancenterCustId?: string;
   consent?: string;
   reportview?: boolean;
+  OverrideStatus?: string;
 }
 
 interface PatientInTakeFormProps
@@ -53,7 +54,7 @@ export const PatientContext = React.createContext<PatientContextType | null>(
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 520 }, (_, index) => ({
+    Array.from({ length: 527 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -91,6 +92,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     categoryId: props.categoryId ?? locationState?.categoryId,
     consent: props.consent ?? locationState?.consent ?? "",
     reportview: props.reportview ?? locationState?.reportview,
+    OverrideStatus: locationState?.OverrideStatus || "",
   };
 
   console.log(locationState);
@@ -98,6 +100,14 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   useEffect(() => {
     if (
       controlData.fetchFormData == true &&
+      controlData.userId != undefined &&
+      controlData.appointmentId != undefined
+    ) {
+      handleFetchPatientForm(controlData.userId, controlData.appointmentId);
+    }
+    console.log("---------------->", controlData?.OverrideStatus);
+    if (
+      controlData.OverrideStatus === "approved" &&
       controlData.userId != undefined &&
       controlData.appointmentId != undefined
     ) {
@@ -123,28 +133,43 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
         userID,
         appointmentId
       );
-      console.log(res);
+      console.log("---->", res);
 
       if (res.status) {
-  if (controlData.apiUpdate && controlData.categoryId) {
-    console.log("Before update:", res.data);
+        if (controlData.apiUpdate && controlData.categoryId) {
+          console.log("Before update:", res.data);
 
-    const updatedData = res.data.map((item: any) =>
-      item.questionId === 170
-        ? { ...item, answer: String(controlData.categoryId) }
-        : item
-    );
+          const updatedData = res.data.map((item: any) =>
+            item.questionId === 170
+              ? { ...item, answer: String(controlData.categoryId) }
+              : item
+          );
 
-    console.log("After update:", updatedData.find((item: any) => item.questionId === 170));
-    setFormData(updatedData);
+          console.log(
+            "After update:",
+            updatedData.find((item: any) => item.questionId === 170)
+          );
+          setFormData(updatedData);
+        } else {
+          if (controlData.OverrideStatus === "approved") {
+            const newData = Array.from({ length: 527 }, (_, index) => {
+              const existing = res.data.find(
+                (q: any) => q.questionId === 1 + index
+              );
+              return {
+                questionId: 1 + index,
+                answer: existing ? existing.answer : "",
+              };
+            });
 
-  } else {
-    setFormData(res.data);
-  }
+            setFormData(newData);
+          } else {
+            setFormData(res.data);
+          }
+        }
 
-  console.log("Final formData:", res.data);
-}
-
+        console.log("Final formData:", res.data);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -220,6 +245,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
             handleFormSwitch={handleFormSwitch}
             openSubmitDialog={handleOpenDialog}
             readOnly={controlData.readOnly ? true : false}
+            OverrideStatus={controlData?.OverrideStatus || ""}
           />
         )}
 

@@ -34,10 +34,22 @@ export type LesionsVal = Record<LesionKeys, string[]>;
 
 export function LesionsRightString(
   reportFormData: ReportQuestion[],
-  questionIds: QuestionIds
+  questionIds: QuestionIds,
+  LesionsString: string
 ): string {
+  console.log("Hi Hello I am Running Lesions.................");
+
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
+
+  let ActualData: LesionsVal = {} as LesionsVal;
+
+  try {
+    ActualData = JSON.parse(LesionsString) as LesionsVal;
+  } catch (err) {
+    console.log(err);
+    ActualData = {} as LesionsVal;
+  }
 
   if (getAnswer(questionIds.lesionsr) !== "Present") return "";
 
@@ -51,186 +63,195 @@ export function LesionsRightString(
     others: [],
   };
 
-  const createHTMLFromData = (label: string, raw: string, isOther = false) => {
+  const createHTMLFromData = (
+    label: LesionKeys,
+    raw: string,
+    isOther = false
+  ) => {
     const htmlVal: string[] = [];
     let html = "";
     try {
       const dataArray = raw ? JSON.parse(raw) : [];
-      dataArray.forEach((data: any) => {
-        // Name/label
-        const namePart = isOther ? data.name?.toLowerCase() : label;
+      dataArray.forEach((data: any, index: number) => {
+        if (data.syncStatus) {
+          // Name/label
+          const namePart = isOther ? data.name?.toLowerCase() : label;
 
-        // Location
-        let locationText = "";
-        if (
-          data.locationclockposition &&
-          data.locationclockposition !== "unknown"
-        ) {
-          locationText =
-            data.locationclockposition === "0"
-              ? "Nipple"
-              : `${data.locationclockposition} o'clock`;
-        }
-
-        let locationTextto = "";
-        if (
-          data.locationclockpositionto &&
-          data.locationclockpositionto !== "unknown"
-        ) {
-          locationTextto =
-            data.locationclockpositionto === "0"
-              ? "Nipple"
-              : `${data.locationclockpositionto} o'clock`;
-        }
-
-        // Level
-        let levelText = "";
-        if (data.locationLevel && data.locationLevel !== "unknown") {
-          levelText =
-            data.locationLevel === "Coronal Level"
-              ? "P"
-              : data.locationLevel === "Axial"
-              ? "S"
-              : data.locationLevel === "Sagital"
-              ? "M"
-              : "";
-        }
-
-        let sentence = `<span>There ${
-          namePart === "multiple simple cysts" ? "are" : "is"
-        }${namePart === "complex cystic structure" ? " a" : ""} ${
-          namePart ?? "lesion"
-        }${
-          namePart === "multiple simple cysts" && data.atleast
-            ? ` atleast ${data.atleast}`
-            : ""
-        }`;
-
-        // Distance from nipple
-        // if (data.distancenipple) {
-        sentence += `${
-          namePart !== "heterogeneous tissue prominence" &&
-          namePart !== "hypertrophic tissue with microcysts"
-            ? `, `
-            : ``
-        } ${namePart === "multiple simple cysts" ? "largest measuring" : ""}`;
-        // }
-
-        // Add location if available
-        if (locationText) {
+          // Location
+          let locationText = "";
           if (
-            (namePart === "heterogeneous tissue prominence" &&
-              locationText &&
-              locationTextto) ||
-            (namePart === "hypertrophic tissue with microcysts" &&
-              locationText &&
-              locationTextto)
+            data.locationclockposition &&
+            data.locationclockposition !== "unknown"
           ) {
-            sentence += ` present in the range of ${locationText} to ${locationTextto}`;
-          } else {
-            sentence += ` present at ${locationText}`;
+            locationText =
+              data.locationclockposition === "0"
+                ? "Nipple"
+                : `${data.locationclockposition} o'clock`;
           }
-        }
 
-        // Add level/percentage if available and not unknown
-        if (
-          levelText &&
-          data.locationLevelPercentage &&
-          data.locationLevel !== "unknown"
-        ) {
+          let locationTextto = "";
           if (
-            (namePart === "heterogeneous tissue prominence" &&
-              data.locationLevelPercentage &&
-              data.locationLevelPercentageto) ||
-            (namePart === "hypertrophic tissue with microcysts" &&
-              data.locationLevelPercentage &&
-              data.locationLevelPercentageto)
+            data.locationclockpositionto &&
+            data.locationclockpositionto !== "unknown"
           ) {
-            sentence += `, located in the range of ${levelText}${data.locationLevelPercentage} to ${levelText}${data.locationLevelPercentageto}`;
-          } else {
-            sentence += `, located at ${levelText}${data.locationLevelPercentage}`;
+            locationTextto =
+              data.locationclockpositionto === "0"
+                ? "Nipple"
+                : `${data.locationclockpositionto} o'clock`;
           }
-        } else if (levelText && data.locationLevel !== "unknown") {
-          sentence += `, located at ${levelText}`;
-        } else if (data.locationLevelPercentage) {
-          sentence += `, located at ${data.locationLevelPercentage}`;
-        }
 
-        if (data.distancenipple) {
-          sentence += `,
+          // Level
+          let levelText = "";
+          if (data.locationLevel && data.locationLevel !== "unknown") {
+            levelText =
+              data.locationLevel === "Coronal Level"
+                ? "P"
+                : data.locationLevel === "Axial"
+                ? "S"
+                : data.locationLevel === "Sagital"
+                ? "M/L"
+                : "";
+          }
+
+          let sentence = `<span>There ${
+            namePart === "multiple simple cysts" ? "are" : "is"
+          }${namePart === "complex cystic structure" || namePart === "fibronodular density" ? " a" : ""} ${
+            namePart ?? "lesion"
+          }${
+            namePart === "multiple simple cysts" && data.atleast
+              ? ` atleast ${data.atleast}`
+              : ""
+          }`;
+
+          // Distance from nipple
+          // if (data.distancenipple) {
+          sentence += `${
+            namePart !== "heterogeneous tissue prominence" &&
+            namePart !== "hypertrophic tissue with microcysts"
+              ? `, `
+              : ``
+          } ${namePart === "multiple simple cysts" ? "largest measuring" : ""}`;
+          // }
+
+          // Add location if available
+          if (locationText) {
+            if (
+              (namePart === "heterogeneous tissue prominence" &&
+                locationText &&
+                locationTextto) ||
+              (namePart === "hypertrophic tissue with microcysts" &&
+                locationText &&
+                locationTextto)
+            ) {
+              sentence += ` spanning in the range of ${locationText} to ${locationTextto}`;
+            } else {
+              sentence += ` present at ${locationText}`;
+            }
+          }
+
+          // Add level/percentage if available and not unknown
+          if (
+            levelText &&
+            data.locationLevelPercentage &&
+            data.locationLevel !== "unknown"
+          ) {
+            if (
+              (namePart === "heterogeneous tissue prominence" &&
+                data.locationLevelPercentage &&
+                data.locationLevelPercentageto) ||
+              (namePart === "hypertrophic tissue with microcysts" &&
+                data.locationLevelPercentage &&
+                data.locationLevelPercentageto)
+            ) {
+              sentence += `, located in the range of ${levelText}${data.locationLevelPercentage} to ${levelText}${data.locationLevelPercentageto}`;
+            } else {
+              sentence += `, located at ${levelText}${data.locationLevelPercentage}`;
+            }
+          } else if (levelText && data.locationLevel !== "unknown") {
+            sentence += `, located at ${levelText}`;
+          } else if (data.locationLevelPercentage) {
+            sentence += `, located at ${data.locationLevelPercentage}`;
+          }
+
+          if (data.distancenipple) {
+            sentence += `,
           ${
             namePart === "heterogeneous tissue prominence" ||
             namePart === "hypertrophic tissue with microcysts"
-              ? `spanning`
+              ? `approximately`
               : `approximately`
           } ${data.distancenipple} mm from the nipple`;
-        }
+          }
 
-        if (data.sizew || data.sizel || data.sizeh) {
-          sentence += `. The lesion is measuring `;
-        }
+          if (data.sizew || data.sizel || data.sizeh) {
+            sentence += `. The lesion is measuring `;
+          }
 
-        // width Size
-        if (data.sizew) {
-          sentence += ` ${data.sizew} mm (width)`;
-        }
+          // width Size
+          if (data.sizew) {
+            sentence += ` ${data.sizew} mm (width)`;
+          }
 
-        // Length Size
-        if (data.sizel) {
-          sentence += ` ${data.sizew || data.sizeh ? "×" : ""} ${
-            data.sizel
-          } mm (length)`;
-        }
+          // Length Size
+          if (data.sizel) {
+            sentence += ` ${data.sizew || data.sizeh ? "×" : ""} ${
+              data.sizel
+            } mm (length)`;
+          }
 
-        // Height Size
-        if (data.sizeh) {
-          sentence += ` ${data.sizew || data.sizel ? "×" : ""} ${
-            data.sizeh
-          } mm (height)`;
-        }
+          // Height Size
+          if (data.sizeh) {
+            sentence += ` ${data.sizew || data.sizel ? "×" : ""} ${
+              data.sizeh
+            } mm (height)`;
+          }
 
-        if (data.sizew || data.sizel || data.sizeh) {
-          sentence += ` in size`;
-        }
+          if (data.sizew || data.sizel || data.sizeh) {
+            sentence += ` in size`;
+          }
 
-        // Shape
-        if (data.Shape && data.Shape !== "unknown") {
-          sentence += `, ${data.Shape.toLowerCase()} shaped`;
-        }
+          // Shape
+          if (data.Shape && data.Shape !== "unknown") {
+            sentence += `, ${data.Shape.toLowerCase()} shaped`;
+          }
 
-        // Appearance
-        if (data.Appearance && data.Appearance !== "unknown") {
-          sentence += `, ${data.Appearance.toLowerCase()} appearance`;
-        }
+          // Appearance
+          if (data.Appearance && data.Appearance !== "unknown") {
+            sentence += `, ${data.Appearance.toLowerCase()} appearance`;
+          }
 
-        // Margins
-        if (data.Margins && data.Margins !== "unknown") {
-          sentence += `, with ${data.Margins.toLowerCase()} margins`;
-        }
+          // Margins
+          if (data.Margins && data.Margins !== "unknown") {
+            sentence += `, with ${data.Margins.toLowerCase()} margins`;
+          }
 
-        // Density/Echotexture
-        if (data.density && data.density !== "unknown") {
-          sentence += ` and ${data.density.toLowerCase()} echotexture`;
-        }
+          // Density/Echotexture
+          if (data.density && data.density !== "unknown") {
+            sentence += ` and ${data.density.toLowerCase()} echotexture`;
+          }
 
-        // Transmission speed
-        if (data.Transmissionspped) {
-          sentence += `. Transmission speed is measured at ${data.Transmissionspped} m/s`;
-        }
+          // Transmission speed
+          if (data.Transmissionspped) {
+            sentence += `. Transmission speed is measured at ${data.Transmissionspped} m/s`;
+          }
 
-        // Internal debris
-        if (data.debris && data.debris !== "not present") {
-          sentence += `. Internal debris is noted`;
-        }
+          // Internal debris
+          if (data.debris && data.debris !== "not present") {
+            sentence += `. Internal debris is noted`;
+          }
 
-        // Volume
-        if (data.Volumne) {
-          sentence += `. Volume is approximately ${data.Volumne} cubic mm`;
-        }
+          // Volume
+          if (data.Volumne) {
+            sentence += `. Volume is approximately ${data.Volumne} cubic mm`;
+          }
 
-        sentence += ".</span><br /><br />";
-        htmlVal.push(sentence);
-        html += sentence;
+          sentence += ".</span><br /><br />";
+
+          htmlVal.push(sentence);
+          html += sentence;
+        } else {
+          htmlVal.push(ActualData[label][index]);
+        }
       });
     } catch (err) {
       console.error("Invalid JSON:", err);
@@ -308,12 +329,12 @@ export function LesionsRightString(
 
   if (getAnswer(questionIds.Otherstr) === "Present") {
     lesionsVal["others"] = createHTMLFromData(
-      "",
+      "others",
       getAnswer(questionIds.OtherDatar),
       true
     );
     finalHTML += createHTMLFromData(
-      "",
+      "others",
       getAnswer(questionIds.OtherDatar),
       true
     );

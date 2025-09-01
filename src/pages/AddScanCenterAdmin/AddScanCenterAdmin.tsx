@@ -585,39 +585,38 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
 
         <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm" htmlFor="drivers-license-upload">
-            Driver's License
+            Driver's License <span className="text-red-500">*</span>
           </Label>
 
           <FileUploadButton
-                  id="drivers-license-upload"
-                  label="Upload Driver's License"
-                  isFilePresent={formData.drivers_license?.length > 0}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+            id="drivers-license-upload"
+            label="Upload Driver's License"
+            isFilePresent={formData.drivers_license?.length > 0}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
 
-                    const maxSize = 5 * 1024 * 1024;
-                    if (file.size > maxSize) {
-                      setError("Driver's license file must be less than 5MB.");
-                      return;
-                    }
+              const maxSize = 5 * 1024 * 1024;
+              if (file.size > maxSize) {
+                setError("Driver's license file must be less than 5MB.");
+                return;
+              }
 
-                    handleSingleFileUpload({
-                      file,
-                      fieldName: "drivers_license",
-                      setFormData,
-                      setTempFiles,
-                      tempFileKey: "drivers_license",
-                    });
+              handleSingleFileUpload({
+                file,
+                fieldName: "drivers_license",
+                setFormData,
+                setTempFiles,
+                tempFileKey: "drivers_license",
+              });
             }}
-                />
+            required
+          />
 
           {/* Uploaded Driver's License */}
           {tempFiles.drivers_license && (
             <div className="mt-2 flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition cursor-pointer bg-blue-100 text-sm text-gray-800 font-medium">
-              <span className="truncate">
-                {tempFiles.drivers_license.name}
-              </span>
+              <span className="truncate">{tempFiles.drivers_license.name}</span>
               <button
                 type="button"
                 onClick={() => handleRemoveSingleFile("drivers_license_no")}

@@ -30,10 +30,10 @@ export function ScanIndicationsPie({ data }: ScanIndicationsPieProps) {
   );
 
   const chartData = [
-    { name: "s", visitors: totals.SForm, fill: "#741b47" },
-    { name: "da", visitors: totals.DaForm, fill: "#38761d" },
-    { name: "db", visitors: totals.DbForm, fill: "#1155cc" },
-    { name: "dc", visitors: totals.DcForm, fill: "#bf9000" },
+    { name: "s", visitors: totals.SForm, fill: "#d5a6bd" },
+    { name: "da", visitors: totals.DaForm, fill: "#b6d7a8" },
+    { name: "db", visitors: totals.DbForm, fill: "#a4c2f4" },
+    { name: "dc", visitors: totals.DcForm, fill: "#fce5cd" },
   ].filter((entry) => entry.visitors > 0);
 
   const chartConfig = {
@@ -42,19 +42,19 @@ export function ScanIndicationsPie({ data }: ScanIndicationsPieProps) {
     },
     s: {
       label: "S- Routine Breast Screening",
-      color: "#741b47",
+      color: "#d5a6bd",
     },
     da: {
       label: "Da-Diagnostic - Abnormal Symptom",
-      color: "#38761d",
+      color: "#b6d7a8",
     },
     db: {
       label: "Db-Diagnostic - Biopsy Confirmed DCIS",
-      color: "#1155cc",
+      color: "#a4c2f4",
     },
     dc: {
       label: "Dc-Diagnostic - Comparison to a Prior QT Scan",
-      color: "#bf9000",
+      color: "#fce5cd",
     },
   } satisfies ChartConfig;
 

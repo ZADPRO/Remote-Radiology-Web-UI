@@ -10,7 +10,8 @@ interface QuestionIds {
 
 export function generateRightBreastReportText(
   reportFormData: ReportQuestion[],
-  questionIds: QuestionIds
+  questionIds: QuestionIds,
+  side:string,
 ): string {
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
@@ -33,8 +34,8 @@ export function generateRightBreastReportText(
     else return "";
   }
 
-  reportText = `The Image quality is ${imageQualityText().toLowerCase()}${artifactsPresent == "Yes" ? " with artifacts present" : ""}.\n`;
-  reportText += `The breast is ${breastDensity.toLowerCase()} with a fibroglandular ratio of ${fibroglandularVolume.toLowerCase()}% and shows ${symmetry.toLowerCase()}.\n`;
+  reportText += `<strong>Density: </strong>The ${side.toLocaleLowerCase()} breast tissue is ${breastDensity.toLowerCase()}${fibroglandularVolume.toLowerCase() ? `with a fibroglandular ratio of  ${fibroglandularVolume.toLowerCase()}%` : ""}${symmetry.toLowerCase() !== "symmetry" ? ` and shows ${symmetry.toLowerCase()}` : ""}.\n`;
+  reportText += `<br/><br/><strong>Image quality: </strong>The image quality is ${imageQualityText().toLowerCase()}${artifactsPresent == "Yes" ? " with artifacts present" : ""}.\n`;
 
   // if (nippleRetraction) {
   //   reportText += `${nippleRetraction.toLowerCase()
