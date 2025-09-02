@@ -602,7 +602,7 @@ const NotesReport: React.FC<Props> = ({
 
             return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
           })
-          .join("<br/>")}</p>`
+          .join("<br/><br/>")}</p><br/>`
       : ``
   }
     `
