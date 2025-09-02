@@ -3,7 +3,8 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import logoNew from "../../assets/LogoNew.png";
+// import logoNew from "../../assets/LogoNew.png";
+import logoNew from "../../assets/LogoNewTM.png";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Timer from "@/components/Timer/Timer";

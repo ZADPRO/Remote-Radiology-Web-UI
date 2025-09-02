@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import logoNew from "../../assets/LogoNew.png";
+// import logoNew from "../../assets/LogoNew.png";
+import logoNew from "../../assets/LogoNewTM.png";
 import loginImg from "../../assets/Login/Login.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
