@@ -18,6 +18,7 @@ import { technicianService } from "@/services/technicianServices";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { TechnicianFormSubmitDialog } from "./TechnicianFormSubmitDialog";
+import { formatReadableDate } from "@/utlis/calculateAge";
 
 export interface ResponsePatientForm {
   refITFId: number;
@@ -643,7 +644,7 @@ const TechnicianPatientIntakeForm: React.FC<
           </div>
           <div className="flex gap-1">
             <div className="font-medium">DOB</div>
-            <div>: {getPatientFormAnswer(2)}</div>
+            <div>: {formatReadableDate(getPatientFormAnswer(2))}</div>
           </div>
         </div>
       )}
