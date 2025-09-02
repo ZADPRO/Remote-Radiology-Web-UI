@@ -55,7 +55,15 @@ export function ComparisonPriorRightString(
       // );
 
       return `
-        ${data.previous ? `<p>Previous scan showed ${data.previous}${data.lesionspresent && data.previous === "lesions present" ? ` ( ${data.lesionspresent} ).</p>` : ''}` : ""}
+        ${
+          data.previous
+            ? `<p>Previous scan showed ${data.previous}${
+                data.lesionspresent && data.previous === "lesions present"
+                  ? ` ( ${data.lesionspresent} ).</p>`
+                  : ""
+              }`
+            : ""
+        }
         ${
           data.lesionStatus ? `<p>Lesion status: ${data.lesionStatus}.</p>` : ""
         }
@@ -65,7 +73,7 @@ export function ComparisonPriorRightString(
             : ""
         }
         <span>
-          <b>${lesionId} ${data.vol2 ? data.vol2: ``}</b><br/>
+          <b>${lesionId} ${data.vol2 ? data.vol2 : ``}</b><br/>
           ${
             (data.sizec || data.sizep) &&
             `<p>Size: ${data.sizec ? `${data.sizec} mm` : ""}${
@@ -85,8 +93,46 @@ export function ComparisonPriorRightString(
             }<p/>`
           }
           ${
-            data.locationcclock || data.locationcposition || data.locationpclock || data.locationpposition
-              ? `<p>Location: ${data.locationcclock ? `${data.locationcclock === "0" ? "Nipple" : `${data.locationcclock}'o clock`}` : ``}${data.locationcposition ? `${data.locationcclock ? " ,": ""}P${data.locationcposition}`: ""}${(data.locationpclock ||data.locationpposition)|| (data.locationpclock && data.locationpposition) ? ` ( Prev: ${data.locationpclock ? `${data.locationpclock === "0" ? "Nipple" : `${data.locationpclock}'o clock`}` : ""}${data.locationpposition ? `${data.locationpclock ? " ,": ""}P${data.locationpposition} `: " "})` : ""}</p>` : ``
+            data.locationcclock ||
+            data.locationcposition ||
+            data.locationpclock ||
+            data.locationpposition
+              ? `Location: ${
+                  data.locationcclock
+                    ? `${
+                        data.locationcclock === "0"
+                          ? "Nipple"
+                          : `${data.locationcclock}'o clock`
+                      }`
+                    : ``
+                }${
+                  data.locationcposition
+                    ? `${data.locationcclock ? " ," : ""}P${
+                        data.locationcposition
+                      }`
+                    : ""
+                }${
+                  data.locationpclock ||
+                  data.locationpposition ||
+                  (data.locationpclock && data.locationpposition)
+                    ? ` ( Prev: ${
+                        data.locationpclock
+                          ? `${
+                              data.locationpclock === "0"
+                                ? "Nipple"
+                                : `${data.locationpclock}'o clock`
+                            }`
+                          : ""
+                      }${
+                        data.locationpposition
+                          ? `${data.locationpclock ? " ," : ""}P${
+                              data.locationpposition
+                            } `
+                          : " "
+                      })`
+                    : ""
+                }`
+              : ``
           }
         </span>
       `;
