@@ -123,6 +123,11 @@ export function LesionsRightString(
             namePart === "hypertrophic tissue with microcysts"
               ? " a"
               : ""
+          }${
+            namePart === "heterogeneous tissue prominence" ||
+            namePart === "hypertrophic tissue with microcysts"
+              ? "n area of"
+              : ""
           } ${namePart ?? "lesion"}${
             namePart === "multiple simple cysts" && data.atleast
               ? ` atleast ${data.atleast}`
