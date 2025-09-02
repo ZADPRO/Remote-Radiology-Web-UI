@@ -570,7 +570,7 @@ const AddTechnician: React.FC = () => {
     setError(null); // Clear previous errors
 
     // Basic validation before submission
-    if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.social_security_no || !formData.drivers_license || !formData.digital_signature || formData.license_files.length === 0) {
+    if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.social_security_no || !formData.drivers_license ) {
       setError("Please fill in all required fields and upload all necessary documents.");
       setLoading(false);
       return;

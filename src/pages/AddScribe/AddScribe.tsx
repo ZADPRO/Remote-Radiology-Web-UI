@@ -497,7 +497,7 @@ const AddScribe: React.FC = () => {
     setLoading(true);
     try {
       // Basic validation before submission (removed lastname check)
-      if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.aadhar || !formData.pan || formData.education_certificate.length === 0) {
+      if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.aadhar || !formData.pan) {
         setError("Please fill in all required fields and upload all necessary documents.");
         setLoading(false);
         return;

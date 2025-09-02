@@ -942,14 +942,6 @@ const AddRadiologist: React.FC = () => {
         !formData.dob ||
         !formData.pan ||
         !formData.aadhar ||
-        !formData.drivers_license ||
-        !formData.mbbs_register_number ||
-        !formData.md_register_number ||
-        !formData.specialization ||
-        formData.cv_files.length === 0 ||
-        formData.license_files.length === 0 ||
-        formData.malpracticeinsureance_files.length === 0 ||
-        !formData.digital_signature ||
         formData.medical_license_security.some(
           (lic) => !lic.State || !lic.MedicalLicenseSecurityNo
         )
