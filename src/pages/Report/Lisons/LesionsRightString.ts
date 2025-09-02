@@ -115,9 +115,15 @@ export function LesionsRightString(
 
           let sentence = `<span>There ${
             namePart === "multiple simple cysts" ? "are" : "is"
-          }${namePart === "complex cystic structure" || namePart === "fibronodular density" ? " a" : ""} ${
-            namePart ?? "lesion"
           }${
+            namePart === "complex cystic structure" ||
+            namePart === "fibronodular density" ||
+            namePart === "simple cyst" ||
+            namePart === "heterogeneous tissue prominence" ||
+            namePart === "hypertrophic tissue with microcysts"
+              ? " a"
+              : ""
+          } ${namePart ?? "lesion"}${
             namePart === "multiple simple cysts" && data.atleast
               ? ` atleast ${data.atleast}`
               : ""

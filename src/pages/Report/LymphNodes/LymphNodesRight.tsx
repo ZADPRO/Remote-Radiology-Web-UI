@@ -275,7 +275,7 @@ const LymphNodesRight: React.FC<Props> = ({
                               >
                                 <span>
                                   {data.level === "Sagital"
-                                    ? "M -"
+                                    ? "M/L -"
                                     : data.level === "Axial"
                                     ? "S -"
                                     : "P -"}

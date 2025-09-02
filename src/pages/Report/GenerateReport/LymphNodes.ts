@@ -29,7 +29,7 @@ export function LymphNodesGenerateString(
     } else if (level == "Coronal Level") {
       return "p";
     } else if (level == "Sagital") {
-      return "M";
+      return "M/L";
     } else {
       return "";
     }
