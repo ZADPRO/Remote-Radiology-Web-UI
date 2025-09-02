@@ -360,6 +360,7 @@ const BreastSymptoms: React.FC<Props> = ({
                     data={technicianFormData}
                     setData={setTechnicianFormData}
                     nameLabelColor="text-[#42a202]"
+                    requiredStatus={true}
                   />
                   {getAnswer(questionIds.deformity) === "true" && (
                     <div className="flex gap-1 ml-[21%] w-90 mb-2">
@@ -392,6 +393,7 @@ const BreastSymptoms: React.FC<Props> = ({
                     data={technicianFormData}
                     setData={setTechnicianFormData}
                     nameLabelColor="text-[#42a202]"
+                    requiredStatus={true}
                   />
                   {getAnswer(questionIds.scar) === "true" && (
                     <div className="flex gap-1 ml-[21%] w-90 mb-2">
@@ -424,6 +426,7 @@ const BreastSymptoms: React.FC<Props> = ({
                     data={technicianFormData}
                     setData={setTechnicianFormData}
                     nameLabelColor="text-[#42a202]"
+                    requiredStatus={true}
                   />
                   {getAnswer(questionIds.sore) === "true" && (
                     <div className="flex gap-1 ml-[21%] w-90 mb-2">
@@ -467,6 +470,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["lump"]}
+                  requiredStatus={false}
                 />,
                 questionIds.lumporthickeningComments
               )}
@@ -493,6 +497,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["skin"]}
+                  requiredStatus={true}
                 />,
                 questionIds.skinchangesComments
               )}
@@ -515,6 +520,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["nippleDischarge"]}
+                  requiredStatus={true}
                 />,
                 questionIds.nippledischargeComments
               )}
@@ -537,6 +543,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["pain"]}
+                  requiredStatus={true}
                 />,
                 questionIds.painonpalpationComments
               )}
@@ -569,6 +576,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["nippleRetraction"]}
+                  requiredStatus={true}
                 />,
                 questionIds.nippleretractionComments
               )}
@@ -600,6 +608,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["lymph"]}
+                  requiredStatus={true}
                 />,
                 questionIds.lymphnodesComments
               )}
