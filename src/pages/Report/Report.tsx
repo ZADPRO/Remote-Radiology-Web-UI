@@ -70,7 +70,7 @@ import {
   AutoPopulateReport,
   AutoPopulateReportImpressRecomm,
 } from "./AutoPopulateReport";
-import { formatDateWithAge } from "@/utlis/calculateAge";
+import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 
 export interface ReportQuestion {
@@ -1553,7 +1553,7 @@ const Report: React.FC = () => {
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refAppointmentDate
-                        ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
+                        ? formatReadableDate(assignData?.appointmentStatus[0]?.refAppointmentDate)
                         : ""
                     }</td>
                     

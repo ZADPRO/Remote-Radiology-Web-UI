@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
 import { FinalAddendumText, reportService } from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
-import { formatDateWithAge } from "@/utlis/calculateAge";
+import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 
 interface TextEditorProps {
   patientHistory: {
@@ -366,7 +366,9 @@ const NotesReport: React.FC<Props> = ({
             patientDetails.refUserCustId
           }</td>
           <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
-          <td style="border: 1px solid #000; padding: 4px;">${AppointmentDate}</td>
+          <td style="border: 1px solid #000; padding: 4px;">${formatReadableDate(
+            AppointmentDate
+          )}</td>
         </tr>
       </tbody>
     </table>
@@ -585,7 +587,9 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     lymphRight
-      ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesRight.value}${
+      ? `<div><strong>Lymph Nodes: </strong>${
+          textEditor.LymphNodesRight.value
+        }${
           textEditor.LymphNodesRightImage.value.length > 7
             ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
             : "<p><br/></p>"
@@ -1078,7 +1082,7 @@ ${
             height="60vh"
           />
 
-          {reportStatus === "Signed Off" && (
+          {reportStatus === "Signed Off" || reportStatus === "Signed Off (A)" && (
             <div className="flex flex-col mb-4">
               <div className="flex items-center justify-between">
                 <p className="text-2xl">Addendum</p>
