@@ -569,7 +569,7 @@ const MasterAdmin: React.FC = () => {
                         : user?.refRTId === 7
                         ? "WellthGreen Scribe"
                         : user?.refRTId === 8
-                        ? "Scan Center Co-Reporting Doctor"
+                        ? "Scan Center Reviewer"
                         : user?.refRTId === 9
                         ? "WellthGreen Manager"
                         : user?.refRTId === 10 &&
