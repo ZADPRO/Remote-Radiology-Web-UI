@@ -92,6 +92,7 @@ import PatientConsentDialog from "./PatientConsentDialog";
 import SendMailDialog from "./SendMailDialog";
 import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
+import { formatReadableDate } from "@/utlis/calculateAge";
 
 interface staffData {
   refUserCustId: string;
@@ -692,8 +693,11 @@ const PatientQueue: React.FC = () => {
           </div>
         ),
         cell: ({ row }) => {
-          const date = new Date(row.original.refAppointmentDate);
-          return date.toLocaleDateString(); // Format date for display
+          return (
+            <div className="text-center w-auto whitespace-normal break-words">
+              {formatReadableDate(row.original.refAppointmentDate)}
+            </div>
+          ); // Format date for display
         },
         enableColumnFilter: true,
         filterFn: (row, columnId, filterValue) => {
@@ -871,11 +875,11 @@ const PatientQueue: React.FC = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex w-full px-1 items-center justify-center">
-                {/* <div className="flex w-full px-1 items-center justify-center">
+                  {/* <div className="flex w-full px-1 items-center justify-center">
                   <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
-                <Label className=" max-w-20 2xl:max-w-30 truncate">
-                  {row.original.refUserFirstName}
-                </Label>
+                  <Label className=" max-w-20 2xl:max-w-30 truncate">
+                    {row.original.refUserFirstName}
+                  </Label>
                 </div>
                 {/* </div>
                 </div> */}

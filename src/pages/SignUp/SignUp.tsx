@@ -333,6 +333,15 @@ const SignUp: React.FC = () => {
                     required
                   />
                 </div>
+                <div className="text-sm mx-auto text-[#525252]">
+              Already have an account?{" "}
+              <span
+                className="text-[#91c3ce] font-bold hover:underline cursor-pointer"
+                onClick={() => navigate("/")}
+              >
+                Log In
+              </span>
+            </div>
               </>
             )}
 
