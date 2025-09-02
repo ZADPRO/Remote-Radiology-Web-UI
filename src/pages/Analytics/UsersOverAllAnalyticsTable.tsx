@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import * as XLSX from "xlsx";
 import {
   useReactTable,
   ColumnDef,
@@ -18,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface OverAllAnalytics {
   refUserCustId: string;
@@ -222,80 +224,147 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
     },
   });
 
-  return (
-    <div className="w-full overflow-x-auto rounded-lg">
-      <Table className="w-full divide-y divide-gray-200">
-        <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="border text-normal text-sm border-gray-300 px-1 py-0 text-left"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </TableHeader>
-        <TableBody className="divide-y divide-gray-100">
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="border border-gray-300 text-center px-4 py-2 text-sm text-gray-700"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={table.getAllColumns().length}
-                className="text-center py-4 text-gray-500"
-              >
-                No users are available
-              </td>
-            </tr>
-          )}
-        </TableBody>
-      </Table>
+  const handleDownloadExcel = () => {
+    const visibleRows = table.getRowModel().rows;
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Prev
-        </button>
-        <span>
-          Page{" "}
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </button>
-      </div>
-    </div>
+    if (!visibleRows || visibleRows.length === 0) return;
+
+    // Define headers (match your table order)
+    const headers = [
+      { header: "User ID", key: "refUserCustId" },
+      { header: "Total Case", key: "totalcase" },
+      { header: "S Form", key: "totalsform" },
+      { header: "Da Form", key: "totaldaform" },
+      { header: "Db Form", key: "totaldbform" },
+      { header: "Dc Form", key: "totaldcform" },
+      { header: "Report Correct", key: "totalreportcorrect" },
+      { header: "Report Edit", key: "totalreportedit" },
+      { header: "Report Artifacts Left", key: "reportartificatsleft" },
+      { header: "Report Artifacts Right", key: "reportartificatsright" },
+      { header: "Tech Artifacts Left", key: "techartificatsleft" },
+      { header: "Tech Artifacts Right", key: "techartificatsright" },
+      { header: "Total Timing (hrs)", key: "totaltiming" },
+    ];
+
+    // Get rows based on current table state
+    const rows = visibleRows.map((row) =>
+      headers.map((h) => {
+        const value = row.original[h.key as keyof OverAllAnalytics];
+        if (h.key === "totaltiming") {
+          return Number(value).toFixed(2);
+        }
+        return value;
+      })
+    );
+
+    // Build worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      headers.map((h) => h.header),
+      ...rows,
+    ]);
+
+    // Auto column widths
+    worksheet["!cols"] = headers.map((h) => ({ wch: h.header.length + 5 }));
+
+    // Create and download file
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Analytics");
+    XLSX.writeFile(workbook, "OverAllAnalytics.xlsx");
+  };
+
+  return (
+    <>
+      <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
+        <CardHeader className="">
+          <CardTitle>
+            <div className="flex justify-between items-center">
+              <div>Users OverAll Analytics</div>
+              <Button onClick={handleDownloadExcel} variant="outline">
+                Download Excel
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="w-full h-[70vh] overflow-auto">
+          <div className="w-full overflow-x-auto rounded-lg">
+            <Table className="w-full divide-y divide-gray-200">
+              <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="border text-normal text-sm border-gray-300 px-1 py-0 text-left"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100">
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row) => (
+                    <tr key={row.id} className="hover:bg-gray-50">
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="border border-gray-300 text-center px-4 py-2 text-sm text-gray-700"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={table.getAllColumns().length}
+                      className="text-center py-4 text-gray-500"
+                    >
+                      No users are available
+                    </td>
+                  </tr>
+                )}
+              </TableBody>
+            </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between mt-4">
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Prev
+              </button>
+              <span>
+                Page{" "}
+                <strong>
+                  {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </strong>
+              </span>
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

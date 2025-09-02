@@ -16,11 +16,6 @@ import { formatReadableDateWithoutDate } from "@/utlis/calculateAge";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Button } from "@/components/ui/button";
 import { Download, Filter, XCircle } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Table, TableBody, TableHeader } from "@/components/ui/table";
 import InvoicePDF from "../Invoice/InvoicePDF";
@@ -228,29 +223,17 @@ const InvoiceOverAllTable: React.FC<Props> = ({
                 </PopoverTriggerDialog>
 
                 <PopoverContentDialog className="w-64 p-2">
-                  <div>
-                    {uniqueMonths.map((month) => {
-                      const current =
-                        (column.getFilterValue() as string[]) ?? [];
-                      const isSelected = current.includes(month);
-
-                      return (
-                        <div
-                          key={month}
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const updated = isSelected
-                              ? current.filter((m) => m !== month)
-                              : [...current, month];
-                            column.setFilterValue(
-                              updated.length ? updated : undefined
-                            );
-                          }}
-                        >
-                          <Checkbox2
-                            checked={isSelected}
-                            onCheckedChange={() => {
+                  <Command>
+                    <CommandGroup className="max-h-60 overflow-auto">
+                      {uniqueMonths.map((month) => {
+                        const current =
+                          (column.getFilterValue() as string[]) ?? [];
+                        const isSelected = current.includes(month);
+                        return (
+                           <CommandItem
+                            key={month}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={() => {
                               const updated = isSelected
                                 ? current.filter((m) => m !== month)
                                 : [...current, month];
@@ -258,24 +241,36 @@ const InvoiceOverAllTable: React.FC<Props> = ({
                                 updated.length ? updated : undefined
                               );
                             }}
-                          />
-                          <span>{month}</span>
-                        </div>
-                      );
-                    })}
+                          >
+                            <Checkbox2
+                              checked={isSelected}
+                              onCheckedChange={() => {
+                                const updated = isSelected
+                                  ? current.filter((m) => m !== month)
+                                  : [...current, month];
+                                column.setFilterValue(
+                                  updated.length ? updated : undefined
+                                );
+                              }}
+                            />
+                            <span>{month}</span>
+                          </CommandItem>
+                        );
+                      })}
 
-                    <Button
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation(); // keep popover open
-                        column.setFilterValue(undefined);
-                      }}
-                      className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                    >
-                      <XCircle className="h-4 w-4" />
-                      <span>Clear</span>
-                    </Button>
-                  </div>
+                    </CommandGroup>
+                      <Button
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation(); // keep popover open
+                          column.setFilterValue(undefined);
+                        }}
+                        className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        <span>Clear</span>
+                      </Button>
+                  </Command>
                 </PopoverContentDialog>
               </PopoverDialog>
             )}
@@ -303,16 +298,16 @@ const InvoiceOverAllTable: React.FC<Props> = ({
           <div className="flex justify-between items-center gap-1 font-semibold">
             <span>Invoice Users</span>
             {column.getCanFilter() && (
-              <Popover>
-                <PopoverTrigger asChild>
+              <PopoverDialog>
+                <PopoverTriggerDialog asChild>
                   <Button
                     variant="ghost"
                     className="!p-0 hover:bg-transparent hover:text-gray-200"
                   >
                     <Filter />
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-2">
+                </PopoverTriggerDialog>
+                <PopoverContentDialog className="w-64 p-2">
                   <Command>
                     <CommandGroup className="max-h-60 overflow-auto">
                       {uniqueUsers.map((user) => {
@@ -351,8 +346,8 @@ const InvoiceOverAllTable: React.FC<Props> = ({
                     <XCircle className="h-4 w-4" />
                     <span>Clear</span>
                   </Button>
-                </PopoverContent>
-              </Popover>
+                </PopoverContentDialog>
+              </PopoverDialog>
             )}
           </div>
         );

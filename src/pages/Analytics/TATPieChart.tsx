@@ -31,11 +31,11 @@ export function TATPieChart({ data }: TATPieChartProps) {
     stat.le_10_days;
 
   const chartData = [
-    { label: ">10 Days", value: stat.gt_10_days, fill: "#dd7e6b" },
-    { label: "≤1 Day", value: stat.le_1_day, fill: "#b6d7a8" },
-    { label: "≤3 Days", value: stat.le_3_days, fill: "#a2c4c9" },
-    { label: "≤7 Days", value: stat.le_7_days, fill: "#ffe599" },
-    { label: "≤10 Days", value: stat.le_10_days, fill: "#f9cb9c" },
+    { label: ">10 Days", value: stat.gt_10_days, fill: "#e6b8af" },
+    { label: "≤1 Day", value: stat.le_1_day, fill: "#d9ead3" },
+    { label: "≤3 Days", value: stat.le_3_days, fill: "#d0e0e3" },
+    { label: "≤7 Days", value: stat.le_7_days, fill: "#fff2cc" },
+    { label: "≤10 Days", value: stat.le_10_days, fill: "#fce5cd" },
   ]
     .filter((item) => item.value > 0)
     .map((item) => ({
@@ -83,12 +83,15 @@ export function TATPieChart({ data }: TATPieChartProps) {
             className="[&_.recharts-text]:fill-background mx-auto aspect-square h-auto max-h-68"
           >
             <PieChart>
-              <ChartTooltip content={<ChartTooltipContent nameKey="label" />} />
+              <ChartTooltip
+                content={<ChartTooltipContent hideLabel nameKey="label" />}
+              />
               <Pie data={chartData} dataKey="value" nameKey="label">
                 <LabelList
                   dataKey="percentageLabel"
                   position="inside"
                   className="fill-background"
+                  stroke="none"
                 />
                 <CustomLegend data={chartData} />
               </Pie>

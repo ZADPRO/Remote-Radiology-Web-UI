@@ -66,6 +66,7 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
     "trim-canvas": "^0.1.2",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.62"
   },
   "devDependencies": {

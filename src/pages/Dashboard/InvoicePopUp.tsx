@@ -385,7 +385,7 @@ const InvoicePopUp: React.FC<Props> = () => {
                               }}
                             >
                               <span className="hidden sm:inline">
-                                Create Report
+                                Create Invoice
                               </span>
                               <span className="sm:hidden">Create</span>
                             </Button>
@@ -488,7 +488,7 @@ const InvoicePopUp: React.FC<Props> = () => {
                               }}
                             >
                               <span className="hidden sm:inline">
-                                Create Report
+                                Create Invoice
                               </span>
                               <span className="sm:hidden">Create</span>
                             </Button>

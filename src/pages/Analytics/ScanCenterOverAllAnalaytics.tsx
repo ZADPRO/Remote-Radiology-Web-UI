@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import * as XLSX from "xlsx";
 import {
   useReactTable,
   ColumnDef,
@@ -19,6 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { OverAllScanCenterAnalytics } from "@/services/analyticsService";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface OverAllAnalytics {
   refUserCustId: string;
@@ -200,80 +202,142 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
     },
   });
 
-  return (
-    <div className="overflow-x-auto rounded-lg">
-      <Table className="divide-y divide-gray-200">
-        <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="border border-gray-300 px-4 py-0 text-left"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </TableHeader>
-        <TableBody className="divide-y divide-gray-100">
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="border text-center border-gray-300 px-4 py-2 text-sm text-gray-700"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={table.getAllColumns().length}
-                className="text-center py-4 text-gray-500"
-              >
-                No users are available
-              </td>
-            </tr>
-          )}
-        </TableBody>
-      </Table>
+  const handleDownloadExcel = () => {
+    const visibleRows = table.getRowModel().rows;
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Prev
-        </button>
-        <span>
-          Page{" "}
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </button>
-      </div>
-    </div>
+    if (!visibleRows || visibleRows.length === 0) return;
+
+    // Define custom column headers (order matters)
+    const headers = [
+      { header: "Center ID", key: "refSCCustId" },
+      { header: "Total Case", key: "totalcase" },
+      { header: "S Form", key: "totalsform" },
+      { header: "Da Form", key: "totaldaform" },
+      { header: "Db Form", key: "totaldbform" },
+      { header: "Dc Form", key: "totaldcform" },
+      { header: "Report Artifacts Left", key: "reportartificatsleft" },
+      { header: "Report Artifacts Right", key: "reportartificatsright" },
+      { header: "Tech Artifacts Left", key: "techartificatsleft" },
+      { header: "Tech Artifacts Right", key: "techartificatsright" },
+    ];
+
+    // Prepare rows from the currently visible (filtered/sorted/paginated) data
+    const rows = visibleRows.map((row) =>
+      headers.map(
+        (h) => row.original[h.key as keyof OverAllScanCenterAnalytics]
+      )
+    );
+
+    // Build worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      headers.map((h) => h.header), // header row
+      ...rows,
+    ]);
+
+    // Auto column widths
+    worksheet["!cols"] = headers.map((h) => ({ wch: h.header.length + 5 }));
+
+    // Create a workbook and append sheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Analytics");
+
+    // Export file
+    XLSX.writeFile(workbook, "ScanCenterAnalytics.xlsx");
+  };
+
+  return (
+    <>
+      <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
+        <CardHeader className="">
+          <CardTitle>
+            <div className="flex justify-between items-center">
+              <div>Scan Center OverAll Analytics</div>
+              <Button onClick={handleDownloadExcel} variant="outline">
+                Download Excel
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="w-full h-[70vh] overflow-auto">
+          <div className="overflow-x-auto rounded-lg">
+            <Table className="divide-y divide-gray-200 rounded-lg">
+              <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="border border-gray-300 px-4 py-0 text-left"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100">
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row) => (
+                    <tr key={row.id} className="hover:bg-gray-50">
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="border text-center border-gray-300 px-4 py-2 text-sm text-gray-700"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={table.getAllColumns().length}
+                      className="text-center py-4 text-gray-500"
+                    >
+                      No users are available
+                    </td>
+                  </tr>
+                )}
+              </TableBody>
+            </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between mt-4">
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Prev
+              </button>
+              <span>
+                Page{" "}
+                <strong>
+                  {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </strong>
+              </span>
+              <button
+                className="px-3 py-1 border rounded disabled:opacity-50"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

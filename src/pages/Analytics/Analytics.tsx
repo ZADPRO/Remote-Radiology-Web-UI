@@ -38,7 +38,6 @@ import { Calendar } from "@/components/calendar";
 import { ChevronDown, User } from "lucide-react";
 import { ArtifactsPie } from "./ArtifactsPieChart";
 import OverAllAnalyticsTable from "./UsersOverAllAnalyticsTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ScanCenterOverAllAnalyticsTable from "./ScanCenterOverAllAnalaytics";
 
 const Analytics: React.FC = () => {
@@ -56,7 +55,7 @@ const Analytics: React.FC = () => {
     }
   };
 
-   const { user, role } = useAuth();
+  const { user, role } = useAuth();
 
   const [centerSelectedValue, setCenterSelectedValue] = useState<number | null>(
     role?.type === "scadmin" && user?.refSCId ? user.refSCId : 0
@@ -290,7 +289,7 @@ const Analytics: React.FC = () => {
     // setTempRole({ id: 0, type: "" });
     setTatStats([]);
 
-    if (["admin", "manager", "scadmin"].includes(role.type)) {
+    if (["admin", "scadmin"].includes(role.type)) {
       if (userSelectedValue) {
         setCenterSelectedValue(null);
         fetchAnalyticsPeruser(
@@ -310,6 +309,13 @@ const Analytics: React.FC = () => {
           );
         }
       }
+    } else if (["manager"].includes(role.type)) {
+      setCenterSelectedValue(null);
+      setUserSelectedValue(0);
+      fetchAnalyticsPeruser(
+        0,
+        role?.id
+      );
     } else {
       setCenterSelectedValue(null);
       setUserSelectedValue(
@@ -343,38 +349,42 @@ const Analytics: React.FC = () => {
       <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between">
         <div className="flex flex-wrap gap-4 self-start relative">
           {/* Scan Center Select */}
-          <Select
-            value={
-              centerSelectedValue !== null ? centerSelectedValue.toString() : ""
-            }
-            onValueChange={(val) => {
-              setCenterSelectedValue(Number(val));
-              setUserSelectedValue(null);
-              setTempRole({ id: 0, type: "" });
-            }}
-          >
-            <SelectTrigger
-              className={`${
-                centerSelectedValue ? "bg-[#a3b1a0]" : "bg-[#f3f0e9]"
-              } font-medium p-6 text-lg`}
-              hidden={handleComponentAccess("scancenterselect")}
+          {role?.id !== 9 && (
+            <Select
+              value={
+                centerSelectedValue !== null
+                  ? centerSelectedValue.toString()
+                  : ""
+              }
+              onValueChange={(val) => {
+                setCenterSelectedValue(Number(val));
+                setUserSelectedValue(null);
+                setTempRole({ id: 0, type: "" });
+              }}
             >
-              <SelectValue placeholder="Scan Center" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem key={0} value="0">
-                Over All
-              </SelectItem>
-              {allScanCenters?.map((option) => (
-                <SelectItem
-                  key={option.refSCId}
-                  value={option.refSCId.toString()}
-                >
-                  {option.refSCName}
+              <SelectTrigger
+                className={`${
+                  centerSelectedValue ? "bg-[#a3b1a0]" : "bg-[#f3f0e9]"
+                } font-medium p-6 text-lg`}
+                hidden={handleComponentAccess("scancenterselect")}
+              >
+                <SelectValue placeholder="Scan Center" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem key={0} value="0">
+                  Over All
                 </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                {allScanCenters?.map((option) => (
+                  <SelectItem
+                    key={option.refSCId}
+                    value={option.refSCId.toString()}
+                  >
+                    {option.refSCName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
 
           {/* Users Select */}
           <Select
@@ -511,28 +521,16 @@ const Analytics: React.FC = () => {
         </div> */}
       {userSelectedValue === 0 &&
         (role?.type === "admin" || role?.type === "manager") && (
-          <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
-            <CardHeader className="">
-              <CardTitle>Users OverAll Analytics</CardTitle>
-            </CardHeader>
-            <CardContent className="w-full h-[70vh] overflow-auto">
+          
               <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
-            </CardContent>
-          </Card>
+          
         )}
 
       {centerSelectedValue === 0 &&
         (role?.type === "admin" || role?.type === "manager") && (
-          <Card className="bg-[#F9F4ED] w-[91vw]  h-[70vh] overflow-auto">
-            <CardHeader className="">
-              <CardTitle>Scan Center OverAll Analytics</CardTitle>
-            </CardHeader>
-            <CardContent className="w-full h-[70vh] overflow-auto">
               <ScanCenterOverAllAnalyticsTable
                 analyticsData={ScanCenterOverAllAnalaytics}
               />
-            </CardContent>
-          </Card>
         )}
 
       <div className="flex flex-wrap w-full gap-4">
