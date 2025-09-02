@@ -30,9 +30,9 @@ export function ScanIndicationsPie({ data }: ScanIndicationsPieProps) {
   );
 
   const chartData = [
-    { name: "s", visitors: totals.SForm, fill: "#d5a6bd" },
-    { name: "da", visitors: totals.DaForm, fill: "#b6d7a8" },
-    { name: "db", visitors: totals.DbForm, fill: "#a4c2f4" },
+    { name: "s", visitors: totals.SForm, fill: "#ead1dc" },
+    { name: "da", visitors: totals.DaForm, fill: "#d9ead3" },
+    { name: "db", visitors: totals.DbForm, fill: "#c9daf8" },
     { name: "dc", visitors: totals.DcForm, fill: "#fce5cd" },
   ].filter((entry) => entry.visitors > 0);
 
@@ -42,15 +42,15 @@ export function ScanIndicationsPie({ data }: ScanIndicationsPieProps) {
     },
     s: {
       label: "S- Routine Breast Screening",
-      color: "#d5a6bd",
+      color: "#ead1dc",
     },
     da: {
       label: "Da-Diagnostic - Abnormal Symptom",
-      color: "#b6d7a8",
+      color: "#d9ead3",
     },
     db: {
       label: "Db-Diagnostic - Biopsy Confirmed DCIS",
-      color: "#a4c2f4",
+      color: "#c9daf8",
     },
     dc: {
       label: "Dc-Diagnostic - Comparison to a Prior QT Scan",
@@ -80,7 +80,12 @@ export function ScanIndicationsPie({ data }: ScanIndicationsPieProps) {
                     content={<ChartTooltipContent nameKey="name" hideLabel />}
                   />
                   <Pie data={chartData} dataKey="visitors">
-                    <LabelList dataKey="visitors" position="inside" />
+                    <LabelList
+                      dataKey="visitors"
+                      position="inside"
+                      stroke="none"
+                      style={{ fill: "grey" }}
+                    />
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>

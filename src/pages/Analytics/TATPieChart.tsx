@@ -1,5 +1,3 @@
-"use client";
-
 import { PieChart, Pie, LabelList } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -31,11 +29,36 @@ export function TATPieChart({ data }: TATPieChartProps) {
     stat.le_10_days;
 
   const chartData = [
-    { label: ">10 Days", value: stat.gt_10_days, fill: "#e6b8af" },
-    { label: "≤1 Day", value: stat.le_1_day, fill: "#d9ead3" },
-    { label: "≤3 Days", value: stat.le_3_days, fill: "#d0e0e3" },
-    { label: "≤7 Days", value: stat.le_7_days, fill: "#fff2cc" },
-    { label: "≤10 Days", value: stat.le_10_days, fill: "#fce5cd" },
+    {
+      label: ">10 Days",
+      value: stat.gt_10_days,
+      fill: "#e6b8af",
+      textColor: "red",
+    },
+    {
+      label: "≤1 Day",
+      value: stat.le_1_day,
+      fill: "#d9ead3",
+      textColor: "yellow",
+    },
+    {
+      label: "≤3 Days",
+      value: stat.le_3_days,
+      fill: "#d0e0e3",
+      textColor: "green",
+    },
+    {
+      label: "≤7 Days",
+      value: stat.le_7_days,
+      fill: "#fff2cc",
+      textColor: "red",
+    },
+    {
+      label: "≤10 Days",
+      value: stat.le_10_days,
+      fill: "#fce5cd",
+      textColor: "red",
+    },
   ]
     .filter((item) => item.value > 0)
     .map((item) => ({
@@ -80,7 +103,7 @@ export function TATPieChart({ data }: TATPieChartProps) {
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-text]:fill-background mx-auto aspect-square h-auto max-h-68"
+            className="[&_.recharts-text]:fill-background text-[red] mx-auto aspect-square h-auto max-h-68"
           >
             <PieChart>
               <ChartTooltip
@@ -92,6 +115,7 @@ export function TATPieChart({ data }: TATPieChartProps) {
                   position="inside"
                   className="fill-background"
                   stroke="none"
+                  style={{fill: "grey"}}
                 />
                 <CustomLegend data={chartData} />
               </Pie>

@@ -30,9 +30,9 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
   );
 
   const chartData = [
-    { key: "left", name: "Left", artifacts: totals.left, fill: "#d5a6bd" },
-    { key: "right", name: "Right", artifacts: totals.right, fill: "#b6d7a8" },
-    { key: "both", name: "Both", artifacts: totals.both, fill: "#a4c2f4" },
+    { key: "left", name: "Left", artifacts: totals.left, fill: "#ead1dc" },
+    { key: "right", name: "Right", artifacts: totals.right, fill: "#d9ead3" },
+    { key: "both", name: "Both", artifacts: totals.both, fill: "#c9daf8" },
   ].filter((entry) => entry.artifacts > 0);
 
   const chartConfig = {
@@ -41,15 +41,15 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
     },
     left: {
       label: "Left",
-      color: "#d5a6bd",
+      color: "#ead1dc",
     },
     right: {
       label: "Right",
-      color: "#b6d7a8",
+      color: "#d9ead3",
     },
     both: {
       label: "Both",
-      color: "#a4c2f4",
+      color: "#c9daf8",
     },
   } satisfies ChartConfig;
 
@@ -75,7 +75,12 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
                     content={<ChartTooltipContent nameKey="name" hideLabel />}
                   />
                   <Pie data={chartData} dataKey="artifacts">
-                    <LabelList dataKey="artifacts" position="inside" />
+                    <LabelList
+                      dataKey="artifacts"
+                      position="inside"
+                      stroke="none"
+                      style={{ fill: "grey" }}
+                    />
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
