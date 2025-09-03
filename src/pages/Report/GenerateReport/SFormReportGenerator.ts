@@ -23,40 +23,61 @@ export function SFormGeneration(
     mastectomy: getPatientAnswer(67),
     mastectomyPosition: getPatientAnswer(68),
     mastectomyDate: getPatientAnswer(506),
+    mastectomyDateAnother: getPatientAnswer(533),
 
     lumpectomy: getPatientAnswer(69),
     lumpectomyPosition: getPatientAnswer(70),
     lumpectomyDate: getPatientAnswer(507),
+    lumpectomyDateAnother: getPatientAnswer(534),
 
     cystAspiration: getPatientAnswer(71),
     cystAspirationPosition: getPatientAnswer(72),
     cystAspirationDate: getPatientAnswer(508),
+    cystAspirationDateAnother: getPatientAnswer(535),
 
     breastReconstruction: getPatientAnswer(73),
     breastReconstructionPosition: getPatientAnswer(74),
     breastReconstructionDate: getPatientAnswer(509),
+    breastReconstructionDateAnother: getPatientAnswer(536),
 
     augmentation: getPatientAnswer(75),
     augmentationPosition: getPatientAnswer(76),
     augmentationDate: getPatientAnswer(510),
+    augmentationDateAnother: getPatientAnswer(537),
 
     breastSurgeryOthers: getPatientAnswer(77),
     breastSurgeryOthersSpecify: getPatientAnswer(78),
     breastSurgeryOthersSpecifyDirection: getPatientAnswer(489),
     breastSurgeryOthersDate: getPatientAnswer(511),
+    breastSurgeryOthersDateAnother: getPatientAnswer(538),
   };
 
   const breastimplants = {
     breastimplantsyesno: getPatientAnswer(79),
-    implantBothDirection: getPatientAnswer(518),
-    implantleft: getPatientAnswer(423),
-    implantright: getPatientAnswer(167),
     implantsSpecify: getPatientAnswer(80),
+    implantsSpecifyBoth: getPatientAnswer(527),
     implantsOthersSpecify: getPatientAnswer(81),
+    implantsOthersSpecifyBoth: getPatientAnswer(528),
+    implantLeft: getPatientAnswer(423),
     implantDateLeft: getPatientAnswer(82),
+    implantDateBoth: getPatientAnswer(529),
+    implantRight: getPatientAnswer(167),
+    implantDateRight: getPatientAnswer(424),
+    implantsRightSpecify: getPatientAnswer(168),
+    implantsRightOthersSpecify: getPatientAnswer(169),
+    implantBothDirection: getPatientAnswer(518),
     explants: getPatientAnswer(83),
-    explantsDateKnown: getPatientAnswer(497),
+    explantsBoth: getPatientAnswer(530),
     explantsDate: getPatientAnswer(84),
+    explantsDateBoth: getPatientAnswer(84),
+    explantsDateKnown: getPatientAnswer(497),
+    explantsDateKnownRight: getPatientAnswer(531),
+    explantsDateKnownBoth: getPatientAnswer(532),
+    denseBreasts: getPatientAnswer(85),
+    additionalComments: getPatientAnswer(86),
+    explantsRight: getPatientAnswer(294),
+    explantsDateRight: getPatientAnswer(295),
+    explantsDateRightKnown: getPatientAnswer(498),
   };
 
   const densbreast = getPatientAnswer(85);
@@ -202,6 +223,13 @@ export function SFormGeneration(
     biopsyRight: getPatientAnswer(435),
     biopsyRightType: getPatientAnswer(436),
     biopsyLeftType: getPatientAnswer(437),
+
+    performed: getPatientAnswer(239),
+    Biopsyresult: getPatientAnswer(243),
+    Benignother: getPatientAnswer(244),
+    Atypicalother: getPatientAnswer(245),
+    Highrisklesionother: getPatientAnswer(246),
+    Pathology: getPatientAnswer(247),
   };
 
   let report = [];
@@ -209,19 +237,19 @@ export function SFormGeneration(
   //Personal History
   //Pregnant Lactating
   if (pregnant === "Yes") {
-    report.push("The patient is currently pregnant/lactating.");
+    report.push("The patient is currently pregnant/lactating.<br/>");
   }
 
   //Risk Stratification
   //IBIS/Tyrer
   if (ibisScore.length > 0) {
-    report.push(`IBIS/Tyrer-Cuzick Breast Cancer Risk ${ibisScore}%.`);
+    report.push(`IBIS/Tyrer-Cuzick Breast Cancer Risk ${ibisScore}%.<br/>`);
   }
 
   //AURIA Breast Cancer
   if (auriaStatus === "Done") {
     report.push(
-      `AURIA breast cancer tear test performed with ${auriaResult.toLocaleLowerCase()} result.`
+      `AURIA breast cancer tear test performed with ${auriaResult.toLocaleLowerCase()} result.<br/>`
     );
   }
 
@@ -239,121 +267,219 @@ export function SFormGeneration(
       text += ".";
     }
 
-    report.push(text);
+    report.push(text + "<br/>");
   }
 
   //Family History
   if (relatives === "Yes") {
-    report.push(
-      `Family history positive for breast cancer in first-/second-degree relatives.`
-    );
+    report.push(`Family history of breast cancer is present.<br/>`);
+  } else if (relatives === "No") {
+    report.push(`No family history of breast cancer.<br/>`);
+  }
+
+  function formatSurgeryText({
+    condition,
+    type,
+    position,
+    date,
+    dateAnother,
+    customName,
+  }: {
+    condition: string;
+    type: string; // "mastectomy", "lumpectomy", etc.
+    position: string;
+    date: string;
+    dateAnother?: string;
+    customName?: string; // used for "others"
+  }): string | null {
+    if (condition !== "true") return null;
+
+    const surgeryName = customName
+      ? customName.toLowerCase()
+      : type.toLowerCase();
+
+    if (position === "Both") {
+      let parts: string[] = [];
+      if (date?.length > 0) {
+        parts.push(`right: ${formatReadableDate(date)}`);
+      }
+      if (dateAnother && dateAnother?.length > 0) {
+        parts.push(`left: ${formatReadableDate(dateAnother)}`);
+      }
+
+      return parts.length
+        ? `${position} ${surgeryName} done on ${parts.join(", ")}.`
+        : `${position} ${surgeryName} done.`;
+    }
+
+    return `${position} ${surgeryName} done on ${formatReadableDate(date)}.`;
   }
 
   //Previous Breast Surgery
   if (previousSurgery.previousSurgeryYesNo === "Yes") {
-    let text = [];
-    if (previousSurgery.mastectomy === "true") {
-      text.push(
-        `${
-          previousSurgery.mastectomyPosition
-        } mastectomy done on ${formatReadableDate(
-          previousSurgery.mastectomyDate
-        )}.`
-      );
-    }
+  let text: string[] = [];
 
-    if (previousSurgery.lumpectomy === "true") {
-      text.push(
-        `${
-          previousSurgery.lumpectomyPosition
-        } lumpectomy done on ${formatReadableDate(
-          previousSurgery.lumpectomyDate
-        )}.`
-      );
-    }
+  const surgeries = [
+    {
+      condition: previousSurgery.mastectomy,
+      type: "mastectomy",
+      position: previousSurgery.mastectomyPosition,
+      date: previousSurgery.mastectomyDate,
+      dateAnother: previousSurgery.mastectomyDateAnother,
+    },
+    {
+      condition: previousSurgery.lumpectomy,
+      type: "lumpectomy",
+      position: previousSurgery.lumpectomyPosition,
+      date: previousSurgery.lumpectomyDate,
+      dateAnother: previousSurgery.lumpectomyDateAnother,
+    },
+    {
+      condition: previousSurgery.cystAspiration,
+      type: "cyst aspiration",
+      position: previousSurgery.cystAspirationPosition,
+      date: previousSurgery.cystAspirationDate,
+      dateAnother: previousSurgery.cystAspirationDateAnother,
+    },
+    {
+      condition: previousSurgery.breastReconstruction,
+      type: "breast reconstruction",
+      position: previousSurgery.breastReconstructionPosition,
+      date: previousSurgery.breastReconstructionDate,
+      dateAnother: previousSurgery.breastReconstructionDateAnother,
+    },
+    {
+      condition: previousSurgery.augmentation,
+      type: "augmentation",
+      position: previousSurgery.augmentationPosition,
+      date: previousSurgery.augmentationDate,
+      dateAnother: previousSurgery.augmentationDateAnother,
+    },
+    {
+      condition: previousSurgery.breastSurgeryOthers,
+      type: "others",
+      position: previousSurgery.breastSurgeryOthersSpecifyDirection,
+      date: previousSurgery.breastSurgeryOthersDate,
+      dateAnother: previousSurgery.breastSurgeryOthersDateAnother,
+      customName: previousSurgery.breastSurgeryOthersSpecify,
+    },
+  ];
 
-    if (previousSurgery.cystAspiration === "true") {
-      text.push(
-        `${
-          previousSurgery.cystAspirationPosition
-        } cyst aspiration done on ${formatReadableDate(
-          previousSurgery.cystAspirationDate
-        )}.`
-      );
-    }
+  surgeries.forEach((s) => {
+    const line = formatSurgeryText(s);
+    if (line) text.push(line);
+  });
 
-    if (previousSurgery.breastReconstruction === "true") {
-      text.push(
-        `${
-          previousSurgery.breastReconstructionPosition
-        } breast reconstruction done on ${formatReadableDate(
-          previousSurgery.breastReconstructionDate
-        )}.`
-      );
-    }
-
-    if (previousSurgery.augmentation === "true") {
-      text.push(
-        `${
-          previousSurgery.augmentationPosition
-        } augmentation done on ${formatReadableDate(
-          previousSurgery.augmentationDate
-        )}.`
-      );
-    }
-
-    if (previousSurgery.breastSurgeryOthers === "true") {
-      text.push(
-        `${
-          previousSurgery.breastSurgeryOthersSpecifyDirection
-        } ${previousSurgery.breastSurgeryOthersSpecify.toLocaleLowerCase()} done on ${formatReadableDate(
-          previousSurgery.breastSurgeryOthersDate
-        )}.`
-      );
-    }
-
-    report.push(text.join(" "));
-  }
+  report.push(text.join(" ") + "<br/>");
+}
 
   //Breast Implants
   if (breastimplants.breastimplantsyesno === "Yes") {
-    let side = "";
-    if (breastimplants.implantBothDirection === "true") side = "both";
-    if (breastimplants.implantleft === "true") side = "left";
-    if (breastimplants.implantright === "true") side = "right";
+    let text = "";
+    // let side = "";
+    // if (breastimplants.implantBothDirection === "true") side = "both";
+    // if (breastimplants.implantleft === "true") side = "left";
+    // if (breastimplants.implantright === "true") side = "right";
 
-    let type = "";
-    if (breastimplants.implantsSpecify !== "Other") {
-      type = breastimplants.implantsSpecify;
-    } else {
-      type = breastimplants.implantsOthersSpecify;
+    // let type = "";
+    // if (breastimplants.implantsSpecify !== "Other") {
+    //   type = breastimplants.implantsSpecify;
+    // } else {
+    //   type = breastimplants.implantsOthersSpecify;
+    // }
+
+    // let text = `Breast implant present on the ${side}, ${type.toLowerCase()} type, since ${
+    //   breastimplants.implantDateLeft
+    // } year${breastimplants.implantDateLeft === "1" ? "" : "s"}${
+    //   breastimplants.explants === "Yes"
+    //     ? `;  explant done${
+    //         breastimplants.explantsDateKnown === "Yes"
+    //           ? ` ${breastimplants.explantsDate} year${
+    //               breastimplants.explantsDate === "1" ? "" : "s"
+    //             } ago`
+    //           : ""
+    //       }.`
+    //     : "."
+    // }`;
+
+    if (breastimplants.implantBothDirection === "true") {
+      text += `Breast implant present on the both, ${
+        breastimplants.implantsSpecifyBoth.toLocaleLowerCase() !== "other"
+          ? breastimplants.implantsSpecifyBoth.toLocaleLowerCase()
+          : breastimplants.implantsOthersSpecifyBoth.toLocaleLowerCase()
+      } type, since ${breastimplants.implantDateBoth} year${
+        breastimplants.implantDateBoth === "1" ? "" : "s"
+      }${
+        breastimplants.explantsBoth === "Yes"
+          ? `,  explant done${
+              breastimplants.explantsDateKnownBoth === "Yes"
+                ? ` ${breastimplants.explantsDateBoth} year${
+                    breastimplants.explantsDateBoth === "1" ? "" : "s"
+                  } ago`
+                : ""
+            }.`
+          : "."
+      }`;
+    } else if (
+      breastimplants.implantLeft === "true" ||
+      breastimplants.implantRight === "true" ||
+      (breastimplants.implantLeft === "true" &&
+        breastimplants.implantRight === "true")
+    ) {
+      text += `Breast implant present on the`;
+
+      if (breastimplants.implantLeft === "true") {
+        text += ` left, ${
+          breastimplants.implantsSpecify.toLocaleLowerCase() !== "other"
+            ? breastimplants.implantsSpecify.toLocaleLowerCase()
+            : breastimplants.implantsOthersSpecify.toLocaleLowerCase()
+        } type, since ${breastimplants.implantDateLeft} year${
+          breastimplants.implantDateLeft === "1" ? "" : "s"
+        }${
+          breastimplants.explants === "Yes"
+            ? `,  explant done${
+                breastimplants.explantsDateKnown === "Yes"
+                  ? ` ${breastimplants.explantsDate} year${
+                      breastimplants.explantsDate === "1" ? "" : "s"
+                    } ago`
+                  : ""
+              }`
+            : ""
+        }`;
+      }
+      if (breastimplants.implantRight === "true") {
+        text += `${breastimplants.implantLeft === "true" ? `,` : ""} right, ${
+          breastimplants.implantsRightSpecify.toLocaleLowerCase() !== "other"
+            ? breastimplants.implantsRightSpecify.toLocaleLowerCase()
+            : breastimplants.implantsRightOthersSpecify.toLocaleLowerCase()
+        } type, since ${breastimplants.implantDateRight} year${
+          breastimplants.implantDateRight === "1" ? "" : "s"
+        }${
+          breastimplants.explantsRight === "Yes"
+            ? `,  explant done${
+                breastimplants.explantsDateKnownRight === "Yes"
+                  ? ` ${breastimplants.explantsDateRight} year${
+                      breastimplants.explantsDateRight === "1" ? "" : "s"
+                    } ago`
+                  : ""
+              }`
+            : ""
+        }`;
+      }
+
+      text += `.`;
     }
-
-    let text = `Breast implant present on the ${side}, ${type.toLowerCase()} type, since ${
-      breastimplants.implantDateLeft
-    } year${breastimplants.implantDateLeft === "1" ? "" : "s"}${
-      breastimplants.explants === "Yes"
-        ? `;  explant done${
-            breastimplants.explantsDateKnown === "Yes"
-              ? ` ${breastimplants.explantsDate} year${
-                  breastimplants.explantsDate === "1" ? "" : "s"
-                } ago`
-              : ""
-          }.`
-        : "."
-    }`;
-
-    report.push(text);
+    report.push(text + "<br/>");
   }
 
   //Dense breast
   if (densbreast === "Yes") {
-    report.push(`The patient has dense breast(per previous imaging).`);
+    report.push(`The patient has dense breast(per previous imaging).<br/>`);
   }
 
   //Additional Comments
   if (Additionalcomments.length > 0) {
-    report.push(`Additional comments: ${Additionalcomments}.`);
+    report.push(`${Additionalcomments}.<br/>`);
   }
 
   function formatBreastSymptoms(input: string): string {
@@ -386,17 +512,12 @@ export function SFormGeneration(
         breastSymptoms.lumpOrThickStatusCheck === "true" &&
         breastSymptoms.lumpOrThickStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of lump or thickening now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of lump or thickening now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.lumpOrThickStatusCheck === "true" &&
-            breastSymptoms.lumpOrThickStatus !== "Resolved"
-              ? ` are ${breastSymptoms.lumpOrThickStatus.toLocaleLowerCase()}`
-              : ``
-          }: Lump or thickening${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Lump or thickening${
             breastSymptoms.lumpLeft.length > 0 ||
             breastSymptoms.lumpRight.length > 0 ||
             (breastSymptoms.lumpLeft.length > 0 &&
@@ -421,11 +542,18 @@ export function SFormGeneration(
                     : ""
                 }${
                   breastSymptoms.lumpDetails.length > 0
-                    ? `, Additional comments: ${breastSymptoms.lumpDetails}.`
-                    : `.`
+                    ? `, ${breastSymptoms.lumpDetails}`
+                    : ``
                 }`
               : ""
-          }`
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.lumpOrThickStatusCheck === "true" &&
+            breastSymptoms.lumpOrThickStatus !== "Resolved"
+              ? `: ${breastSymptoms.lumpOrThickStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -438,17 +566,12 @@ export function SFormGeneration(
         breastSymptoms.skinChangesStatusCheck === "true" &&
         breastSymptoms.skinChangesStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of skin changes now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of skin changes now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.skinChangesStatusCheck === "true" &&
-            breastSymptoms.skinChangesStatus !== "Resolved"
-              ? ` are ${breastSymptoms.skinChangesStatus.toLocaleLowerCase()}`
-              : ``
-          }: Skin changes${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Skin changes${
             breastSymptoms.skinLeft.length > 0 ||
             breastSymptoms.skinRight.length > 0 ||
             (breastSymptoms.skinLeft.length > 0 &&
@@ -477,11 +600,18 @@ export function SFormGeneration(
                     : ""
                 }${
                   breastSymptoms.skinDetails.length > 0
-                    ? `, Additional comments: ${breastSymptoms.skinDetails}.`
-                    : `.`
+                    ? `, ${breastSymptoms.skinDetails}`
+                    : ``
                 }`
               : ""
-          }`
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.skinChangesStatusCheck === "true" &&
+            breastSymptoms.skinChangesStatus !== "Resolved"
+              ? `: ${breastSymptoms.skinChangesStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -494,17 +624,12 @@ export function SFormGeneration(
         breastSymptoms.nippleDischargeStatusCheck === "true" &&
         breastSymptoms.nippleDischargeStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of nipple discharge now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of nipple discharge now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.nippleDischargeStatusCheck === "true" &&
-            breastSymptoms.nippleDischargeStatus !== "Resolved"
-              ? ` are ${breastSymptoms.nippleDischargeStatus.toLocaleLowerCase()}`
-              : ``
-          }: Nipple discharge${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Nipple discharge${
             breastSymptoms.nippleLeft.length > 0 ||
             breastSymptoms.nippleRight.length > 0 ||
             (breastSymptoms.nippleLeft.length > 0 &&
@@ -521,11 +646,18 @@ export function SFormGeneration(
                     : ""
                 }${
                   breastSymptoms.nippleDetails.length > 0
-                    ? `, Additional comments: ${breastSymptoms.nippleDetails}.`
-                    : `.`
+                    ? `, ${breastSymptoms.nippleDetails}`
+                    : ``
                 }`
               : ""
-          }`
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.nippleDischargeStatusCheck === "true" &&
+            breastSymptoms.nippleDischargeStatus !== "Resolved"
+              ? `: ${breastSymptoms.nippleDischargeStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -538,17 +670,12 @@ export function SFormGeneration(
         breastSymptoms.breastPainStatusCheck === "true" &&
         breastSymptoms.breastPainStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of breast pain now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of breast pain now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.breastPainStatusCheck === "true" &&
-            breastSymptoms.breastPainStatus !== "Resolved"
-              ? ` are ${breastSymptoms.breastPainStatus.toLocaleLowerCase()}`
-              : ``
-          }: Breast pain${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Breast pain${
             breastSymptoms.breastPainLeft.length > 0 ||
             breastSymptoms.breastPainRight.length > 0 ||
             (breastSymptoms.breastPainLeft.length > 0 &&
@@ -569,11 +696,18 @@ export function SFormGeneration(
                     : ""
                 }${
                   breastSymptoms.breastPainDetails.length > 0
-                    ? `, Type of pain: ${breastSymptoms.breastPainDetails}.`
-                    : `.`
+                    ? `, ${breastSymptoms.breastPainDetails}`
+                    : ``
                 }`
               : ""
-          }`
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.breastPainStatusCheck === "true" &&
+            breastSymptoms.breastPainStatus !== "Resolved"
+              ? `: ${breastSymptoms.breastPainStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -586,17 +720,12 @@ export function SFormGeneration(
         breastSymptoms.nipplePainStatusCheck === "true" &&
         breastSymptoms.nipplePainStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of nipple changes now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of nipple changes now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.nipplePainStatusCheck === "true" &&
-            breastSymptoms.nipplePainStatus !== "Resolved"
-              ? ` are ${breastSymptoms.nipplePainStatus.toLocaleLowerCase()}`
-              : ``
-          }: Nipple changes${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Nipple changes${
             breastSymptoms.nipplePainLeft.length > 0 ||
             breastSymptoms.nipplePainRight.length > 0 ||
             (breastSymptoms.nipplePainLeft.length > 0 &&
@@ -629,11 +758,18 @@ export function SFormGeneration(
                     : ""
                 }${
                   breastSymptoms.nipplePainDetails.length > 0
-                    ? `, Additional comments: ${breastSymptoms.nipplePainDetails}.`
-                    : `.`
+                    ? `, ${breastSymptoms.nipplePainDetails}`
+                    : ``
                 }`
               : ""
-          }`
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.nipplePainStatusCheck === "true" &&
+            breastSymptoms.nipplePainStatus !== "Resolved"
+              ? `: ${breastSymptoms.nipplePainStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -646,17 +782,12 @@ export function SFormGeneration(
         breastSymptoms.lymphNodesStatusCheck === "true" &&
         breastSymptoms.lymphNodesStatus === "Resolved"
       ) {
-        text.push(`Previous symptoms of lymph node swelling now resolved`);
+        text.push(
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of lymph node swelling now resolved.</li></ol>`
+        );
       } else {
         text.push(
-          `Current breast symptoms${
-            breastSymptoms.categoryId === "4" &&
-            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
-            breastSymptoms.lymphNodesStatusCheck === "true" &&
-            breastSymptoms.lymphNodesStatus !== "Resolved"
-              ? ` are ${breastSymptoms.lymphNodesStatus.toLocaleLowerCase()}`
-              : ``
-          }: Lymph node swelling${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Lymph node swelling${
             breastSymptoms.lymphNodesRight.length > 0 ||
             breastSymptoms.lymphNodesLeft.length > 0 ||
             (breastSymptoms.lymphNodesRight.length > 0 &&
@@ -696,9 +827,16 @@ export function SFormGeneration(
               : ``
           }${
             breastSymptoms.lymphNodesDetails.length > 0
-              ? `, Additional comments: ${breastSymptoms.lymphNodesDetails}.`
-              : `.`
-          }`
+              ? `, ${breastSymptoms.lymphNodesDetails}`
+              : ``
+          }${
+            breastSymptoms.categoryId === "4" &&
+            breastSymptoms.cbreastCancerSymptoms === "Yes" &&
+            breastSymptoms.lymphNodesStatusCheck === "true" &&
+            breastSymptoms.lymphNodesStatus !== "Resolved"
+              ? `: ${breastSymptoms.lymphNodesStatus.toLocaleLowerCase()}`
+              : ``
+          }.</li></ol>`
         );
       }
     }
@@ -712,23 +850,29 @@ export function SFormGeneration(
         breastSymptoms.othersStatus === "Resolved"
       ) {
         text.push(
-          `Previous symptoms of ${breastSymptoms.othersDetails} now resolved`
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Previous symptoms of ${breastSymptoms.othersDetails} now resolved.</li></ol>`
         );
       } else {
         text.push(
-          `Others${
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Others: ${
+            breastSymptoms.othersDetails
+          }${
             breastSymptoms.categoryId === "4" &&
             breastSymptoms.cbreastCancerSymptoms === "Yes" &&
             breastSymptoms.othersStatusCheck === "true" &&
             breastSymptoms.othersStatus !== "Resolved"
-              ? ` are ${breastSymptoms.othersStatus.toLocaleLowerCase()}`
+              ? `: ${breastSymptoms.othersStatus.toLocaleLowerCase()}`
               : ``
-          }: ${breastSymptoms.othersDetails}.`
+          }.</li></ol>`
         );
       }
     }
 
-    report.push(text.join("<br/>"));
+    if (text.length > 0) {
+      report.push(
+        "<strong>Current breast symptoms:</strong><br/>" + text.join("")
+      );
+    }
   }
 
   //Previous Imaging in past 3 years
@@ -745,18 +889,20 @@ export function SFormGeneration(
       return ``;
     }
 
-    return `${label}${
+    return `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>${label}${
       dateknown === "Known" && date.length > 0
         ? ` performed on ${formatReadableDate(date)}`
         : ""
     }, result ${result.toLocaleLowerCase()}.${
       reportAvailable === "Not Available" ? ` Report not available.` : ``
-    }`;
+    }</li></ol>`;
   };
+
+  let previousImagingReport = [];
 
   //Thermogram
   if (previousImaging.thermogramYesNo === "Yes") {
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "Thermogram",
         previousImaging.thermogramYesNo,
@@ -770,7 +916,7 @@ export function SFormGeneration(
 
   //Mammogram
   if (previousImaging.mammogramYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "Mammogram",
         previousImaging.mammogramYesNo,
@@ -783,7 +929,7 @@ export function SFormGeneration(
 
   //Breast Ultrasound
   if (previousImaging.breastUltrasoundYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "Breast ultrasound / HERscan",
         previousImaging.breastUltrasoundYesNo,
@@ -796,7 +942,7 @@ export function SFormGeneration(
 
   //Breast MRI
   if (previousImaging.breastMRIYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "Breast MRI",
         previousImaging.breastMRIYesNo,
@@ -809,7 +955,7 @@ export function SFormGeneration(
 
   //PET/CT
   if (previousImaging.petctYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "PET/CT scan",
         previousImaging.petctYesNo,
@@ -822,7 +968,7 @@ export function SFormGeneration(
 
   //QT Imaging
   if (previousImaging.qtImagingYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "QT imaging",
         previousImaging.qtImagingYesNo,
@@ -835,7 +981,7 @@ export function SFormGeneration(
 
   //Other Imaging
   if (previousImaging.otherImagingYesNo === "Yes")
-    report.push(
+    previousImagingReport.push(
       generatepreviousImaging(
         "Other imaging",
         previousImaging.otherImagingYesNo,
@@ -846,16 +992,22 @@ export function SFormGeneration(
       )
     );
 
+  if (previousImagingReport.length > 0) {
+    report.push(
+      `<strong>Imaging:</strong><br/>${previousImagingReport.join("")}`
+    );
+  }
+
   //Biopsy
   if (biopsy.previousBiopsy === "Yes" || biopsy.previousBiopsy === "Unknown") {
-    report.push(
-      `Previous biopsy:${
+    const biopsyReport = [];
+    biopsyReport.push(
+      `${
         biopsy.previousBiopsy === "Yes"
           ? ` Date: ${formatReadableDate(biopsy.previousBiopsyDate)}.`
           : ""
       }${
-        biopsy.biopsyResults === "Yes" ||
-        biopsy.biopsyResults === "Unknown"
+        biopsy.biopsyResults === "Yes" || biopsy.biopsyResults === "Unknown"
           ? ` Result: ${
               biopsy.biopsyResults === "Yes"
                 ? `${biopsy.biopsyResultsDetails}.`
@@ -876,11 +1028,40 @@ export function SFormGeneration(
           : ""
       }${
         biopsy.additionalComments.length > 0
-          ? ` Additional comments: ${biopsy.additionalComments}.`
+          ? ` ${biopsy.additionalComments}.`
           : ""
       }`
     );
+
+    if (
+      biopsy.performed === "Yes" &&
+      biopsy.Biopsyresult !== "Unknown" &&
+      breastSymptoms.categoryId === "2"
+    ) {
+      biopsyReport.push(
+        `Results: ${biopsy.Biopsyresult.toLocaleLowerCase()}${
+          biopsy.Biopsyresult === "Benign" && biopsy.Benignother.length > 0
+            ? ` (${biopsy.Benignother})`
+            : ``
+        }${
+          biopsy.Biopsyresult === "Atypical" && biopsy.Atypicalother.length > 0
+            ? ` (${biopsy.Atypicalother})`
+            : ``
+        }${
+          biopsy.Biopsyresult === "High-risk lesion" &&
+          biopsy.Highrisklesionother.length > 0
+            ? ` (${biopsy.Highrisklesionother})`
+            : ``
+        }.`
+      );
+    }
+
+    report.push(
+      `<strong>Biopsy:</strong><br/><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>` +
+        biopsyReport.join(" ") +
+        "</li></ol>"
+    );
   }
 
-  return report.join("<br/>");
+  return report.join("");
 }

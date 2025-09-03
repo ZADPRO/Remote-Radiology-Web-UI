@@ -17,37 +17,50 @@ interface QuestionIds {
   mastectomy: number;
   mastectomyPosition: number;
   mastectomyDate: number;
+  mastectomyDateAnother: number;
   lumpectomy: number;
   lumpectomyPosition: number;
   lumpectomyDate: number;
+  lumpectomyDateAnother: number;
   cystAspiration: number;
   cystAspirationPosition: number;
   cystAspirationDate: number;
+  cystAspirationDateAnother: number;
   breastReconstruction: number;
   breastReconstructionPosition: number;
   breastReconstructionDate: number;
+  breastReconstructionDateAnother: number;
   augmentation: number;
   augmentationposition: number;
   augmentationDate: number;
+  augmentationDateAnother: number;
   breastSurgeryOthers: number;
   breastSurgeryOthersSpecify: number;
   breastSurgeryOthersSpecifyDirection: number;
   breastSurgeryOthersDate: number;
+  breastSurgeryOthersDateAnother: number;
   implants: number;
   implantsSpecify: number;
+  implantsSpecifyBoth: number;
   implantsOthersSpecify: number;
-  explants: number;
-  explantsDate: number;
-  explantsDateKnown: number;
-  denseBreasts: number;
-  additionalComments: number;
+  implantsOthersSpecifyBoth: number;
   implantLeft: number;
   implantDateLeft: number;
+  implantDateBoth: number;
   implantRight: number;
   implantDateRight: number;
   implantsRightSpecify: number;
   implantsRightOthersSpecify: number;
   implantBothDirection: number;
+  explants: number;
+  explantsBoth: number;
+  explantsDate: number;
+  explantsDateBoth: number;
+  explantsDateKnown: number;
+  explantsDateKnownRight: number;
+  explantsDateKnownBoth: number;
+  denseBreasts: number;
+  additionalComments: number;
   explantsRight: number;
   explantsDateRight: number;
   explantsDateRightKnown: number;
@@ -73,7 +86,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="PERSONAL MEDICAL HISTORY" className="uppercase" />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
@@ -99,30 +117,35 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                   id: "mastectomy",
                   posId: "mastectomyPosition",
                   dateId: "mastectomyDate",
+                  dateIdAnother: "mastectomyDateAnother",
                 },
                 {
                   label: "Lumpectomy",
                   id: "lumpectomy",
                   posId: "lumpectomyPosition",
                   dateId: "lumpectomyDate",
+                  dateIdAnother: "lumpectomyDateAnother",
                 },
                 {
                   label: "Cyst Aspiration",
                   id: "cystAspiration",
                   posId: "cystAspirationPosition",
                   dateId: "cystAspirationDate",
+                  dateIdAnother: "cystAspirationDateAnother",
                 },
                 {
                   label: "Breast Reconstruction",
                   id: "breastReconstruction",
                   posId: "breastReconstructionPosition",
                   dateId: "breastReconstructionDate",
+                  dateIdAnother: "breastReconstructionDateAnother",
                 },
                 {
                   label: "Augmentation",
                   id: "augmentation",
                   posId: "augmentationposition",
                   dateId: "augmentationDate",
+                  dateIdAnother: "augmentationDateAnother",
                 },
               ].map((item) => {
                 const checked =
@@ -190,30 +213,70 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                         </div>
 
                         {/* Date Picker */}
-                        <div className="flex-1 min-w-40 max-w-50">
-                          <DatePicker
-                            value={
-                              getAnswer(
-                                questionIds[item.dateId as keyof QuestionIds]
-                              )
-                                ? parseLocalDate(
-                                    getAnswer(
-                                      questionIds[
-                                        item.dateId as keyof QuestionIds
-                                      ]
+                        <div className="flex flex-wrap gap-3">
+                          <div className="flex-1 flex gap-2 min-w-50 max-w-60">
+                            {getAnswer(
+                              questionIds[item.posId as keyof QuestionIds]
+                            ) === "Both" && <Label>R-</Label>}
+                            <DatePicker
+                              value={
+                                getAnswer(
+                                  questionIds[item.dateId as keyof QuestionIds]
+                                )
+                                  ? parseLocalDate(
+                                      getAnswer(
+                                        questionIds[
+                                          item.dateId as keyof QuestionIds
+                                        ]
+                                      )
                                     )
+                                  : undefined
+                              }
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds[item.dateId as keyof QuestionIds],
+                                  e?.toLocaleDateString("en-CA") || ""
+                                )
+                              }
+                              disabledDates={dateDisablers.noFuture}
+                              required
+                            />
+                          </div>
+
+                          {getAnswer(
+                            questionIds[item.posId as keyof QuestionIds]
+                          ) === "Both" && (
+                            <div className="flex-1 flex gap-2 min-w-50 max-w-60">
+                              <Label>L-</Label>
+                              <DatePicker
+                                value={
+                                  getAnswer(
+                                    questionIds[
+                                      item.dateIdAnother as keyof QuestionIds
+                                    ]
                                   )
-                                : undefined
-                            }
-                            onChange={(e) =>
-                              handleInputChange(
-                                questionIds[item.dateId as keyof QuestionIds],
-                                e?.toLocaleDateString("en-CA") || ""
-                              )
-                            }
-                            disabledDates={dateDisablers.noFuture}
-                            required
-                          />
+                                    ? parseLocalDate(
+                                        getAnswer(
+                                          questionIds[
+                                            item.dateIdAnother as keyof QuestionIds
+                                          ]
+                                        )
+                                      )
+                                    : undefined
+                                }
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    questionIds[
+                                      item.dateIdAnother as keyof QuestionIds
+                                    ],
+                                    e?.toLocaleDateString("en-CA") || ""
+                                  )
+                                }
+                                disabledDates={dateDisablers.noFuture}
+                                required
+                              />
+                            </div>
+                          )}
                         </div>
                       </>
                     )}
@@ -290,24 +353,58 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       ))}
                     </div>
 
-                    {/* Date picker */}
-                    <div className="flex-1 min-w-[160px] max-w-[200px]">
-                      <DatePicker
-                        value={
-                          getAnswer(questionIds.breastSurgeryOthersDate)
-                            ? parseLocalDate(
-                                getAnswer(questionIds.breastSurgeryOthersDate)
+                    <div className="flex flex-wrap gap-3">
+                      {/* Date picker */}
+                      <div className="flex-1 flex gap-2 min-w-[230px] max-w-[230px]">
+                        {getAnswer(
+                          questionIds.breastSurgeryOthersSpecifyDirection
+                        ) === "Both" && <Label>R-</Label>}
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.breastSurgeryOthersDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.breastSurgeryOthersDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              questionIds.breastSurgeryOthersDate,
+                              e?.toLocaleDateString("en-CA") || ""
+                            )
+                          }
+                          disabledDates={dateDisablers.noFuture}
+                          required
+                        />
+                      </div>
+                      {getAnswer(
+                        questionIds.breastSurgeryOthersSpecifyDirection
+                      ) === "Both" && (
+                        <div className="flex-1 flex gap-2 min-w-[230px] max-w-[230px]">
+                          <Label>L-</Label>
+                          <DatePicker
+                            value={
+                              getAnswer(
+                                questionIds.breastSurgeryOthersDateAnother
                               )
-                            : undefined
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            questionIds.breastSurgeryOthersDate,
-                            e?.toLocaleDateString("en-CA") || ""
-                          )
-                        }
-                        required
-                      />
+                                ? parseLocalDate(
+                                    getAnswer(
+                                      questionIds.breastSurgeryOthersDateAnother
+                                    )
+                                  )
+                                : undefined
+                            }
+                            onChange={(e) =>
+                              handleInputChange(
+                                questionIds.breastSurgeryOthersDateAnother,
+                                e?.toLocaleDateString("en-CA") || ""
+                              )
+                            }
+                            disabledDates={dateDisablers.noFuture}
+                            required
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -371,16 +468,13 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   value={value}
                                   className="custom-radio"
                                   checked={
-                                    getAnswer(questionIds.implantsSpecify) ===
-                                    value
+                                    getAnswer(
+                                      questionIds.implantsSpecifyBoth
+                                    ) === value
                                   }
                                   onChange={(e) => {
                                     handleInputChange(
-                                      questionIds.implantsSpecify,
-                                      e.target.value
-                                    );
-                                    handleInputChange(
-                                      questionIds.implantsRightSpecify,
+                                      questionIds.implantsSpecifyBoth,
                                       e.target.value
                                     );
                                   }}
@@ -390,21 +484,17 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               </div>
                             );
                           })}
-                          {getAnswer(questionIds.implantsSpecify) ===
+                          {getAnswer(questionIds.implantsSpecifyBoth) ===
                             "Other" && (
                             <Input
                               placeholder="Please specify"
                               value={getAnswer(
-                                questionIds.implantsOthersSpecify
+                                questionIds.implantsOthersSpecifyBoth
                               )}
                               className="w-64"
                               onChange={(e) => {
                                 handleInputChange(
-                                  questionIds.implantsOthersSpecify,
-                                  e.target.value
-                                );
-                                handleInputChange(
-                                  questionIds.implantsRightOthersSpecify,
+                                  questionIds.implantsOthersSpecifyBoth,
                                   e.target.value
                                 );
                               }}
@@ -417,14 +507,10 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             type="number"
                             placeholder="Duration"
                             className="lg:w-38"
-                            value={getAnswer(questionIds.implantDateLeft)}
+                            value={getAnswer(questionIds.implantDateBoth)}
                             onChange={(e) => {
                               handleInputChange(
-                                questionIds.implantDateLeft,
-                                e.target.value
-                              );
-                              handleInputChange(
-                                questionIds.implantDateRight,
+                                questionIds.implantDateBoth,
                                 e.target.value
                               );
                             }}
@@ -438,12 +524,11 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           <div className="flex items-center gap-2">
                             <MultiRadioOptionalInputInline
                               label="Explants"
-                              questionId={questionIds.explants}
+                              questionId={questionIds.explantsBoth}
                               formData={formData}
                               handleInputChange={(_id, value) => {
-                                handleInputChange(questionIds.explants, value);
                                 handleInputChange(
-                                  questionIds.explantsRight,
+                                  questionIds.explantsBoth,
                                   value
                                 );
                               }}
@@ -455,19 +540,15 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             />
                           </div>
 
-                          {getAnswer(questionIds.explants) === "Yes" && (
+                          {getAnswer(questionIds.explantsBoth) === "Yes" && (
                             <div className="flex flex-wrap flex-col lg:flex-row gap-1 lg:gap-4 w-full">
                               <MultiRadioOptionalInputInline
                                 label="Is the date known?"
-                                questionId={questionIds.explantsDateKnown}
+                                questionId={questionIds.explantsDateKnownBoth}
                                 formData={formData}
                                 handleInputChange={(_id, value) => {
                                   handleInputChange(
-                                    questionIds.explantsDateKnown,
-                                    value
-                                  );
-                                  handleInputChange(
-                                    questionIds.explantsDateRightKnown,
+                                    questionIds.explantsDateKnownBoth,
                                     value
                                   );
                                 }}
@@ -478,21 +559,19 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 className="w-auto"
                               />
 
-                              {getAnswer(questionIds.explantsDateKnown) ===
+                              {getAnswer(questionIds.explantsDateKnownBoth) ===
                                 "Yes" && (
                                 <div className="flex items-center gap-2">
                                   <Input
                                     type="number"
                                     placeholder="Duration"
                                     className="lg:w-38"
-                                    value={getAnswer(questionIds.explantsDate)}
+                                    value={getAnswer(
+                                      questionIds.explantsDateBoth
+                                    )}
                                     onChange={(e) => {
                                       handleInputChange(
-                                        questionIds.explantsDate,
-                                        e.target.value
-                                      );
-                                      handleInputChange(
-                                        questionIds.explantsDateRight,
+                                        questionIds.explantsDateBoth,
                                         e.target.value
                                       );
                                     }}
@@ -524,11 +603,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               ? "false"
                               : "true"
                           );
-                          handleInputChange(
-                            questionIds.implantBothDirection,
-                            "false"
-                          );
-                          handleInputChange(questionIds.implantRight, "false");
                         }}
                         required={
                           getAnswer(questionIds.implants) === "Yes" &&
@@ -570,10 +644,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       questionIds.implantsSpecify,
                                       e.target.value
                                     );
-                                    handleInputChange(
-                                      questionIds.implantsRightSpecify,
-                                      e.target.value
-                                    );
                                   }}
                                   required
                                 />
@@ -594,10 +664,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                   questionIds.implantsOthersSpecify,
                                   e.target.value
                                 );
-                                handleInputChange(
-                                  questionIds.implantsRightOthersSpecify,
-                                  e.target.value
-                                );
                               }}
                             />
                           )}
@@ -610,10 +676,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             className="lg:w-38"
                             value={getAnswer(questionIds.implantDateLeft)}
                             onChange={(e) => {
-                              handleInputChange(
-                                questionIds.implantDateRight,
-                                e.target.value
-                              );
                               handleInputChange(
                                 questionIds.implantDateLeft,
                                 e.target.value
@@ -695,12 +757,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               ? "false"
                               : "true"
                           );
-
-                          handleInputChange(
-                            questionIds.implantBothDirection,
-                            "false"
-                          );
-                          handleInputChange(questionIds.implantLeft, "false");
                         }}
                         required={
                           getAnswer(questionIds.implants) === "Yes" &&
@@ -779,10 +835,6 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 questionIds.implantDateRight,
                                 e.target.value
                               );
-                              handleInputChange(
-                                questionIds.implantDateLeft,
-                                e.target.value
-                              );
                             }}
                           />
                           <Label className="text-sm font-medium">Years</Label>
@@ -791,7 +843,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                         <div className="flex flex-col gap-2">
                           <MultiRadioOptionalInputInline
                             label="Explants"
-                            questionId={questionIds.explants}
+                            questionId={questionIds.explantsRight}
                             formData={formData}
                             handleInputChange={handleInputChange}
                             options={[
@@ -800,11 +852,11 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             ]}
                             className="w-auto"
                           />
-                          {getAnswer(questionIds.explants) === "Yes" && (
+                          {getAnswer(questionIds.explantsRight) === "Yes" && (
                             <div className="flex flex-wrap gap-1 lg:gap-4 w-full">
                               <MultiRadioOptionalInputInline
                                 label="Is the date known?"
-                                questionId={questionIds.explantsDateKnown}
+                                questionId={questionIds.explantsDateKnownRight}
                                 formData={formData}
                                 handleInputChange={handleInputChange}
                                 options={[
@@ -814,7 +866,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                 className="w-auto"
                               />
 
-                              {getAnswer(questionIds.explantsDateKnown) ===
+                              {getAnswer(questionIds.explantsDateKnownRight) ===
                                 "Yes" && (
                                 <div className="flex gap-2">
                                   <Input
@@ -826,11 +878,7 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                     )}
                                     onChange={(e) => {
                                       handleInputChange(
-                                        questionIds.implantDateRight,
-                                        e.target.value
-                                      );
-                                      handleInputChange(
-                                        questionIds.implantDateLeft,
+                                        questionIds.explantsDateRight,
                                         e.target.value
                                       );
                                     }}

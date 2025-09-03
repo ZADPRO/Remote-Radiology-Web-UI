@@ -257,6 +257,62 @@ const ComparisonPriorRight: React.FC<Props> = ({
               {/* Table */}
               <div className="flex gap-3">
                 <div className="flex-1">
+                  {/* Radio groups */}
+                  <div className="flex w-full mt-3  gap-3 items-center">
+                    <Label className="w-60 font-semibold">Previous Scan</Label>
+                    <div className="flex w-full gap-2 flex-wrap">
+                      {PREVIOUS_SCAN_OPTIONS.map((opt) => (
+                        <label
+                          key={opt}
+                          className="flex items-center gap-2 min-h-10"
+                        >
+                          <input
+                            type="radio"
+                            checked={data.previous === opt}
+                            className="custom-radio"
+                            value={opt}
+                            onChange={() =>
+                              updateLesionField(i, "previous", opt)
+                            }
+                          />
+                          {opt}
+                        </label>
+                      ))}
+                      {data.previous === "lesions present" && (
+                        <Input
+                          type="text"
+                          className="w-60"
+                          value={data.lesionspresent}
+                          onChange={(e) =>
+                            updateLesionField(
+                              i,
+                              "lesionspresent",
+                              e.target.value
+                            )
+                          }
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Radio groups */}
+                  <div className="flex w-full my-4 gap-3 items-center">
+                    <Label className="w-60 font-semibold">
+                      {side === "Right" ? "R" : "L"}
+                      {i + 1}
+                    </Label>
+                    <div className="w-full">
+                      <Input
+                        type="text"
+                        className="w-60"
+                        value={data.vol2}
+                        onChange={(e) =>
+                          updateLesionField(i, "vol2", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+
                   <div className="overflow-x-auto rounded-xl border border-[#f0eae6]">
                     <table className="table-auto w-full text-sm bg-[#fff9f6]">
                       <thead className="bg-[#f7f5f2] font-semibold">
@@ -431,62 +487,6 @@ const ComparisonPriorRight: React.FC<Props> = ({
                         ))}
                       </tbody>
                     </table>
-                  </div>
-
-                  {/* Radio groups */}
-                  <div className="flex w-full mt-4 gap-3 items-center">
-                    <Label className="w-60 font-semibold">
-                      {side === "Right" ? "R" : "L"}
-                      {i + 1}
-                    </Label>
-                    <div className="w-full">
-                      <Input
-                        type="text"
-                        className="w-60"
-                        value={data.vol2}
-                        onChange={(e) =>
-                          updateLesionField(i, "vol2", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  {/* Radio groups */}
-                  <div className="flex w-full mt-3  gap-3 items-center">
-                    <Label className="w-60 font-semibold">Previous Scan</Label>
-                    <div className="flex w-full gap-2 flex-wrap">
-                      {PREVIOUS_SCAN_OPTIONS.map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-2 min-h-10"
-                        >
-                          <input
-                            type="radio"
-                            checked={data.previous === opt}
-                            className="custom-radio"
-                            value={opt}
-                            onChange={() =>
-                              updateLesionField(i, "previous", opt)
-                            }
-                          />
-                          {opt}
-                        </label>
-                      ))}
-                      {data.previous === "lesions present" && (
-                        <Input
-                          type="text"
-                          className="w-60"
-                          value={data.lesionspresent}
-                          onChange={(e) =>
-                            updateLesionField(
-                              i,
-                              "lesionspresent",
-                              e.target.value
-                            )
-                          }
-                        />
-                      )}
-                    </div>
                   </div>
 
                   <div className="flex w-full mt-3 gap-3 items-center">

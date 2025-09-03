@@ -56,16 +56,142 @@ export function AutoPopulateReport(
   if (getPatientAnswer(79) === "Yes") {
     getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
       handleReportInputChange(breastImpantQuestions.breastImplants, "Present");
-    getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+    if (
+      getPatientAnswer(518) === "true" &&
+      getreportAnswer(breastImpantQuestions.implantConfiguration) === ""
+    ) {
       handleReportInputChange(
-        breastImpantQuestions.implantMaterial,
-        getPatientAnswer(80)
+        breastImpantQuestions.implantConfiguration,
+        "Bilateral Similar"
       );
-    getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+      getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterial,
+          getPatientAnswer(527)
+        );
+
+      getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterialOther,
+          getPatientAnswer(528)
+        );
+    } else if (
+      getPatientAnswer(423) === "true" &&
+      getPatientAnswer(167) === "true" &&
+      getreportAnswer(breastImpantQuestions.implantConfiguration) === ""
+    ) {
       handleReportInputChange(
-        breastImpantQuestions.implantMaterialOther,
-        getPatientAnswer(81)
+        breastImpantQuestions.implantConfiguration,
+        "Bilateral Dissimilar"
       );
+      getreportAnswer(breastImpantQuestions.bilateraldissimilar) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.bilateraldissimilar,
+          `R-${
+            getPatientAnswer(80) === "Other"
+              ? getPatientAnswer(81)
+              : getPatientAnswer(80)
+          },L-${
+            getPatientAnswer(168) === "Other"
+              ? getPatientAnswer(169)
+              : getPatientAnswer(168)
+          }`
+        );
+    } else if (
+      getPatientAnswer(423) === "true" &&
+      getreportAnswer(breastImpantQuestions.implantConfiguration) === ""
+    ) {
+      handleReportInputChange(
+        breastImpantQuestions.implantConfiguration,
+        "Unilateral Left"
+      );
+
+      getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterial,
+          getPatientAnswer(80)
+        );
+
+      getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterialOther,
+          getPatientAnswer(81)
+        );
+    } else if (
+      getPatientAnswer(167) === "true" &&
+      getreportAnswer(breastImpantQuestions.implantConfiguration) === ""
+    ) {
+      handleReportInputChange(
+        breastImpantQuestions.implantConfiguration,
+        "Unilateral Right"
+      );
+
+      getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterial,
+          getPatientAnswer(168)
+        );
+
+      getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantMaterialOther,
+          getPatientAnswer(169)
+        );
+    }
+    // getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+    //   handleReportInputChange(
+    //     breastImpantQuestions.implantMaterial,
+    //     getPatientAnswer(80)
+    //   );
+    // getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
+    //   handleReportInputChange(
+    //     breastImpantQuestions.implantMaterialOther,
+    //     getPatientAnswer(81)
+    //   );
+  }
+
+  if (getTechnicianAnswer(19) === "true") {
+    if (
+      getTechnicianAnswer(21) === "true" &&
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleDeformity) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleDeformity,
+        "Present"
+      );
+    }
+
+    if (
+      getTechnicianAnswer(22) === "true" &&
+      getreportAnswer(nippleAreolaSkinLeftQuestions.nippleDeformity) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleDeformity,
+        "Present"
+      );
+    }
+  }
+
+  if (getPatientAnswer(111) === "true") {
+    if (
+      getPatientAnswer(112) === "true" &&
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleRetraction,
+        "Present"
+      );
+    }
+
+    if (
+      getPatientAnswer(113) === "true" &&
+      getPatientAnswer(nippleAreolaSkinLeftQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleRetraction,
+        "Present"
+      );
+    }
   }
 
   getreportAnswer(breastImpantQuestions.displacement) === "" &&
@@ -161,20 +287,20 @@ export function AutoPopulateReport(
       handleReportInputChange(questionIds.symmetry, "Symmetry");
   }
 
-  function nippleAreola(questionIds: { [key: string]: number }, side: string) {
+  function nippleAreola(questionIds: { [key: string]: number }, _: string) {
     getreportAnswer(questionIds.nippleSelect) === "" &&
       handleReportInputChange(questionIds.nippleSelect, "Present");
     getreportAnswer(questionIds.skinChanges) === "" &&
       handleReportInputChange(questionIds.skinChanges, "Normal");
-    getreportAnswer(questionIds.nippleDeformity) === "" &&
-      handleReportInputChange(questionIds.nippleDeformity, "Absent");
+    // getreportAnswer(questionIds.nippleDeformity) === "" &&
+    //   handleReportInputChange(questionIds.nippleDeformity, "Absent");
     getreportAnswer(questionIds.architecture) === "" &&
       handleReportInputChange(questionIds.architecture, "Normal");
-    if (getreportAnswer(questionIds.nippleRetraction) === "") {
-      const answer = getPatientAnswer(side === "Right" ? 112 : 113) || "Absent";
+    // if (getreportAnswer(questionIds.nippleRetraction) === "") {
+    //   const answer = getPatientAnswer(side === "Right" ? 112 : 113) || "Absent";
 
-      handleReportInputChange(questionIds.nippleRetraction, answer);
-    }
+    //   handleReportInputChange(questionIds.nippleRetraction, answer);
+    // }
   }
 
   function glandularAndDuctalTissue(questionIds: { [key: string]: number }) {

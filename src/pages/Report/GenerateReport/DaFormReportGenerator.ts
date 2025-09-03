@@ -274,26 +274,26 @@ export function DaFormReportGenerator(
 
   //Biopsy Information
   //Biopsy Result
-  if (biopsyinfo.performed === "Yes" && biopsyinfo.Biopsyresult !== "Unknown") {
-    report.push(
-      `Biospy results: ${biopsyinfo.Biopsyresult.toLocaleLowerCase()}${
-        biopsyinfo.Biopsyresult === "Benign" &&
-        biopsyinfo.Benignother.length > 0
-          ? ` (${biopsyinfo.Benignother})`
-          : ``
-      }${
-        biopsyinfo.Biopsyresult === "Atypical" &&
-        biopsyinfo.Atypicalother.length > 0
-          ? ` (${biopsyinfo.Atypicalother})`
-          : ``
-      }${
-        biopsyinfo.Biopsyresult === "High-risk lesion" &&
-        biopsyinfo.Highrisklesionother.length > 0
-          ? ` (${biopsyinfo.Highrisklesionother})`
-          : ``
-      }.`
-    );
-  }
+  // if (biopsyinfo.performed === "Yes" && biopsyinfo.Biopsyresult !== "Unknown") {
+  //   report.push(
+  //     `Biospy results: ${biopsyinfo.Biopsyresult.toLocaleLowerCase()}${
+  //       biopsyinfo.Biopsyresult === "Benign" &&
+  //       biopsyinfo.Benignother.length > 0
+  //         ? ` (${biopsyinfo.Benignother})`
+  //         : ``
+  //     }${
+  //       biopsyinfo.Biopsyresult === "Atypical" &&
+  //       biopsyinfo.Atypicalother.length > 0
+  //         ? ` (${biopsyinfo.Atypicalother})`
+  //         : ``
+  //     }${
+  //       biopsyinfo.Biopsyresult === "High-risk lesion" &&
+  //       biopsyinfo.Highrisklesionother.length > 0
+  //         ? ` (${biopsyinfo.Highrisklesionother})`
+  //         : ``
+  //     }.`
+  //   );
+  // }
 
   //Pathology
   if (biopsyinfo.Pathology.length > 0) {

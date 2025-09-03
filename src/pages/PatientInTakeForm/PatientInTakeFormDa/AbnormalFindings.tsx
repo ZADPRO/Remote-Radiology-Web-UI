@@ -328,7 +328,7 @@ const AbnormalFindings: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader
         FormTitle="ABNORMAL FINDINGS(more details)"
         className="uppercase"

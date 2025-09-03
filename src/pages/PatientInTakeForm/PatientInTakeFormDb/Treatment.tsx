@@ -62,7 +62,7 @@ const Treatment: React.FC<Props> = ({
     formData.find((q) => q.questionId === id)?.answer || "";
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Treatment" className="uppercase" />
       <div className="bg-[#fff]">
         {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}

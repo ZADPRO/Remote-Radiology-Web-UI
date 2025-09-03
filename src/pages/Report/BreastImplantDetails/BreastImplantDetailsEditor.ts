@@ -46,27 +46,39 @@ export function generateBreastImplantDetailsHTML(
   // const ruptureSignsOther = getAnswer(questionIds.ruptureSignsOther);
   const ruptureType = getAnswer(questionIds.ruptureType);
 
-  let html = `<span>The QT scan shows ${config.toLowerCase()}${config === "Bilateral Dissimilar" ? ` (${getAnswer(questionIds.bilateraldissimilar)})`:""}</span>`;
+  let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
     html += ` implants`;
-  }else{
-     html += ` implant`;
+  } else {
+    html += ` implant`;
   }
 
-  html += ` which are ${position.toLowerCase()} in position, with speed of sound consistent with ${material == "Other"? `${materialOther}` : material.toLowerCase()}. `;
+  html += ` which are ${position.toLowerCase()} in position, with speed of sound consistent with ${
+    config === "Bilateral Dissimilar"
+      ? ` ${getAnswer(questionIds.bilateraldissimilar)}`
+      : `${material == "Other" ? `${materialOther}` : material.toLowerCase()}`
+  }. `;
 
   if (displacement.length > 0) {
     if (displacement !== "None") {
       html += `The displacement is noted in ${
-        displacement === "Both" ? "both sides" : `${displacement.toLowerCase()} side`
+        displacement === "Both"
+          ? "both sides"
+          : `${displacement.toLowerCase()} side`
       }. `;
-    } 
+    }
   }
 
   if (contracture !== "None") {
-    html += `There is ${contractureSev ? contractureSev.toLocaleLowerCase()+" " : ""} contracture noted 
-    on ${contracture.toLowerCase() == "both" ? `${contracture.toLowerCase()} sides` : `the ${contracture.toLowerCase()} side`}.`;
+    html += `There is ${
+      contractureSev ? contractureSev.toLocaleLowerCase() + " " : ""
+    } contracture noted 
+    on ${
+      contracture.toLowerCase() == "both"
+        ? `${contracture.toLowerCase()} sides`
+        : `the ${contracture.toLowerCase()} side`
+    }.`;
   }
 
   if (rupture === "Present") {

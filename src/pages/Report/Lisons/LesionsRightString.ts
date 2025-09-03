@@ -270,6 +270,320 @@ export function LesionsRightString(
     return htmlVal;
   };
 
+  const createHypertropictissue = (
+    label: LesionKeys,
+    raw: string,
+    isOther = false
+  ) => {
+    const htmlVal: string[] = [];
+    let html = "";
+    try {
+      const dataArray = raw ? JSON.parse(raw) : [];
+      dataArray.forEach((data: any, index: number) => {
+        if (data.syncStatus) {
+          // Name/label
+          const namePart = isOther ? data.name?.toLowerCase() : label;
+
+          // Location
+
+          // Level
+          let levelText = "";
+          if (data.locationLevel && data.locationLevel !== "unknown") {
+            levelText =
+              data.locationLevel === "Coronal Level"
+                ? "P"
+                : data.locationLevel === "Axial"
+                ? "S"
+                : data.locationLevel === "Sagital"
+                ? "M/L"
+                : "";
+          }
+
+          let sentence = `<span>There is an area of ${namePart ?? "lesion"}${
+            data.distancenipple ? ` spanning ${data.distancenipple} mm,` : ``
+          }${
+            data.Transmissionspped
+              ? ` with a speed of ${data.Transmissionspped} m/s,`
+              : ``
+          }${
+            data.locationclockposition.length > 0
+              ? ` located ${
+                  data.locationclockposition.length > 0 &&
+                  data.locationclockpositionto.length > 0
+                    ? `in the range of `
+                    : `at`
+                } ${
+                  data.locationclockposition === "nipple"
+                    ? "nipple"
+                    : data.locationclockposition + "'o clock"
+                }`
+              : ``
+          }${
+            data.locationclockpositionto.length > 0
+              ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
+                  data.locationclockpositionto === "nipple"
+                    ? "nipple"
+                    : data.locationclockpositionto + "'o clock"
+                }`
+              : ``
+          }${
+            data.locationLevel && data.locationLevel !== "unknown"
+              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+                  data.locationLevelPercentage
+                }${
+                  data.locationLevelPercentage.length > 0 &&
+                  data.locationLevelPercentageto.length > 0
+                    ? `-${data.locationLevelPercentageto}`
+                    : `${data.locationLevelPercentageto}`
+                }`
+              : ``
+          }`;
+
+          if (
+            data.sizew ||
+            data.sizel ||
+            data.sizeh ||
+            (data.Shape && data.Shape !== "unknown") ||
+            (data.Appearance && data.Appearance !== "unknown") ||
+            (data.Margins && data.Margins !== "unknown") ||
+            (data.density && data.density !== "unknown") ||
+            (data.debris && data.debris !== "not present") ||
+            data.Volumne
+          ) {
+            sentence += `. It is noted to be `;
+          }
+
+          // width Size
+          if (data.sizew) {
+            sentence += ` ${data.sizew} mm (width)`;
+          }
+
+          // Length Size
+          if (data.sizel) {
+            sentence += ` ${data.sizew || data.sizeh ? "×" : ""} ${
+              data.sizel
+            } mm (length)`;
+          }
+
+          // Height Size
+          if (data.sizeh) {
+            sentence += ` ${data.sizew || data.sizel ? "×" : ""} ${
+              data.sizeh
+            } mm (height)`;
+          }
+
+          if (data.sizew || data.sizel || data.sizeh) {
+            sentence += ` in size`;
+          }
+
+          // Shape
+          if (data.Shape && data.Shape !== "unknown") {
+            sentence += `, ${data.Shape.toLowerCase()} shaped`;
+          }
+
+          // Appearance
+          if (data.Appearance && data.Appearance !== "unknown") {
+            sentence += `, ${data.Appearance.toLowerCase()} in appearance`;
+          }
+
+          // Density/Echotexture
+          if (data.density && data.density !== "unknown") {
+            sentence += `, ${data.density.toLowerCase()} echotexture`;
+          }
+
+          // Margins
+          if (data.Margins && data.Margins !== "unknown") {
+            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+          }
+
+          // Internal debris
+          if (data.debris && data.debris !== "not present") {
+            sentence += `. Internal debris is noted`;
+          }
+
+          // Volume
+          if (data.Volumne) {
+            sentence += `. With an estimated volume of ${data.Volumne} cubic mm`;
+          }
+
+          sentence += ".</span><br /><br />";
+
+          htmlVal.push(sentence);
+          html += sentence;
+        } else {
+          htmlVal.push(ActualData[label][index]);
+        }
+      });
+    } catch (err) {
+      console.error("Invalid JSON:", err);
+    }
+    return htmlVal;
+  };
+
+  const createMultipleCyst = (
+    label: LesionKeys,
+    raw: string,
+    isOther = false
+  ) => {
+    const htmlVal: string[] = [];
+    let html = "";
+    try {
+      const dataArray = raw ? JSON.parse(raw) : [];
+      dataArray.forEach((data: any, index: number) => {
+        if (data.syncStatus) {
+          // Name/label
+          const namePart = isOther ? data.name?.toLowerCase() : label;
+
+          // // Location
+          // let locationText = "";
+          // if (
+          //   data.locationclockposition &&
+          //   data.locationclockposition !== "unknown"
+          // ) {
+          //   locationText =
+          //     data.locationclockposition === "0"
+          //       ? "Nipple"
+          //       : `${data.locationclockposition} o'clock`;
+          // }
+
+          // Level
+          let levelText = "";
+          if (data.locationLevel && data.locationLevel !== "unknown") {
+            levelText =
+              data.locationLevel === "Coronal Level"
+                ? "P"
+                : data.locationLevel === "Axial"
+                ? "S"
+                : data.locationLevel === "Sagital"
+                ? "M/L"
+                : "";
+          }
+
+          let sentence = `<span>There are ${namePart ?? "lesion"}${
+            data.atleast ? ` (atleast ${data.atleast})` : ``
+          }${
+            data.distancenipple
+              ? `, largest measuring ${data.distancenipple} mm,`
+              : ``
+          }${
+            data.Transmissionspped
+              ? ` with a speed of ${data.Transmissionspped} m/s,`
+              : ``
+          }${
+            data.locationclockposition.length > 0
+              ? ` located ${
+                  data.locationclockposition.length > 0 &&
+                  data.locationclockpositionto.length > 0
+                    ? `in the range of `
+                    : `at`
+                } ${
+                  data.locationclockposition === "nipple"
+                    ? "nipple"
+                    : data.locationclockposition + "'o clock"
+                }`
+              : ``
+          }${
+            data.locationclockpositionto.length > 0
+              ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
+                  data.locationclockpositionto === "nipple"
+                    ? "nipple"
+                    : data.locationclockpositionto + "'o clock"
+                }`
+              : ``
+          }${
+            data.locationLevel && data.locationLevel !== "unknown"
+              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+                  data.locationLevelPercentage
+                }${
+                  data.locationLevelPercentage.length > 0 &&
+                  data.locationLevelPercentageto.length > 0
+                    ? `-${data.locationLevelPercentageto}`
+                    : `${data.locationLevelPercentageto}`
+                }`
+              : ``
+          }`;
+
+          if (
+            data.sizew ||
+            data.sizel ||
+            data.sizeh ||
+            (data.Shape && data.Shape !== "unknown") ||
+            (data.Appearance && data.Appearance !== "unknown") ||
+            (data.Margins && data.Margins !== "unknown") ||
+            (data.density && data.density !== "unknown") ||
+            (data.debris && data.debris !== "not present") ||
+            data.Volumne
+          ) {
+            sentence += `. These are noted to be `;
+          }
+
+          // width Size
+          if (data.sizew) {
+            sentence += ` ${data.sizew} mm (width)`;
+          }
+
+          // Length Size
+          if (data.sizel) {
+            sentence += ` ${data.sizew || data.sizeh ? "×" : ""} ${
+              data.sizel
+            } mm (length)`;
+          }
+
+          // Height Size
+          if (data.sizeh) {
+            sentence += ` ${data.sizew || data.sizel ? "×" : ""} ${
+              data.sizeh
+            } mm (height)`;
+          }
+
+          if (data.sizew || data.sizel || data.sizeh) {
+            sentence += ` in size`;
+          }
+
+          // Shape
+          if (data.Shape && data.Shape !== "unknown") {
+            sentence += `, ${data.Shape.toLowerCase()} shaped`;
+          }
+
+          // Appearance
+          if (data.Appearance && data.Appearance !== "unknown") {
+            sentence += `, ${data.Appearance.toLowerCase()} in appearance`;
+          }
+
+          // Density/Echotexture
+          if (data.density && data.density !== "unknown") {
+            sentence += `, ${data.density.toLowerCase()} echotexture`;
+          }
+
+          // Margins
+          if (data.Margins && data.Margins !== "unknown") {
+            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+          }
+
+          // Internal debris
+          if (data.debris && data.debris !== "not present") {
+            sentence += `. Internal debris is noted`;
+          }
+
+          // Volume
+          if (data.Volumne) {
+            sentence += `. It has an estimated volume of approximately ${data.Volumne} cubic mm`;
+          }
+
+          sentence += ".</span><br /><br />";
+
+          htmlVal.push(sentence);
+          html += sentence;
+        } else {
+          htmlVal.push(ActualData[label][index]);
+        }
+      });
+    } catch (err) {
+      console.error("Invalid JSON:", err);
+    }
+    return htmlVal;
+  };
+
   let finalHTML = "";
 
   if (getAnswer(questionIds.simplecrstr) === "Present") {
@@ -295,7 +609,7 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.Heterogeneousstr) === "Present") {
-    lesionsVal["heterogeneous tissue prominence"] = createHTMLFromData(
+    lesionsVal["heterogeneous tissue prominence"] = createHypertropictissue(
       "heterogeneous tissue prominence",
       getAnswer(questionIds.HeterogeneousDatar)
     );
@@ -306,7 +620,7 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.Hypertrophicstr) === "Present") {
-    lesionsVal["hypertrophic tissue with microcysts"] = createHTMLFromData(
+    lesionsVal["hypertrophic tissue with microcysts"] = createHypertropictissue(
       "hypertrophic tissue with microcysts",
       getAnswer(questionIds.HypertrophicDatar)
     );
@@ -328,7 +642,7 @@ export function LesionsRightString(
   }
 
   if (getAnswer(questionIds.multipleCystsstr) === "Present") {
-    lesionsVal["multiple simple cysts"] = createHTMLFromData(
+    lesionsVal["multiple simple cysts"] = createMultipleCyst(
       "multiple simple cysts",
       getAnswer(questionIds.multipleCystsDatar)
     );

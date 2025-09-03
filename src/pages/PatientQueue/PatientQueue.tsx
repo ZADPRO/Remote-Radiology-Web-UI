@@ -92,7 +92,7 @@ import PatientConsentDialog from "./PatientConsentDialog";
 import SendMailDialog from "./SendMailDialog";
 import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
-import { formatReadableDate } from "@/utlis/calculateAge";
+import { formatReadableDateWithDefault } from "@/utlis/calculateAge";
 
 interface staffData {
   refUserCustId: string;
@@ -695,7 +695,7 @@ const PatientQueue: React.FC = () => {
         cell: ({ row }) => {
           return (
             <div className="text-center w-auto whitespace-normal break-words">
-              {formatReadableDate(row.original.refAppointmentDate)}
+              {formatReadableDateWithDefault(row.original.refAppointmentDate)}
             </div>
           ); // Format date for display
         },

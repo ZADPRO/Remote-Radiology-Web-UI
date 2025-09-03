@@ -470,7 +470,7 @@ const BreastSymptoms: React.FC<Props> = ({
                   patientData={patientFormData}
                   setPatientData={setPatientFormData}
                   editStatus={!editStatuses["lump"]}
-                  requiredStatus={false}
+                  requiredStatus={true}
                 />,
                 questionIds.lumporthickeningComments
               )}
