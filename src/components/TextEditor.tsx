@@ -69,7 +69,6 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const toolbarId = useId();
 
   useEffect(() => {
-    console.log("$$$$$$$$$$$$$$$$$$$$",value)
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
 
