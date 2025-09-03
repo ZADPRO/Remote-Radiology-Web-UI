@@ -877,7 +877,7 @@ const PatientQueue: React.FC = () => {
                 <div className="flex w-full px-1 items-center justify-center">
                   {/* <div className="flex w-full px-1 items-center justify-center">
                   <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
-                  <Label className=" max-w-20 2xl:max-w-30 truncate">
+                  <Label className=" max-w-19 2xl:max-w-30 truncate">
                     {row.original.refUserFirstName}
                   </Label>
                 </div>

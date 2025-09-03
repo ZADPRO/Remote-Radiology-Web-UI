@@ -338,6 +338,8 @@ const Report: React.FC = () => {
     symmetry: true,
   });
 
+  const [AutoReportAccess, setAutoReportAccess] = useState(false);
+
   // const hasProcessedRef = useRef<{ hash: string | null }>({ hash: null });
 
   useEffect(() => {
@@ -871,6 +873,7 @@ const Report: React.FC = () => {
       console.log("---------->", response);
 
       if (response.status) {
+        setAutoReportAccess(true);
         setScanCenterImg(response.ScanCenterImg);
         setScanCenterAddress(response.ScancenterAddress);
         setScanCenterImg(response.ScanCenterImg);
@@ -2380,9 +2383,9 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    // if (!location?.readOnly) {
-    fecthautosave();
-    // }
+    if (AutoReportAccess) {
+      fecthautosave();
+    }
   }, [timeOut]);
 
   return (
