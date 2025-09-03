@@ -64,6 +64,7 @@ export function ComparisonPriorRightString(
               }`
             : ""
         }
+        <b>${lesionId} ${data.vol2 ? data.vol2 : ``}</b><br/>
         ${
           data.lesionStatus ? `<p>Lesion status: ${data.lesionStatus}.</p>` : ""
         }
@@ -73,7 +74,6 @@ export function ComparisonPriorRightString(
             : ""
         }
         <span>
-          <b>${lesionId} ${data.vol2 ? data.vol2 : ``}</b><br/>
           ${
             (data.sizec || data.sizep) &&
             `<p>Size: ${data.sizec ? `${data.sizec} mm` : ""}${

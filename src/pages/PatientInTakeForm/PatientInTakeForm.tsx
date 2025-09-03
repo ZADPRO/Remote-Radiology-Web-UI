@@ -54,7 +54,7 @@ export const PatientContext = React.createContext<PatientContextType | null>(
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 527 }, (_, index) => ({
+    Array.from({ length: 539 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -153,7 +153,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           if (controlData.OverrideStatus === "approved") {
 
             
-            const newData = Array.from({ length: 527 }, (_, index) => {
+            const newData = Array.from({ length: 539 }, (_, index) => {
               const existing = res.data.find(
                 (q: any) => q.questionId === 1 + index
               );

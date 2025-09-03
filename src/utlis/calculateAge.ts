@@ -1,4 +1,4 @@
-export function calculateAge(dob:string) {
+export function calculateAge(dob: string) {
   const today = new Date();
   const birthDate = new Date(dob);
 
@@ -6,7 +6,10 @@ export function calculateAge(dob:string) {
   const monthDiff = today.getMonth() - birthDate.getMonth();
 
   // adjust if birthday hasn't occurred yet this year
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
@@ -18,38 +21,80 @@ export function formatDateWithAge(dob: string): string {
   const today = new Date();
 
   // Format date (e.g., "May 10, 1996")
-  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
   const formattedDate = birthDate.toLocaleDateString("en-US", options);
 
   // Calculate age
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
   return `${formattedDate} (${age} y)`;
 }
 
-export function formatReadableDate(dateStr: string): string {
+export function formatReadableDate(input: string): string {
+  if (input) {
+    const [year, month, day] = input.split("-");
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const monthName = months[parseInt(month, 10) - 1];
+    return `${monthName} ${day}, ${year}`;
+  } else {
+    return ``;
+  }
+}
+
+export function formatReadableDateWithDefault(dateStr: string): string {
   const date = new Date(dateStr);
-
-  const options: Intl.DateTimeFormatOptions = { 
-    year: "numeric", 
-    month: "short", 
-    day: "2-digit" 
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   };
-
   return date.toLocaleDateString("en-US", options);
 }
 
 export function formatReadableDateWithoutDate(dateStr: string): string {
-  const date = new Date(dateStr);
+  const [year, month] = dateStr.split("-"); // expects "YYYY-MM" or "YYYY-MM-DD"
 
-  const options: Intl.DateTimeFormatOptions = { 
-    year: "numeric", 
-    month: "short", 
-  };
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-  return date.toLocaleDateString("en-US", options);
+  const monthName = months[parseInt(month, 10) - 1];
+  return `${monthName}, ${year}`;
 }

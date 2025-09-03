@@ -109,21 +109,25 @@ const BreastImplantDetails: React.FC<Props> = ({
               ]}
             />
 
-            <MultiRadioOptionalInputInline
-              label="Implant Material"
-              labelClassname="w-[12rem]"
-              questionId={questionIds.implantMaterial}
-              optionalInputQuestionId={questionIds.implantMaterialOther}
-              showOptionalForValue="Other"
-              optionalInputWidth="w-60"
-              formData={reportFormData}
-              handleInputChange={handleReportInputChange}
-              options={[
-                { label: "Silicone", value: "Silicone" },
-                { label: "Saline", value: "Saline" },
-                { label: "Other", value: "Other" },
-              ]}
-            />
+            {reportFormData.find(
+              (q) => q.questionId === questionIds.implantConfiguration
+            )?.answer !== "Bilateral Dissimilar" && (
+              <MultiRadioOptionalInputInline
+                label="Implant Material"
+                labelClassname="w-[12rem]"
+                questionId={questionIds.implantMaterial}
+                optionalInputQuestionId={questionIds.implantMaterialOther}
+                showOptionalForValue="Other"
+                optionalInputWidth="w-60"
+                formData={reportFormData}
+                handleInputChange={handleReportInputChange}
+                options={[
+                  { label: "Silicone", value: "Silicone" },
+                  { label: "Saline", value: "Saline" },
+                  { label: "Other", value: "Other" },
+                ]}
+              />
+            )}
 
             <MultiRadioOptionalInputInline
               label="Displacement"

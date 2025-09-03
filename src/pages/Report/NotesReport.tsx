@@ -377,8 +377,6 @@ const NotesReport: React.FC<Props> = ({
   
   <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
   
-  <br/>
-  
 
   ${patientHistory}
 

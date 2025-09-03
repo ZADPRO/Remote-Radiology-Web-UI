@@ -25,7 +25,6 @@ export function generateGrandularAndDuctalTissueReport(
   const benignMicroCysts = getAnswer(questionIds.benignMicroCysts);
   const benignCapsular = getAnswer(questionIds.benignCapsular);
   const benignFibronodular = getAnswer(questionIds.benignFibronodular);
-
   const macroList = getParsedList(questionIds.macroCalcificationsList);
   const microList = getParsedList(questionIds.microCalcificationsList);
   const calcifiedScar = getAnswer(questionIds.calcifiedScar);
@@ -88,18 +87,16 @@ export function generateGrandularAndDuctalTissueReport(
   //     : "";
 
   // 2. Macrocalcifications
-  const macroText = generateCalcificationText(
-    macroList,
-    "macrocalcifications",
-    true
-  );
+  const macroText =
+    macroList.length > 0
+      ? generateCalcificationText(macroList, "macrocalcifications", true)
+      : "";
 
   // 3. Microcalcifications
-  const microText = generateCalcificationText(
-    microList,
-    "microcalcifications",
-    true
-  );
+  const microText =
+    microList.length > 0
+      ? generateCalcificationText(microList, "microcalcifications", true)
+      : "";
 
   // 4. Calcified Scar
   const scarText =
@@ -109,32 +106,39 @@ export function generateGrandularAndDuctalTissueReport(
 
   let ductalText = "";
 
-  console.log("----->",ductalList)
-
   // 5. Ductal Prominence
   ductalList.map((data) => {
     ductalText +=
       ductalProminence === "Present" && ductalList.length > 0
         ? `There is ductal prominence ${data.type.toLowerCase()}${
-            data.clock
-              ? ` noted at ${data.clock} o'clock`
-              : ""
-          }${data.position !== "Unknown" && data.position ? ` in ${data.position}${data.position ? `
+            data.clock ? ` noted at ${data.clock} o'clock` : ""
+          }${
+            data.position !== "Unknown" && data.position
+              ? ` in ${data.position}${
+                  data.position
+                    ? `
              ${
-                          data.position === "Coronal Level" ? "P": data.position === "Axial" ? "S" : data.position === "Sagital" && "M/L"
-                        }${level}`:""}
-                        ` : ""}.`
+               data.position === "Coronal Level"
+                 ? "P"
+                 : data.position === "Axial"
+                 ? "S"
+                 : data.position === "Sagital" && "M/L"
+             }${level}`
+                    : ""
+                }
+                        `
+              : ""
+          }.`
         : "";
   });
 
   // ${glandularandductaltext}
   return `
-    <p>${benignText}</p>
-${macroText && `<p></p>`}
-    ${macroText}
-${microText}
-${scarText && `<p></p>${scarText}`}
-${ductalText && `<p></p>${ductalText}`}
+    ${benignText.length > 0 ? `<p>${benignText}</p><br/>` : ""}
+    ${macroText.length > 0 ? `<p>${macroText}</p><br/>` : ""}
+${microText.length > 0 ? `<p>${microText}</p><br/>` : ""}
+${scarText ? `<p>${scarText}</p><br/>` : ""}
+${ductalText ? `${ductalText}` : ""}
   `;
 }
 
@@ -166,7 +170,7 @@ function generateCalcificationText(
         : "";
       location += level ? ` in coronal location P${level}` : "";
 
-      return `${base}${distText}${location}`;
+      return `${base}${distText}${location}.`;
     })
     .join("\n");
 }

@@ -9,7 +9,7 @@ import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { downloadDocumentFile } from "@/lib/commonUtlis";
-import { parseLocalDate } from "@/lib/dateUtils";
+import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
@@ -20,7 +20,7 @@ interface QuestionIds {
   biopsyResultsDetails: number;
   reportAvailablity: number;
   reportDetails: number;
-  biopsyRight: number
+  biopsyRight: number;
   biopsyLeft: number;
   biopsyRightType: number;
   biopsyLeftType: number;
@@ -38,7 +38,7 @@ const Biopsy: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   console.log(formData);
 
@@ -56,7 +56,9 @@ const Biopsy: React.FC<Props> = ({
       const formDataObj = new FormData();
       formDataObj.append("file", file);
       try {
-        const response = await uploadService.uploadFile({ formFile: formDataObj });
+        const response = await uploadService.uploadFile({
+          formFile: formDataObj,
+        });
         if (response.status) {
           handleInputChange(questionIds.reportDetails, response.fileName);
         } else {
@@ -69,19 +71,26 @@ const Biopsy: React.FC<Props> = ({
     }
   };
 
-    const getFile =  formData.find((q) => q.questionId === questionIds.reportDetails)?.file;
+  const getFile = formData.find(
+    (q) => q.questionId === questionIds.reportDetails
+  )?.file;
 
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Biopsy" className="uppercase" />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto p-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <div className="flex flex-col flex-wrap gap-x-4 gap-y-2">
             <Label className="text-base font-semibold block mb-2">
-              <span>A. Previous breast biopsies or procedures?</span>
+              <span>A. Biopsy performed?</span>
               <span className="text-red-500 ml-1">*</span>
             </Label>
             <div className="flex flex-col sm:flex-row gap-4 pl-4 h-[auto] lg:h-[40px]">
@@ -131,13 +140,15 @@ const Biopsy: React.FC<Props> = ({
                     <DatePicker
                       value={
                         getAnswer(questionIds.previousBiopsyDate)
-                          ? parseLocalDate(getAnswer(questionIds.previousBiopsyDate))
+                          ? parseLocalDate(
+                              getAnswer(questionIds.previousBiopsyDate)
+                            )
                           : undefined
                       }
                       onChange={(val) =>
                         handleInputChange(
                           questionIds.previousBiopsyDate,
-                          val?.toLocaleDateString("en-CA") || ""
+                          val ? formatLocalDate(val) : ""
                         )
                       }
                       disabledDates={(date) => date > new Date()}
@@ -168,7 +179,8 @@ const Biopsy: React.FC<Props> = ({
             </div>
           </div>
 
-          { (getAnswer(questionIds.previousBiopsy) === "Unknown" ||  getAnswer(questionIds.previousBiopsy) === "Yes") && (
+          {(getAnswer(questionIds.previousBiopsy) === "Unknown" ||
+            getAnswer(questionIds.previousBiopsy) === "Yes") && (
             <div className="pl-4">
               <LabeledRadioWithOptionalInput
                 name="morphology-change"
@@ -189,91 +201,104 @@ const Biopsy: React.FC<Props> = ({
                 optionalInputRequired={false}
               />
               <div className="space-y-4 pl-4 py-4">
-  {/* Left Biopsy Section */}
-  <div className="flex items-center gap-6">
-    <div className="flex items-center gap-2">
-      <Checkbox2
-        id="biopsyLeft"
-        checked={getAnswer(questionIds.biopsyLeft) === "true"}
-        onCheckedChange={() =>
-          handleInputChange(
-            questionIds.biopsyLeft,
-            getAnswer(questionIds.biopsyLeft) === "true" ? "false" : "true"
-          )
-        }
-      />
-      <Label htmlFor="biopsyLeft">Biopsy - Left</Label>
-    </div>
+                {/* Left Biopsy Section */}
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Checkbox2
+                      id="biopsyLeft"
+                      checked={getAnswer(questionIds.biopsyLeft) === "true"}
+                      onCheckedChange={() =>
+                        handleInputChange(
+                          questionIds.biopsyLeft,
+                          getAnswer(questionIds.biopsyLeft) === "true"
+                            ? "false"
+                            : "true"
+                        )
+                      }
+                    />
+                    <Label htmlFor="biopsyLeft">Biopsy - Left</Label>
+                  </div>
 
-    {getAnswer(questionIds.biopsyLeft) === "true" && (
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
-        {["Benign", "Malignant"].map((value) => {
-          const id = `biopsy-left-${value.toLowerCase()}`;
-          return (
-            <div key={id} className="flex items-center gap-2">
-              <input
-                type="radio"
-                id={id}
-                name="biopsyLeftType"
-                className="custom-radio"
-                value={value}
-                checked={getAnswer(questionIds.biopsyLeftType) === value}
-                onChange={(e) =>
-                  handleInputChange(questionIds.biopsyLeftType, e.target.value)
-                }
-                required
-              />
-              <Label htmlFor={id}>{value}</Label>
-            </div>
-          );
-        })}
-      </div>
-    )}
-  </div>
+                  {getAnswer(questionIds.biopsyLeft) === "true" && (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
+                      {["Benign", "Malignant"].map((value) => {
+                        const id = `biopsy-left-${value.toLowerCase()}`;
+                        return (
+                          <div key={id} className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              id={id}
+                              name="biopsyLeftType"
+                              className="custom-radio"
+                              value={value}
+                              checked={
+                                getAnswer(questionIds.biopsyLeftType) === value
+                              }
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds.biopsyLeftType,
+                                  e.target.value
+                                )
+                              }
+                              required
+                            />
+                            <Label htmlFor={id}>{value}</Label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
-  {/* Right Biopsy Section */}
-  <div className="flex items-center gap-6">
-    <div className="flex items-center gap-2">
-      <Checkbox2
-        id="biopsyRight"
-        checked={getAnswer(questionIds.biopsyRight) === "true"}
-        onCheckedChange={() =>
-          handleInputChange(
-            questionIds.biopsyRight,
-            getAnswer(questionIds.biopsyRight) === "true" ? "false" : "true"
-          )
-        }
-      />
-      <Label htmlFor="biopsyRight">Biopsy - Right</Label>
-    </div>
+                {/* Right Biopsy Section */}
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Checkbox2
+                      id="biopsyRight"
+                      checked={getAnswer(questionIds.biopsyRight) === "true"}
+                      onCheckedChange={() =>
+                        handleInputChange(
+                          questionIds.biopsyRight,
+                          getAnswer(questionIds.biopsyRight) === "true"
+                            ? "false"
+                            : "true"
+                        )
+                      }
+                    />
+                    <Label htmlFor="biopsyRight">Biopsy - Right</Label>
+                  </div>
 
-    {getAnswer(questionIds.biopsyRight) === "true" && (
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
-        {["Benign", "Malignant"].map((value) => {
-          const id = `biopsy-right-${value.toLowerCase()}`;
-          return (
-            <div key={id} className="flex items-center gap-2">
-              <input
-                type="radio"
-                id={id}
-                name="biopsyRightType"
-                className="custom-radio"
-                value={value}
-                checked={getAnswer(questionIds.biopsyRightType) === value}
-                onChange={(e) =>
-                  handleInputChange(questionIds.biopsyRightType, e.target.value)
-                }
-                required
-              />
-              <Label htmlFor={id}>{value}</Label>
-            </div>
-          );
-        })}
-      </div>
-    )}
-  </div>
-</div>
-
+                  {getAnswer(questionIds.biopsyRight) === "true" && (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
+                      {["Benign", "Malignant"].map((value) => {
+                        const id = `biopsy-right-${value.toLowerCase()}`;
+                        return (
+                          <div key={id} className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              id={id}
+                              name="biopsyRightType"
+                              className="custom-radio"
+                              value={value}
+                              checked={
+                                getAnswer(questionIds.biopsyRightType) === value
+                              }
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds.biopsyRightType,
+                                  e.target.value
+                                )
+                              }
+                              required
+                            />
+                            <Label htmlFor={id}>{value}</Label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="space-y-4">
                 <MultiOptionRadioGroup
@@ -314,19 +339,22 @@ const Biopsy: React.FC<Props> = ({
                         </label>
                         {(selectedFileName || uploadedFileName) && (
                           <span
-                                          className={`text-sm ${uploadedFileName && "pointer-events-auto cursor-pointer"}`}
-                                          onClick={() => {
-                                            console.log(getFile);
-                                            getFile &&
-                                              downloadDocumentFile(
-                                                getFile?.base64Data,
-                                                getFile?.contentType,
-                                                "Report"
-                                              );
-                                          }}
-                                        >
-                                          {selectedFileName || uploadedFileName}
-                                        </span>
+                            className={`text-sm ${
+                              uploadedFileName &&
+                              "pointer-events-auto cursor-pointer"
+                            }`}
+                            onClick={() => {
+                              console.log(getFile);
+                              getFile &&
+                                downloadDocumentFile(
+                                  getFile?.base64Data,
+                                  getFile?.contentType,
+                                  "Report"
+                                );
+                            }}
+                          >
+                            {selectedFileName || uploadedFileName}
+                          </span>
                         )}
                       </div>
                     </div>

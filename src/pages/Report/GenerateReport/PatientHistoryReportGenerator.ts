@@ -33,7 +33,7 @@ export function PatientHistoryReportGenerator(
   }
 
   if (report.length > 0) {
-    return report.join("<br/>");
+    return report.join("");
   } else {
     return "";
   }

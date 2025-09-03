@@ -85,28 +85,49 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
+  // const [mic, setMic] = useState(false);
+
   return (
-    <div
-      className={`border rounded-xl bg-background p-4 shadow-sm ${className} ${
-        readOnly ? "cursor-not-allowed" : ""
-      }`}
-    >
-      <style>{`
+    <div>
+      {/* {mic ? (
+        <button
+          onClick={() => {
+            setMic(false);
+          }}
+        >
+          OFF
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            setMic(true);
+          }}
+        >
+          ON
+        </button>
+      )} */}
+      <div
+        className={`border rounded-xl bg-background p-4 shadow-sm ${className} ${
+          readOnly ? "cursor-not-allowed" : ""
+        }`}
+      >
+        <style>{`
         .ql-container {
           height: ${height ? height : "auto"};
         }
       `}</style>
-      <QuillToolbar id={toolbarId} />
-      <ReactQuill
-        ref={quillRef}
-        value={value}
-        onChange={onChange}
-        modules={createModules(toolbarId)}
-        formats={formats}
-        theme="snow"
-        placeholder={placeholder}
-        readOnly={readOnly}
-      />
+        <QuillToolbar id={toolbarId} />
+        <ReactQuill
+          ref={quillRef}
+          value={value}
+          onChange={onChange}
+          modules={createModules(toolbarId)}
+          formats={formats}
+          theme="snow"
+          placeholder={placeholder}
+          readOnly={readOnly}
+        />
+      </div>
     </div>
   );
 };

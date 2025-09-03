@@ -353,20 +353,22 @@ const Report: React.FC = () => {
 
     if (syncStatus.patientHistory) {
       let reason = ``;
-      reason += `<p><strong>HISTORY : </strong></p>`;
+      // reason += `<p><strong>HISTORY : </strong></p>`;
       // reason += SFormGeneration(responsePatientInTake);
 
       const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
 
       if (categoryId === 1) {
         reason += `<div><strong>Indication:</strong> Screening<br/>
+        <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan: </strong>
-          ${getPatientAnswer(11)}</div>
+          ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
       } else if (categoryId === 2) {
         // reason += "" + DaFormReportGenerator(responsePatientInTake);
         reason += `<div><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
+        <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan: </strong>
           ${getPatientAnswer(11)}.</div>
         `;
@@ -374,15 +376,17 @@ const Report: React.FC = () => {
       } else if (categoryId === 3) {
         // reason += DbFormReportGenerator(responsePatientInTake);
         reason += `<div><strong>Indication:</strong> Biopsy Proven Disease<br/>
+        <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan: </strong>
-          ${getPatientAnswer(11)}</div>
+          ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
       } else if (categoryId === 4) {
         // reason += DcFormGeneration(responsePatientInTake);
         reason += `<div><strong>Indication:</strong> Comparison to Prior<br/>
+        <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan: </strong>
-          ${getPatientAnswer(11)}</div>
+          ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
@@ -1553,7 +1557,9 @@ const Report: React.FC = () => {
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       assignData?.appointmentStatus[0]?.refAppointmentDate
-                        ? formatReadableDate(assignData?.appointmentStatus[0]?.refAppointmentDate)
+                        ? formatReadableDate(
+                            assignData?.appointmentStatus[0]?.refAppointmentDate
+                          )
                         : ""
                     }</td>
                     
@@ -2457,7 +2463,11 @@ const Report: React.FC = () => {
                   <div
                     key={label}
                     onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs text-[#e06666] 2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                    className={`flex-1 max-w-xl text-xs ${
+                      label !== "Final Report"
+                        ? "text-[#e06666]"
+                        : "text-[#3f3f3d]"
+                    }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
                       accessible
                         ? subTab === value
                           ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
@@ -2958,13 +2968,13 @@ const Report: React.FC = () => {
                   } else if (status == "" && label == "Insert Signature") {
                     const date = new Date().toLocaleDateString();
                     console.log(userDetails);
-                    const signatureRow = `<br/><h3 class="ql-align-right"><strong>Electronically signed by Dr. ${
+                    const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by Dr. ${
                       userDetails.refUserFirstName
                     },${
                       userDetails.specialization
                         ? "" + userDetails.specialization + ""
                         : ""
-                    } on <em>${date}</em></strong></h3>`;
+                    } on <em>${date}</em></strong></p></strong>`;
 
                     const notesData = Notes + signatureRow;
                     setNotes(notesData);
@@ -2972,6 +2982,11 @@ const Report: React.FC = () => {
                       ...syncStatus,
                       Notes: false,
                     });
+                    setChangedOne((prev) => ({
+                      ...prev,
+                      syncStatus: true,
+                      reportTextContent: true,
+                    }));
                   } else {
                     handleReportSubmit(status, editStatus); // directly call
                   }

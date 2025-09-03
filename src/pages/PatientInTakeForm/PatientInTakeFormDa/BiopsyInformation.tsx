@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadioGroup";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
@@ -37,6 +37,22 @@ const BiopsyInformation: React.FC<Props> = ({
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
 
+  useEffect(() => {
+    if (getAnswer(160) === "Yes" && getAnswer(questionIds.performed) === "") {
+      handleInputChange(questionIds.performed, "Yes");
+    } else if (
+      getAnswer(160) === "No" &&
+      getAnswer(questionIds.performed) === ""
+    ) {
+      handleInputChange(questionIds.performed, "No");
+    } else if (
+      getAnswer(160) === "Unknown" &&
+      getAnswer(questionIds.performed) === ""
+    ) {
+      handleInputChange(questionIds.performed, "Yes");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-full">
       <FormHeader
@@ -44,7 +60,12 @@ const BiopsyInformation: React.FC<Props> = ({
         className="uppercase"
       />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
@@ -63,18 +84,11 @@ const BiopsyInformation: React.FC<Props> = ({
           {getAnswer(questionIds.performed) === "Yes" && (
             <>
               {/* B. If yes, date of biopsy */}
-              <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
+              {/* <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 mt-2">
                 <Label className="font-semibold text-base">
                   B. If yes, date of biopsy{" "}
                   <span className="text-red-500">*</span>
                 </Label>
-                {/* <Input
-                                    className="w-64"
-                                    value={getAnswer(questionIds.datebio)}
-                                    onChange={(e) =>
-                                        handleInputChange(questionIds.datebio, e.target.value)
-                                    }
-                                /> */}
                 <div className="w-45">
                   <DatePicker
                     value={
@@ -92,12 +106,12 @@ const BiopsyInformation: React.FC<Props> = ({
                     required
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* C. Type of biopsy */}
               <TwoOptionRadioGroup
                 className="flex flex-col gap-3 mt-3 "
-                label="C. Type of biopsy"
+                label="B. Type of biopsy"
                 questionId={questionIds.typebiopsy}
                 formData={formData}
                 handleInputChange={handleInputChange}
@@ -123,7 +137,7 @@ const BiopsyInformation: React.FC<Props> = ({
               {/* D. Guidance method */}
               <TwoOptionRadioGroup
                 className="flex flex-col gap-3 mt-3 "
-                label="D. Guidance method"
+                label="C. Guidance method"
                 questionId={questionIds.guidance}
                 formData={formData}
                 handleInputChange={handleInputChange}
@@ -140,7 +154,7 @@ const BiopsyInformation: React.FC<Props> = ({
               {/*E. Biopsy results*/}
               <div className="flex -mt-2 flex-col gap-4">
                 <Label className="font-bold text-base">
-                  E. Biopsy results <span className="text-red-500">*</span>
+                  D. Biopsy results <span className="text-red-500">*</span>
                 </Label>
                 <div className="flex flex-col gap-2 lg:gap-0">
                   {[
@@ -235,7 +249,7 @@ const BiopsyInformation: React.FC<Props> = ({
               {/*F. Pathology recommendations:*/}
               <div className="flex flex-col lg:flex-row gap-2 lg:gap-5 mt-2">
                 <Label className="font-semibold text-base">
-                  F. Pathology recommendations:
+                  E. Pathology recommendations:
                 </Label>
                 <Input
                   className="w-64"
