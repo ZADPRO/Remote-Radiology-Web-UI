@@ -362,7 +362,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                           options={[
                             { label: "Pea", value: "Pea" },
                             { label: "Grape", value: "Grape" },
-                            { label: "Bigger", value: "Bigger than grape" },
+                            { label: "Bigger", value: "Bigger than a grape" },
                           ]}
                           placeholder="Select Size"
                           required={
@@ -489,7 +489,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                           options={[
                             { label: "Pea", value: "Pea" },
                             { label: "Grape", value: "Grape" },
-                            { label: "Bigger", value: "Bigger than grape" },
+                            { label: "Bigger", value: "Bigger than a grape" },
                           ]}
                           placeholder="Select Size"
                           required={

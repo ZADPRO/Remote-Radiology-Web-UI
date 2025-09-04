@@ -277,7 +277,6 @@ export function SFormGeneration(
 
   //Addtional Comments
   if (addtionalCommentsRiskStratification.length > 0) {
-
     report.push(addtionalCommentsRiskStratification + ".<br/>");
   }
 
@@ -537,19 +536,23 @@ export function SFormGeneration(
                   breastSymptoms.lumpLeft.length > 0
                     ? `left breast at ${formatBreastSymptoms(
                         breastSymptoms.lumpLeft
-                      )} since ${
-                        breastSymptoms.lumpDate
-                      } months, size ${breastSymptoms.lumpSize.toLocaleLowerCase()}${
-                        breastSymptoms.lumpRight.length > 0 ? `, ` : ""
-                      }`
+                      )} since ${breastSymptoms.lumpDate} months,${
+                        breastSymptoms.lumpSize.toLocaleLowerCase() ===
+                        "bigger than a grape"
+                          ? ` bigger than a grape`
+                          : ` size of a ${breastSymptoms.lumpSize.toLocaleLowerCase()}`
+                      }${breastSymptoms.lumpRight.length > 0 ? `, ` : ""}`
                     : ""
                 }${
                   breastSymptoms.lumpRight.length > 0
                     ? `right breast at ${formatBreastSymptoms(
                         breastSymptoms.lumpRight
-                      )} since ${
-                        breastSymptoms.lumpDateRight
-                      } months, size ${breastSymptoms.lumpSizeRight.toLocaleLowerCase()}`
+                      )} since ${breastSymptoms.lumpDateRight} months,${
+                        breastSymptoms.lumpSizeRight.toLocaleLowerCase() ===
+                        "bigger than a grape"
+                          ? ` bigger than a grape`
+                          : ` size of a ${breastSymptoms.lumpSizeRight.toLocaleLowerCase()}`
+                      }`
                     : ""
                 }${
                   breastSymptoms.lumpDetails.length > 0
@@ -799,32 +802,36 @@ export function SFormGeneration(
       } else {
         text.push(
           `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Lymph node swelling${
-            breastSymptoms.lymphNodesRight.length > 0 ||
-            breastSymptoms.lymphNodesLeft.length > 0 ||
-            (breastSymptoms.lymphNodesRight.length > 0 &&
-              breastSymptoms.lymphNodesLeft.length > 0)
+            breastSymptoms.lymphNodesRight === "true" ||
+            breastSymptoms.lymphNodesLeft === "true" ||
+            (breastSymptoms.lymphNodesRight === "true" &&
+              breastSymptoms.lymphNodesLeft === "true")
               ? ` axillary (armpit) in the
               ${
-                breastSymptoms.lymphNodesLeft.length > 0
-                  ? ` left side at ${formatBreastSymptoms(
-                      breastSymptoms.lymphNodesLeft
-                    )}${
-                      breastSymptoms.lymphNodesLeft.length > 0 ? "," : ""
+                breastSymptoms.lymphNodesLeft === "true"
+                  ? ` left side${
+                      breastSymptoms.lymphNodesLeft === "true" ? "," : ""
                     } since ${
                       breastSymptoms.locationAxillaryDurationRight
-                    } months, size ${breastSymptoms.locationAxillarySizeRight.toLocaleLowerCase()}${
-                      breastSymptoms.lymphNodesRight.length > 0 ? "," : ""
-                    }`
+                    } months,${
+                      breastSymptoms.locationAxillarySizeRight.toLocaleLowerCase() ===
+                      "bigger than a grape"
+                        ? ` bigger than a grape`
+                        : ` size of a ${breastSymptoms.locationAxillarySizeRight.toLocaleLowerCase()}`
+                    }${breastSymptoms.lymphNodesRight === "true" ? "," : ""}`
                   : ""
               }${
-                  breastSymptoms.lymphNodesRight.length > 0
-                    ? ` right side ${formatBreastSymptoms(
-                        breastSymptoms.lymphNodesRight
-                      )}${
-                        breastSymptoms.lymphNodesRight.length > 0 ? "," : ""
+                  breastSymptoms.lymphNodesRight === "true"
+                    ? ` right side${
+                        breastSymptoms.lymphNodesRight === "true" ? "," : ""
                       } since ${
                         breastSymptoms.locationAxillaryDuration
-                      } months, size ${breastSymptoms.locationAxillarySize.toLocaleLowerCase()}`
+                      } months,${
+                        breastSymptoms.locationAxillarySize.toLocaleLowerCase() ===
+                        "bigger than a grape"
+                          ? ` bigger than a grape`
+                          : ` size of a ${breastSymptoms.locationAxillarySize.toLocaleLowerCase()}`
+                      }`
                     : ""
                 }`
               : ``
@@ -832,13 +839,23 @@ export function SFormGeneration(
             breastSymptoms.locationInBetween === "true"
               ? ` / inbetween chest ${
                   breastSymptoms.locationInBetweenDuration
-                } months, size ${breastSymptoms.locationInBetweenSize.toLocaleLowerCase()}`
+                } months,${
+                  breastSymptoms.locationInBetweenSize.toLocaleLowerCase() ===
+                  "bigger than a grape"
+                    ? ` bigger than a grape`
+                    : ` size of a ${breastSymptoms.locationInBetweenSize.toLocaleLowerCase()}`
+                }`
               : ``
           }${
             breastSymptoms.locationOther === "true"
               ? ` / ${breastSymptoms.locationOtherSpecify.toLocaleLowerCase()} since ${
                   breastSymptoms.locationOtherDuration
-                } months, size ${breastSymptoms.locationOtherSize.toLocaleLowerCase()}`
+                } months,${
+                  breastSymptoms.locationOtherSize.toLocaleLowerCase() ===
+                  "bigger than a grape"
+                    ? ` bigger than a grape`
+                    : ` size of a ${breastSymptoms.locationOtherSize.toLocaleLowerCase()}`
+                }`
               : ``
           }${
             breastSymptoms.lymphNodesDetails.length > 0

@@ -79,7 +79,7 @@ export function LesionsRightString(
           let locationText = "";
           if (
             data.locationclockposition &&
-            data.locationclockposition !== "unknown"
+            data.locationclockposition !== "Unknown"
           ) {
             locationText =
               data.locationclockposition === "0"
@@ -90,7 +90,7 @@ export function LesionsRightString(
           let locationTextto = "";
           if (
             data.locationclockpositionto &&
-            data.locationclockpositionto !== "unknown"
+            data.locationclockpositionto !== "Unknown"
           ) {
             locationTextto =
               data.locationclockpositionto === "0"
@@ -100,7 +100,7 @@ export function LesionsRightString(
 
           // Level
           let levelText = "";
-          if (data.locationLevel && data.locationLevel !== "unknown") {
+          if (data.locationLevel && data.locationLevel !== "Unknown") {
             levelText =
               data.locationLevel === "Coronal Level"
                 ? "P"
@@ -134,12 +134,12 @@ export function LesionsRightString(
 
           // Distance from nipple
           // if (data.distancenipple) {
-          sentence += `${
-            namePart !== "heterogeneous tissue prominence" &&
-            namePart !== "hypertrophic tissue with microcysts"
-              ? `, `
-              : ``
-          } ${namePart === "multiple simple cysts" ? "largest measuring" : ""}`;
+          // sentence += `${
+          //   namePart !== "heterogeneous tissue prominence" &&
+          //   namePart !== "hypertrophic tissue with microcysts"
+          //     ? `, `
+          //     : ``
+          // } ${namePart === "multiple simple cysts" ? "largest measuring" : ""}`;
           // }
 
           // Add location if available
@@ -152,9 +152,9 @@ export function LesionsRightString(
                 locationText &&
                 locationTextto)
             ) {
-              sentence += ` spanning in the range of ${locationText} to ${locationTextto}`;
+              sentence += `, spanning in the range of ${locationText} to ${locationTextto}`;
             } else {
-              sentence += ` present at ${locationText}`;
+              sentence += `, present at ${locationText}`;
             }
           }
 
@@ -174,13 +174,11 @@ export function LesionsRightString(
             ) {
               sentence += `, located in the range of ${levelText}${data.locationLevelPercentage} to ${levelText}${data.locationLevelPercentageto}`;
             } else {
-              sentence += `, located at ${levelText}${data.locationLevelPercentage}`;
+              sentence += `${data.locationLevel !== "Unknown" ? `, located at ${levelText}${data.locationLevelPercentage}`:""}`;
             }
           } else if (levelText && data.locationLevel !== "unknown") {
             sentence += `, located at ${levelText}`;
-          } else if (data.locationLevelPercentage) {
-            sentence += `, located at ${data.locationLevelPercentage}`;
-          }
+          } 
 
           if (data.sizew || data.sizel || data.sizeh) {
             sentence += `. The lesion is measuring `;

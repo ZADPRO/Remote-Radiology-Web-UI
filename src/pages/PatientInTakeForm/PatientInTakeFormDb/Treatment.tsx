@@ -148,43 +148,6 @@ const Treatment: React.FC<Props> = ({
                         </div>
                       </div>
 
-                      {/* Was the surgery successful in removing all of the tumor? */}
-                      <div className="ml-4.5 flex flex-col lg:flex-row gap-3 h-[auto] lg:h-[40px] items-start lg:items-center">
-                        <div className="flex gap-3">
-                          <Checkbox2
-                            checked={
-                              getAnswer(questionIds.successfulStatus) === "true"
-                            }
-                            onClick={() =>
-                              handleInputChange(
-                                questionIds.successfulStatus,
-                                getAnswer(questionIds.successfulStatus) ===
-                                  "true"
-                                  ? ""
-                                  : "true"
-                              )
-                            }
-                          />
-                          <div className="font-semibold text-sm ">
-                            Was the surgery successful in removing all of the
-                            tumor?
-                          </div>
-                        </div>
-                        {getAnswer(questionIds.successfulStatus) === "true" && (
-                          <MultiOptionRadioGroup
-                            questionId={questionIds.successful}
-                            handleInputChange={handleInputChange}
-                            formData={formData}
-                            options={[
-                              { label: "No", value: "No" },
-                              { label: "Yes", value: "Yes" },
-                            ]}
-                            required
-                            className="mt-0 flex-row"
-                          />
-                        )}
-                      </div>
-
                       {/*Mastectomy (Partial or Segmental) */}
                       <div className="ml-4.5 flex gap-3  h-[auto] lg:h-[40px] items-center">
                         <Checkbox2
@@ -737,9 +700,7 @@ const Treatment: React.FC<Props> = ({
                       <DatePicker
                         value={
                           getAnswer(questionIds.otherDate)
-                            ? parseLocalDate(
-                                getAnswer(questionIds.otherDate)
-                              )
+                            ? parseLocalDate(getAnswer(questionIds.otherDate))
                             : undefined
                         }
                         onChange={(val) => {
@@ -753,6 +714,27 @@ const Treatment: React.FC<Props> = ({
                   )}
                 </div>
 
+                <div
+                  className={`relative flex flex-col gap-2 ${
+                    getAnswer(questionIds.Neoadjuvant) === "Done" ||
+                    getAnswer(questionIds.Neoadjuvant) === "Planned" ||
+                    "mt-3"
+                  }`}
+                >
+                  {/*f. Was the surgery successful in removing all of the tumor?*/}
+                  <MultiOptionRadioGroup
+                    label="f. Was the surgery successful in removing all of the tumor?"
+                    questionId={questionIds.successfulStatus}
+                    formData={formData}
+                    //   className="flex flex-col lg:flex-row gap-3 mt-3"
+                    handleInputChange={handleInputChange}
+                    options={[
+                      { label: "No", value: "No" },
+                      { label: "Yes", value: "Yes" },
+                    ]}
+                  />
+                </div>
+
                 <div>
                   <div
                     className={`flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-3 ${
@@ -762,7 +744,7 @@ const Treatment: React.FC<Props> = ({
                     }`}
                   >
                     <Label className="font-semibold text-base flex flex-wrap gap-1">
-                      f. Treatment timeline and details
+                      g. Treatment timeline and details
                     </Label>
                     <Textarea
                       className="w-full lg:w-100"
@@ -781,7 +763,7 @@ const Treatment: React.FC<Props> = ({
                 <div>
                   <div className=" flex flex-col  gap-3 mt-3">
                     <Label className="font-semibold text-base flex flex-wrap gap-1">
-                      g. Did you experience any side effects from chemotherapy
+                      h. Did you experience any side effects from chemotherapy
                       or radiation? If so, what were they?
                     </Label>
                     <Textarea

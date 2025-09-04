@@ -84,8 +84,6 @@ export function DbFormReportGenerator(
     treatmentstatus: getPatientAnswer(283),
     Surgical: getPatientAnswer(284),
     surgery: getPatientAnswer(285),
-    successfulStatus: getPatientAnswer(286),
-    successful: getPatientAnswer(287),
     Mastectomy: getPatientAnswer(288),
     Bilateral: getPatientAnswer(289),
     Sentinel: getPatientAnswer(290),
@@ -263,14 +261,6 @@ export function DbFormReportGenerator(
         sentence.push(`lumpectomy/breast-conserving surgery`);
       }
 
-      if (treatment.successfulStatus === "true") {
-        sentence.push(
-          `surgery was${
-            treatment.successful === "Yes" ? "" : " not"
-          } successful in removing all of the tumor`
-        );
-      }
-
       if (treatment.Mastectomy === "true") {
         sentence.push(`mastectomy (partial or segmental)`);
       }
@@ -357,7 +347,7 @@ export function DbFormReportGenerator(
       reportText.push(
         `${
           treatment.otherspecify
-        } ${treatment.other.toLocaleLowerCase()}${treatment.cryoblation.toLocaleLowerCase()}${
+        } ${treatment.other.toLowerCase()}${
           treatment.otherDate.length > 0
             ? ` on ${formatReadableDate(treatment.otherDate)}`
             : ""

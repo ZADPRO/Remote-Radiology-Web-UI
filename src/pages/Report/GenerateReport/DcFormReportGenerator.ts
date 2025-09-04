@@ -149,7 +149,7 @@ export function DcFormGeneration(
         cancerhistoy.historyPosition.toLowerCase() === "both"
           ? `${
               cancerhistoy.historyPosition.length > 0
-                ? `right ${
+                ? `right breast cancer ${
                     cancerhistoy.historyclockposition.length > 0
                       ? ` ${formatBreastSymptoms(
                           cancerhistoy.historyclockposition
@@ -157,7 +157,7 @@ export function DcFormGeneration(
                       : ``
                   }${
                     cancerhistoy.historyclockpositionLeft.length > 0
-                      ? `, left ${formatBreastSymptoms(
+                      ? `, left breast cancer ${formatBreastSymptoms(
                           cancerhistoy.historyclockpositionLeft
                         )}`
                       : ``
@@ -165,11 +165,15 @@ export function DcFormGeneration(
                 : ""
             }`
           : cancerhistoy.historyPosition.toLowerCase() +
-            ` ${
+            ` breast cancer ${
               cancerhistoy.historyclockposition.length > 0
                 ? ` ${formatBreastSymptoms(cancerhistoy.historyclockposition)}`
                 : ``
             }`
+      }${
+        cancerhistoy.cancerType.length > 0
+          ? `, (${cancerhistoy.cancerType})`
+          : ""
       }${
         cancerhistoy.cancerDate.length > 0
           ? `, diagnosed on ${formatReadableDate(cancerhistoy.cancerDate)}`
@@ -236,21 +240,32 @@ export function DcFormGeneration(
   }
 
   //BiopsyResult
-  if (
-    IntervalImagingHistory.intervalBiopsy === "Yes" &&
-    IntervalImagingHistory.intervalBiopsyResult.length > 0
-  ) {
+  if (IntervalImagingHistory.intervalBiopsy === "Yes") {
     report.push(
-      `Interval Biopsy results: ${IntervalImagingHistory.intervalBiopsyResult}.`
+      `Interval Biopsy done${
+        IntervalImagingHistory.intervalBiopsyResult.length > 0
+          ? `, result: ${IntervalImagingHistory.intervalBiopsyResult}`
+          : ""
+      }${
+        IntervalImagingHistory.intervalBiopsyDate.length > 0
+          ? `, date: ${formatReadableDate(
+              IntervalImagingHistory.intervalBiopsyDate
+            )}`
+          : ""
+      }.`
     );
+  } else if (IntervalImagingHistory.intervalBiopsy === "No") {
+    report.push(`Interval Biopsy not done`);
   }
 
   //Changes Since Previous QT Imaging
   let ChangeReport = [];
   if (ChangesSincePreviousQTImaging.changesFindings === "Yes") {
-    ChangeReport.push(`Change since prior scan: yes`);
+    ChangeReport.push(`Changes in image findings since prior QT: Yes`);
   } else if (ChangesSincePreviousQTImaging.changesFindings === "No") {
-    ChangeReport.push(`Change since prior scan: no`);
+    ChangeReport.push(`Changes in image findings since prior QT: No`);
+  }else if (ChangesSincePreviousQTImaging.changesFindings === "Unknown") {
+    ChangeReport.push(`Changes in image findings since prior QT: Unknown`);
   }
   if (
     ChangesSincePreviousQTImaging.changesFindings === "Yes" &&
@@ -262,7 +277,7 @@ export function DcFormGeneration(
     );
   }
 
-  report.push(ChangeReport.join("") + ".");
+  report.push(ChangeReport.join("") + `${ChangeReport.length > 0 ? "." : ""}`);
 
   //New Finding
   if (
@@ -279,8 +294,10 @@ export function DcFormGeneration(
   }
 
   //Change Treatment
-  if(ChangesSincePreviousQTImaging.changeTreatment.length > 0){
-    report.push(`Changes in treatment since prior scan: ${ChangesSincePreviousQTImaging.changeTreatment.toLowerCase()}.`)
+  if (ChangesSincePreviousQTImaging.changeTreatment.length > 0) {
+    report.push(
+      `Changes in treatment since prior scan: ${ChangesSincePreviousQTImaging.changeTreatment.toLowerCase()}.`
+    );
   }
 
   return report.join("<br/>");
