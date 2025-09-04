@@ -455,14 +455,23 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                         option.label === "Axillary (Armpit)"
                                           ? getAnswerByQuestionId(
                                               Props.RQID
-                                            ) === "false"
+                                            ) === "false" ||
+                                            getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === ""
                                             ? false
                                             : true
                                           : true
                                       }
                                       disabled={
-                                        getAnswerByQuestionId(Props.RQID) ===
-                                        "false"
+                                        option.label === "Axillary (Armpit)"
+                                          ? getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === "false" ||
+                                            getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === ""
+                                          : false
                                       }
                                     />
                                   </div>
@@ -487,7 +496,10 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                           option.label === "Axillary (Armpit)"
                                             ? getAnswerByQuestionId(
                                                 Props.RQID
-                                              ) === "false"
+                                              ) === "false" ||
+                                              getAnswerByQuestionId(
+                                                Props.RQID
+                                              ) === ""
                                               ? false
                                               : true
                                             : getAnswerByQuestionId(
@@ -500,8 +512,14 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                             : false
                                         }
                                         disabled={
-                                          getAnswerByQuestionId(Props.RQID) ===
-                                          "false"
+                                          option.label === "Axillary (Armpit)"
+                                            ? getAnswerByQuestionId(
+                                                Props.RQID
+                                              ) === "false" ||
+                                              getAnswerByQuestionId(
+                                                Props.RQID
+                                              ) === ""
+                                            : false
                                         }
                                       />
                                     </div>
@@ -596,14 +614,19 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                           option.label === "Axillary (Armpit)"
                                             ? getAnswerByQuestionId(
                                                 Props.LQID
-                                              ) === "false"
+                                              ) === "false" ||
+                                              getAnswerByQuestionId(
+                                                Props.LQID
+                                              ) === ""
                                               ? false
                                               : true
                                             : true
                                         }
                                         disabled={
                                           getAnswerByQuestionId(Props.LQID) ===
-                                          "false"
+                                            "false" ||
+                                          getAnswerByQuestionId(Props.LQID) ===
+                                            ""
                                         }
                                       />
                                     </div>
@@ -630,7 +653,10 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                             option.label === "Axillary (Armpit)"
                                               ? getAnswerByQuestionId(
                                                   Props.LQID
-                                                ) === "false"
+                                                ) === "false" ||
+                                                getAnswerByQuestionId(
+                                                  Props.LQID
+                                                ) === ""
                                                 ? false
                                                 : true
                                               : getAnswerByQuestionId(
@@ -645,7 +671,10 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                           disabled={
                                             getAnswerByQuestionId(
                                               Props.LQID
-                                            ) === "false"
+                                            ) === "false" ||
+                                            getAnswerByQuestionId(
+                                              Props.LQID
+                                            ) === ""
                                           }
                                         />
                                       </div>

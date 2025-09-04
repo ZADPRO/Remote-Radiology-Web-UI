@@ -2484,7 +2484,7 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
-      <div className="w-[98%] h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-2 lg:py-6 lg:px-2 rounded-lg">
+      <div className="w-[99%] h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-1 lg:py-6 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button
@@ -2551,7 +2551,9 @@ const PatientQueue: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className="grid w-full border rounded-lg overflow-auto"
+          className={`rounded-lg grid w-full ${
+            role?.type == "patient" ? "h-[80%]" : "h-[92%]"
+          } border `}
           style={{
             background:
               "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
@@ -2638,8 +2640,8 @@ const PatientQueue: React.FC = () => {
         </div>
 
         {/* ShadCN Pagination Controls */}
-        <div className="flex flex-col items-center py-4">
-          <div className="flex md:hidden items-center justify-center w-full space-x-4 mb-4">
+        <div className="flex flex-col items-center py-1">
+          <div className="flex md:hidden items-center justify-center w-full space-x-4 mb-2">
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>
               <Select

@@ -255,7 +255,7 @@ export function DcFormGeneration(
       }.`
     );
   } else if (IntervalImagingHistory.intervalBiopsy === "No") {
-    report.push(`Interval Biopsy not done`);
+    report.push(`Interval Biopsy not done.`);
   }
 
   //Changes Since Previous QT Imaging

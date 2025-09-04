@@ -259,7 +259,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="w-full h-[70vh] overflow-auto">
-          <div className="overflow-x-auto rounded-lg">
+          <div className="grid w-full h-[60vh] overflow-x-auto rounded-lg">
             <Table className="divide-y divide-gray-200 rounded-lg">
               <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
