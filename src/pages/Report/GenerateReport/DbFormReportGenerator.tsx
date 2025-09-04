@@ -113,6 +113,11 @@ export function DbFormReportGenerator(
     otherspecify: getPatientAnswer(522),
     Treatmenttimeline: getPatientAnswer(312),
     sideeffects: getPatientAnswer(313),
+    approachDate: getPatientAnswer(546),
+    neoadjuvantDate: getPatientAnswer(548),
+    adjuvantDate: getPatientAnswer(549),
+    cryoablationDate: getPatientAnswer(550),
+    otherDate: getPatientAnswer(551),
   };
 
   let reportText = [];
@@ -296,7 +301,11 @@ export function DbFormReportGenerator(
       if (sentence.length > 0) {
         let text = `${sentence.join(", ")} ${
           sentence.length === 1 ? "is" : "are"
-        } being ${treatment.Surgical.toLowerCase()}.`;
+        } being ${treatment.Surgical.toLowerCase()}${
+          treatment.approachDate.length > 0
+            ? ` on ${formatReadableDate(treatment.approachDate)}`
+            : ""
+        }.`;
 
         // Capitalize the first letter
         text = text.charAt(0).toUpperCase() + text.slice(1);
@@ -310,7 +319,11 @@ export function DbFormReportGenerator(
       treatment.Neoadjuvant.length > 0
     ) {
       reportText.push(
-        `Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}.`
+        `Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}${
+          treatment.neoadjuvantDate.length > 0
+            ? ` on ${formatReadableDate(treatment.neoadjuvantDate)}`
+            : ""
+        }.`
       );
     }
     //Adjuvant treatment planned (after surgery)
@@ -319,7 +332,11 @@ export function DbFormReportGenerator(
       treatment.Adjuvant.length > 0
     ) {
       reportText.push(
-        `Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}.`
+        `Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}${
+          treatment.adjuvantDate.length > 0
+            ? ` on ${formatReadableDate(treatment.adjuvantDate)}`
+            : ""
+        }.`
       );
     }
     //Cryoablation
@@ -328,13 +345,23 @@ export function DbFormReportGenerator(
       treatment.cryoblation.length > 0
     ) {
       reportText.push(
-        `Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}.`
+        `Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}${
+          treatment.cryoablationDate.length > 0
+            ? ` on ${formatReadableDate(treatment.cryoablationDate)}`
+            : ""
+        }.`
       );
     }
     //Other
     if (treatment.other !== "Not Applicable" && treatment.other.length > 0) {
       reportText.push(
-        `${treatment.otherspecify} ${treatment.other.toLocaleLowerCase()}.`
+        `${
+          treatment.otherspecify
+        } ${treatment.other.toLocaleLowerCase()}${treatment.cryoblation.toLocaleLowerCase()}${
+          treatment.otherDate.length > 0
+            ? ` on ${formatReadableDate(treatment.otherDate)}`
+            : ""
+        }.`
       );
     }
     //Treatment timeline and details

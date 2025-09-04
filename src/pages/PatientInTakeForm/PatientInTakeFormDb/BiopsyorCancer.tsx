@@ -215,7 +215,7 @@ const BiopsyorCancer: React.FC<Props> = ({
             <Label className="font-semibold text-base">
               A. Date of diagnosis <span className="text-red-500">*</span>
             </Label>
-            <div className="w-45 ml-4 lg:ml-0">
+            <div className="w-50 ml-4 lg:ml-0">
               <DatePicker
                 value={
                   getAnswer(questionIds.datediagnosis)
@@ -438,7 +438,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                           { label: "Yes", value: "Yes" },
                           { label: "Unknown", value: "Unknown" },
                         ]}
-                        required
+                        // required
                       />
 
                       {getAnswer(questionIds.LymphRight) === "Yes" && (
@@ -483,7 +483,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                           { label: "Yes", value: "Yes" },
                           { label: "Unknown", value: "Unknown" },
                         ]}
-                        required
+                        // required
                       />
 
                       {getAnswer(questionIds.MetastasisRight) === "Yes" && (
@@ -570,7 +570,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                           { label: "Yes", value: "Yes" },
                           { label: "Unknown", value: "Unknown" },
                         ]}
-                        required
+                        // required
                       />
 
                       {getAnswer(questionIds.Lymph) === "Yes" && (
@@ -613,7 +613,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                           { label: "Yes", value: "Yes" },
                           { label: "Unknown", value: "Unknown" },
                         ]}
-                        required
+                        // required
                       />
 
                       {getAnswer(questionIds.Metastasis) === "Yes" && (

@@ -771,7 +771,7 @@ const PatientQueue: React.FC = () => {
             )}
           </div>
         ),
-        // cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
+        cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
         enableColumnFilter: true,
       },
       {

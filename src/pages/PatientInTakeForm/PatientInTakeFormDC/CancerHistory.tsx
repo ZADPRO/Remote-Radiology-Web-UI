@@ -9,13 +9,19 @@ import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleB
 import TextEditor from "@/components/TextEditor";
 import { Input } from "@/components/ui/input";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
+import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 
 interface QuestionIds {
   cancerHistory: number;
   historyPosition: number;
   historyclockposition: number;
+  historyclockpositionLeft: number;
   cancerDate: number;
   cancerType: number;
+  cancerTreatmentChemotherapy: number;
+  cancerTreatmentRadiation: number;
+  cancerTreatmentSurgery: number;
+  cancerTreatmentCyroablation: number;
   cancerTreatment: number;
   cancerTreatmentOther: number;
   cancerTreatmentdate: number;
@@ -42,7 +48,7 @@ const CancerHistory: React.FC<Props> = ({
     formData.find((q) => q.questionId === id)?.answer || "";
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Cancer History" className="uppercase" />
       <div className="bg-[#fff]">
         {
@@ -80,13 +86,33 @@ const CancerHistory: React.FC<Props> = ({
                   ]}
                   required
                 />
-                <SingleBreastPositionPicker
-                  value={getAnswer(questionIds.historyclockposition)}
-                  onChange={(val) =>
-                    handleInputChange(questionIds.historyclockposition, val)
-                  }
-                  singleSelect={true}
-                />
+                <div className="flex gap-2">
+                  {getAnswer(questionIds.historyPosition) === "Both" && (
+                    <Label>R-</Label>
+                  )}
+                  <SingleBreastPositionPicker
+                    value={getAnswer(questionIds.historyclockposition)}
+                    onChange={(val) =>
+                      handleInputChange(questionIds.historyclockposition, val)
+                    }
+                    singleSelect={true}
+                  />
+                  {getAnswer(questionIds.historyPosition) === "Both" && (
+                    <>
+                      <Label>L-</Label>
+                      <SingleBreastPositionPicker
+                        value={getAnswer(questionIds.historyclockpositionLeft)}
+                        onChange={(val) =>
+                          handleInputChange(
+                            questionIds.historyclockpositionLeft,
+                            val
+                          )
+                        }
+                        singleSelect={true}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <Label className="text-bold text-base">
@@ -122,7 +148,7 @@ const CancerHistory: React.FC<Props> = ({
                 />
               </div>
 
-              <MultiOptionRadioGroup
+              {/* <MultiOptionRadioGroup
                 label="D. Treatment received"
                 className="sm:h-0 h-0 mb-3"
                 questionId={questionIds.cancerTreatment}
@@ -138,7 +164,94 @@ const CancerHistory: React.FC<Props> = ({
                   { label: "Cyroablation", value: "Cyroablation" },
                   { label: "Other", value: "Other" },
                 ]}
-              />
+              /> */}
+
+              <div className="space-y-4 ">
+                <Label className="text-bold text-base">
+                  D. Treatment Received
+                </Label>
+                {[
+                  {
+                    label: "Chemotherapy",
+                    id: "chemotherapy",
+                    questionId: questionIds.cancerTreatmentChemotherapy,
+                  },
+                  {
+                    label: "Radiation",
+                    id: "radiation",
+                    questionId: questionIds.cancerTreatmentRadiation,
+                  },
+                  {
+                    label: "Surgery",
+                    id: "surgery",
+                    questionId: questionIds.cancerTreatmentSurgery,
+                  },
+                  {
+                    label: "Cyroablation",
+                    id: "cyroablation",
+                    questionId: questionIds.cancerTreatmentCyroablation,
+                  },
+                ].map((item) => {
+                  const checked = getAnswer(item.questionId) === "true";
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex flex-wrap sm:flex-nowrap items-center gap-4"
+                    >
+                      {/* Checkbox + Label */}
+                      <div className="flex items-center gap-2 min-w-[180px]">
+                        <Checkbox2
+                          id={item.id}
+                          checked={checked}
+                          onCheckedChange={(checked) =>
+                            handleInputChange(
+                              item.questionId,
+                              checked ? "true" : "false"
+                            )
+                          }
+                        />
+                        <Label className="whitespace-nowrap" htmlFor={item.id}>
+                          {item.label}
+                        </Label>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-4">
+                  {/* Checkbox + Label */}
+                  <div className="flex items-center gap-2 min-w-[180px]">
+                    <Checkbox2
+                      checked={
+                        getAnswer(questionIds.cancerTreatment) === "true"
+                          ? true
+                          : false
+                      }
+                      onCheckedChange={(checked) =>
+                        handleInputChange(
+                          questionIds.cancerTreatment,
+                          checked ? "true" : "false"
+                        )
+                      }
+                    />
+                    <Label className="whitespace-nowrap">Other</Label>
+                  </div>
+                  {getAnswer(questionIds.cancerTreatment) === "true" && (
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={getAnswer(questionIds.cancerTreatmentOther)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            questionIds.cancerTreatmentOther,
+                            e.target.value
+                          )
+                        }
+                        placeholder="Specify"
+                        className="w-60 text-sm"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {getAnswer(questionIds.cancerTreatment) === "Other" && (
                 <Input

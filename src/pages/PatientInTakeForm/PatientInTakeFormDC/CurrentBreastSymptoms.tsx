@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Separator } from "@/components/ui/separator";
 import FormHeader from "../FormHeader";
@@ -82,6 +82,64 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
     );
   };
 
+  useEffect(() => {
+    if (
+      getAnswerByQuestionId(87) === "Yes" &&
+      getAnswerByQuestionId(Props.questionIds.breastCancerSymptoms) === ""
+    ) {
+      handleInputChange(Props.questionIds.breastCancerSymptoms, "Yes");
+    }
+
+    if (
+      getAnswerByQuestionId(88) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.lumpOrThick) === ""
+    ) {
+      handleInputChange(Props.questionIds.lumpOrThick, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(94) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.skinChanges) === ""
+    ) {
+      handleInputChange(Props.questionIds.skinChanges, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(99) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.nippleDischarge) === ""
+    ) {
+      handleInputChange(Props.questionIds.nippleDischarge, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(106) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.breastPain) === ""
+    ) {
+      handleInputChange(Props.questionIds.breastPain, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(111) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.nipplePain) === ""
+    ) {
+      handleInputChange(Props.questionIds.nipplePain, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(116) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.lymphNodes) === ""
+    ) {
+      handleInputChange(Props.questionIds.lymphNodes, "true");
+    }
+
+    if (
+      getAnswerByQuestionId(122) === "true" &&
+      getAnswerByQuestionId(Props.questionIds.others) === ""
+    ) {
+      handleInputChange(Props.questionIds.others, "true");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="CURRENT BREAST SYMPTOMS" className="uppercase" />
@@ -113,6 +171,13 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
               <div className="font-bold mb-4">
                 B. If yes, check all that apply:{" "}
                 <span className="text-red-500">*</span>
+              </div>
+
+              <div className="font-semibold mb-4">
+                How symptoms compare with your previous symptoms?
+                <br />
+                Have any of the symptoms you experienced previously now
+                resolved?
               </div>
 
               <div className="w-full flex flex-col lg:flex-row items-center lg:space-x-10">

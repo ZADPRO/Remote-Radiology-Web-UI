@@ -9,6 +9,8 @@ import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionR
 import { IntakeOption } from "../PatientInTakeForm";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
+import DatePicker from "@/components/date-picker";
+import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   treatmentstatus: number;
@@ -43,6 +45,11 @@ interface QuestionIds {
   adjotherspecify: number;
   Treatmenttimeline: number;
   sideeffects: number;
+  approachDate: number;
+  neoadjuvantDate: number;
+  adjuvantDate: number;
+  cryoablationDate: number;
+  otherDate: number;
 }
 
 interface Props {
@@ -65,7 +72,12 @@ const Treatment: React.FC<Props> = ({
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Treatment" className="uppercase" />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
@@ -101,6 +113,23 @@ const Treatment: React.FC<Props> = ({
                   {(getAnswer(questionIds.Surgical) === "Done" ||
                     getAnswer(questionIds.Surgical) === "Planned") && (
                     <>
+                      <div className="w-60 ml-4.5 mt-3">
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.approachDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.approachDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(val) => {
+                            handleInputChange(
+                              questionIds.approachDate,
+                              val ? formatLocalDate(val) : ""
+                            );
+                          }}
+                        />
+                      </div>
                       {/* Lumpectomy/Breast-conserving surgery */}
                       <div className="ml-4.5 mt-0 lg:mt-2 flex gap-3 h-[auto] lg:h-[40px] items-center">
                         <Checkbox2
@@ -291,6 +320,23 @@ const Treatment: React.FC<Props> = ({
                   {(getAnswer(questionIds.Neoadjuvant) === "Done" ||
                     getAnswer(questionIds.Neoadjuvant) === "Planned") && (
                     <>
+                      <div className="w-60 ml-4.5 mt-3">
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.neoadjuvantDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.neoadjuvantDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(val) => {
+                            handleInputChange(
+                              questionIds.neoadjuvantDate,
+                              val ? formatLocalDate(val) : ""
+                            );
+                          }}
+                        />
+                      </div>
                       {/* Chemotherapy (e.g., Taxol, Adriamycin, Herceptin) */}
                       <div className="ml-4.5 mt-0 lg:mt-3 flex gap-3 h-[auto] lg:h-[40px] items-center">
                         <Checkbox2
@@ -378,7 +424,7 @@ const Treatment: React.FC<Props> = ({
                                 )
                               }
                               placeholder="Specify"
-                              required
+                              // required={}
                             />
                           </div>
                         )}
@@ -487,6 +533,23 @@ const Treatment: React.FC<Props> = ({
                   {(getAnswer(questionIds.Adjuvant) === "Done" ||
                     getAnswer(questionIds.Adjuvant) === "Planned") && (
                     <>
+                      <div className="w-60 ml-4.5 mt-3">
+                        <DatePicker
+                          value={
+                            getAnswer(questionIds.adjuvantDate)
+                              ? parseLocalDate(
+                                  getAnswer(questionIds.adjuvantDate)
+                                )
+                              : undefined
+                          }
+                          onChange={(val) => {
+                            handleInputChange(
+                              questionIds.adjuvantDate,
+                              val ? formatLocalDate(val) : ""
+                            );
+                          }}
+                        />
+                      </div>
                       {/* Chemotherapy */}
                       <div className="ml-4.5 flex gap-3  h-[40px] items-center">
                         <Checkbox2
@@ -610,6 +673,26 @@ const Treatment: React.FC<Props> = ({
                       { label: "Planned", value: "Planned" },
                     ]}
                   />
+                  {(getAnswer(questionIds.adjcryoblation) === "Done" ||
+                    getAnswer(questionIds.adjcryoblation) === "Planned") && (
+                    <div className="w-60 ml-4.5 mt-3">
+                      <DatePicker
+                        value={
+                          getAnswer(questionIds.cryoablationDate)
+                            ? parseLocalDate(
+                                getAnswer(questionIds.cryoablationDate)
+                              )
+                            : undefined
+                        }
+                        onChange={(val) => {
+                          handleInputChange(
+                            questionIds.cryoablationDate,
+                            val ? formatLocalDate(val) : ""
+                          );
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div
@@ -643,8 +726,31 @@ const Treatment: React.FC<Props> = ({
                       )
                     }
                     placeholder="Specify"
-                    required
+                    required={
+                      getAnswer(questionIds.adjother) === "Done" ||
+                      getAnswer(questionIds.adjother) === "Planned"
+                    }
                   />
+                  {(getAnswer(questionIds.adjother) === "Done" ||
+                    getAnswer(questionIds.adjother) === "Planned") && (
+                    <div className="w-60 ml-4.5 mt-3">
+                      <DatePicker
+                        value={
+                          getAnswer(questionIds.otherDate)
+                            ? parseLocalDate(
+                                getAnswer(questionIds.otherDate)
+                              )
+                            : undefined
+                        }
+                        onChange={(val) => {
+                          handleInputChange(
+                            questionIds.otherDate,
+                            val ? formatLocalDate(val) : ""
+                          );
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>

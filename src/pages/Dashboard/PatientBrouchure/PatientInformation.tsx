@@ -8,13 +8,13 @@ import { dynamicBrochure } from "@/services/dynamicForms";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Button } from "@/components/ui/button";
 
-interface Props{
+interface Props {
   onNext?: () => void;
   scId?: number;
 }
 
-const PatientInformation: React.FC<Props> = ({onNext, scId}) => {
-  const {user,role} = useAuth();
+const PatientInformation: React.FC<Props> = ({ onNext, scId }) => {
+  const { user, role } = useAuth();
   const [defaultInfo, setDefaultInfo] = useState(false);
 
   const [patientInfo, setPatientInfo] = useState("");
@@ -26,37 +26,43 @@ const PatientInformation: React.FC<Props> = ({onNext, scId}) => {
   const listBrochure = async () => {
     setLoading(true);
     try {
-      const res = await dynamicBrochure.listBrochure(scId ?? user?.refSCId ?? 0);
+      const res = await dynamicBrochure.listBrochure(
+        scId ?? user?.refSCId ?? 0
+      );
       console.log(res);
 
-      if(res.status) {
+      if (res.status) {
         setPatientInfo(res.WGPatientBrochure);
         setScPatientInfo(res.SCPatientBrochure);
         setDefaultInfo(res.SCBrochureAccessStatus);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const updateBrochure = async() => {
+  const updateBrochure = async () => {
     setLoading(true);
     try {
-      const res = await dynamicBrochure.updateBrochure(user?.refSCId == 0 ? patientInfo : scPatientInfo, user?.refSCId ?? 0, defaultInfo);
+      const res = await dynamicBrochure.updateBrochure(
+        user?.refSCId == 0 ? patientInfo : scPatientInfo,
+        user?.refSCId ?? 0,
+        defaultInfo
+      );
       console.log(res);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     listBrochure();
   }, []);
-  
+
   return (
     <DialogContent
       style={{
@@ -89,13 +95,13 @@ const PatientInformation: React.FC<Props> = ({onNext, scId}) => {
       </DialogHeader>
 
       <div className="w-11/12 mx-auto">
-        {(role?.type === "manager" || role?.type == "admin") ? (
+        {role?.type === "manager" || role?.type == "admin" ? (
           <WGPatientInfo
             patientInfo={patientInfo}
             setPatientInfo={setPatientInfo}
             onSubmit={updateBrochure}
           />
-        ) : (role?.type === "scadmin" ? (
+        ) : role?.type === "scadmin" ? (
           <SCPatientInfo
             defaultInfo={defaultInfo}
             setDefaultInfo={setDefaultInfo}
@@ -105,14 +111,24 @@ const PatientInformation: React.FC<Props> = ({onNext, scId}) => {
             onSubmit={updateBrochure}
           />
         ) : (
-          <div className="flex flex-col gap-2 w-full">
-          <div
-          className="ql-editor border-2 border-gray-300 rounded-2xl shadow-2xl p-5"
-          dangerouslySetInnerHTML={{ __html: defaultInfo ? patientInfo : scPatientInfo }}
-        />
-          {onNext &&<Button variant="greenTheme" className="self-end" onClick={onNext}>Next</Button>}
-        </div>
-        ))}
+          <div className="flex flex-col gap-2 w-full pb-5">
+            <div
+              className="ql-editor border-2  border-gray-300 rounded-2xl shadow-2xl p-5"
+              dangerouslySetInnerHTML={{
+                __html: defaultInfo ? patientInfo : scPatientInfo,
+              }}
+            />
+            {onNext && (
+              <Button
+                variant="greenTheme"
+                className="self-end"
+                onClick={onNext}
+              >
+                Next
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* <Brochure />

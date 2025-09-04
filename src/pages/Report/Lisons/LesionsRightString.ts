@@ -37,8 +37,6 @@ export function LesionsRightString(
   questionIds: QuestionIds,
   LesionsString: string
 ): string {
-  console.log("Hi Hello I am Running Lesions.................");
-
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
 
@@ -184,16 +182,6 @@ export function LesionsRightString(
             sentence += `, located at ${data.locationLevelPercentage}`;
           }
 
-          if (data.distancenipple) {
-            sentence += `,
-          ${
-            namePart === "heterogeneous tissue prominence" ||
-            namePart === "hypertrophic tissue with microcysts"
-              ? `approximately`
-              : `approximately`
-          } ${data.distancenipple} mm from the nipple`;
-          }
-
           if (data.sizew || data.sizel || data.sizeh) {
             sentence += `. The lesion is measuring `;
           }
@@ -256,6 +244,10 @@ export function LesionsRightString(
             sentence += `. Volume is approximately ${data.Volumne} cubic mm`;
           }
 
+          if (data.distancenipple) {
+            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+          }
+
           sentence += ".</span><br /><br />";
 
           htmlVal.push(sentence);
@@ -300,8 +292,6 @@ export function LesionsRightString(
           }
 
           let sentence = `<span>There is an area of ${namePart ?? "lesion"}${
-            data.distancenipple ? ` spanning ${data.distancenipple} mm,` : ``
-          }${
             data.Transmissionspped
               ? ` with a speed of ${data.Transmissionspped} m/s,`
               : ``
@@ -313,7 +303,7 @@ export function LesionsRightString(
                     ? `in the range of `
                     : `at`
                 } ${
-                  data.locationclockposition === "nipple"
+                  data.locationclockposition === "0"
                     ? "nipple"
                     : data.locationclockposition + "'o clock"
                 }`
@@ -321,13 +311,13 @@ export function LesionsRightString(
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
-                  data.locationclockpositionto === "nipple"
+                  data.locationclockpositionto === "0"
                     ? "nipple"
                     : data.locationclockpositionto + "'o clock"
                 }`
               : ``
           }${
-            data.locationLevel && data.locationLevel !== "unknown"
+            data.locationLevel && data.locationLevel !== "Unknown"
               ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${
@@ -350,7 +340,9 @@ export function LesionsRightString(
             (data.debris && data.debris !== "not present") ||
             data.Volumne
           ) {
-            sentence += `. It is noted to be `;
+            sentence += `. It is noted to be ${
+              data.sizew || data.sizel || data.sizeh ? "spanning around" : ""
+            }`;
           }
 
           // width Size
@@ -404,6 +396,10 @@ export function LesionsRightString(
           // Volume
           if (data.Volumne) {
             sentence += `. With an estimated volume of ${data.Volumne} cubic mm`;
+          }
+
+          if (data.distancenipple) {
+            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -462,12 +458,8 @@ export function LesionsRightString(
           let sentence = `<span>There are ${namePart ?? "lesion"}${
             data.atleast ? ` (atleast ${data.atleast})` : ``
           }${
-            data.distancenipple
-              ? `, largest measuring ${data.distancenipple} mm,`
-              : ``
-          }${
             data.Transmissionspped
-              ? ` with a speed of ${data.Transmissionspped} m/s,`
+              ? `, with a speed of ${data.Transmissionspped} m/s,`
               : ``
           }${
             data.locationclockposition.length > 0
@@ -477,7 +469,7 @@ export function LesionsRightString(
                     ? `in the range of `
                     : `at`
                 } ${
-                  data.locationclockposition === "nipple"
+                  data.locationclockposition === "0"
                     ? "nipple"
                     : data.locationclockposition + "'o clock"
                 }`
@@ -485,13 +477,13 @@ export function LesionsRightString(
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
-                  data.locationclockpositionto === "nipple"
+                  data.locationclockpositionto === "0"
                     ? "nipple"
                     : data.locationclockpositionto + "'o clock"
                 }`
               : ``
           }${
-            data.locationLevel && data.locationLevel !== "unknown"
+            data.locationLevel && data.locationLevel !== "Unknown"
               ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${

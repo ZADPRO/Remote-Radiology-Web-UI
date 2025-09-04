@@ -27,6 +27,11 @@ export function DcFormGeneration(
       .join(", ");
   }
 
+  function capitalizeFirstLetter(str: string) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   // const breastCancerSymptoms = {
   //   breastCancerSymptoms: getPatientAnswer(322),
   //   lumpOrThick: getPatientAnswer(323),
@@ -82,8 +87,13 @@ export function DcFormGeneration(
     cancerHistory: getPatientAnswer(356),
     historyPosition: getPatientAnswer(357),
     historyclockposition: getPatientAnswer(524),
+    historyclockpositionLeft: getPatientAnswer(541),
     cancerDate: getPatientAnswer(358),
     cancerType: getPatientAnswer(359),
+    cancerTreatmentChemotherapy: getPatientAnswer(542),
+    cancerTreatmentRadiation: getPatientAnswer(543),
+    cancerTreatmentSurgery: getPatientAnswer(544),
+    cancerTreatmentCyroablation: getPatientAnswer(545),
     cancerTreatment: getPatientAnswer(360),
     cancerTreatmentOther: getPatientAnswer(526),
     cancerTreatmentdate: getPatientAnswer(525),
@@ -121,9 +131,12 @@ export function DcFormGeneration(
     morphologyChangeDetails: getPatientAnswer(398),
     newFindings: getPatientAnswer(399),
     newFindingsDeatils: getPatientAnswer(400),
+    changeTreatment: getPatientAnswer(552),
   };
 
-   const categoryId = getPatientAnswer(170);
+  const categoryId = getPatientAnswer(170);
+
+  const clinicalStatus = getPatientAnswer(547);
 
   if (categoryId != "4") {
     return ``;
@@ -132,14 +145,31 @@ export function DcFormGeneration(
   //Cancer History
   if (cancerhistoy.cancerHistory === "Yes") {
     report.push(
-      `History of ${cancerhistoy.historyPosition.toLowerCase()}${
-        cancerhistoy.cancerType.length > 0
-          ? ` (${cancerhistoy.cancerType})`
-          : ""
-      }${
-        cancerhistoy.historyclockposition.length > 0
-          ? ` ${formatBreastSymptoms(cancerhistoy.historyclockposition)}`
-          : ``
+      `History of ${
+        cancerhistoy.historyPosition.toLowerCase() === "both"
+          ? `${
+              cancerhistoy.historyPosition.length > 0
+                ? `right ${
+                    cancerhistoy.historyclockposition.length > 0
+                      ? ` ${formatBreastSymptoms(
+                          cancerhistoy.historyclockposition
+                        )}`
+                      : ``
+                  }${
+                    cancerhistoy.historyclockpositionLeft.length > 0
+                      ? `, left ${formatBreastSymptoms(
+                          cancerhistoy.historyclockpositionLeft
+                        )}`
+                      : ``
+                  }`
+                : ""
+            }`
+          : cancerhistoy.historyPosition.toLowerCase() +
+            ` ${
+              cancerhistoy.historyclockposition.length > 0
+                ? ` ${formatBreastSymptoms(cancerhistoy.historyclockposition)}`
+                : ``
+            }`
       }${
         cancerhistoy.cancerDate.length > 0
           ? `, diagnosed on ${formatReadableDate(cancerhistoy.cancerDate)}`
@@ -148,14 +178,21 @@ export function DcFormGeneration(
     );
   }
 
+  let text = [];
+
+  cancerhistoy.cancerTreatmentChemotherapy === "true" &&
+    text.push("chemotherapy");
+  cancerhistoy.cancerTreatmentRadiation === "true" && text.push("radiation");
+  cancerhistoy.cancerTreatmentSurgery === "true" && text.push("surgery");
+  cancerhistoy.cancerTreatmentCyroablation === "true" &&
+    text.push("cyroablation");
+  cancerhistoy.cancerTreatment === "true" &&
+    text.push(`${cancerhistoy.cancerTreatmentOther}`);
+
   //Treatment Recieved
-  if (cancerhistoy.cancerTreatment.length > 0) {
+  if (text.length > 0) {
     report.push(
-      `${
-        cancerhistoy.cancerTreatment === "Other"
-          ? `${cancerhistoy.cancerTreatmentOther}`
-          : `${cancerhistoy.cancerTreatment}`
-      } treatment was recieved${
+      `${capitalizeFirstLetter(text.join(", "))} treatment was recieved${
         cancerhistoy.cancerTreatmentdate.length > 0
           ? ` on ${formatReadableDate(cancerhistoy.cancerTreatmentdate)}`
           : ``
@@ -166,6 +203,14 @@ export function DcFormGeneration(
   //Current Status
   if (cancerhistoy.cancerStatus.length > 0) {
     report.push(`Currently ${cancerhistoy.cancerStatus.toLocaleLowerCase()}.`);
+  }
+
+  if (clinicalStatus.length > 0) {
+    if (clinicalStatus === "Yes") {
+      report.push("Changes in treatment since last QT scan: Present");
+    } else if (clinicalStatus === "No") {
+      report.push("Changes in treatment since last QT scan: None");
+    }
   }
 
   //IntervalImagingHistory
@@ -201,19 +246,27 @@ export function DcFormGeneration(
   }
 
   //Changes Since Previous QT Imaging
+  let ChangeReport = [];
+  if (ChangesSincePreviousQTImaging.changesFindings === "Yes") {
+    ChangeReport.push(`Change since prior scan: yes`);
+  } else if (ChangesSincePreviousQTImaging.changesFindings === "No") {
+    ChangeReport.push(`Change since prior scan: no`);
+  }
   if (
-    ChangesSincePreviousQTImaging.changesFindings === "Known" &&
+    ChangesSincePreviousQTImaging.changesFindings === "Yes" &&
     ChangesSincePreviousQTImaging.sizeChange.length > 0 &&
     ChangesSincePreviousQTImaging.sizeChange !== "Unknown"
   ) {
-    report.push(
-      `Change since prior scan: ${ChangesSincePreviousQTImaging.sizeChange}.`
+    ChangeReport.push(
+      `, Size Change: ${ChangesSincePreviousQTImaging.sizeChange}`
     );
   }
 
+  report.push(ChangeReport.join("") + ".");
+
   //New Finding
   if (
-    ChangesSincePreviousQTImaging.changesFindings === "Known" &&
+    ChangesSincePreviousQTImaging.changesFindings === "Yes" &&
     ChangesSincePreviousQTImaging.newFindings.length > 0
   ) {
     report.push(
@@ -223,6 +276,11 @@ export function DcFormGeneration(
           : `${ChangesSincePreviousQTImaging.newFindings}`
       }.`
     );
+  }
+
+  //Change Treatment
+  if(ChangesSincePreviousQTImaging.changeTreatment.length > 0){
+    report.push(`Changes in treatment since prior scan: ${ChangesSincePreviousQTImaging.changeTreatment.toLowerCase()}.`)
   }
 
   return report.join("<br/>");

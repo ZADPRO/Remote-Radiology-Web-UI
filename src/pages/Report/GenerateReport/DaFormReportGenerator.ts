@@ -297,7 +297,7 @@ export function DaFormReportGenerator(
 
   //Pathology
   if (biopsyinfo.Pathology.length > 0) {
-    report.push(`Pathology was recommended ${biopsyinfo.Pathology}.`);
+    report.push(`Pathology recommendation was ${biopsyinfo.Pathology}.`);
   }
 
   return report.join("<br/>");

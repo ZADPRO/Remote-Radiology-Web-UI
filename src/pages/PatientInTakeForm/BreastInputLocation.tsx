@@ -31,6 +31,8 @@ type Props = {
   LocationAxillary?: number;
   LocationAxillaryDuration?: number;
   LocationAxillarySize?: number;
+  LocationAxillaryDurationRight?: number;
+  LocationAxillarySizeRight?: number;
   LocationInBetween?: number;
   LocationInBetweenDuration?: number;
   LocationInBetweenSize?: number;
@@ -288,192 +290,423 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
             <Label className="font-semibold text-base">{Props.label}</Label>
           </div>
 
-             {getAnswerByQuestionId(Props.checkStatusQId) === "true" && ( 
-          <div className="h-full w-full space-y-4">
-          
-            <div className="h-full w-full space-y-2">
-              <div>
-                <div className="flex flex-col space-y-2">
-                  <Label className="text-base font-semibold block mb-2">
-                    Location
-                  </Label>
-                  <div className="flex flex-col items-start gap-4 pl-4">
-  {[
-    {
-      label: "Axillary (Armpit)",
-      checkedQId: Props.LocationAxillary,
-      durationQId: Props.LocationAxillaryDuration,
-      sizeQId: Props.LocationAxillarySize,
-      isOther: false,
-    },
-    {
-      label: "In-Between (Chest Bone)",
-      checkedQId: Props.LocationInBetween,
-      durationQId: Props.LocationInBetweenDuration,
-      sizeQId: Props.LocationInBetweenSize,
-      isOther: false,
-    },
-    {
-      label: "Other",
-      checkedQId: Props.LocationOther,
-      specifQId: Props.LocationOtherSpecify,
-      durationQId: Props.LocationOtherDuration,
-      sizeQId: Props.LocationOtherSize,
-      isOther: true,
-    },
-  ].map((option, index) => {
-    const isSelected = getAnswerByQuestionId(option.checkedQId) === "true";
+          {getAnswerByQuestionId(Props.checkStatusQId) === "true" && (
+            <div className="h-full w-full space-y-4">
+              <div className="h-full w-full space-y-2">
+                <div>
+                  <div className="flex flex-col space-y-2">
+                    <Label className="text-base font-semibold block mb-2">
+                      Location
+                    </Label>
+                    <div className="flex flex-col items-start gap-4 pl-4">
+                      {[
+                        {
+                          label: "Axillary (Armpit)",
+                          checkedQId: Props.LocationAxillary,
+                          durationQId: Props.LocationAxillaryDuration,
+                          sizeQId: Props.LocationAxillarySize,
+                          isOther: false,
+                        },
+                        {
+                          label: "In-Between (Chest Bone)",
+                          checkedQId: Props.LocationInBetween,
+                          durationQId: Props.LocationInBetweenDuration,
+                          sizeQId: Props.LocationInBetweenSize,
+                          isOther: false,
+                        },
+                        {
+                          label: "Other",
+                          checkedQId: Props.LocationOther,
+                          specifQId: Props.LocationOtherSpecify,
+                          durationQId: Props.LocationOtherDuration,
+                          sizeQId: Props.LocationOtherSize,
+                          isOther: true,
+                        },
+                      ].map((option, index) => {
+                        const isSelected =
+                          getAnswerByQuestionId(option.checkedQId) === "true";
 
-    return (
-      <div
-        key={index}
-        className="flex flex-col gap-2 min-h-8 w-full"
-      >
-        {/* Checkbox */}
-        <div className="flex items-center gap-2">
-          <Checkbox2
-            id={option.label}
-            checked={isSelected}
-            onCheckedChange={() =>
-              updateAnswer(option.checkedQId ?? 0, getAnswerByQuestionId(option.checkedQId) == "true" ? "false" : "true")
-            }
-          />
-          <label htmlFor={option.label} className="text-sm">
-            {option.label}
-          </label>
-        </div>
+                        return (
+                          <div
+                            key={index}
+                            className="flex flex-col gap-2 min-h-8 w-full"
+                          >
+                            {/* Checkbox */}
+                            <div className="flex items-center gap-2">
+                              <Checkbox2
+                                id={option.label}
+                                checked={isSelected}
+                                onCheckedChange={() =>
+                                  updateAnswer(
+                                    option.checkedQId ?? 0,
+                                    getAnswerByQuestionId(option.checkedQId) ==
+                                      "true"
+                                      ? "false"
+                                      : "true"
+                                  )
+                                }
+                                required={
+                                  (getAnswerByQuestionId(
+                                    Props.LocationAxillary
+                                  ) === "" ||
+                                    getAnswerByQuestionId(
+                                      Props.LocationAxillary
+                                    ) === "false") &&
+                                  (getAnswerByQuestionId(
+                                    Props.LocationInBetween
+                                  ) === "" ||
+                                    getAnswerByQuestionId(
+                                      Props.LocationInBetween
+                                    ) === "false") &&
+                                  (getAnswerByQuestionId(
+                                    Props.LocationOther
+                                  ) === "" ||
+                                    getAnswerByQuestionId(
+                                      Props.LocationOther
+                                    ) === "false")
+                                }
+                              />
+                              <label htmlFor={option.label} className="text-sm">
+                                {option.label}
+                              </label>
+                            </div>
 
-        {/* Extra fields if selected */}
-        {isSelected && (
-          <div className="flex flex-wrap gap-4 pl-6">
-            {option.isOther && (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                <Label>Specify</Label>
-                <Input
-                  type="text"
-                  value={getAnswerByQuestionId(option.specifQId)}
-                  onChange={(e) =>
-                    updateAnswer(option.specifQId ?? 0, e.target.value)
-                  }
-                  className="w-full lg:w-48"
-                  placeholder="Enter location"
-                  required
-                />
-              </div>
-            )}
+                            {/* Extra fields if selected */}
+                            {isSelected && (
+                              <>
+                                <div className="flex flex-wrap gap-4 pl-6">
+                                  {option.isOther && (
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                                      <Label>Specify</Label>
+                                      <Input
+                                        type="text"
+                                        value={getAnswerByQuestionId(
+                                          option.specifQId
+                                        )}
+                                        onChange={(e) =>
+                                          updateAnswer(
+                                            option.specifQId ?? 0,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-full lg:w-48"
+                                        placeholder="Enter location"
+                                        required
+                                      />
+                                    </div>
+                                  )}
+                                  {option.label === "Axillary (Armpit)" && (
+                                    <div
+                                      onClick={() =>
+                                        getAnswerByQuestionId(
+                                          Props.checkStatusQId
+                                        ) === "true" && setModal(true)
+                                      }
+                                      className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
+                                    >
+                                      <Label className="min-w-[20px]">R</Label>
+                                      <Input
+                                        value={formatClockLabels(
+                                          getAnswerByQuestionId(Props.RQID)
+                                        )}
+                                        onChange={(e) =>
+                                          updateAnswer(
+                                            Props.RQID,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-full lg:w-32"
+                                        disabled={
+                                          getAnswerByQuestionId(
+                                            Props.checkStatusQId
+                                          ) !== "true"
+                                        }
+                                        required={
+                                          getAnswerByQuestionId(Props.RQID) ===
+                                            "" &&
+                                          getAnswerByQuestionId(Props.LQID) ===
+                                            "" &&
+                                          getAnswerByQuestionId(
+                                            Props.OtherInputQId
+                                          ) === ""
+                                        }
+                                      />
+                                    </div>
+                                  )}
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-              <Label>Duration (Months)</Label>
-              <Input
-                placeholder="Months"
-                value={getAnswerByQuestionId(option.durationQId)}
-                onChange={(e) =>
-                  updateAnswer(option.durationQId ?? 0, e.target.value)
-                }
-                className="w-full lg:w-20"
-                type="number"
-                required
-              />
-            </div>
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                                    <Label>Duration (Months)</Label>
+                                    <Input
+                                      placeholder="Months"
+                                      value={getAnswerByQuestionId(
+                                        option.durationQId
+                                      )}
+                                      onChange={(e) =>
+                                        updateAnswer(
+                                          option.durationQId ?? 0,
+                                          e.target.value
+                                        )
+                                      }
+                                      className="w-full lg:w-20"
+                                      type="number"
+                                      required={
+                                        option.label === "Axillary (Armpit)"
+                                          ? getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === ""
+                                            ? false
+                                            : true
+                                          : true
+                                      }
+                                    />
+                                  </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
-              <Label>Size</Label>
-              <div className="w-full lg:w-32">
-                <ValidatedSelect
-                          questionId={option.sizeQId ?? 0}
-                          formData={Props.data}
-                          handleInputChange={updateAnswer}
-                          options={[
-                            { label: "Pea", value: "Pea" },
-                            { label: "Grape", value: "Grape" },
-                            { label: "Bigger", value: "Bigger" },
-                          ]}
-                          placeholder="Select Size"
-                          required={
-                            getAnswerByQuestionId(option.checkedQId) != "" &&
-                            getAnswerByQuestionId(option.sizeQId) == ""
-                          }
-                        />
-                
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  })}
-</div>
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                                    <Label>Size</Label>
+                                    <div className="w-full lg:w-32">
+                                      <ValidatedSelect
+                                        questionId={option.sizeQId ?? 0}
+                                        formData={Props.data}
+                                        handleInputChange={updateAnswer}
+                                        options={[
+                                          { label: "Pea", value: "Pea" },
+                                          { label: "Grape", value: "Grape" },
+                                          { label: "Bigger", value: "Bigger than grape" },
+                                        ]}
+                                        placeholder="Select Size"
+                                        required={
+                                          option.label === "Axillary (Armpit)"
+                                            ? getAnswerByQuestionId(
+                                                Props.RQID
+                                              ) === ""
+                                              ? false
+                                              : true
+                                            : getAnswerByQuestionId(
+                                                option.checkedQId
+                                              ) != "" &&
+                                              getAnswerByQuestionId(
+                                                option.sizeQId
+                                              ) == ""
+                                            ? true
+                                            : false
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                {option.label === "Axillary (Armpit)" && (
+                                  <div className="flex flex-wrap gap-4 pl-6">
+                                    {option.isOther && (
+                                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                                        <Label>Specify</Label>
+                                        <Input
+                                          type="text"
+                                          value={getAnswerByQuestionId(
+                                            option.specifQId
+                                          )}
+                                          onChange={(e) =>
+                                            updateAnswer(
+                                              option.specifQId ?? 0,
+                                              e.target.value
+                                            )
+                                          }
+                                          className="w-full lg:w-48"
+                                          placeholder="Enter location"
+                                          required
+                                        />
+                                      </div>
+                                    )}
+                                    {option.label === "Axillary (Armpit)" && (
+                                      <div
+                                        onClick={() =>
+                                          getAnswerByQuestionId(
+                                            Props.checkStatusQId
+                                          ) === "true" && setModal(true)
+                                        }
+                                        className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
+                                      >
+                                        <Label className="min-w-[20px]">
+                                          L
+                                        </Label>
+                                        <Input
+                                          value={formatClockLabels(
+                                            getAnswerByQuestionId(Props.LQID)
+                                          )}
+                                          onChange={(e) =>
+                                            updateAnswer(
+                                              Props.LQID,
+                                              e.target.value
+                                            )
+                                          }
+                                          className="w-full lg:w-32"
+                                          disabled={
+                                            getAnswerByQuestionId(
+                                              Props.checkStatusQId
+                                            ) !== "true"
+                                          }
+                                          required={
+                                            getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === "" &&
+                                            getAnswerByQuestionId(
+                                              Props.LQID
+                                            ) === "" &&
+                                            getAnswerByQuestionId(
+                                              Props.OtherInputQId
+                                            ) === ""
+                                          }
+                                        />
+                                      </div>
+                                    )}
 
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
+                                      <Label>Duration (Months)</Label>
+                                      <Input
+                                        placeholder="Months"
+                                        value={getAnswerByQuestionId(
+                                          Props.LocationAxillaryDurationRight
+                                        )}
+                                        onChange={(e) =>
+                                          updateAnswer(
+                                            Props.LocationAxillaryDurationRight ??
+                                              0,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-full lg:w-20"
+                                        type="number"
+                                        required={
+                                          option.label === "Axillary (Armpit)"
+                                            ? getAnswerByQuestionId(
+                                                Props.LQID
+                                              ) === ""
+                                              ? false
+                                              : true
+                                            : true
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 lg:gap-2 w-full lg:w-auto">
+                                      <Label>Size</Label>
+                                      <div className="w-full lg:w-32">
+                                        <ValidatedSelect
+                                          questionId={
+                                            Props.LocationAxillarySizeRight ?? 0
+                                          }
+                                          formData={Props.data}
+                                          handleInputChange={updateAnswer}
+                                          options={[
+                                            { label: "Pea", value: "Pea" },
+                                            { label: "Grape", value: "Grape" },
+                                            {
+                                              label: "Bigger",
+                                              value: "Bigger than grape",
+                                            },
+                                          ]}
+                                          placeholder="Select Size"
+                                         required={
+                                          option.label === "Axillary (Armpit)"
+                                            ? getAnswerByQuestionId(
+                                                Props.LQID
+                                              ) === ""
+                                              ? false
+                                              : true
+                                            : getAnswerByQuestionId(
+                                                option.checkedQId
+                                              ) != "" &&
+                                              getAnswerByQuestionId(
+                                                Props.LocationAxillarySizeRight
+                                              ) == ""
+                                            ? true
+                                            : false
+                                        }
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          
 
-          <div className="flex items-start gap-2">
-            {/* R Clock Label Input */}
-            <div
-              onClick={() =>
-                getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
-                setModal(true)
-              }
-              className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
-            >
-              <Label className="min-w-[20px]">R</Label>
-              <Input
-                value={formatClockLabels(getAnswerByQuestionId(Props.RQID))}
-                onChange={(e) => updateAnswer(Props.RQID, e.target.value)}
-                className="w-full lg:w-32"
-                disabled={
-                  getAnswerByQuestionId(Props.checkStatusQId) !== "true"
-                }
-                required={
-                  getAnswerByQuestionId(Props.RQID) === "" &&
-                  getAnswerByQuestionId(Props.LQID) === "" &&
-                  getAnswerByQuestionId(Props.OtherInputQId) === ""
-                }
-              />
-            </div>
+              {Props.label !== "Lymph node swelling" && (
+                <div className="flex items-start gap-2">
+                  {/* R Clock Label Input */}
+                  <div
+                    onClick={() =>
+                      getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
+                      setModal(true)
+                    }
+                    className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
+                  >
+                    <Label className="min-w-[20px]">R</Label>
+                    <Input
+                      value={formatClockLabels(
+                        getAnswerByQuestionId(Props.RQID)
+                      )}
+                      onChange={(e) => updateAnswer(Props.RQID, e.target.value)}
+                      className="w-full lg:w-32"
+                      disabled={
+                        getAnswerByQuestionId(Props.checkStatusQId) !== "true"
+                      }
+                      required={
+                        getAnswerByQuestionId(Props.RQID) === "" &&
+                        getAnswerByQuestionId(Props.LQID) === "" &&
+                        getAnswerByQuestionId(Props.OtherInputQId) === ""
+                      }
+                    />
+                  </div>
 
-            {/* L Clock Label Input */}
-            <div
-              onClick={() =>
-                getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
-                setModal(true)
-              }
-              className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
-            >
-              <Label className="min-w-[20px]">L</Label>
-              <Input
-                value={formatClockLabels(getAnswerByQuestionId(Props.LQID))}
-                onChange={(e) => updateAnswer(Props.LQID, e.target.value)}
-                className="w-full lg:w-32"
-                disabled={
-                  getAnswerByQuestionId(Props.checkStatusQId) !== "true"
-                }
-                required={
-                  getAnswerByQuestionId(Props.RQID) === "" &&
-                  getAnswerByQuestionId(Props.LQID) === "" &&
-                  getAnswerByQuestionId(Props.OtherInputQId) === ""
-                }
-              />
-            </div>
-          </div>
+                  {/* L Clock Label Input */}
+                  <div
+                    onClick={() =>
+                      getAnswerByQuestionId(Props.checkStatusQId) === "true" &&
+                      setModal(true)
+                    }
+                    className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
+                  >
+                    <Label className="min-w-[20px]">L</Label>
+                    <Input
+                      value={formatClockLabels(
+                        getAnswerByQuestionId(Props.LQID)
+                      )}
+                      onChange={(e) => updateAnswer(Props.LQID, e.target.value)}
+                      className="w-full lg:w-32"
+                      disabled={
+                        getAnswerByQuestionId(Props.checkStatusQId) !== "true"
+                      }
+                      required={
+                        getAnswerByQuestionId(Props.RQID) === "" &&
+                        getAnswerByQuestionId(Props.LQID) === "" &&
+                        getAnswerByQuestionId(Props.OtherInputQId) === ""
+                      }
+                    />
+                  </div>
+                </div>
+              )}
 
-          {/* Other Input */}
-          {!Props.technician && Props.OtherInputQId && (
-            <div className="flex gap-2 mt-2 w-1/2">
-              <Textarea
-                placeholder="Additional Comments"
-                value={getAnswerByQuestionId(Props.OtherInputQId)}
-                onChange={(e) =>
-                  updateAnswer(Props.OtherInputQId!, e.target.value)
-                }
-                className="w-full"
-              />
+              {/* Other Input */}
+              {!Props.technician && Props.OtherInputQId && (
+                <div className="flex gap-2 mt-2 w-1/2">
+                  <Textarea
+                    placeholder="Additional Comments"
+                    value={getAnswerByQuestionId(Props.OtherInputQId)}
+                    onChange={(e) =>
+                      updateAnswer(Props.OtherInputQId!, e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
+              )}
             </div>
           )}
-          </div>
-             )}
         </div>
       </div>
     </>

@@ -337,7 +337,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                           <SelectContent>
                             <SelectItem value="Pea">Pea</SelectItem>
                             <SelectItem value="Grape">Grape</SelectItem>
-                            <SelectItem value="Bigger">Bigger</SelectItem>
+                            <SelectItem value="Bigger than grape">Bigger</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -423,7 +423,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                           <SelectContent>
                             <SelectItem value="Pea">Pea</SelectItem>
                             <SelectItem value="Grape">Grape</SelectItem>
-                            <SelectItem value="Bigger">Bigger</SelectItem>
+                            <SelectItem value="Bigger than grape">Bigger</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>

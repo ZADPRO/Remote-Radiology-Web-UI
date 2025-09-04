@@ -18,6 +18,7 @@ interface QuestionIds {
   morphologyChangeDetails: number;
   newFindings: number;
   newFindingsDeatils: number;
+  changeTreatment: number;
 }
 
 interface Props {
@@ -51,7 +52,12 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
         className="uppercase"
       />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
@@ -61,12 +67,13 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
             handleInputChange={handleInputChange}
             formData={formData}
             options={[
+              { label: "Yes", value: "Yes" },
+              { label: "No", value: "No" },
               { label: "Unknown", value: "Unknown" },
-              { label: "Known", value: "Known" },
             ]}
           />
 
-          {getAnswer(questionIds.changesFindings) === "Known" && (
+          {getAnswer(questionIds.changesFindings) === "Yes" && (
             <div className="pl-4 flex flex-col gap-6">
               <div>
                 <MultiOptionRadioGroup
@@ -143,6 +150,16 @@ const ChangesFromPreviousImaging: React.FC<Props> = ({
                 showInputWhenValue="Yes"
                 inputPlaceholder="Details"
                 optionalInputType="textarea"
+              />
+              <MultiOptionRadioGroup
+                label="d. Changes in treatment since prior scan"
+                questionId={questionIds.changeTreatment}
+                handleInputChange={handleInputChange}
+                formData={formData}
+                options={[
+                  { label: "No", value: "No" },
+                  { label: "Yes", value: "Yes" },
+                ]}
               />
             </div>
           )}

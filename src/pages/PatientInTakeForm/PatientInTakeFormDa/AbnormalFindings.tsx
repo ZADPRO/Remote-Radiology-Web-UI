@@ -350,7 +350,7 @@ const AbnormalFindings: React.FC<Props> = ({
                             handleInputChange(questionIds.abnormality, e.target.value)
                         }
                     /> */}
-            <div className="w-45 ml-4 lg:ml-0">
+            <div className="w-65 ml-4 lg:ml-0">
               <DatePicker
                 value={
                   getAnswer(questionIds.abnormality)
