@@ -286,7 +286,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="w-full h-[70vh] overflow-auto">
-          <div className="w-full overflow-x-auto rounded-lg">
+          <div className="grid w-full h-[60vh] overflow-x-auto rounded-lg">
             <Table className="w-full divide-y divide-gray-200">
               <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (

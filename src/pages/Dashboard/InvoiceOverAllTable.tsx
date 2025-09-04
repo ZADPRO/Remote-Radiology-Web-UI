@@ -230,7 +230,7 @@ const InvoiceOverAllTable: React.FC<Props> = ({
                           (column.getFilterValue() as string[]) ?? [];
                         const isSelected = current.includes(month);
                         return (
-                           <CommandItem
+                          <CommandItem
                             key={month}
                             className="flex items-center gap-2 cursor-pointer"
                             onSelect={() => {
@@ -257,19 +257,18 @@ const InvoiceOverAllTable: React.FC<Props> = ({
                           </CommandItem>
                         );
                       })}
-
                     </CommandGroup>
-                      <Button
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation(); // keep popover open
-                          column.setFilterValue(undefined);
-                        }}
-                        className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                      >
-                        <XCircle className="h-4 w-4" />
-                        <span>Clear</span>
-                      </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation(); // keep popover open
+                        column.setFilterValue(undefined);
+                      }}
+                      className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                    >
+                      <XCircle className="h-4 w-4" />
+                      <span>Clear</span>
+                    </Button>
                   </Command>
                 </PopoverContentDialog>
               </PopoverDialog>
@@ -393,7 +392,7 @@ const InvoiceOverAllTable: React.FC<Props> = ({
   });
 
   return (
-    <div className="overflow-x-auto rounded-lg mx-5 mb-5">
+    <div className="grid w-[96%] h-[55vh] overflow-x-auto rounded-lg mx-5 mb-5">
       <Table className="divide-y divide-gray-200">
         <TableHeader className="bg-[#a4b2a1] sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
