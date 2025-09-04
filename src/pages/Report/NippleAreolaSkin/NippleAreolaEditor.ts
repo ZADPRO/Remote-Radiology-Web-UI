@@ -42,7 +42,7 @@ export function generateNippleAreolaBreastEditor(
       ? skinChangesOther
       : skinChanges.toLocaleLowerCase();
   result += `The QT scan shows ${skinText}${
-    skinText === "nwormal" ? "" : " in"
+    skinText === "normal" ? "" : " in"
   } skin with ${nippleRetraction.toLowerCase()} and ${nippleDeformity.toLowerCase()}.`;
   // }
 

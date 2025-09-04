@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import bg from "../../assets/Patient-InTake Form/breastOutline.png";
-import ValidatedSelect from "./ValidatedSelect";
+import ValidatedSelect from "@/components/ui/CustomComponents/ValidatedSelect";
 
 type Props = {
   label: string;
@@ -397,38 +397,40 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                   )}
                                   {option.label === "Axillary (Armpit)" && (
                                     <div
-                                      onClick={() =>
-                                        getAnswerByQuestionId(
-                                          Props.checkStatusQId
-                                        ) === "true" && setModal(true)
-                                      }
+                                      // onClick={() =>
+                                      //   getAnswerByQuestionId(
+                                      //     Props.checkStatusQId
+                                      //   ) === "true" && setModal(true)
+                                      // }
                                       className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
                                     >
                                       <Label className="min-w-[20px]">R</Label>
-                                      <Input
-                                        value={formatClockLabels(
-                                          getAnswerByQuestionId(Props.RQID)
-                                        )}
-                                        onChange={(e) =>
+                                      <Checkbox2
+                                        id={`${Props.RQID}`}
+                                        checked={
+                                          getAnswerByQuestionId(Props.RQID) ===
+                                          "true"
+                                        }
+                                        onCheckedChange={() =>
                                           updateAnswer(
-                                            Props.RQID,
-                                            e.target.value
+                                            Props.RQID ?? 0,
+                                            getAnswerByQuestionId(Props.RQID) ==
+                                              "true"
+                                              ? "false"
+                                              : "true"
                                           )
                                         }
-                                        className="w-full lg:w-32"
-                                        disabled={
-                                          getAnswerByQuestionId(
-                                            Props.checkStatusQId
-                                          ) !== "true"
-                                        }
                                         required={
-                                          getAnswerByQuestionId(Props.RQID) ===
-                                            "" &&
-                                          getAnswerByQuestionId(Props.LQID) ===
-                                            "" &&
-                                          getAnswerByQuestionId(
-                                            Props.OtherInputQId
-                                          ) === ""
+                                          (getAnswerByQuestionId(Props.RQID) ===
+                                            "false" ||
+                                            getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === "") &&
+                                          (getAnswerByQuestionId(Props.LQID) ===
+                                            "false" ||
+                                            getAnswerByQuestionId(
+                                              Props.LQID
+                                            ) === "")
                                         }
                                       />
                                     </div>
@@ -453,10 +455,14 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                         option.label === "Axillary (Armpit)"
                                           ? getAnswerByQuestionId(
                                               Props.RQID
-                                            ) === ""
+                                            ) === "false"
                                             ? false
                                             : true
                                           : true
+                                      }
+                                      disabled={
+                                        getAnswerByQuestionId(Props.RQID) ===
+                                        "false"
                                       }
                                     />
                                   </div>
@@ -471,14 +477,17 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                         options={[
                                           { label: "Pea", value: "Pea" },
                                           { label: "Grape", value: "Grape" },
-                                          { label: "Bigger", value: "Bigger than grape" },
+                                          {
+                                            label: "Bigger",
+                                            value: "Bigger than a grape",
+                                          },
                                         ]}
                                         placeholder="Select Size"
                                         required={
                                           option.label === "Axillary (Armpit)"
                                             ? getAnswerByQuestionId(
                                                 Props.RQID
-                                              ) === ""
+                                              ) === "false"
                                               ? false
                                               : true
                                             : getAnswerByQuestionId(
@@ -489,6 +498,10 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                               ) == ""
                                             ? true
                                             : false
+                                        }
+                                        disabled={
+                                          getAnswerByQuestionId(Props.RQID) ===
+                                          "false"
                                         }
                                       />
                                     </div>
@@ -518,42 +531,46 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                     )}
                                     {option.label === "Axillary (Armpit)" && (
                                       <div
-                                        onClick={() =>
-                                          getAnswerByQuestionId(
-                                            Props.checkStatusQId
-                                          ) === "true" && setModal(true)
-                                        }
+                                        // onClick={() =>
+                                        //   getAnswerByQuestionId(
+                                        //     Props.checkStatusQId
+                                        //   ) === "true" && setModal(true)
+                                        // }
                                         className="flex flex-col sm:flex-row items-start sm:items-center w-full lg:w-auto"
                                       >
                                         <Label className="min-w-[20px]">
                                           L
                                         </Label>
-                                        <Input
-                                          value={formatClockLabels(
-                                            getAnswerByQuestionId(Props.LQID)
-                                          )}
-                                          onChange={(e) =>
-                                            updateAnswer(
-                                              Props.LQID,
-                                              e.target.value
-                                            )
-                                          }
-                                          className="w-full lg:w-32"
-                                          disabled={
-                                            getAnswerByQuestionId(
-                                              Props.checkStatusQId
-                                            ) !== "true"
-                                          }
-                                          required={
-                                            getAnswerByQuestionId(
-                                              Props.RQID
-                                            ) === "" &&
+                                        <Checkbox2
+                                          id={`${Props.LQID}`}
+                                          checked={
                                             getAnswerByQuestionId(
                                               Props.LQID
-                                            ) === "" &&
-                                            getAnswerByQuestionId(
-                                              Props.OtherInputQId
-                                            ) === ""
+                                            ) === "true"
+                                          }
+                                          onCheckedChange={() =>
+                                            updateAnswer(
+                                              Props.LQID ?? 0,
+                                              getAnswerByQuestionId(
+                                                Props.LQID
+                                              ) == "true"
+                                                ? "false"
+                                                : "true"
+                                            )
+                                          }
+                                          required={
+                                            (getAnswerByQuestionId(
+                                              Props.RQID
+                                            ) === "false" ||
+                                              getAnswerByQuestionId(
+                                                Props.RQID
+                                              ) === "") &&
+                                            (getAnswerByQuestionId(
+                                              Props.LQID
+                                            ) === "false" ||
+                                              getAnswerByQuestionId(
+                                                Props.LQID
+                                              ) === "")
                                           }
                                         />
                                       </div>
@@ -579,10 +596,14 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                           option.label === "Axillary (Armpit)"
                                             ? getAnswerByQuestionId(
                                                 Props.LQID
-                                              ) === ""
+                                              ) === "false"
                                               ? false
                                               : true
                                             : true
+                                        }
+                                        disabled={
+                                          getAnswerByQuestionId(Props.LQID) ===
+                                          "false"
                                         }
                                       />
                                     </div>
@@ -601,26 +622,31 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                             { label: "Grape", value: "Grape" },
                                             {
                                               label: "Bigger",
-                                              value: "Bigger than grape",
+                                              value: "Bigger than a grape",
                                             },
                                           ]}
                                           placeholder="Select Size"
-                                         required={
-                                          option.label === "Axillary (Armpit)"
-                                            ? getAnswerByQuestionId(
-                                                Props.LQID
-                                              ) === ""
-                                              ? false
-                                              : true
-                                            : getAnswerByQuestionId(
-                                                option.checkedQId
-                                              ) != "" &&
-                                              getAnswerByQuestionId(
-                                                Props.LocationAxillarySizeRight
-                                              ) == ""
-                                            ? true
-                                            : false
-                                        }
+                                          required={
+                                            option.label === "Axillary (Armpit)"
+                                              ? getAnswerByQuestionId(
+                                                  Props.LQID
+                                                ) === "false"
+                                                ? false
+                                                : true
+                                              : getAnswerByQuestionId(
+                                                  option.checkedQId
+                                                ) != "" &&
+                                                getAnswerByQuestionId(
+                                                  Props.LocationAxillarySizeRight
+                                                ) == ""
+                                              ? true
+                                              : false
+                                          }
+                                          disabled={
+                                            getAnswerByQuestionId(
+                                              Props.LQID
+                                            ) === "false"
+                                          }
                                         />
                                       </div>
                                     </div>
