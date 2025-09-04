@@ -19,21 +19,31 @@ export function generateNippleAreolaBreastEditor(
 
   const skinChanges = getAnswer(questionIds.skinChanges);
   const skinChangesOther = getAnswer(questionIds.skinChangesOther);
-  const nippleRetraction = getAnswer(questionIds.nippleRetraction) === "Present" ? "nipple retraction" : "no Nipple retraction";
-  const nippleDeformity = getAnswer(questionIds.nippleDeformity) === "Present" ? "nipple deformity" : "no Nipple deformity";
+  const nippleRetraction =
+    getAnswer(questionIds.nippleRetraction) === "Present"
+      ? "nipple retraction"
+      : "no Nipple retraction";
+  const nippleDeformity =
+    getAnswer(questionIds.nippleDeformity) === "Present"
+      ? "nipple deformity"
+      : "no Nipple deformity";
   // const subAreolarMass = getAnswer(questionIds.subAreolarMass) === "Present" ? "Subareolar mass" : "no Subareolar mass";
   const architecture = getAnswer(questionIds.architecture);
   const architectureOther = getAnswer(questionIds.architectureOther);
 
-  
   let result = "";
 
   // Skin + nipple section
   // if (skinChanges === "Normal") {
   //   result += `The QT scan shows normal skin with ${nippleRetraction.toLowerCase()}. The QT scan shows normal skin with ${nippleDeformity.toLowerCase()}.`;
   // } else {
-    const skinText = skinChanges === "Other" ? skinChangesOther : skinChanges.toLocaleLowerCase();
-    result += `The QT scan shows ${skinText} in skin with ${nippleRetraction.toLowerCase()} and ${nippleDeformity.toLowerCase()}.`;
+  const skinText =
+    skinChanges === "Other"
+      ? skinChangesOther
+      : skinChanges.toLocaleLowerCase();
+  result += `The QT scan shows ${skinText}${
+    skinText === "nwormal" ? "" : " in"
+  } skin with ${nippleRetraction.toLowerCase()} and ${nippleDeformity.toLowerCase()}.`;
   // }
 
   // Architecture section
@@ -46,5 +56,5 @@ export function generateNippleAreolaBreastEditor(
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>${architectureOther.toLowerCase()} is seen.`;
   }
 
-  return "<strong>Nipple, areola, and skin: </strong>"+result.trim();
+  return "<strong>Nipple, areola, and skin: </strong>" + result.trim();
 }

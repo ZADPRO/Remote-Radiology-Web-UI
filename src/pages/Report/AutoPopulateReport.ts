@@ -159,6 +159,13 @@ export function AutoPopulateReport(
         nippleAreolaSkinRightQuestions.nippleDeformity,
         "Present"
       );
+    } else if (
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleDeformity) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleDeformity,
+        "Absent"
+      );
     }
 
     if (
@@ -168,6 +175,13 @@ export function AutoPopulateReport(
       handleReportInputChange(
         nippleAreolaSkinLeftQuestions.nippleDeformity,
         "Present"
+      );
+    } else if (
+      getreportAnswer(nippleAreolaSkinLeftQuestions.nippleDeformity) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleDeformity,
+        "Absent"
       );
     }
   }
@@ -181,6 +195,13 @@ export function AutoPopulateReport(
         nippleAreolaSkinRightQuestions.nippleRetraction,
         "Present"
       );
+    } else if (
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleRetraction,
+        "Absent"
+      );
     }
 
     if (
@@ -190,6 +211,13 @@ export function AutoPopulateReport(
       handleReportInputChange(
         nippleAreolaSkinLeftQuestions.nippleRetraction,
         "Present"
+      );
+    } else if (
+      getreportAnswer(nippleAreolaSkinLeftQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleRetraction,
+        "Absent"
       );
     }
   }

@@ -137,9 +137,14 @@ const PatientInTakeForm04: React.FC<Props> = ({
             questionIds={{
               cancerHistory: 356,
               historyPosition: 357,
-              historyclockposition:524,
+              historyclockposition: 524,
+              historyclockpositionLeft: 541,
               cancerDate: 358,
               cancerType: 359,
+              cancerTreatmentChemotherapy: 542,
+              cancerTreatmentRadiation: 543,
+              cancerTreatmentSurgery: 544,
+              cancerTreatmentCyroablation: 545,
               cancerTreatment: 360,
               cancerTreatmentOther: 526,
               cancerTreatmentdate: 525,
@@ -156,6 +161,7 @@ const PatientInTakeForm04: React.FC<Props> = ({
             handleInputChange={handleInputChange}
             readOnly={readOnly}
             questionIds={{
+              clinicalStatus: 547,
               newTreatment: 363,
               newTreatmentDetails: 364,
               treatmentDiscontnued: 365,
@@ -229,6 +235,7 @@ const PatientInTakeForm04: React.FC<Props> = ({
               morphologyChangeDetails: 398,
               newFindings: 399,
               newFindingsDeatils: 400,
+              changeTreatment:552
             }}
           />
         );

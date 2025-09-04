@@ -323,6 +323,8 @@ const PatientInTakeForm01: React.FC<Props> = ({
               locationAxillary: 119,
               locationAxillaryDuration: 432,
               locationAxillarySize: 120,
+              locationAxillaryDurationRight: 539,
+              locationAxillarySizeRight: 540,
               locationInBetween: 433,
               locationInBetweenDuration: 121,
               locationInBetweenSize: 512,

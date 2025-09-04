@@ -66,6 +66,8 @@ interface QuestionIds {
   locationAxillary: number;
   locationAxillaryDuration: number;
   locationAxillarySize: number;
+  locationAxillaryDurationRight: number;
+  locationAxillarySizeRight: number;
   locationInBetween: number;
   locationInBetweenDuration: number;
   locationInBetweenSize: number;
@@ -106,7 +108,14 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="CURRENT BREAST SYMPTOMS" className="uppercase" />
-      <div className="bg-[#fff]">{<TextEditor value={PatientHistoryReportGenerator(Props.data)} readOnly={true} />}</div>
+      <div className="bg-[#fff]">
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(Props.data)}
+            readOnly={true}
+          />
+        }
+      </div>
       <div className={Props.readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:py-0 lg:px-20 lg:pr-2 space-y-8 pb-10">
           <MultiOptionRadioGroup
@@ -143,12 +152,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                   setData={Props.setData}
                   OtherInputQId={Props.questionIds.lumpDetails}
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />
@@ -168,12 +183,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                   skinOther={Props.questionIds.skinOther}
                   skinOtherRight={Props.questionIds.skinOtherRight}
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />
@@ -189,12 +210,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                   setData={Props.setData}
                   OtherInputQId={Props.questionIds.nippleDetails}
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />
@@ -210,12 +237,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                   setData={Props.setData}
                   OtherInputQId={Props.questionIds.breastPainDetails}
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />
@@ -239,12 +272,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                     Props.questionIds.nipplePositionRightDetails
                   }
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />
@@ -259,6 +298,10 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                     Props.questionIds.locationAxillaryDuration
                   }
                   LocationAxillarySize={Props.questionIds.locationAxillarySize}
+                  LocationAxillaryDurationRight={
+                    Props.questionIds.locationAxillaryDurationRight
+                  }
+                  LocationAxillarySizeRight={Props.questionIds.locationAxillarySizeRight}
                   LocationInBetween={Props.questionIds.locationInBetween}
                   LocationInBetweenDuration={
                     Props.questionIds.locationInBetweenDuration
@@ -276,12 +319,18 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
                   setData={Props.setData}
                   OtherInputQId={Props.questionIds.lymphNodesDetails}
                   requiredStatus={
-                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.skinChanges) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.breastPain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.nipplePain) === "true" ||
-                    getAnswerByQuestionId(Props.questionIds.lymphNodes) === "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lumpOrThick) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.skinChanges) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nippleDischarge) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.breastPain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.nipplePain) ===
+                      "true" ||
+                    getAnswerByQuestionId(Props.questionIds.lymphNodes) ===
+                      "true" ||
                     getAnswerByQuestionId(Props.questionIds.others) === "true"
                   }
                 />

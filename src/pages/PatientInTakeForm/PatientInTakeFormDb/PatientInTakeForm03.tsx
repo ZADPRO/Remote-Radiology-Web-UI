@@ -172,11 +172,16 @@ const PatientInTakeForm03: React.FC<Props> = ({
               AdjTargeted: 309,
               AdjImmunotherapy: 310,
               AdjRadiation: 311,
-              adjcryoblation:520,
-              adjother:521,
-              adjotherspecify:522,
+              adjcryoblation: 520,
+              adjother: 521,
+              adjotherspecify: 522,
               Treatmenttimeline: 312,
               sideeffects: 313,
+              approachDate: 546,
+              neoadjuvantDate: 548,
+              adjuvantDate: 549,
+              cryoablationDate: 550,
+              otherDate: 551,
             }}
           />
         );

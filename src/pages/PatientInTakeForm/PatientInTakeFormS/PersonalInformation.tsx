@@ -145,7 +145,14 @@ const PersonalInformation: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Personal Information" className="uppercase" />
-      <div className="bg-[#fff]">{<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}</div>
+      <div className="bg-[#fff]">
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* Row 1 */}
@@ -416,7 +423,7 @@ const PersonalInformation: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Row 6 */}
+          {/* Row 6
           {getAnswer(questionIds.eligible) != "" && (
             <div className="flex flex-col">
               <Label className="text-base font-medium mb-2">
@@ -434,23 +441,21 @@ const PersonalInformation: React.FC<Props> = ({
                   : "Not Eligible"}
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
-
-      {/* Note */}
       {getAnswer(questionIds.eligible) === "NO" &&
         OverrideStatus !== "approved" && (
-          <div className="flex items-start justify-center mt-2 px-3 py-2 rounded-md">
-            <p className="text-sm">
-              <span className="font-semibold text-red-600">Note:</span>{" "}
-              <span className="text-gray-800">
-                Please contact Center Manager to evaluate your eligibility for
-                the scan.
-              </span>
-            </p>
+          <div className="flex justify-center items-center pb-5">
+            <div
+            className={`px-6 py-3 rounded-lg w-fit text-base font-semibold border shadow-sm border-red-500 text-red-700 bg-red-100`}
+          >
+            Please contact Center Manager to evaluate your eligibility for the scan.
+          </div>
           </div>
         )}
+
+      {/* Note */}
     </div>
   );
 };
