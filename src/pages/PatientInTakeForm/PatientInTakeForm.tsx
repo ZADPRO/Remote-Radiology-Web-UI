@@ -62,7 +62,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
 
   const [loading, setLoading] = useState(false);
 
-  const [activeForm, setActiveForm] = useState(4);
+  const [activeForm, setActiveForm] = useState(1);
 
   const handleFormSwitch = (formNumber: number) => {
     setActiveForm(formNumber);
