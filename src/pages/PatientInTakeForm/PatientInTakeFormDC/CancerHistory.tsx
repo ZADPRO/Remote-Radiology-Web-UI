@@ -27,6 +27,8 @@ interface QuestionIds {
   cancerTreatmentdate: number;
   cancerStatus: number;
   cancerFolowupDate: number;
+  cancerDateStatus: number;
+  cancerTreatmentdateStatus: number;
 }
 
 interface Props {
@@ -114,26 +116,39 @@ const CancerHistory: React.FC<Props> = ({
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <Label className="text-bold text-base">
-                  B. Date of diagnosis
-                </Label>
-                <div>
-                  <DatePicker
-                    value={
-                      getAnswer(questionIds.cancerDate)
-                        ? parseLocalDate(getAnswer(questionIds.cancerDate))
-                        : undefined
-                    }
-                    onChange={(val) =>
-                      handleInputChange(
-                        questionIds.cancerDate,
-                        val?.toLocaleDateString("en-CA") || ""
-                      )
-                    }
-                    disabledDates={(date) => date > new Date()}
-                  />
-                </div>
+              <div className="flex items-end gap-4">
+                <MultiOptionRadioGroup
+                  label="B. Date of diagnosis"
+                  questionId={questionIds.cancerDateStatus}
+                  handleInputChange={handleInputChange}
+                  formData={formData}
+                  options={[
+                    { label: "Unknown", value: "Unknown" },
+                    { label: "Known", value: "Known" },
+                  ]}
+                  required
+                />
+                {getAnswer(questionIds.cancerDateStatus) === "Known" && (
+                  <div className="w-65">
+                    <DatePicker
+                      value={
+                        getAnswer(questionIds.cancerDate)
+                          ? parseLocalDate(getAnswer(questionIds.cancerDate))
+                          : undefined
+                      }
+                      onChange={(val) =>
+                        handleInputChange(
+                          questionIds.cancerDate,
+                          val?.toLocaleDateString("en-CA") || ""
+                        )
+                      }
+                      required={
+                        getAnswer(questionIds.cancerDateStatus) === "Known"
+                      }
+                      disabledDates={(date) => date > new Date()}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-4">
@@ -269,28 +284,42 @@ const CancerHistory: React.FC<Props> = ({
                 />
               )}
 
-              <div className="flex items-center gap-4">
-                <Label className="text-bold text-base">
-                  Last date of treatment
-                </Label>
-                <div>
-                  <DatePicker
-                    value={
-                      getAnswer(questionIds.cancerTreatmentdate)
-                        ? parseLocalDate(
-                            getAnswer(questionIds.cancerTreatmentdate)
-                          )
-                        : undefined
-                    }
-                    onChange={(val) =>
-                      handleInputChange(
-                        questionIds.cancerTreatmentdate,
-                        val?.toLocaleDateString("en-CA") || ""
-                      )
-                    }
-                    disabledDates={(date) => date > new Date()}
-                  />
-                </div>
+              <div className="flex items-end gap-4">
+                <MultiOptionRadioGroup
+                  label="Last date of treatment"
+                  questionId={questionIds.cancerTreatmentdateStatus}
+                  handleInputChange={handleInputChange}
+                  formData={formData}
+                  options={[
+                    { label: "Unknown", value: "Unknown" },
+                    { label: "Known", value: "Known" },
+                  ]}
+                  required
+                />
+                {getAnswer(questionIds.cancerTreatmentdateStatus) ===
+                  "Known" && (
+                  <div className="w-65">
+                    <DatePicker
+                      value={
+                        getAnswer(questionIds.cancerTreatmentdate)
+                          ? parseLocalDate(
+                              getAnswer(questionIds.cancerTreatmentdate)
+                            )
+                          : undefined
+                      }
+                      onChange={(val) =>
+                        handleInputChange(
+                          questionIds.cancerTreatmentdate,
+                          val?.toLocaleDateString("en-CA") || ""
+                        )
+                      }
+                      required={
+                        getAnswer(questionIds.cancerTreatmentdateStatus) === "Known"
+                      }
+                      disabledDates={(date) => date > new Date()}
+                    />
+                  </div>
+                )}
               </div>
 
               <MultiOptionRadioGroup

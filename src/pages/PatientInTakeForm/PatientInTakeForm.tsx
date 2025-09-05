@@ -54,7 +54,7 @@ export const PatientContext = React.createContext<PatientContextType | null>(
 
 const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const [formData, setFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 553 }, (_, index) => ({
+    Array.from({ length: 555 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -62,7 +62,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
 
   const [loading, setLoading] = useState(false);
 
-  const [activeForm, setActiveForm] = useState(1);
+  const [activeForm, setActiveForm] = useState(4);
 
   const handleFormSwitch = (formNumber: number) => {
     setActiveForm(formNumber);
@@ -149,7 +149,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           setFormData(updatedData);
         } else {
           if (controlData.OverrideStatus === "approved") {
-            const newData = Array.from({ length: 553 }, (_, index) => {
+            const newData = Array.from({ length: 555 }, (_, index) => {
               const existing = res.data.find(
                 (q: any) => q.questionId === 1 + index
               );

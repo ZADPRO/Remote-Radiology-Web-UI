@@ -99,6 +99,8 @@ export function DcFormGeneration(
     cancerTreatmentdate: getPatientAnswer(525),
     cancerStatus: getPatientAnswer(361),
     cancerFolowupDate: getPatientAnswer(362),
+    cancerDateStatus: getPatientAnswer(553),
+    cancerTreatmentdateStatus: getPatientAnswer(554),
   };
 
   const IntervalImagingHistory = {
@@ -175,9 +177,12 @@ export function DcFormGeneration(
           ? `, (${cancerhistoy.cancerType})`
           : ""
       }${
-        cancerhistoy.cancerDate.length > 0
+        cancerhistoy.cancerDate.length > 0 &&
+        cancerhistoy.cancerDateStatus === "Known"
           ? `, diagnosed on ${formatReadableDate(cancerhistoy.cancerDate)}`
-          : ``
+          : cancerhistoy.cancerDateStatus === "Unknown"
+          ? `, date of diagnose is unknown`
+          : ""
       }.`
     );
   }
@@ -194,12 +199,26 @@ export function DcFormGeneration(
     text.push(`${cancerhistoy.cancerTreatmentOther}`);
 
   //Treatment Recieved
-  if (text.length > 0) {
+  if (cancerhistoy.cancerTreatmentdateStatus !== "") {
     report.push(
-      `${capitalizeFirstLetter(text.join(", "))} treatment was recieved${
-        cancerhistoy.cancerTreatmentdate.length > 0
-          ? ` on ${formatReadableDate(cancerhistoy.cancerTreatmentdate)}`
-          : ``
+      `${
+        text.length > 0
+          ? `${capitalizeFirstLetter(text.join(", "))} treatment  was recieved`
+          : ""
+      }${
+        cancerhistoy.cancerTreatmentdateStatus === "Known"
+          ? `${
+              text.length > 0
+                ? ` on ${formatReadableDate(cancerhistoy.cancerTreatmentdate)}`
+                : `Last date of treatment recevied on ${formatReadableDate(
+                    cancerhistoy.cancerTreatmentdate
+                  )}`
+            }`
+          : `${
+              text.length > 0
+                ? `, date is unknown`
+                : `Last date of treatment recevied is unknown`
+            }`
       }.`
     );
   }
@@ -264,7 +283,7 @@ export function DcFormGeneration(
     ChangeReport.push(`Changes in image findings since prior QT: Yes`);
   } else if (ChangesSincePreviousQTImaging.changesFindings === "No") {
     ChangeReport.push(`Changes in image findings since prior QT: No`);
-  }else if (ChangesSincePreviousQTImaging.changesFindings === "Unknown") {
+  } else if (ChangesSincePreviousQTImaging.changesFindings === "Unknown") {
     ChangeReport.push(`Changes in image findings since prior QT: Unknown`);
   }
   if (

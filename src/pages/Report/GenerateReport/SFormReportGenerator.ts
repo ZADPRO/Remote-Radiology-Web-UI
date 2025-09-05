@@ -801,12 +801,13 @@ export function SFormGeneration(
         );
       } else {
         text.push(
-          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Lymph node swelling${
-            breastSymptoms.lymphNodesRight === "true" ||
+          `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Swelling${
+            (breastSymptoms.lymphNodesRight === "true" ||
             breastSymptoms.lymphNodesLeft === "true" ||
             (breastSymptoms.lymphNodesRight === "true" &&
-              breastSymptoms.lymphNodesLeft === "true")
-              ? ` axillary (armpit) in the
+              breastSymptoms.lymphNodesLeft === "true")) &&
+              breastSymptoms.locationAxillary === "true"
+              ? ` in axilla (armpit) on the
               ${
                 breastSymptoms.lymphNodesLeft === "true"
                   ? ` left side${
@@ -837,7 +838,15 @@ export function SFormGeneration(
               : ``
           }${
             breastSymptoms.locationInBetween === "true"
-              ? ` / inbetween chest ${
+              ? ` ${
+                  (breastSymptoms.lymphNodesRight === "true" ||
+            breastSymptoms.lymphNodesLeft === "true" ||
+            (breastSymptoms.lymphNodesRight === "true" &&
+              breastSymptoms.lymphNodesLeft === "true")) &&
+              breastSymptoms.locationAxillary === "true"
+                    ? `/ `
+                    : ""
+                }inbetween chest since ${
                   breastSymptoms.locationInBetweenDuration
                 } months,${
                   breastSymptoms.locationInBetweenSize.toLocaleLowerCase() ===
@@ -848,7 +857,7 @@ export function SFormGeneration(
               : ``
           }${
             breastSymptoms.locationOther === "true"
-              ? ` / ${breastSymptoms.locationOtherSpecify.toLocaleLowerCase()} since ${
+              ? ` ${breastSymptoms.locationInBetween === "true" ? "/":"in" } ${breastSymptoms.locationOtherSpecify.toLocaleLowerCase()} since ${
                   breastSymptoms.locationOtherDuration
                 } months,${
                   breastSymptoms.locationOtherSize.toLocaleLowerCase() ===
