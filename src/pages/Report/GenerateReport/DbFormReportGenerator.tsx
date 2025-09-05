@@ -248,8 +248,26 @@ export function DbFormReportGenerator(
     reportText.push(sentence.join(", ") + ".");
   }
 
+  
   //Treatement
   if (treatment.treatmentstatus === "Yes") {
+    let treatmentreport = [];
+    reportText.push(
+      `${
+        (treatment.Surgical !== "Not Applicable" &&
+          treatment.Surgical.length > 0) ||
+        (treatment.Neoadjuvant !== "Not Applicable" &&
+          treatment.Neoadjuvant.length > 0) ||
+        (treatment.Adjuvant !== "Not Applicable" &&
+          treatment.Adjuvant.length > 0) ||
+        (treatment.cryoblation !== "Not Applicable" &&
+          treatment.cryoblation.length > 0) ||
+        (treatment.other !== "Not Applicable" && treatment.other.length > 0) ||
+        treatment.Treatmenttimeline.length > 0 ? `<strong>Treatment:</strong>`:``
+      }`
+    );
+
+    
     //Surgical approach
     if (
       treatment.Surgical !== "Not Applicable" &&
@@ -300,7 +318,7 @@ export function DbFormReportGenerator(
         // Capitalize the first letter
         text = text.charAt(0).toUpperCase() + text.slice(1);
 
-        reportText.push(text);
+        treatmentreport.push(`<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>`+text+`</li></ol>`);
       }
     }
     //Neoadjuvant treatment planned (before surgery)
@@ -308,12 +326,12 @@ export function DbFormReportGenerator(
       treatment.Neoadjuvant !== "Not Applicable" &&
       treatment.Neoadjuvant.length > 0
     ) {
-      reportText.push(
-        `Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}${
+      treatmentreport.push(
+        `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}${
           treatment.neoadjuvantDate.length > 0
             ? ` on ${formatReadableDate(treatment.neoadjuvantDate)}`
             : ""
-        }.`
+        }.</li></ol>`
       );
     }
     //Adjuvant treatment planned (after surgery)
@@ -321,12 +339,12 @@ export function DbFormReportGenerator(
       treatment.Adjuvant !== "Not Applicable" &&
       treatment.Adjuvant.length > 0
     ) {
-      reportText.push(
-        `Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}${
+      treatmentreport.push(
+        `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}${
           treatment.adjuvantDate.length > 0
             ? ` on ${formatReadableDate(treatment.adjuvantDate)}`
             : ""
-        }.`
+        }.</li></ol>`
       );
     }
     //Cryoablation
@@ -334,33 +352,34 @@ export function DbFormReportGenerator(
       treatment.cryoblation !== "Not Applicable" &&
       treatment.cryoblation.length > 0
     ) {
-      reportText.push(
-        `Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}${
+      treatmentreport.push(
+        `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}${
           treatment.cryoablationDate.length > 0
             ? ` on ${formatReadableDate(treatment.cryoablationDate)}`
             : ""
-        }.`
+        }.</li></ol>`
       );
     }
     //Other
     if (treatment.other !== "Not Applicable" && treatment.other.length > 0) {
-      reportText.push(
-        `${
-          treatment.otherspecify
-        } ${treatment.other.toLowerCase()}${
+      treatmentreport.push(
+        `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>${treatment.otherspecify} ${treatment.other.toLowerCase()}${
           treatment.otherDate.length > 0
             ? ` on ${formatReadableDate(treatment.otherDate)}`
             : ""
-        }.`
+        }.</li></ol>`
       );
     }
     //Treatment timeline and details
     if (treatment.Treatmenttimeline.length > 0) {
-      reportText.push(
-        `Treatment timeline and details: ${treatment.Treatmenttimeline}.`
+      treatmentreport.push(
+        `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Treatment timeline and details: ${treatment.Treatmenttimeline}.</li></ol>`
       );
     }
+    
+    reportText.push(treatmentreport.join(""))
   }
+
 
   return reportText.join("<br/>");
 }
