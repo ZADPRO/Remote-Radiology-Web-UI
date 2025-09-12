@@ -1,4 +1,5 @@
-import { Quill } from "react-quill-new";
+// import ReactQuill from "react-quill-new";
+import Quill from "quill"; // ✅ Correct import
 import type QuillType from "quill";
 import ImageResize from "quill-image-resize-module-react";
 
