@@ -1,10 +1,8 @@
 import React, { useEffect, useId, useRef, useState } from "react";
-import ReactQuill from "react-quill-new"; // or 'react-quill'
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import QuillToolbar, { createModules, formats } from "./QuillToolbar";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { Mic } from "lucide-react";
 
 interface TextEditorProps {
@@ -34,24 +32,14 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const quillRef = useRef<ReactQuill | null>(null);
   const toolbarId = useId();
 
-  // Local speech recognition for THIS editor only
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
   const [focused, setFocused] = useState(false);
-  const [active, setActive] = useState(false); // mic active state
-
+  const [active, setActive] = useState(false);
   const [lastTranscript, setLastTranscript] = useState("");
 
-  // New state to track the starting index of transcription
-  // const [transcriptStartIndex, setTranscriptStartIndex] = useState<
-  //   number | null
-  // >(null);
-
-  // Update the editor with the full transcript
-
+  // Restore censored terms
   const restoreMedicalTerms = (text: string) => {
     return text.replace(/\*{3,}/g, (match) => {
-      // If censorship detected, try to replace based on context
-      // Expand this dictionary with real terms
       const medicalTerms = ["nipple", "breast"];
       for (const word of medicalTerms) {
         if (text.toLowerCase().includes(word[0])) {
@@ -61,30 +49,30 @@ const TextEditor: React.FC<TextEditorProps> = ({
       return match;
     });
   };
+
+  // Insert transcript into editor
   useEffect(() => {
-    if (focused && active && quillRef.current) {
-      const editor = quillRef.current.getEditor();
-      const restoredTranscript = restoreMedicalTerms(transcript);
+    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
+    if (!editor || !focused || !active) return;
 
-      // Compare word by word instead of just string length
-      const oldWords = lastTranscript.trim().split(/\s+/);
-      const newWords = restoredTranscript.trim().split(/\s+/);
+    const restoredTranscript = restoreMedicalTerms(transcript);
 
-      // Find the part that's actually new
-      const newPart = newWords.slice(oldWords.length).join(" ");
+    const oldWords = lastTranscript.trim().split(/\s+/);
+    const newWords = restoredTranscript.trim().split(/\s+/);
 
-      if (newPart) {
-        const selection = editor.getSelection(true);
-        const index = selection?.index ?? editor.getLength();
+    const newPart = newWords.slice(oldWords.length).join(" ");
 
-        editor.insertText(index, newPart + " "); // add space after
-        editor.setSelection(index + newPart.length + 1);
+    if (newPart) {
+      const selection = editor.getSelection(true);
+      const index = selection?.index ?? editor.getLength();
 
-        onChange?.(editor.root.innerHTML, "", "voice", editor);
-      }
+      editor.insertText(index, newPart + " ");
+      editor.setSelection(index + newPart.length + 1);
 
-      setLastTranscript(restoredTranscript);
+      onChange?.(editor.root.innerHTML, "", "voice", editor);
     }
+
+    setLastTranscript(restoredTranscript);
   }, [transcript, focused, active]);
 
   const startListening = async () => {
@@ -104,9 +92,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       });
     } catch (error) {
       console.error("Speech recognition error:", error);
-      alert(
-        "Microphone not accessible. Please check your permissions or device settings."
-      );
+      alert("Microphone not accessible. Please check your permissions or device settings.");
       setActive(false);
     }
   };
@@ -114,12 +100,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const stopListening = () => {
     setActive(false);
     SpeechRecognition.stopListening();
-    // setTranscriptStartIndex(null); // Reset the start index
   };
 
   // Manual edit tracker
   useEffect(() => {
-    const editor = quillRef.current?.getEditor();
+    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
     if (!editor) return;
 
     const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
@@ -134,9 +119,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
-  // Focus tracking
+  // Focus + selection change tracker
   useEffect(() => {
-    const editor = quillRef.current?.getEditor();
+    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
     if (!editor) return;
 
     const handleSelectionChange = (range: any) => {
@@ -156,8 +141,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
     editor.on("text-change", handleTextChange);
     editor.on("selection-change", handleSelectionChange);
+
     return () => {
-      editor.on("text-change", handleTextChange);
+      editor.off("text-change", handleTextChange);
       editor.off("selection-change", handleSelectionChange);
     };
   }, [onManualEdit]);
@@ -187,11 +173,10 @@ const TextEditor: React.FC<TextEditorProps> = ({
       />
 
       <div className="w-full flex justify-end items-center mt-2">
-        {/* Mic button – scoped to this editor */}
         {focused && !readOnly && (
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()} // keep focus in editor
+            onMouseDown={(e) => e.preventDefault()}
             onClick={listening ? stopListening : startListening}
             className={`p-3 rounded-full shadow-lg transition-colors ${
               listening && active
@@ -199,12 +184,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
                 : "bg-[#f4e7e1] hover:bg-[#f9e2d7] text-[#3f3f3d]"
             }`}
           >
-            {listening && active ? <Mic size={20} /> : <Mic size={20} />}
+            <Mic size={20} />
           </button>
         )}
       </div>
     </div>
-    // a3b1a0
   );
 };
 
