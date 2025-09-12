@@ -1,9 +1,7 @@
-import { Quill } from "react-quill-new";
+import Quill from "quill";
 import type QuillType from "quill";
 import ImageResize from "quill-image-resize-module-react";
 
-// Custom Undo button icon component for Quill editor. You can import it directly
-// from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
 // handle them correctly
 const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
@@ -73,7 +71,6 @@ export const createModules = (toolbarId: string) => ({
   },
 });
 
-
 // Formats objects for setting up the Quill editor
 export const formats = [
   "header",
@@ -87,8 +84,7 @@ export const formats = [
   "script",
   "blockquote",
   "background",
-  "list",
-  "bullet",
+  "list", // Remove "bullet" - it's handled by "list"
   "indent",
   "link",
   "image",

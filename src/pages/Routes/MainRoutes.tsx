@@ -64,7 +64,6 @@ interface AppRoute {
 }
 
 const MainRoutes: React.FC = () => {
-
   const adminRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
     { path: "dashboard", element: <Dashboard /> },
@@ -87,10 +86,10 @@ const MainRoutes: React.FC = () => {
     { path: "manageWellthGreenManager", element: <ManageWellthGreenAdmin /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
-    { path: "patientQueue", element: <PatientQueue />},
-    { path: "addWgDoctor", element: <AddWGPerformingProvider />},
+    { path: "patientQueue", element: <PatientQueue /> },
+    { path: "addWgDoctor", element: <AddWGPerformingProvider /> },
     { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
-    { path: "uploadDicoms", element: <UploadDicomFiles />}
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   const scAdminRoutes: AppRoute[] = [
@@ -103,15 +102,15 @@ const MainRoutes: React.FC = () => {
     { path: "addTechnician", element: <AddTechnician /> },
     { path: "addPerformingProvider", element: <AddPerformingProvider /> },
     { path: "addCoReportingDoctor", element: <AddCoReportingDoctor /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-    { path: "uploadDicoms", element: <UploadDicomFiles />}
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   const technicianRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "uploadDicoms", element: <UploadDicomFiles /> },
     { path: "analytics", element: <Analytics /> },
   ];
@@ -119,32 +118,33 @@ const MainRoutes: React.FC = () => {
   const doctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-  ]
+  ];
 
   const radiologistRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-  ]
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
+  ];
 
   const scribeRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
-    { path: "report", element: <Report />},
+    { path: "patientQueue", element: <PatientQueue /> },
+    { path: "report", element: <Report /> },
     { path: "analytics", element: <Analytics /> },
-    { path: "uploadDicoms", element: <UploadDicomFiles />}
-  ]
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
+  ];
 
   const coDoctorRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-  ]
+  ];
 
   const managerRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
@@ -170,26 +170,26 @@ const MainRoutes: React.FC = () => {
     { path: "manageTechnician", element: <ManageTechnician /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-    { path: "addWgDoctor", element: <AddWGPerformingProvider />},
+    { path: "addWgDoctor", element: <AddWGPerformingProvider /> },
     { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
-    { path: "uploadDicoms", element: <UploadDicomFiles />}
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   const patientRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="myCare" replace /> },
     { path: "dashboard", element: <Dashboard /> },
     { path: "myCare", element: <MyCare /> },
-    { path: "medicalHistory", element: <PatientQueue />},
+    { path: "medicalHistory", element: <PatientQueue /> },
   ];
 
-   const wgDocotrRoutes: AppRoute[] = [
+  const wgDocotrRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
-    { path: "patientQueue", element: <PatientQueue />},
+    { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
-  ]
+  ];
 
   // Helper function to render routes, applying RoleProtectedRoute when needed
   const renderRoutes = (routes: AppRoute[]) => {
@@ -210,7 +210,13 @@ const MainRoutes: React.FC = () => {
           </Route>
         );
       } else if (route.redirectTo) {
-        return <Route key={index} path={route.path} element={<Navigate to={route.redirectTo} replace />} />;
+        return (
+          <Route
+            key={index}
+            path={route.path}
+            element={<Navigate to={route.redirectTo} replace />}
+          />
+        );
       } else if (route.children) {
         return (
           <Route key={index} path={route.path} element={Element}>
@@ -218,7 +224,14 @@ const MainRoutes: React.FC = () => {
           </Route>
         );
       }
-      return <Route key={index} path={route.path} element={Element} index={route.index} />;
+      return (
+        <Route
+          key={index}
+          path={route.path}
+          element={Element}
+          index={route.index}
+        />
+      );
     });
   };
 
@@ -238,9 +251,8 @@ const MainRoutes: React.FC = () => {
           <Route path="/verifyOtp" element={<VerifyOTP />} />
           <Route path="/forgotPassword" element={<ForgotPasword />} />
           <Route path="/registerUser" element={<SignUp />} />
-          
-          <Route path="/report" element={<Report />} />
 
+          <Route path="/report" element={<Report />} />
 
           <Route path="/patientInTakeForm" element={<PatientInTakeForm />} />
           {/* Patient Intake Forms (Accessible without specific roles, or role handling is internal to the forms) */}
@@ -263,12 +275,26 @@ const MainRoutes: React.FC = () => {
           /> */}
           <Route
             path="technicianpatientintakeform"
-            element={<RoleProtectedRoute allowedRoles={["technician", "admin", "scadmin", "wgdoctor", "manager", "radiologist", "scribe", "codoctor", "doctor"]}>
-              <TechnicianPatientIntakeForm />
-            </RoleProtectedRoute>}
+            element={
+              <RoleProtectedRoute
+                allowedRoles={[
+                  "technician",
+                  "admin",
+                  "scadmin",
+                  "wgdoctor",
+                  "manager",
+                  "radiologist",
+                  "scribe",
+                  "codoctor",
+                  "doctor",
+                ]}
+              >
+                <TechnicianPatientIntakeForm />
+              </RoleProtectedRoute>
+            }
           />
 
-          <Route path="/invoiceGenerate" element={<NewInvoice />}/>
+          <Route path="/invoiceGenerate" element={<NewInvoice />} />
 
           {/* Protected Routes */}
           <Route
