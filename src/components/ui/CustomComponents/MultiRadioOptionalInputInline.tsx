@@ -48,7 +48,12 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
   return (
     <div className="flex flex-col lg:flex-row lg:items-center gap-2 relative">
       {label && (
-        <Label className={cn("font-semibold text-base flex flex-wrap lg:items-center", labelClassname)}>
+        <Label
+          className={cn(
+            "font-semibold text-base flex flex-wrap lg:items-center",
+            labelClassname
+          )}
+        >
           <span>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
@@ -78,13 +83,18 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
                 name={`question-${questionId}`}
                 value={value}
                 checked={isSelected}
-                onChange={(e) =>
-                  handleInputChange(questionId, e.target.value)
-                }
+                onChange={(e) => handleInputChange(questionId, e.target.value)}
                 required={required}
                 className="custom-radio"
               />
-              <Label htmlFor={id}>{optLabel}</Label>
+              <Label
+                className={`${
+                  optLabel === "S/P Mastectomy" && `text-[#a4b2a1]`
+                }`}
+                htmlFor={id}
+              >
+                {optLabel}
+              </Label>
 
               {/* Show input beside selected option */}
               {optionalInputQuestionId &&
@@ -95,10 +105,7 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
                     placeholder="Enter details"
                     value={optionalInputValue}
                     onChange={(e) =>
-                      handleInputChange(
-                        optionalInputQuestionId,
-                        e.target.value
-                      )
+                      handleInputChange(optionalInputQuestionId, e.target.value)
                     }
                   />
                 )}
@@ -112,8 +119,8 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
 
 export default MultiRadioOptionalInputInline;
 
-
-{/* <MultiRadioOptionalInputInline
+{
+  /* <MultiRadioOptionalInputInline
           label="Implant Configuration"
           labelClassname="w-[10rem]"
           questionId={questionIds.breastImplants}
@@ -126,4 +133,5 @@ export default MultiRadioOptionalInputInline;
             { label: "Unilateral Right", value: "Unilateral Right" },
             { label: "Absent", value: "Absent" },
           ]}
-        /> */}
+        /> */
+}

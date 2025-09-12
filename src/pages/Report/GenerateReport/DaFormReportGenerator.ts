@@ -168,9 +168,7 @@ export function DaFormReportGenerator(
 
     if (methodofdetectionres.length > 0) {
       abnormalityOverAll.push(
-        `Method of detection ${
-          methodofdetectionres.length === 1 ? "is" : "are"
-        } ${methodofdetectionres.join(", ")}.`
+        `Method of detection: ${methodofdetectionres.join(", ")}.`
       );
     }
   }
