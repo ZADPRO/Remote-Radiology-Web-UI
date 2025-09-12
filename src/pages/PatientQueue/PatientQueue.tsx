@@ -2438,6 +2438,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
+      "dicomFull",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
