@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
-import DatePicker from "@/components/date-picker";
 import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,8 +13,8 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { parseLocalDate } from "@/lib/dateUtils";
 import FileView from "@/components/FileView/FileView";
+import { Input } from "@/components/ui/input";
 
 interface IntakeOption {
   questionId: number;
@@ -372,20 +371,13 @@ const PriorImaging: React.FC<Props> = ({
               <div className="flex items-center gap-2">
                 <Label className="text-sm font-medium">DATE</Label>
                 <div className="w-48">
-                  <DatePicker
-                    value={
-                      getAnswer(dateId)
-                        ? parseLocalDate(getAnswer(dateId))
-                        : undefined
-                    }
-                    onChange={(val) =>
-                      handleInputChange(
-                        dateId,
-                        val?.toLocaleDateString("en-CA") || ""
-                      )
-                    }
-                    disabledDates={(date) => date > new Date()}
-                    required={getAnswer(reportAvailableId) == "Available"}
+                  <Input
+                    name={`dateKnownId${dateKnownId}`}
+                    id={`dateKnownId${dateKnownId}id`}
+                    type="text"
+                    value={getAnswer(dateId)}
+                    onChange={(e) => handleInputChange(dateId, e.target.value)}
+                    required={getAnswer(reportAvailableId) === "Available"}
                   />
                 </div>
               </div>
@@ -573,7 +565,7 @@ const PriorImaging: React.FC<Props> = ({
           readOnly ? "pointer-events-none" : ""
         }`}
       >
-        {imagingSections.map((sectionProps) => {
+        {imagingSections.map((sectionProps,index) => {
           const patientQIds = [
             sectionProps.yesNoId,
             sectionProps.dateId,
@@ -592,7 +584,7 @@ const PriorImaging: React.FC<Props> = ({
             patientQIds,
             patientLabels,
             <ImagingSection
-              key={sectionProps.idPrefix}
+              key={sectionProps.idPrefix+""+index}
               {...sectionProps}
               formData={formData}
               handleInputChange={handleInputChangePatient}
