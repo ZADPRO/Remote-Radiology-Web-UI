@@ -1,9 +1,11 @@
 import React, { useEffect, useId, useRef, useState } from "react";
-import ReactQuill from "react-quill-new";
+import ReactQuill from "react-quill-new"; // or 'react-quill'
 import "react-quill-new/dist/quill.snow.css";
 import QuillToolbar, { createModules, formats } from "./QuillToolbar";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
-import { Mic } from "lucide-react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { Mic, MicOff } from "lucide-react";
 
 interface TextEditorProps {
   value: string;
@@ -32,14 +34,24 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const quillRef = useRef<ReactQuill | null>(null);
   const toolbarId = useId();
 
+  // Local speech recognition for THIS editor only
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
   const [focused, setFocused] = useState(false);
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(false); // mic active state
+
   const [lastTranscript, setLastTranscript] = useState("");
 
-  // Restore censored terms
+  // New state to track the starting index of transcription
+  // const [transcriptStartIndex, setTranscriptStartIndex] = useState<
+  //   number | null
+  // >(null);
+
+  // Update the editor with the full transcript
+
   const restoreMedicalTerms = (text: string) => {
     return text.replace(/\*{3,}/g, (match) => {
+      // If censorship detected, try to replace based on context
+      // Expand this dictionary with real terms
       const medicalTerms = ["nipple", "breast"];
       for (const word of medicalTerms) {
         if (text.toLowerCase().includes(word[0])) {
@@ -49,30 +61,28 @@ const TextEditor: React.FC<TextEditorProps> = ({
       return match;
     });
   };
-
-  // Insert transcript into editor
   useEffect(() => {
-    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
-    if (!editor || !focused || !active) return;
+    if (focused && active && quillRef.current) {
+      const editor = quillRef.current.getEditor();
+      const restoredTranscript = restoreMedicalTerms(transcript);
 
-    const restoredTranscript = restoreMedicalTerms(transcript);
+      if (restoredTranscript.length > lastTranscript.length) {
+        const newText = restoredTranscript.slice(lastTranscript.length);
+        const selection = editor.getSelection(true);
+        const index = selection?.index ?? editor.getLength();
 
-    const oldWords = lastTranscript.trim().split(/\s+/);
-    const newWords = restoredTranscript.trim().split(/\s+/);
+        editor.insertText(index, newText);
+        editor.setSelection(index + newText.length);
+      }
 
-    const newPart = newWords.slice(oldWords.length).join(" ");
-
-    if (newPart) {
-      const selection = editor.getSelection(true);
-      const index = selection?.index ?? editor.getLength();
-
-      editor.insertText(index, newPart + " ");
-      editor.setSelection(index + newPart.length + 1);
-
-      onChange?.(editor.root.innerHTML, "", "voice", editor);
+      onChange?.(
+        editor.root.innerHTML,
+        "", // delta-like object
+        "voice",
+        editor
+      );
+      setLastTranscript(restoredTranscript);
     }
-
-    setLastTranscript(restoredTranscript);
   }, [transcript, focused, active]);
 
   const startListening = async () => {
@@ -88,11 +98,13 @@ const TextEditor: React.FC<TextEditorProps> = ({
       await SpeechRecognition.startListening({
         continuous: false,
         language: "en-US",
-        interimResults: true,
+        interimResults: false,
       });
     } catch (error) {
       console.error("Speech recognition error:", error);
-      alert("Microphone not accessible. Please check your permissions or device settings.");
+      alert(
+        "Microphone not accessible. Please check your permissions or device settings."
+      );
       setActive(false);
     }
   };
@@ -100,11 +112,12 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const stopListening = () => {
     setActive(false);
     SpeechRecognition.stopListening();
+    // setTranscriptStartIndex(null); // Reset the start index
   };
 
   // Manual edit tracker
   useEffect(() => {
-    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
+    const editor = quillRef.current?.getEditor();
     if (!editor) return;
 
     const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
@@ -119,9 +132,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
-  // Focus + selection change tracker
+  // Focus tracking
   useEffect(() => {
-    const editor = quillRef.current?.getEditor?.(); // ✅ safe access
+    const editor = quillRef.current?.getEditor();
     if (!editor) return;
 
     const handleSelectionChange = (range: any) => {
@@ -141,9 +154,8 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
     editor.on("text-change", handleTextChange);
     editor.on("selection-change", handleSelectionChange);
-
     return () => {
-      editor.off("text-change", handleTextChange);
+      editor.on("text-change", handleTextChange);
       editor.off("selection-change", handleSelectionChange);
     };
   }, [onManualEdit]);
@@ -173,18 +185,19 @@ const TextEditor: React.FC<TextEditorProps> = ({
       />
 
       <div className="w-full flex justify-end items-center mt-2">
+        {/* Mic button – scoped to this editor */}
         {focused && !readOnly && (
           <button
             type="button"
-            onMouseDown={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()} // keep focus in editor
             onClick={listening ? stopListening : startListening}
             className={`p-3 rounded-full shadow-lg transition-colors ${
               listening && active
-                ? "bg-[red] hover:bg-[red] text-[#fff]"
+                ? "bg-[#a3b1a0] hover:bg-[#a6baa1] text-white"
                 : "bg-[#f4e7e1] hover:bg-[#f9e2d7] text-[#3f3f3d]"
             }`}
           >
-            <Mic size={20} />
+            {listening && active ? <MicOff size={20} /> : <Mic size={20} />}
           </button>
         )}
       </div>
