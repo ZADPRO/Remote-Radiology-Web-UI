@@ -31,7 +31,6 @@ const NippleAreolaSkin: React.FC<Props> = ({
   handleReportInputChange,
   label,
 }) => {
-
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
   return (
@@ -131,7 +130,11 @@ const NippleAreolaSkin: React.FC<Props> = ({
                 label: "Normal",
                 value: "Normal",
               },
-              { label: "Architectural Distortion", value: "Architectural Distortion" },
+              {
+                label: "Architectural Distortion",
+                value: "Architectural Distortion",
+              },
+              { label: "S/P Mastectomy", value: "S/P Mastectomy" },
               { label: "Other", value: "Other" },
             ]}
           />

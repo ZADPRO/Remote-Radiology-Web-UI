@@ -436,7 +436,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     glandularRight
-      ? `<strong>Glandular and ductal tissue: </strong>${
+      ? `<p><strong>Glandular and ductal tissue: </strong></p>${
           textEditor.grandularAndDuctalTissueRight.value
         }${
           textEditor.grandularAndDuctalTissueRightImage.value.length > 7
@@ -604,7 +604,7 @@ const NotesReport: React.FC<Props> = ({
 
             return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
           })
-          .join("<br/><br/>")}</p><br/>`
+          .join("<br/>")}</p><br/>`
       : ``
   }
     `
@@ -636,7 +636,7 @@ const NotesReport: React.FC<Props> = ({
   }
   ${
     glandularLeft
-      ? `<strong>Glandular and ductal tissue: </strong>${
+      ? `<p><strong>Glandular and ductal tissue: </strong></p>${
           textEditor.grandularAndDuctalTissueLeft.value
         }${
           textEditor.grandularAndDuctalTissueLeftImage.value.length > 7
@@ -1080,7 +1080,7 @@ ${
             height="60vh"
           />
 
-          {reportStatus === "Signed Off" || reportStatus === "Signed Off (A)" && (
+          {(reportStatus === "Signed Off" || reportStatus === "Signed Off (A)") && (
             <div className="flex flex-col mb-4">
               <div className="flex items-center justify-between">
                 <p className="text-2xl">Addendum</p>

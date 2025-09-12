@@ -364,7 +364,7 @@ const LesionsOptions: React.FC<Props> = ({
                                 {[
                                   "Coronal Level",
                                   "Axial",
-                                  "Sagital",
+                                  "Sagittal",
                                   "Unknown",
                                 ].map((level, i) => (
                                   <div
@@ -398,13 +398,13 @@ const LesionsOptions: React.FC<Props> = ({
                                 ))}
                               </div>
                             </div>
-                            {["Sagital", "Axial", "Coronal Level"].includes(
+                            {["Sagittal", "Axial", "Coronal Level"].includes(
                               data.locationLevel
                             ) && (
                               <div
                                 className={
                                   "flex items-center gap-2 mt-2 lg:mt-0" +
-                                  (data.locationLevel === "Sagital"
+                                  (data.locationLevel === "Sagittal"
                                     ? " lg:ml-[27rem]"
                                     : data.locationLevel === "Axial"
                                     ? " lg:ml-[22rem]"
@@ -412,7 +412,7 @@ const LesionsOptions: React.FC<Props> = ({
                                 }
                               >
                                 <span>
-                                  {data.locationLevel === "Sagital"
+                                  {data.locationLevel === "Sagittal"
                                     ? "M/L -"
                                     : data.locationLevel === "Axial"
                                     ? "S -"
@@ -523,32 +523,6 @@ const LesionsOptions: React.FC<Props> = ({
                               </div>
                             </>
                           )}
-
-                          {/* 3. Distance from Nipple */}
-                          <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-                            <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
-                              Distance from Nipple
-                            </Label>
-                            <div className="flex items-center gap-2 flex-grow">
-                              <Input
-                                type="number"
-                                className="w-20"
-                                placeholder="mm"
-                                value={data.distancenipple}
-                                onChange={(e) => {
-                                  const updated = [...dataArray];
-                                  updated[index].distancenipple =
-                                    e.target.value;
-                                  updated[index].syncStatus = true;
-                                  handleReportInputChange(
-                                    DataQId,
-                                    JSON.stringify(updated)
-                                  );
-                                }}
-                              />
-                              <span className="text-sm">mm</span>
-                            </div>
-                          </div>
 
                           {/* 4. Size */}
                           <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
@@ -884,6 +858,32 @@ const LesionsOptions: React.FC<Props> = ({
                               <span className="text-sm">cubic mm</span>
                             </div>
                           </div>
+
+                            {/* 3. Distance from Nipple */}
+                          <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+                            <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
+                              Distance from Nipple
+                            </Label>
+                            <div className="flex items-center gap-2 flex-grow">
+                              <Input
+                                type="number"
+                                className="w-20"
+                                placeholder="mm"
+                                value={data.distancenipple}
+                                onChange={(e) => {
+                                  const updated = [...dataArray];
+                                  updated[index].distancenipple =
+                                    e.target.value;
+                                  updated[index].syncStatus = true;
+                                  handleReportInputChange(
+                                    DataQId,
+                                    JSON.stringify(updated)
+                                  );
+                                }}
+                              />
+                              <span className="text-sm">mm</span>
+                            </div>
+                          </div>
                         </div>
 
                         <div className="w-[10%] flex justify-center items-start mt-0 lg:mt-2">
@@ -927,15 +927,34 @@ const LesionsOptions: React.FC<Props> = ({
                             //   );
                             // }}
                             onChange={(val, _, source) => {
-                              if (source === "user") {
-                                debouncedUpdate(
-                                  index,
-                                  val,
-                                  sectionVal,
-                                  dataArray,
-                                  DataQId
-                                );
-                              }
+                              console.log("---------->",source)
+                                if (source === "voice") {
+                                  // Immediate update for speech recognition (no debounce)
+                                  const updated = { ...editorVal };
+                                  updated[sectionVal] = [
+                                    ...(updated[sectionVal] || []),
+                                  ];
+                                  updated[sectionVal][index] = val;
+                                  textEditorOnChange?.(JSON.stringify(updated));
+
+                                  // Still update sync status with debounce
+                                  debouncedUpdate(
+                                    index,
+                                    val,
+                                    sectionVal,
+                                    dataArray,
+                                    DataQId
+                                  );
+                                } else if (source === "user") {
+                                  // Debounced update for typing
+                                  debouncedUpdate(
+                                    index,
+                                    val,
+                                    sectionVal,
+                                    dataArray,
+                                    DataQId
+                                  );
+                                }
                             }}
                           />
                         )}

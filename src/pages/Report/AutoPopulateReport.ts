@@ -35,8 +35,8 @@ export function AutoPopulateReport(
   //Left Recommendation
   getreportAnswer(133) === "" && handleReportInputChange(133, "Present");
 
-  getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
-    handleReportInputChange(breastImpantQuestions.breastImplants, "Present");
+  // getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
+  //   handleReportInputChange(breastImpantQuestions.breastImplants, "Present");
 
   // getPatientAnswer(questionIds.implantConfiguration) === "" &&
   //   handleReportInputChange(
@@ -148,6 +148,9 @@ export function AutoPopulateReport(
     //     breastImpantQuestions.implantMaterialOther,
     //     getPatientAnswer(81)
     //   );
+  } else if (getPatientAnswer(79) === "No") {
+    getreportAnswer(breastImpantQuestions.breastImplants) === "" &&
+      handleReportInputChange(breastImpantQuestions.breastImplants, "Absent");
   }
 
   if (getTechnicianAnswer(19) === "true") {

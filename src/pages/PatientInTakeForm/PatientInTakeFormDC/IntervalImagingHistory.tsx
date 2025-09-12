@@ -2,12 +2,10 @@ import React from "react";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
-import DatePicker from "@/components/date-picker";
 import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
@@ -84,7 +82,12 @@ const IntervalImagingHistory: React.FC<Props> = ({
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Interval Imaging History" className="uppercase" />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
@@ -127,21 +130,15 @@ const IntervalImagingHistory: React.FC<Props> = ({
                   !isNoneSelected && (
                     <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
                       <div className="w-full sm:w-48">
-                        <DatePicker
-                          value={
-                            getAnswer(questionIds.mammogramDate)
-                              ? parseLocalDate(
-                                  getAnswer(questionIds.mammogramDate)
-                                )
-                              : undefined
-                          }
+                        <Input
+                          value={getAnswer(questionIds.mammogramDate)}
                           onChange={(val) =>
                             handleInputChange(
                               questionIds.mammogramDate,
-                              val?.toLocaleDateString("en-CA") || ""
+                              val.target.value
                             )
                           }
-                          disabledDates={dateDisablers.noFuture}
+                          placeholder="Date / Duration"
                         />
                       </div>
                       <Input
@@ -178,21 +175,15 @@ const IntervalImagingHistory: React.FC<Props> = ({
                   !isNoneSelected && (
                     <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
                       <div className="w-full sm:w-48">
-                        <DatePicker
-                          value={
-                            getAnswer(questionIds.ultrasoundDate)
-                              ? parseLocalDate(
-                                  getAnswer(questionIds.ultrasoundDate)
-                                )
-                              : undefined
-                          }
+                        <Input
+                          value={getAnswer(questionIds.ultrasoundDate)}
                           onChange={(val) =>
                             handleInputChange(
                               questionIds.ultrasoundDate,
-                              val?.toLocaleDateString("en-CA") || ""
+                              val.target.value
                             )
                           }
-                          disabledDates={(date) => date > new Date()}
+                          placeholder="Date / Duration"
                         />
                       </div>
                       <Input
@@ -228,19 +219,15 @@ const IntervalImagingHistory: React.FC<Props> = ({
                 {isChecked(questionIds.mriCheckbox) && !isNoneSelected && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
                     <div className="w-full sm:w-48">
-                      <DatePicker
-                        value={
-                          getAnswer(questionIds.mriDate)
-                            ? parseLocalDate(getAnswer(questionIds.mriDate))
-                            : undefined
-                        }
+                      <Input
+                        value={getAnswer(questionIds.mriDate)}
                         onChange={(val) =>
                           handleInputChange(
                             questionIds.mriDate,
-                            val?.toLocaleDateString("en-CA") || ""
+                            val.target.value
                           )
                         }
-                        disabledDates={(date) => date > new Date()}
+                        placeholder="Date / Duration"
                       />
                     </div>
                     <Input
@@ -283,19 +270,15 @@ const IntervalImagingHistory: React.FC<Props> = ({
                 {isChecked(questionIds.otherCheckbox) && !isNoneSelected && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full">
                     <div className="w-full sm:w-48">
-                      <DatePicker
-                        value={
-                          getAnswer(questionIds.otherDate)
-                            ? parseLocalDate(getAnswer(questionIds.otherDate))
-                            : undefined
-                        }
+                      <Input
+                        value={getAnswer(questionIds.otherDate)}
                         onChange={(val) =>
                           handleInputChange(
                             questionIds.otherDate,
-                            val?.toLocaleDateString("en-CA") || ""
+                            val.target.value
                           )
                         }
-                        disabledDates={(date) => date > new Date()}
+                        placeholder="Date / Duration"
                       />
                     </div>
                     <Input
@@ -349,20 +332,17 @@ const IntervalImagingHistory: React.FC<Props> = ({
 
                 <div className="w-full space-y-2 sm:w-48">
                   <Label>Date</Label>
-                  <DatePicker
+                  <Input
                     value={
                       getAnswer(questionIds.intervalBiopsyDate)
-                        ? parseLocalDate(
-                            getAnswer(questionIds.intervalBiopsyDate)
-                          )
-                        : undefined
-                    }
+                       }
                     onChange={(val) =>
                       handleInputChange(
                         questionIds.intervalBiopsyDate,
-                        val?.toLocaleDateString("en-CA") || ""
+                        val.target.value
                       )
                     }
+                    placeholder="Date / Duration"
                   />
                 </div>
 

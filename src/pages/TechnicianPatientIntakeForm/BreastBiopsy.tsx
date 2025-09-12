@@ -5,7 +5,7 @@ import {
   ResponseAudit,
   ResponsePatientForm,
 } from "./TechnicianPatientIntakeForm";
-import { Edit, Info } from "lucide-react";
+import { Edit, Info, Trash } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -13,8 +13,8 @@ import {
 } from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
-import { downloadDocumentFile } from "@/lib/commonUtlis";
 import { uploadService } from "@/services/commonServices";
+import FileView from "@/components/FileView/FileView";
 
 interface IntakeOption {
   questionId: number;
@@ -71,26 +71,40 @@ const BreastBiopsy: React.FC<Props> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     questionId: number
   ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // setSelectedFileName(file.name); // Optimistic UI update
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      try {
-        const response = await uploadService.uploadFile({
-          formFile: formDataObj,
-        });
-        if (response.status) {
-          console.log(questionId, response.status, response.fileName);
-          handlePatientInputChange(questionId, response.fileName);
-        } else {
-          // setSelectedFileName(""); // Revert on failure
+    const files = e.target.files;
+    if (!files) return;
+
+    const values = JSON.parse(getPatientAnswer(questionId) || "[]");
+
+    for (const file of files) {
+      if (file) {
+        const formDataObj = new FormData();
+        formDataObj.append("file", file);
+        try {
+          const response = await uploadService.uploadFile({
+            formFile: formDataObj,
+          });
+          if (response.status) {
+            values.push(response.fileName);
+          }
+        } catch (error) {
+          console.error("File upload failed:", error);
         }
-      } catch (error) {
-        console.error("File upload failed:", error);
-        // setSelectedFileName(""); // Revert on failure
       }
     }
+    handlePatientInputChange(questionId, JSON.stringify(values));
+  };
+
+  const handleDeleteFile = (fileToDelete: string, questionId: number) => {
+    // parse existing array of file names
+    const values: string[] = JSON.parse(getPatientAnswer(questionId) || "[]");
+
+    // filter out the file to delete
+    const updatedValues = values.filter((file) => file !== fileToDelete);
+    console.log(updatedValues);
+
+    // save updated list back to formData
+    handlePatientInputChange(questionId, JSON.stringify(updatedValues));
   };
 
   const handleEditClick = (sectionKey: string) => {
@@ -138,7 +152,9 @@ const BreastBiopsy: React.FC<Props> = ({
           )
         }
         disabled={!isEditable}
-        required={getPatientAnswer(434) != "true" && getPatientAnswer(435) != "true"}
+        required={
+          getPatientAnswer(434) != "true" && getPatientAnswer(435) != "true"
+        }
       />
       <div className="text-sm sm:text-base font-medium">{label}</div>
     </div>
@@ -189,9 +205,7 @@ const BreastBiopsy: React.FC<Props> = ({
           <div className="flex gap-3">
             {/* Check to Confirm Checkbox */}
             <div className={cn(`flex flex-col items-center w-25 gap-1`)}>
-              <div className="text-xs sm:text-xs font-medium">
-                Confirm
-              </div>
+              <div className="text-xs sm:text-xs font-medium">Confirm</div>
               <Checkbox2
                 className="bg-white data-[state=checked]:text-[#f9f4ed] rounded-full"
                 checked={
@@ -213,49 +227,48 @@ const BreastBiopsy: React.FC<Props> = ({
             </div>
 
             {/* Edit / Info Icons */}
-            {!readOnly && (
-            !isEditing ? (
-              <div className="flex w-20 flex-col gap-1 items-center">
-                <div className="text-xs sm:text-xs font-medium">Edit</div>
-                <Edit
-                  onClick={() => handleEditClick(sectionKey)}
-                  className="w-4 h-4 cursor-pointer"
-                />
-              </div>
-            ) : (
-              <div className="flex w-20 flex-col gap-1 items-center">
-                <div className="text-xs sm:text-xs font-medium">Info</div>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="space-y-2 text-sm text-gray-700">
-                      <div className="font-medium text-gray-900 border-b pb-2 mb-2">
-                        Patient Response
+            {!readOnly &&
+              (!isEditing ? (
+                <div className="flex w-20 flex-col gap-1 items-center">
+                  <div className="text-xs sm:text-xs font-medium">Edit</div>
+                  <Edit
+                    onClick={() => handleEditClick(sectionKey)}
+                    className="w-4 h-4 cursor-pointer"
+                  />
+                </div>
+              ) : (
+                <div className="flex w-20 flex-col gap-1 items-center">
+                  <div className="text-xs sm:text-xs font-medium">Info</div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Info className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-4 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="space-y-2 text-sm text-gray-700">
+                        <div className="font-medium text-gray-900 border-b pb-2 mb-2">
+                          Patient Response
+                        </div>
+                        {patientAnswers.map(
+                          (pa) =>
+                            pa.value && (
+                              <div
+                                key={pa.label}
+                                className="flex justify-between items-center"
+                              >
+                                <span className="font-medium text-gray-800">
+                                  {pa.label}:
+                                </span>
+                                <span className="text-gray-600 text-right">
+                                  {pa.value}
+                                </span>
+                              </div>
+                            )
+                        )}
                       </div>
-                      {patientAnswers.map(
-                        (pa) =>
-                          pa.value && (
-                            <div
-                              key={pa.label}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="font-medium text-gray-800">
-                                {pa.label}:
-                              </span>
-                              <span className="text-gray-600 text-right">
-                                {pa.value}
-                              </span>
-                            </div>
-                          )
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )
-          )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -353,32 +366,62 @@ const BreastBiopsy: React.FC<Props> = ({
                   <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100">
                     <input
                       type="file"
+                      accept=".pdf, .jpg, .jpeg, .png"
                       className="sr-only"
+                      multiple
                       onChange={(e) => {
                         handleFileChange(e, 165);
                       }}
                       // disabled={editStatus}
-                      required={getPatientAnswer(165) == ""}
+                      required={(() => {
+                        let parsed: any[] = [];
+                        try {
+                          parsed = JSON.parse(getPatientAnswer(165) || "[]");
+                        } catch {
+                          parsed = [];
+                        }
+                        return parsed.length === 0;
+                      })()}
                     />
                     Upload File
                   </label>
-                  {getPatientAnswer(165) && (
-                    <span
-                      className="text-sm cursor-pointer pointer-events-auto underline hover:underline-offset-2"
-                      onClick={() =>
-                        downloadDocumentFile(
-                          patientFormData.find((q) => q.questionId === 165)
-                            ?.file?.base64Data || "",
-                          patientFormData.find((q) => q.questionId === 165)
-                            ?.file?.contentType || "",
-                          getPatientAnswer(165)
-                        )
-                      }
-                    >
-                      {getPatientAnswer(165) || "Report"}
-                    </span>
-                  )}
                 </div>
+                {getPatientAnswer(165) &&
+                  (() => {
+                    try {
+                      const fileNames: string[] = JSON.parse(
+                        getPatientAnswer(165)
+                      );
+
+                      console.log(fileNames);
+                      return fileNames.length > 0 ? (
+                        <div className="w-full space-y-2">
+                          {fileNames.map((fileName, index) => (
+                            <div
+                              key={index}
+                              className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
+                            >
+                              {/* File name (downloadable) */}
+                              <FileView fileName={fileName} />
+
+                              {/* Delete icon */}
+                              <div
+                                className="cursor-pointer"
+                                onClick={() => handleDeleteFile(fileName, 165)}
+                              >
+                                {readOnly ? null : (
+                                  <Trash size={15} className="text-red-500" />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null;
+                    } catch (err) {
+                      console.error("Invalid reportDetails JSON:", err);
+                      return null;
+                    }
+                  })()}
               </>
             )}
           </div>

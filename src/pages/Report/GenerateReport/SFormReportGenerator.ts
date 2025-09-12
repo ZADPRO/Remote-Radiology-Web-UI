@@ -1,5 +1,4 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
-import { formatReadableDate } from "@/utlis/calculateAge";
 
 export function SFormGeneration(
   patientInTakeForm: ResponsePatientForm[]
@@ -311,18 +310,18 @@ export function SFormGeneration(
     if (position === "Both") {
       let parts: string[] = [];
       if (date?.length > 0) {
-        parts.push(`right: ${formatReadableDate(date)}`);
+        parts.push(`right: ${date}`);
       }
       if (dateAnother && dateAnother?.length > 0) {
-        parts.push(`left: ${formatReadableDate(dateAnother)}`);
+        parts.push(`left: ${dateAnother}`);
       }
 
       return parts.length
-        ? `${position} ${surgeryName} done on ${parts.join(", ")}.`
+        ? `${position} ${surgeryName} done: ${parts.join(", ")}.`
         : `${position} ${surgeryName} done.`;
     }
 
-    return `${position} ${surgeryName} done on ${formatReadableDate(date)}.`;
+    return `${position} ${surgeryName} done: ${date}.`;
   }
 
   //Previous Breast Surgery
@@ -536,7 +535,7 @@ export function SFormGeneration(
                   breastSymptoms.lumpLeft.length > 0
                     ? `left breast at ${formatBreastSymptoms(
                         breastSymptoms.lumpLeft
-                      )} since ${breastSymptoms.lumpDate} months,${
+                      )} since ${breastSymptoms.lumpDate},${
                         breastSymptoms.lumpSize.toLocaleLowerCase() ===
                         "bigger than a grape"
                           ? ` bigger than a grape`
@@ -547,7 +546,7 @@ export function SFormGeneration(
                   breastSymptoms.lumpRight.length > 0
                     ? `right breast at ${formatBreastSymptoms(
                         breastSymptoms.lumpRight
-                      )} since ${breastSymptoms.lumpDateRight} months,${
+                      )} since ${breastSymptoms.lumpDateRight},${
                         breastSymptoms.lumpSizeRight.toLocaleLowerCase() ===
                         "bigger than a grape"
                           ? ` bigger than a grape`
@@ -594,7 +593,7 @@ export function SFormGeneration(
                   breastSymptoms.skinLeft.length > 0
                     ? `left breast at ${formatBreastSymptoms(
                         breastSymptoms.skinLeft
-                      )} since ${breastSymptoms.skinDate} months, ${
+                      )} since ${breastSymptoms.skinDate}, ${
                         breastSymptoms.skinChangesType === "Other"
                           ? breastSymptoms.skinOther.toLocaleLowerCase()
                           : breastSymptoms.skinChangesType.toLocaleLowerCase()
@@ -606,7 +605,7 @@ export function SFormGeneration(
                   breastSymptoms.skinRight.length > 0
                     ? `right breast at ${formatBreastSymptoms(
                         breastSymptoms.skinRight
-                      )} since ${breastSymptoms.skinDateRight} months, ${
+                      )} since ${breastSymptoms.skinDateRight}, ${
                         breastSymptoms.skinChangesTypeRight === "Other"
                           ? breastSymptoms.skinOtherRight.toLocaleLowerCase()
                           : breastSymptoms.skinChangesTypeRight.toLocaleLowerCase()
@@ -650,13 +649,13 @@ export function SFormGeneration(
               breastSymptoms.nippleRight.length > 0)
               ? ` in the${
                   breastSymptoms.nippleLeft === "true"
-                    ? ` left breast since ${breastSymptoms.nippleDate} months${
+                    ? ` left breast since ${breastSymptoms.nippleDate}${
                         breastSymptoms.nippleRight === "true" ? "," : ""
                       }`
                     : ""
                 }${
                   breastSymptoms.nippleRight === "true"
-                    ? ` right breast since ${breastSymptoms.nippleDateRight} months`
+                    ? ` right breast since ${breastSymptoms.nippleDateRight}`
                     : ""
                 }${
                   breastSymptoms.nippleDetails.length > 0
@@ -698,7 +697,7 @@ export function SFormGeneration(
                   breastSymptoms.breastPainLeft.length > 0
                     ? ` left breast at ${formatBreastSymptoms(
                         breastSymptoms.breastPainLeft
-                      )} since ${breastSymptoms.breastPainDate} months${
+                      )} since ${breastSymptoms.breastPainDate}${
                         breastSymptoms.breastPainRight.length > 0 ? "," : ""
                       }`
                     : ""
@@ -706,7 +705,7 @@ export function SFormGeneration(
                   breastSymptoms.breastPainRight.length > 0
                     ? ` right breast ${formatBreastSymptoms(
                         breastSymptoms.breastPainRight
-                      )} since ${breastSymptoms.breastPainDateRight} months`
+                      )} since ${breastSymptoms.breastPainDateRight}`
                     : ""
                 }${
                   breastSymptoms.breastPainDetails.length > 0
@@ -754,7 +753,7 @@ export function SFormGeneration(
                                 : ` (${breastSymptoms.nipplePosition.toLowerCase()})`
                             }`
                           : ``
-                      } since ${breastSymptoms.nipplePainDate} months${
+                      } since ${breastSymptoms.nipplePainDate}${
                         breastSymptoms.nipplePainRight === "true" ? "," : ""
                       }`
                     : ""
@@ -768,7 +767,7 @@ export function SFormGeneration(
                                 : ` (${breastSymptoms.nipplePositionRight.toLowerCase()})`
                             }`
                           : ``
-                      } since ${breastSymptoms.nipplePainDateRight} months`
+                      } since ${breastSymptoms.nipplePainDateRight}`
                     : ""
                 }${
                   breastSymptoms.nipplePainDetails.length > 0
@@ -803,18 +802,16 @@ export function SFormGeneration(
         text.push(
           `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Swelling${
             (breastSymptoms.lymphNodesRight === "true" ||
-            breastSymptoms.lymphNodesLeft === "true" ||
-            (breastSymptoms.lymphNodesRight === "true" &&
-              breastSymptoms.lymphNodesLeft === "true")) &&
-              breastSymptoms.locationAxillary === "true"
+              breastSymptoms.lymphNodesLeft === "true" ||
+              (breastSymptoms.lymphNodesRight === "true" &&
+                breastSymptoms.lymphNodesLeft === "true")) &&
+            breastSymptoms.locationAxillary === "true"
               ? ` in axilla (armpit) on the
               ${
                 breastSymptoms.lymphNodesLeft === "true"
                   ? ` left side${
                       breastSymptoms.lymphNodesLeft === "true" ? "," : ""
-                    } since ${
-                      breastSymptoms.locationAxillaryDurationRight
-                    } months,${
+                    } since ${breastSymptoms.locationAxillaryDurationRight},${
                       breastSymptoms.locationAxillarySizeRight.toLocaleLowerCase() ===
                       "bigger than a grape"
                         ? ` bigger than a grape`
@@ -825,9 +822,7 @@ export function SFormGeneration(
                   breastSymptoms.lymphNodesRight === "true"
                     ? ` right side${
                         breastSymptoms.lymphNodesRight === "true" ? "," : ""
-                      } since ${
-                        breastSymptoms.locationAxillaryDuration
-                      } months,${
+                      } since ${breastSymptoms.locationAxillaryDuration},${
                         breastSymptoms.locationAxillarySize.toLocaleLowerCase() ===
                         "bigger than a grape"
                           ? ` bigger than a grape`
@@ -840,15 +835,15 @@ export function SFormGeneration(
             breastSymptoms.locationInBetween === "true"
               ? ` ${
                   (breastSymptoms.lymphNodesRight === "true" ||
-            breastSymptoms.lymphNodesLeft === "true" ||
-            (breastSymptoms.lymphNodesRight === "true" &&
-              breastSymptoms.lymphNodesLeft === "true")) &&
-              breastSymptoms.locationAxillary === "true"
+                    breastSymptoms.lymphNodesLeft === "true" ||
+                    (breastSymptoms.lymphNodesRight === "true" &&
+                      breastSymptoms.lymphNodesLeft === "true")) &&
+                  breastSymptoms.locationAxillary === "true"
                     ? `/ `
                     : ""
                 }inbetween chest since ${
                   breastSymptoms.locationInBetweenDuration
-                } months,${
+                },${
                   breastSymptoms.locationInBetweenSize.toLocaleLowerCase() ===
                   "bigger than a grape"
                     ? ` bigger than a grape`
@@ -857,9 +852,11 @@ export function SFormGeneration(
               : ``
           }${
             breastSymptoms.locationOther === "true"
-              ? ` ${breastSymptoms.locationInBetween === "true" ? "/":"in" } ${breastSymptoms.locationOtherSpecify.toLocaleLowerCase()} since ${
+              ? ` ${
+                  breastSymptoms.locationInBetween === "true" ? "/" : "in"
+                } ${breastSymptoms.locationOtherSpecify.toLocaleLowerCase()} since ${
                   breastSymptoms.locationOtherDuration
-                } months,${
+                },${
                   breastSymptoms.locationOtherSize.toLocaleLowerCase() ===
                   "bigger than a grape"
                     ? ` bigger than a grape`
@@ -934,7 +931,7 @@ export function SFormGeneration(
 
     return `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>${label}${
       dateknown === "Known" && date.length > 0
-        ? ` performed on ${formatReadableDate(date)}`
+        ? ` performed: ${date}`
         : dateknown === "Unknown"
         ? ` date unknown`
         : ""
@@ -1056,16 +1053,20 @@ export function SFormGeneration(
     biopsyReport.push(
       `${
         biopsy.previousBiopsy === "Yes"
-          ? ` Date: ${formatReadableDate(biopsy.previousBiopsyDate)}.`
+          ? ` Date: ${biopsy.previousBiopsyDate}.`
           : biopsy.previousBiopsy === "Unknown"
           ? ` Date: unknown.`
           : ""
       }${
         biopsy.biopsyResults === "Yes" || biopsy.biopsyResults === "Unknown"
-          ? ` Result: ${
+          ? `${
               biopsy.biopsyResults === "Yes"
-                ? `${biopsy.biopsyResultsDetails}.`
-                : `${biopsy.biopsyResults.toLowerCase()}.`
+                ? ` ${
+                    biopsy.biopsyResultsDetails.length > 0
+                      ? ` Result: ${biopsy.biopsyResultsDetails}`
+                      : ``
+                  }`
+                : `Result: ${biopsy.biopsyResults.toLowerCase()}`
             }`
           : ""
       }${
@@ -1093,19 +1094,25 @@ export function SFormGeneration(
       breastSymptoms.categoryId === "2"
     ) {
       biopsyReport.push(
-        `Results: ${biopsy.Biopsyresult.toLocaleLowerCase()}${
-          biopsy.Biopsyresult === "Benign" && biopsy.Benignother.length > 0
-            ? ` (${biopsy.Benignother})`
-            : ``
-        }${
-          biopsy.Biopsyresult === "Atypical" && biopsy.Atypicalother.length > 0
-            ? ` (${biopsy.Atypicalother})`
-            : ``
-        }${
-          biopsy.Biopsyresult === "High-risk lesion" &&
-          biopsy.Highrisklesionother.length > 0
-            ? ` (${biopsy.Highrisklesionother})`
-            : ``
+        `Results: ${
+          biopsy.Biopsyresult === "Other"
+            ? `${biopsy.Benignother}`
+            : `${biopsy.Biopsyresult.toLocaleLowerCase()}${
+                biopsy.Biopsyresult === "Benign" &&
+                biopsy.Benignother.length > 0
+                  ? ` (${biopsy.Benignother})`
+                  : ``
+              }${
+                biopsy.Biopsyresult === "Atypical" &&
+                biopsy.Atypicalother.length > 0
+                  ? ` (${biopsy.Atypicalother})`
+                  : ``
+              }${
+                biopsy.Biopsyresult === "High-risk lesion" &&
+                biopsy.Highrisklesionother.length > 0
+                  ? ` (${biopsy.Highrisklesionother})`
+                  : ``
+              }`
         }.`
       );
     }

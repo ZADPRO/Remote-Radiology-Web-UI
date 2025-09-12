@@ -49,12 +49,12 @@ export function generateBreastImplantDetailsHTML(
   let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
-    html += ` implants`;
+    html += ` implants `;
   } else {
-    html += ` implant`;
+    html += ` implant `;
   }
 
-  html += ` which are ${position.toLowerCase()} in position, with speed of sound consistent with ${
+  html += `which are ${position.toLowerCase()} in position, with speed of sound consistent with ${
     config === "Bilateral Dissimilar"
       ? ` ${getAnswer(questionIds.bilateraldissimilar)}`
       : `${material == "Other" ? `${materialOther}` : material.toLowerCase()}`
@@ -62,6 +62,7 @@ export function generateBreastImplantDetailsHTML(
 
   if (displacement.length > 0) {
     if (displacement !== "None") {
+console.log('BreastImplantDetailsEditor.ts -------------------------- >  64  ');
       html += `The displacement is noted in ${
         displacement === "Both"
           ? "both sides"

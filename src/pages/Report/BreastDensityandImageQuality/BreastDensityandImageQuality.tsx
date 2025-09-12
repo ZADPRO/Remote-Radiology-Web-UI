@@ -72,6 +72,7 @@ const BreastDensityandImageQuality: React.FC<Props> = ({
                 value: "Dense",
               },
               { label: "Very Dense", value: "Very Dense" },
+              { label: "S/P Mastectomy", value: "S/P Mastectomy" },
             ]}
           />
 

@@ -120,7 +120,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                 type: getDefaultType(),
                 clock: "",
                 level: "",
-                position: "",
+                position: "Unknown",
                 ...(showDistributions && { distribution: "Non Segmental" }),
                 ...(enableOtherInput && { otherText: "" }),
               };
@@ -132,141 +132,153 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
           </Button>
         </div>
         {parsedList.map((item, index) => (
-          <div key={index} className="flex items-center gap-2 pl-4">
-            <span className="text-sm font-medium">{index + 1}.</span>
-            <CustomSelect
-              className="min-w-28 w-38"
-              value={item.type}
-              onChange={(val) => {
-                const updated = [...parsedList];
-                updated[index].type = val;
-                updateList(updated);
-              }}
-              options={typeOptions}
-              required
-            />
-            {item.type === "Other" && enableOtherInput && (
-              <Input
-                className="w-[200px]"
-                placeholder="Specify"
-                value={item.otherText || ""}
-                onChange={(e) => {
-                  const updated = [...parsedList];
-                  updated[index].otherText = e.target.value;
-                  updateList(updated);
-                }}
-              />
-            )}
-
-            <SingleBreastPositionPicker
-              value={item.clock}
-              onChange={(val) => {
-                const updated = [...parsedList];
-                updated[index].clock = val;
-                updateList(updated);
-              }}
-              singleSelect={true}
-            />
-            {item.clock.length > 0 && (
-              <X
-                className="cursor-pointer"
-                onClick={() => {
-                  const updated = [...parsedList];
-                  updated[index].clock = "";
-                  updateList(updated);
-                }}
-                width={13}
-                height={13}
-                color="red"
-              />
-            )}
-            <span className="text-xs">o'clock, level</span>
-            {label === "Ductal Prominence" && (
-              <CustomSelect
-                className="min-w-28 w-38"
-                value={item.position}
-                onChange={(val) => {
-                  const updated = [...parsedList];
-                  updated[index].position = val;
-                  updateList(updated);
-                }}
-                options={["Coronal Level", "Axial", "Sagital", "Unknown"]}
-                required
-              />
-            )}
-            {label === "Ductal Prominence" ? (
-              <>
-                {item.position !== "Unknown" && (
-                  <>
-                  {
-                item.position === "Coronal Level" ? "P - ": item.position === "Axial" ? "S - " : item.position === "Sagital" && "M/L - "
-              }
-                    <GridNumber200
-                      className="w-14"
-                      value={item.level}
-                      onChange={(val) => {
+          <>
+            <div className={`flex gap-6 justify-center ${index !== 0 && `border-t-2`} pt-3`}>
+              <div
+                key={index}
+                className="flex flex-wrap items-center gap-2 pl-4"
+              >
+                <div className="flex items-center gap-2 pl-4">
+                  <span className="text-sm font-medium">{index + 1}.</span>
+                  <CustomSelect
+                    className="min-w-28 w-38"
+                    value={item.type}
+                    onChange={(val) => {
+                      const updated = [...parsedList];
+                      updated[index].type = val;
+                      updateList(updated);
+                    }}
+                    options={typeOptions}
+                    required
+                  />
+                  {item.type === "Other" && enableOtherInput && (
+                    <Input
+                      className="w-[200px]"
+                      placeholder="Specify"
+                      value={item.otherText || ""}
+                      onChange={(e) => {
                         const updated = [...parsedList];
-                        updated[index].level = val;
+                        updated[index].otherText = e.target.value;
                         updateList(updated);
                       }}
                     />
-                    {item.level && (
-                      <X
-                        className="cursor-pointer"
-                        onClick={() => {
-                          const updated = [...parsedList];
-                          updated[index].level = "";
-                          updateList(updated);
-                        }}
-                        width={13}
-                        height={13}
-                        color="red"
-                      />
-                    )}
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <GridNumber200
-                  className="w-14"
-                  value={item.level}
-                  onChange={(val) => {
-                    const updated = [...parsedList];
-                    updated[index].level = val;
-                    updateList(updated);
-                  }}
-                />
-                {item.level && (
-                  <X
-                    className="cursor-pointer"
-                    onClick={() => {
+                  )}
+
+                  <SingleBreastPositionPicker
+                    value={item.clock}
+                    onChange={(val) => {
                       const updated = [...parsedList];
-                      updated[index].level = "";
+                      updated[index].clock = val;
                       updateList(updated);
                     }}
-                    width={13}
-                    height={13}
-                    color="red"
+                    singleSelect={true}
                   />
-                )}
-              </>
-            )}
+                  {item.clock.length > 0 && (
+                    <X
+                      className="cursor-pointer"
+                      onClick={() => {
+                        const updated = [...parsedList];
+                        updated[index].clock = "";
+                        updateList(updated);
+                      }}
+                      width={13}
+                      height={13}
+                      color="red"
+                    />
+                  )}
+                  <span className="text-xs">o'clock,</span>
+                </div>
+                <div className="flex items-center gap-2 pl-4">
+                  {/* <CustomSelect
+                    className="min-w-28 w-38"
+                    value={item.position}
+                    onChange={(val) => {
+                      const updated = [...parsedList];
+                      updated[index].position = val;
+                      updateList(updated);
+                    }}
+                    options={["Coronal Level", "Axial", "Sagittal", "Unknown"]}
+                    required
+                  /> */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    {["Coronal Level", "Axial", "Sagittal", "Unknown"].map(
+                      (level, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            id={`grandularLevel-${label}-${index}-${i}`}
+                            name={`grandularlevelquestion-${label}-${index}`}
+                            value={level}
+                            checked={item.position === level} // this should work
+                            onChange={(e) => {
+                              const updated = [...parsedList];
+                              updated[index] = {
+                                ...updated[index],
+                                position: e.target.value, // make sure to replace the object
+                              };
+                              updateList(updated);
+                            }}
+                            required
+                            className="custom-radio"
+                          />
+                          <Label htmlFor={`grandularLevel-${label}-${index}-${i}`}>
+                            {level}
+                          </Label>
+                        </div>
+                      )
+                    )}
+                  </div>
 
-            {showDistributions && (
-              <>
-                <span className="text-xs">, distribution</span>
-                <CustomSelect
-                  className="min-w-10"
-                  value={item.distribution || ""} // ✅ ensure it's always a string
-                  onChange={(val) => {
-                    const updated = [...parsedList];
-                    updated[index].distribution = val;
-                    updateList(updated);
-                  }}
-                  options={distributionOptions}
-                />
-                {/* {item.distribution && (
+                  <>
+                    {item.position !== "Unknown" && (
+                      <>
+                        {item.position === "Coronal Level"
+                          ? "P - "
+                          : item.position === "Axial"
+                          ? "S - "
+                          : item.position === "Sagittal" && "M/L - "}
+                        <GridNumber200
+                          className="w-14"
+                          value={item.level}
+                          onChange={(val) => {
+                            const updated = [...parsedList];
+                            updated[index].level = val;
+                            updateList(updated);
+                          }}
+                        />
+                        {item.level && (
+                          <X
+                            className="cursor-pointer"
+                            onClick={() => {
+                              const updated = [...parsedList];
+                              updated[index].level = "";
+                              updateList(updated);
+                            }}
+                            width={13}
+                            height={13}
+                            color="red"
+                          />
+                        )}
+                      </>
+                    )}
+                  </>
+                </div>
+
+                <div className="flex items-center gap-2 pl-4">
+                  {showDistributions && (
+                    <>
+                      <span className="text-xs">, distribution</span>
+                      <CustomSelect
+                        className="min-w-10"
+                        value={item.distribution || ""} // ✅ ensure it's always a string
+                        onChange={(val) => {
+                          const updated = [...parsedList];
+                          updated[index].distribution = val;
+                          updateList(updated);
+                        }}
+                        options={distributionOptions}
+                      />
+                      {/* {item.distribution && (
                   <X
                     className="cursor-pointer"
                     onClick={() => {
@@ -279,21 +291,11 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                     color="red"
                   />
                 )} */}
-              </>
-            )}
-            {parsedList.length > 0 && (
-              <button
-                className="text-red-500"
-                onClick={() => {
-                  const updated = parsedList.filter((_, i) => i !== index);
-                  updateList(updated);
-                }}
-              >
-                <Trash2 size={15} />
-              </button>
-            )}
+                    </>
+                  )}
+                </div>
 
-            {/* {index === parsedList.length - 1 && (
+                {/* {index === parsedList.length - 1 && (
               <span
                 className="text-blue-500 cursor-pointer text-sm underline"
                 onClick={() => {
@@ -309,7 +311,20 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                 Add
               </span>
             )} */}
-          </div>
+              </div>
+              {parsedList.length > 0 && (
+                <button
+                  className="text-red-500"
+                  onClick={() => {
+                    const updated = parsedList.filter((_, i) => i !== index);
+                    updateList(updated);
+                  }}
+                >
+                  <Trash2 size={15} />
+                </button>
+              )}
+            </div>
+          </>
         ))}
       </div>
     );
@@ -340,17 +355,17 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
 
       {getAnswer(questionIds.grandularSelect) === "Present" && (
         <div className="py-4 lg:pl-10 space-y-4">
-          {/* <MultiRadioOptionalInputInline
-            label="Glandular And Ductal tissue"
+          <MultiRadioOptionalInputInline
+            label="S/P Mastectomy"
             labelClassname="lg:w-[12rem]"
             questionId={questionIds.grandularAndDuctalTissue}
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
             options={[
-              { label: "Normal", value: "Normal" },
-              { label: "Abnormal", value: "Abnormal" },
+              { label: "Absent", value: "Absent" },
+              { label: "Present", value: "Present" },
             ]}
-          /> */}
+          />
 
           <MultiRadioOptionalInputInline
             label="Benign Microcysts"

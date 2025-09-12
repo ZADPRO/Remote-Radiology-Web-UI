@@ -437,7 +437,7 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                   )}
 
                                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                                    <Label>Duration (Months)</Label>
+                                    <Label>Duration</Label>
                                     <Input
                                       placeholder="Months"
                                       value={getAnswerByQuestionId(
@@ -449,8 +449,8 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                           e.target.value
                                         )
                                       }
-                                      className="w-full lg:w-20"
-                                      type="number"
+                                      className="w-full lg:w-30"
+                                      type="text"
                                       required={
                                         option.label === "Axillary (Armpit)"
                                           ? getAnswerByQuestionId(
@@ -595,7 +595,7 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                     )}
 
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                                      <Label>Duration (Months)</Label>
+                                      <Label>Duration</Label>
                                       <Input
                                         placeholder="Months"
                                         value={getAnswerByQuestionId(
@@ -608,8 +608,8 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                                             e.target.value
                                           )
                                         }
-                                        className="w-full lg:w-20"
-                                        type="number"
+                                        className="w-full lg:w-30"
+                                        type="text"
                                         required={
                                           option.label === "Axillary (Armpit)"
                                             ? getAnswerByQuestionId(

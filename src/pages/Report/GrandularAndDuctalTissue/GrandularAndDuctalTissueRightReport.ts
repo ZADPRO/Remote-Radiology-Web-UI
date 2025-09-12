@@ -11,6 +11,7 @@ interface QuestionIds {
   ductalProminence: number;
   ductalProminenceList: number;
   grandularAndDuctalTissue: number;
+  calcificationsPresent: number;
 }
 
 export function generateGrandularAndDuctalTissueReport(
@@ -22,9 +23,13 @@ export function generateGrandularAndDuctalTissueReport(
 
   // const glandularandductal = getAnswer(questionIds.grandularAndDuctalTissue);
 
+  const grandularAndDuctalTissue = getAnswer(
+    questionIds.grandularAndDuctalTissue
+  );
   const benignMicroCysts = getAnswer(questionIds.benignMicroCysts);
   const benignCapsular = getAnswer(questionIds.benignCapsular);
   const benignFibronodular = getAnswer(questionIds.benignFibronodular);
+  const calcificationsPresent = getAnswer(questionIds.calcificationsPresent);
   const macroList = getParsedList(questionIds.macroCalcificationsList);
   const microList = getParsedList(questionIds.microCalcificationsList);
   const calcifiedScar = getAnswer(questionIds.calcifiedScar);
@@ -111,35 +116,71 @@ export function generateGrandularAndDuctalTissueReport(
     ductalText +=
       ductalProminence === "Present" && ductalList.length > 0
         ? `There is ductal prominence ${data.type.toLowerCase()}${
-            data.clock ? ` noted at ${data.clock} o'clock` : ""
+            data.clock ? ` noted at ${data.clock} O'clock` : ""
           }${
             data.position !== "Unknown" && data.position
-              ? ` in ${data.position}${
+              ? ` in ${data.position.toLowerCase()}${
                   data.position
-                    ? `
-             ${
-               data.position === "Coronal Level"
-                 ? "P"
-                 : data.position === "Axial"
-                 ? "S"
-                 : data.position === "Sagital" && "M/L"
-             }${level}`
+                    ? ` ${
+                        data.position === "Coronal Level"
+                          ? "P"
+                          : data.position === "Axial"
+                          ? "S"
+                          : data.position === "Sagittal" && "M/L"
+                      }${level}`
                     : ""
-                }
-                        `
+                }`
               : ""
           }.`
         : "";
   });
 
-  // ${glandularandductaltext}
-  return `
-    ${benignText.length > 0 ? `<p>${benignText}</p><br/>` : ""}
-    ${macroText.length > 0 ? `<p>${macroText}</p><br/>` : ""}
-${microText.length > 0 ? `<p>${microText}</p><br/>` : ""}
-${scarText ? `<p>${scarText}</p><br/>` : ""}
-${ductalText ? `${ductalText}` : ""}
+  if (
+    benignMicroCysts === "Present" ||
+    benignCapsular === "Present" ||
+    benignFibronodular === "Present" ||
+    ductalProminence === "Present" ||
+    calcificationsPresent === "Present" ||
+    calcifiedScar === "Present"
+  ) {
+    return `
+    ${
+      grandularAndDuctalTissue === "Present"
+        ? `<p>Absent (post mastectomy status).</p><br/>`
+        : ""
+    }
+    ${
+      benignText.length > 0 &&
+      (benignMicroCysts === "Present" ||
+        benignCapsular === "Present" ||
+        benignFibronodular === "Present")
+        ? `<p>${benignText}</p><br/>`
+        : ""
+    }
+    ${
+      macroText.length > 0 && calcificationsPresent === "Present"
+        ? `<p>${macroText}</p><br/>`
+        : ""
+    }
+    ${
+      microText.length > 0 && calcificationsPresent === "Present"
+        ? `<p>${microText}</p><br/>`
+        : ""
+    }
+    ${scarText && calcifiedScar === "Present" ? `<p>${scarText}</p><br/>` : ""}
+    ${
+      ductalText && ductalProminence === "Present"
+        ? `<p>${ductalText}</p><br/>`
+        : ""
+    }
   `;
+  } else {
+    return ` ${
+      grandularAndDuctalTissue === "Present"
+        ? `<p>Absent (post mastectomy status).</p><br/>`
+        : ""
+    }<p>The rest of the breast tissue appears unremarkable.</p>`;
+  }
 }
 
 function generateCalcificationText(
@@ -158,7 +199,7 @@ function generateCalcificationText(
       const clock = item.clock;
       const level = item.level;
 
-      const base = `There is a ${
+      const base = `There ${label === "calcified scar" ? `is a` : "are"} ${
         type.toLowerCase() === "other" ? item.otherText : type.toLowerCase()
       } ${label} noted`;
       const distText =
@@ -166,9 +207,25 @@ function generateCalcificationText(
           ? ` with ${distribution.toLowerCase()} distribution`
           : "";
       let location = clock
-        ? ` at ${clock === "0" ? "nipple" : clock + ` o'clock`}`
+        ? ` at ${clock === "0" ? "nipple" : clock + ` O'clock`}`
         : "";
-      location += level ? ` in coronal location P${level}` : "";
+      location += level
+        ? ` ${
+            item.position !== "Unknown" && item.position
+              ? ` in ${item.position.toLowerCase()}${
+                  item.position
+                    ? ` ${
+                        item.position === "Coronal Level"
+                          ? "P"
+                          : item.position === "Axial"
+                          ? "S"
+                          : item.position === "Sagittal" && "M/L"
+                      }${level}`
+                    : ""
+                }`
+              : ""
+          }`
+        : "";
 
       return `${base}${distText}${location}.`;
     })

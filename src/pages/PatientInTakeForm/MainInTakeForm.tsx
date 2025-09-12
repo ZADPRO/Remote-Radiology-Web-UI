@@ -173,47 +173,47 @@ const MainInTakeForm: React.FC<Props> = ({
       // Suggestion logic
       let suggestion = "";
 
-      if (
-        formData.find((item) => item.questionId === 87)?.answer.toString() ===
-        "Yes"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 126)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 131)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 136)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 141)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 146)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "2";
-      } else if (
-        formData.find((item) => item.questionId === 151)?.answer.toString() ===
-        "Abnormal"
-      ) {
-        suggestion = "4";
-      } else if (
-        formData.find((item) => item.questionId === 162)?.answer.toString() ===
-        "Yes"
-      ) {
-        suggestion = "3";
-      }
+      // if (
+      //   formData.find((item) => item.questionId === 87)?.answer.toString() ===
+      //   "Yes"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 126)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 131)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 136)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 141)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 146)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "2";
+      // } else if (
+      //   formData.find((item) => item.questionId === 151)?.answer.toString() ===
+      //   "Abnormal"
+      // ) {
+      //   suggestion = "4";
+      // } else if (
+      //   formData.find((item) => item.questionId === 162)?.answer.toString() ===
+      //   "Yes"
+      // ) {
+      //   suggestion = "3";
+      // }
       setSuggestedOption(suggestion);
       setSelectedOption(suggestion);
     }

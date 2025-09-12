@@ -122,6 +122,23 @@ const PatientQueue: React.FC = () => {
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
 
+  const hasSignedOffReport = (
+    ids: number[],
+    queue: TechnicianPatientQueue[]
+  ) => {
+    if (ids.length === 0) {
+      return false;
+    }
+    return ids.every((id) =>
+      queue.some(
+        (p) =>
+          p.refAppointmentId === id &&
+          (p.refAppointmentComplete === "Signed Off" ||
+            p.refAppointmentComplete === "Signed Off (A)")
+      )
+    );
+  };
+
   const currentUserRole = useAuth().role?.type;
   const currentUser = useAuth().user?.refUserId;
 
@@ -382,6 +399,20 @@ const PatientQueue: React.FC = () => {
                 !dicomFiles &&
                 role?.type !== "technician" &&
                 role?.type !== "admin"
+              )
+                return false;
+
+              // Always filter out 'Predraft'
+              if (
+                refAppointmentComplete === "Predraft" &&
+                (role?.type === "technician" || role?.type === "manager")
+              )
+                return false;
+
+              // Always filter out 'Draft'
+              if (
+                refAppointmentComplete === "Draft" &&
+                (role?.type === "technician" || role?.type === "manager")
               )
                 return false;
 
@@ -1113,7 +1144,22 @@ const PatientQueue: React.FC = () => {
                   onOpenChange={setIsEditDialogOpen}
                 >
                   <ConsentForm
-                    onSubmit={(consent) =>
+                    onSubmit={(consent) => {
+                      const now = new Date();
+                      const formatted =
+                        now.getFullYear() +
+                        "-" +
+                        String(now.getMonth() + 1).padStart(2, "0") +
+                        "-" +
+                        String(now.getDate()).padStart(2, "0") +
+                        " " +
+                        String(now.getHours()).padStart(2, "0") +
+                        ":" +
+                        String(now.getMinutes()).padStart(2, "0") +
+                        ":" +
+                        String(now.getSeconds()).padStart(2, "0");
+
+                      localStorage.setItem("patientIntakeStartTime", formatted);
                       navigate("/patientInTakeForm", {
                         state: {
                           fetchFormData: false,
@@ -1128,8 +1174,8 @@ const PatientQueue: React.FC = () => {
                           consent: consent,
                           OverrideStatus: row.original.refOverrideStatus,
                         },
-                      })
-                    }
+                      });
+                    }}
                     scId={row.original.refSCId}
                   />
                   {/* <UserConsentWrapper
@@ -1487,10 +1533,16 @@ const PatientQueue: React.FC = () => {
         },
       },
       {
-        id: "report",
+        id: "reportStatus",
+        accessorFn: (row) => row.reportStatus ?? "-",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            Report
+            <span
+              className="cursor-pointer"
+              onClick={column.getToggleSortingHandler()}
+            >
+              Report
+            </span>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1718,12 +1770,12 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
-        enableColumnFilter: true,
         filterFn: (row, _columnId, value) => {
           const tempStatus = getFormStatus(row.original.refAppointmentComplete);
           const filled = tempStatus?.technicianForm === true;
           return value === "filled" ? filled : !filled;
         },
+        enableColumnFilter: true,
       },
 
       {
@@ -1732,7 +1784,10 @@ const PatientQueue: React.FC = () => {
         header: ({ column }) => {
           return (
             <div className="flex items-center justify-center gap-1">
-              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div
+                onClick={column.getToggleSortingHandler()}
+                className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer "
+              >
                 <div>Report</div>
                 <div>Status</div>
               </div>
@@ -2005,7 +2060,7 @@ const PatientQueue: React.FC = () => {
         id: "assigned",
         header: () => (
           <div className="text-center flex  justify-center items-center">
-            Assigned
+            Assign
           </div>
         ),
         cell: ({ row }) => {
@@ -2289,7 +2344,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm",
       "dicom",
       "dicomFull",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "patientReportMail",
       "assigned",
@@ -2307,7 +2362,8 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // Start/View logic handled in cell
       "dicom",
       "dicomFull",
-      "report",
+      "reportStatus",
+      "assigned",
       "refAppointmentComplete",
       "pendingRemarks",
       "totalRemarks",
@@ -2322,7 +2378,8 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
-      "report",
+      "dicomFull",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2340,7 +2397,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // only "View" if filled
       "dicom",
       "dicomFull",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "patientReportMail",
       "assigned",
@@ -2353,7 +2410,7 @@ const PatientQueue: React.FC = () => {
       "consentView",
       "refSCCustId",
       "patientFormAndStatus",
-      "report",
+      "reportStatus",
     ],
     doctor: [
       "select",
@@ -2364,7 +2421,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2381,7 +2438,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2397,7 +2454,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2415,7 +2472,8 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
-      "report",
+      "dicomFull",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2429,10 +2487,11 @@ const PatientQueue: React.FC = () => {
       "refUserFirstName",
       "patientId",
       "refSCCustId",
+      "consentView",
       "patientFormAndStatus",
       "technicianForm",
       "dicom",
-      "report",
+      "reportStatus",
       "refAppointmentComplete",
       "assigned",
       "changes",
@@ -2484,7 +2543,7 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
-      <div className="w-[99%] h-[80vh] overflow-y-scroll bg-radial-greeting-02 mx-auto my-5 space-y-3 p-1 lg:py-6 rounded-lg">
+      <div className="w-[99%] h-[85vh] overflow-y-scroll bg-radial-greeting-02 mx-auto space-y-3 p-1 my-2 lg:py-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button
@@ -2508,8 +2567,12 @@ const PatientQueue: React.FC = () => {
               setLoading(false);
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
-            disabled={selectedRowIds.length === 0}
-            hidden={role?.type == "patient"}
+            disabled={!hasSignedOffReport(selectedRowIds, patientQueue)}
+            hidden={
+              role?.type == "patient" ||
+              role?.type == "scribe" ||
+              role?.type == "radiologist"
+            }
           >
             <Download className="h-4 w-4" />
             Download Final Reports
@@ -2552,7 +2615,7 @@ const PatientQueue: React.FC = () => {
         {/* Table Container */}
         <div
           className={`rounded-lg grid w-full ${
-            role?.type == "patient" ? "h-[80%]" : "h-[92%]"
+            role?.type == "patient" ? "h-[80%]" : "h-[76%]"
           } border `}
           style={{
             background:
@@ -2623,21 +2686,23 @@ const PatientQueue: React.FC = () => {
           </Table>
         </div>
 
-        <div className="p-1 text-center" hidden={role?.type !== "patient"}>
-          <h1 className="text-sm lg:text-lg text-[#50b33b] font-bold">
-            If you would like to discuss your report, you may schedule an
-            appointment{" "}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://my.practicebetter.io/#/65e5aa632c1aab1598f642fc/bookings?s=65fd9719891980592a43767c"
-              className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
-            >
-              here
-            </a>
-            .
-          </h1>
-        </div>
+        {role?.type === "patient" && (
+          <div className="p-1 text-center">
+            <h1 className="text-sm lg:text-lg text-[#50b33b] font-bold">
+              If you would like to discuss your report, you may schedule an
+              appointment{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://my.practicebetter.io/#/65e5aa632c1aab1598f642fc/bookings?s=65fd9719891980592a43767c"
+                className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
+              >
+                here
+              </a>
+              .
+            </h1>
+          </div>
+        )}
 
         {/* ShadCN Pagination Controls */}
         <div className="flex flex-col items-center py-1">

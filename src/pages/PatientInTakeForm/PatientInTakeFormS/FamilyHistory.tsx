@@ -90,7 +90,7 @@ const FamilyHistory: React.FC<Props> = ({
                 }
                 className="w-24 h-10 border border-gray-300 rounded-md px-2 text-sm"
                 placeholder="Age"
-                required
+                // required
               />
               <Label className="text-sm font-medium">Age</Label>
             </div>

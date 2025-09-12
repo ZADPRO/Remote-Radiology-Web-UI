@@ -331,15 +331,15 @@ const BreastInput: React.FC<Props> = (Props) => {
 
                 {/* Since (Months) */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                  <Label className="">Duration (Months)</Label>
+                  <Label className="">Duration</Label>
                   <Input
-                    placeholder="Months"
+                    placeholder="Specify"
                     value={getAnswerByQuestionId(Props.SDateRight)}
                     onChange={(e) =>
                       updateAnswer(Props.SDateRight, e.target.value)
                     }
-                    className="w-full lg:w-20"
-                    type="number"
+                    className="w-full lg:w-30"
+                    type="text"
                     required={
                       getAnswerByQuestionId(Props.SDateRight) === "" &&
                       getAnswerByQuestionId(Props.OtherInputQId) == "" &&
@@ -460,13 +460,13 @@ const BreastInput: React.FC<Props> = (Props) => {
 
                 {/* Since (Months) */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 w-full lg:w-auto">
-                  <Label className="">Duration (Months)</Label>
+                  <Label className="">Duration</Label>
                   <Input
-                    placeholder="Months"
+                    placeholder="Specify"
                     value={getAnswerByQuestionId(Props.SDate)}
                     onChange={(e) => updateAnswer(Props.SDate, e.target.value)}
-                    className="w-full lg:w-20"
-                    type="number"
+                    className="w-full lg:w-30"
+                    type="text"
                     required={
                       getAnswerByQuestionId(Props.SDate) === "" &&
                       getAnswerByQuestionId(Props.OtherInputQId) == "" &&

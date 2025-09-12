@@ -52,6 +52,8 @@ export function generateNippleAreolaBreastEditor(
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>The architectural distortion observed is attributed to post-operative changes.`;
   } else if (architecture === "Normal") {
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.`;
+  }else if (architecture === "S/P Mastectomy") {
+    result += `<br/><br/><strong>Vascular and connective tissues: </strong>Absent (post mastectomy status).`;
   } else {
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>${architectureOther.toLowerCase()} is seen.`;
   }

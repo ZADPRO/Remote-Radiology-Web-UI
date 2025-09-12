@@ -136,6 +136,7 @@ const MainRoutes: React.FC = () => {
     { path: "patientQueue", element: <PatientQueue />},
     { path: "report", element: <Report />},
     { path: "analytics", element: <Analytics /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles />}
   ]
 
   const coDoctorRoutes: AppRoute[] = [
@@ -173,6 +174,7 @@ const MainRoutes: React.FC = () => {
     { path: "analytics", element: <Analytics /> },
     { path: "addWgDoctor", element: <AddWGPerformingProvider />},
     { path: "manageWgDoctor", element: <ManageWGPerformingProvider /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles />}
   ];
 
   const patientRoutes: AppRoute[] = [

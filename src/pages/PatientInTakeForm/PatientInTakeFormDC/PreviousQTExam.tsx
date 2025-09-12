@@ -1,12 +1,10 @@
 import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
-import DatePicker from "@/components/date-picker";
 import { Input } from "@/components/ui/input";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Textarea } from "@/components/ui/textarea";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousQTImaging: number;
@@ -45,19 +43,16 @@ const PreviousQTExam: React.FC<Props> = ({
         <div className="flex flex-col lg:flex-row gap-4">
           <Label className="font-semibold text-base">A. Date of previous QT imaging</Label>
           <div>
-            <DatePicker
+            <Input
               value={
-                getAnswer(questionIds.previousQTImaging)
-                  ? parseLocalDate(getAnswer(questionIds.previousQTImaging))
-                  : undefined
-              }
+                getAnswer(questionIds.previousQTImaging)}
               onChange={(val) =>
                 handleInputChange(
                   questionIds.previousQTImaging,
-                  val?.toLocaleDateString("en-CA") || ""
+                  val.target.value
                 )
               }
-              disabledDates={dateDisablers.noFuture}
+              placeholder="Date / Duration"
             />
           </div>
         </div>

@@ -12,11 +12,11 @@ import { RecoCodeCountPie } from "./RecoCodeCountPie";
 import {
   analyticsService,
   AppointmentCases,
-  ImpressionModel,
   IntakeFormAnalytics,
   ListScanAppointmentCount,
   OverAllAnalytics,
   OverAllScanCenterAnalytics,
+  RecommentdationPieModel,
   TATStats,
   TotalArtifacts,
   TotalCorrectEdit,
@@ -80,7 +80,26 @@ const Analytics: React.FC = () => {
   const [userAccessTiming, setUserAccessTiming] = useState<UserAccessTiming[]>(
     []
   );
-  const [recoCode, setRecode] = useState<ImpressionModel[]>([]);
+  const [recoCodeLeft, setRecodeLeft] = useState<RecommentdationPieModel>({
+    Annualscreening: 0,
+    Biopsy: 0,
+    Breastradiologist: 0,
+    ClinicalCorrelation: 0,
+    OncoConsult: 0,
+    Redo: 0,
+    USGSFU: 0,
+  });
+
+  const [recoCodeRight, setRecodeRight] = useState<RecommentdationPieModel>({
+    Annualscreening: 0,
+    Biopsy: 0,
+    Breastradiologist: 0,
+    ClinicalCorrelation: 0,
+    OncoConsult: 0,
+    Redo: 0,
+    USGSFU: 0,
+  });
+
   const [totalCorrectEdits, setTotalCorrectEdits] = useState<
     TotalCorrectEdit[]
   >([]);
@@ -199,6 +218,11 @@ const Analytics: React.FC = () => {
     return !allowedRoles.includes(role.type);
   };
 
+  const getCount = (array: any, groupName: string) => {
+          const item = array.find((i: any) => i.group_name === groupName);
+          return item ? parseInt(item.total_count) : 0;
+        };
+
   const fetchOverallScanCenter = async (scId: number) => {
     try {
       if (!dateRange.from || !dateRange.to) {
@@ -218,7 +242,40 @@ const Analytics: React.FC = () => {
         setAllScanCenters(res.AllScaCenter || []);
         setAllUsers(res.UserListIds || []);
         setIntakeFormAnalytics(res.AdminOverallScanIndicatesAnalaytics || []);
-        setRecode(res.ImpressionModel || []);
+        setRecodeLeft({
+          Annualscreening: getCount(res.LeftRecommendation, "Annual Screening"),
+          Biopsy: getCount(res.LeftRecommendation, "Biopsy"),
+          Breastradiologist: getCount(
+            res.LeftRecommendation,
+            "Breast Radiologist"
+          ),
+          ClinicalCorrelation: getCount(
+            res.LeftRecommendation,
+            "Clinical Correlation"
+          ),
+          OncoConsult: getCount(res.LeftRecommendation, "Onco Consult"),
+          Redo: getCount(res.LeftRecommendation, "Redo"),
+          USGSFU: getCount(res.LeftRecommendation, "USG/ SFU"), // note exact name in your array
+        });
+
+        setRecodeRight({
+          Annualscreening: getCount(
+            res.RightRecommendation,
+            "Annual Screening"
+          ),
+          Biopsy: getCount(res.RightRecommendation, "Biopsy"),
+          Breastradiologist: getCount(
+            res.RightRecommendation,
+            "Breast Radiologist"
+          ),
+          ClinicalCorrelation: getCount(
+            res.RightRecommendation,
+            "Clinical Correlation"
+          ),
+          OncoConsult: getCount(res.RightRecommendation, "Onco Consult"),
+          Redo: getCount(res.RightRecommendation, "Redo"),
+          USGSFU: getCount(res.RightRecommendation, "USG/ SFU"), // note exact name in your array
+        });
         setTatStats([]);
         setTechArtifacts(res.TechArtificate || []);
         setReportArtifacts(res.ReportArtificate || []);
@@ -267,7 +324,40 @@ const Analytics: React.FC = () => {
           res.ListScanAppointmentCount ? res.ListScanAppointmentCount : []
         );
         setUserAccessTiming(res.UserAccessTiming ? res.UserAccessTiming : []);
-        setRecode(res.ImpressionModel ? res.ImpressionModel : []);
+        setRecodeLeft({
+          Annualscreening: getCount(res.LeftRecommendation, "Annual Screening"),
+          Biopsy: getCount(res.LeftRecommendation, "Biopsy"),
+          Breastradiologist: getCount(
+            res.LeftRecommendation,
+            "Breast Radiologist"
+          ),
+          ClinicalCorrelation: getCount(
+            res.LeftRecommendation,
+            "Clinical Correlation"
+          ),
+          OncoConsult: getCount(res.LeftRecommendation, "Onco Consult"),
+          Redo: getCount(res.LeftRecommendation, "Redo"),
+          USGSFU: getCount(res.LeftRecommendation, "USG/ SFU"), // note exact name in your array
+        });
+
+        setRecodeRight({
+          Annualscreening: getCount(
+            res.RightRecommendation,
+            "Annual Screening"
+          ),
+          Biopsy: getCount(res.RightRecommendation, "Biopsy"),
+          Breastradiologist: getCount(
+            res.RightRecommendation,
+            "Breast Radiologist"
+          ),
+          ClinicalCorrelation: getCount(
+            res.RightRecommendation,
+            "Clinical Correlation"
+          ),
+          OncoConsult: getCount(res.RightRecommendation, "Onco Consult"),
+          Redo: getCount(res.RightRecommendation, "Redo"),
+          USGSFU: getCount(res.RightRecommendation, "USG/ SFU"), // note exact name in your array
+        });
         setTotalCorrectEdits(res.TotalCorrectEdit ? res.TotalCorrectEdit : []);
         setTatStats(res.DurationBucketModel ? res.DurationBucketModel : []);
         setReportArtifacts(res.ReportArtificate ? res.ReportArtificate : []);
@@ -312,10 +402,7 @@ const Analytics: React.FC = () => {
     } else if (["manager"].includes(role.type)) {
       setCenterSelectedValue(null);
       setUserSelectedValue(0);
-      fetchAnalyticsPeruser(
-        0,
-        role?.id
-      );
+      fetchAnalyticsPeruser(0, role?.id);
     } else {
       setCenterSelectedValue(null);
       setUserSelectedValue(
@@ -512,25 +599,17 @@ const Analytics: React.FC = () => {
           </Popover>
         </div>
       </div>
-
-      {/* <div className="w-full h-[70vh] bg-[#f9f4ed] rounded-lg overflow-y-auto">
-          <span className="leading-tight text-sx font-bold pb-2">
-            OverAll Users Analaytics
-          </span>
-          <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
-        </div> */}
+      
       {userSelectedValue === 0 &&
         (role?.type === "admin" || role?.type === "manager") && (
-          
-              <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
-          
+          <OverAllAnalyticsTable analyticsData={UsersOverAllAnalaytics} />
         )}
 
       {centerSelectedValue === 0 &&
         (role?.type === "admin" || role?.type === "manager") && (
-              <ScanCenterOverAllAnalyticsTable
-                analyticsData={ScanCenterOverAllAnalaytics}
-              />
+          <ScanCenterOverAllAnalyticsTable
+            analyticsData={ScanCenterOverAllAnalaytics}
+          />
         )}
 
       <div className="flex flex-wrap w-full gap-4">
@@ -649,7 +728,7 @@ const Analytics: React.FC = () => {
       {/* ---------- Row 2 ---------- */}
       {userSelectedValue !== 0 && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 max-w-5xl mx-auto">
             {!handleComponentAccess("scanIndications") && (
               <div className="w-full">
                 <ScanIndicationsPie data={intakeFormAnalytics} />
@@ -658,7 +737,13 @@ const Analytics: React.FC = () => {
 
             {!handleComponentAccess("recoCodeCount") && (
               <div className="w-full">
-                <RecoCodeCountPie ImpressionModel={recoCode} />
+                <RecoCodeCountPie Side={"Left"} data={recoCodeLeft} />
+              </div>
+            )}
+
+            {!handleComponentAccess("recoCodeCount") && (
+              <div className="w-full">
+                <RecoCodeCountPie Side={"Right"} data={recoCodeRight} />
               </div>
             )}
 

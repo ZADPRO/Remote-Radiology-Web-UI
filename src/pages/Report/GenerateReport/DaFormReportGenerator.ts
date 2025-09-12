@@ -1,5 +1,4 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
-import { formatReadableDate } from "@/utlis/calculateAge";
 
 // interface QuestionConfig {
 //   label: string;
@@ -143,7 +142,7 @@ export function DaFormReportGenerator(
     abnormalityOverAll.push(
       `${sentence.charAt(0).toUpperCase() + sentence.slice(1)} was detected${
         AbnormalFinding.abnormality.length > 0
-          ? ` on ${formatReadableDate(AbnormalFinding.abnormality)}`
+          ? `: ${AbnormalFinding.abnormality}`
           : ""
       }.`
     );
@@ -169,7 +168,7 @@ export function DaFormReportGenerator(
 
     if (methodofdetectionres.length > 0) {
       abnormalityOverAll.push(
-        `Method of detected ${
+        `Method of detection ${
           methodofdetectionres.length === 1 ? "is" : "are"
         } ${methodofdetectionres.join(", ")}.`
       );

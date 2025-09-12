@@ -39,6 +39,21 @@ export interface ImpressionModel {
   count: number;
 }
 
+export interface RecommentdationModel {
+  group_name: string;
+  total_count: number;
+}
+
+export interface RecommentdationPieModel {
+  Annualscreening: number;
+  Biopsy: number;
+  Breastradiologist: number;
+  ClinicalCorrelation: number;
+  OncoConsult: number;
+  Redo: number;
+  USGSFU: number;
+}
+
 export interface TotalCorrectEdit {
   totalCorrect: number;
   totalEdit: number;
@@ -72,7 +87,21 @@ export interface OverAllAnalytics {
   totalreportcorrect: number;
   totalreportedit: number;
   totalsform: number;
-  totaltiming: number; // or float, but in TS just use number
+  totaltiming: number;
+  leftannualscreening: number;
+  leftusgsfu:number;
+  leftBiopsy: number;
+  leftBreastradiologist: number;
+  leftClinicalCorrelation: number;
+  leftOncoConsult: number;
+  leftRedo: number;
+  rightannualscreening: number;
+  rightusgsfu: number;
+  rightBiopsy: number;
+  rightBreastradiologist: number;
+  rightClinicalCorrelation: number;
+  rightOncoConsult: number;
+  rightRedo: number;
 }
 
 export interface OverAllScanCenterAnalytics {
@@ -86,6 +115,20 @@ export interface OverAllScanCenterAnalytics {
   totaldaform: number;
   totaldbform: number;
   totaldcform: number;
+  leftannualscreening: number;
+  leftusgsfu:number;
+  leftBiopsy: number;
+  leftBreastradiologist: number;
+  leftClinicalCorrelation: number;
+  leftOncoConsult: number;
+  leftRedo: number;
+  rightannualscreening: number;
+  rightusgsfu: number;
+  rightBiopsy: number;
+  rightBreastradiologist: number;
+  rightClinicalCorrelation: number;
+  rightOncoConsult: number;
+  rightRedo: number;
 }
 
 export const analyticsService = {
@@ -117,7 +160,8 @@ export const analyticsService = {
       AdminOverallScanIndicatesAnalaytics: IntakeFormAnalytics[];
       UserListIds: UserList[];
       AllScaCenter: ListScanCenter[];
-      ImpressionModel: ImpressionModel[];
+      LeftRecommendation: RecommentdationModel[];
+      RightRecommendation: RecommentdationModel[];
       ReportArtificate: TotalArtifacts[];
       TechArtificate: TotalArtifacts[];
       OverAllAnalytics: OverAllScanCenterAnalytics[];
@@ -159,7 +203,8 @@ export const analyticsService = {
       ListScanAppointmentCount: ListScanAppointmentCount[];
       UserAccessTiming: UserAccessTiming[];
       DurationBucketModel: TATStats[];
-      ImpressionModel: ImpressionModel[];
+      LeftRecommendation: RecommentdationModel[];
+      RightRecommendation: RecommentdationModel[];
       TotalCorrectEdit: TotalCorrectEdit[];
       ReportArtificate: TotalArtifacts[];
       TechArtificate: TotalArtifacts[];

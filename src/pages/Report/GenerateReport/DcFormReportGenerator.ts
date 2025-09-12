@@ -1,5 +1,4 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
-import { formatReadableDate } from "@/utlis/calculateAge";
 
 export function DcFormGeneration(
   patientInTakeForm: ResponsePatientForm[]
@@ -179,7 +178,7 @@ export function DcFormGeneration(
       }${
         cancerhistoy.cancerDate.length > 0 &&
         cancerhistoy.cancerDateStatus === "Known"
-          ? `, diagnosed on ${formatReadableDate(cancerhistoy.cancerDate)}`
+          ? `, diagnosed: ${cancerhistoy.cancerDate}`
           : cancerhistoy.cancerDateStatus === "Unknown"
           ? `, date of diagnose is unknown`
           : ""
@@ -209,10 +208,8 @@ export function DcFormGeneration(
         cancerhistoy.cancerTreatmentdateStatus === "Known"
           ? `${
               text.length > 0
-                ? ` on ${formatReadableDate(cancerhistoy.cancerTreatmentdate)}`
-                : `Last date of treatment recevied on ${formatReadableDate(
-                    cancerhistoy.cancerTreatmentdate
-                  )}`
+                ? `: ${cancerhistoy.cancerTreatmentdate}`
+                : `Last date of treatment recevied: ${cancerhistoy.cancerTreatmentdate}`
             }`
           : `${
               text.length > 0
@@ -267,9 +264,7 @@ export function DcFormGeneration(
           : ""
       }${
         IntervalImagingHistory.intervalBiopsyDate.length > 0
-          ? `, date: ${formatReadableDate(
-              IntervalImagingHistory.intervalBiopsyDate
-            )}`
+          ? `, date: ${IntervalImagingHistory.intervalBiopsyDate}`
           : ""
       }.`
     );
