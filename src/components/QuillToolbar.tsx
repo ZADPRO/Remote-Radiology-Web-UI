@@ -1,11 +1,8 @@
-// import ReactQuill from "react-quill-new";
-import Quill from "quill"; // ✅ Correct import
+import { Quill } from "react-quill-new"; // ✅ use same source as ReactQuill
 import type QuillType from "quill";
 import ImageResize from "quill-image-resize-module-react";
 
-// Custom Undo button icon component for Quill editor. You can import it directly
-// from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
-// handle them correctly
+// Custom Undo button icon component
 const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
     <polygon className="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10" />
@@ -16,7 +13,7 @@ const CustomUndo = () => (
   </svg>
 );
 
-// Redo button icon component for Quill editor
+// Custom Redo button icon component
 const CustomRedo = () => (
   <svg viewBox="0 0 18 18">
     <polygon className="ql-fill ql-stroke" points="12 10 14 12 16 10 12 10" />
@@ -27,34 +24,30 @@ const CustomRedo = () => (
   </svg>
 );
 
-// Undo and redo functions for Custom Toolbar
+// Undo and redo functions
 function undoChange(this: { quill: QuillType }) {
   this.quill.history.undo();
 }
-
 function redoChange(this: { quill: QuillType }) {
   this.quill.history.redo();
 }
 
-// Add sizes to whitelist and register them
+// Register custom sizes
 const Size: any = Quill.import("formats/size");
 Size.whitelist = ["extra-small", "small", "medium", "large"];
 Quill.register(Size, true);
 
-// Add fonts to whitelist and register them
+// Register custom fonts
 const Font: any = Quill.import("formats/font");
-Font.whitelist = [
-  "arial",
-  "comic-sans",
-  "courier-new",
-  "georgia",
-  "helvetica",
-  "lucida",
-];
+Font.whitelist = ["arial", "comic-sans", "courier-new", "georgia", "helvetica", "lucida"];
 Quill.register(Font, true);
-Quill.register("modules/imageResize", ImageResize);
 
-// Modules object for setting up the Quill editor
+// ✅ Register ImageResize safely (avoid duplicate registration)
+if (typeof window !== "undefined" && Quill && !Quill.imports["modules/imageResize"]) {
+  Quill.register("modules/imageResize", ImageResize);
+}
+
+// Modules config
 export const createModules = (toolbarId: string) => ({
   toolbar: {
     container: `#${toolbarId}`,
@@ -74,7 +67,7 @@ export const createModules = (toolbarId: string) => ({
   },
 });
 
-// Formats objects for setting up the Quill editor
+// Formats
 export const formats = [
   "header",
   "font",
@@ -87,7 +80,7 @@ export const formats = [
   "script",
   "blockquote",
   "background",
-  "list", // covers both ordered + bullet lists
+  "list",
   "indent",
   "link",
   "image",
@@ -96,24 +89,10 @@ export const formats = [
   "table",
 ];
 
-// Quill Toolbar component
+// Toolbar Component
 export const QuillToolbar = ({ id }: { id: string }) => (
   <div id={id}>
     <span className="ql-formats">
-      {/* <select className="ql-font" defaultValue="arial">
-        <option value="arial">Arial</option>
-        <option value="comic-sans">Comic Sans</option>
-        <option value="courier-new">Courier New</option>
-        <option value="georgia">Georgia</option>
-        <option value="helvetica">Helvetica</option>
-        <option value="lucida">Lucida</option>
-      </select> */}
-      {/* <select className="ql-size" defaultValue="small">
-        <option value="large">Heading 1</option>
-        <option value="medium">Heading 2</option>
-        <option value="small">Heading 3</option>
-        <option value="extra-small">Normal</option>
-      </select> */}
       <select className="ql-header" defaultValue="4">
         <option value="1">Heading 1</option>
         <option value="2">Heading 2</option>
@@ -125,7 +104,6 @@ export const QuillToolbar = ({ id }: { id: string }) => (
       <button className="ql-bold" />
       <button className="ql-italic" />
       <button className="ql-underline" />
-      {/* <button className="ql-strike" /> */}
     </span>
     <span className="ql-formats">
       <button className="ql-list" value="ordered" />
@@ -133,27 +111,14 @@ export const QuillToolbar = ({ id }: { id: string }) => (
       <button className="ql-indent" value="-1" />
       <button className="ql-indent" value="+1" />
     </span>
-    {/* <span className="ql-formats">
-      <button className="ql-script" value="super" />
-      <button className="ql-script" value="sub" />
-      <button className="ql-blockquote" />
-      <button className="ql-direction" />
-    </span> */}
     <span className="ql-formats">
       <select className="ql-align" />
       <select className="ql-color" />
       <select className="ql-background" />
     </span>
     <span className="ql-formats">
-      {/* <button className="ql-link" /> */}
       <button className="ql-image" />
-      {/* <button className="ql-video" /> */}
     </span>
-    {/* <span className="ql-formats">
-      <button className="ql-formula" />
-      <button className="ql-code-block" />
-      <button className="ql-clean" />
-    </span> */}
     <span className="ql-formats">
       <button className="ql-undo">
         <CustomUndo />
