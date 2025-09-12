@@ -96,7 +96,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       setActive(true);
 
       await SpeechRecognition.startListening({
-        continuous: true,
+        continuous: false,
         language: "en-US",
         interimResults: false,
       });

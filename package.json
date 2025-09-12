@@ -52,6 +52,7 @@
     "pdfjs-dist": "^3.11.174",
     "pdfmake": "^0.2.20",
     "quill": "^2.0.3",
+    "quill-image-resize-module": "^3.0.0",
     "quill-image-resize-module-react": "^3.0.0",
     "quill-image-resize-module-ts": "^3.0.3",
     "quill-table-ui": "^1.0.7",
