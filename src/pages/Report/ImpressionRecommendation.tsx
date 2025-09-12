@@ -815,23 +815,51 @@ export const additionalOptions = [
   },
   {
     id: "B",
-    text: "Blind read. No pathology, no prior medical images, no clinical useful treatment history and no specific clinical symptoms were disclosed. Without this information, the QT imaging study may be of limited value to the patient.",
+    text: "Breast specialist evaluation with a clinical exam is recommended to determine appropriate follow-up, which may include short-term surveillance or further testing. Should the mass be determined to be benign, yearly follow up is recommended.",
   },
   {
     id: "C",
-    text: "Comparative addendum can be made if and when the prior QT DICOM images are made available.",
+    text: "Clinical consultation and evaluation for a image-guided biopsy is recommended for histopathological evaluation and definitive diagnosis to ensure appropriate management.",
   },
   {
     id: "D",
-    text: "Correlative addendum can be made if and when the biopsy/ Additional standard imaging reports are made available.",
+    text: "We are happy to review the QT scan again if additional evaluation (imaging or biopsy) is performed after the QT scan, as recommended by us, and the results can be included in our report as a correlative addendum.",
   },
   {
     id: "E",
-    text: "Images were reviewed again. In view with the given history/data, it is prudent to further evaluate the lesion with a targeted ultrasound of the area.",
+    text: "While tissue variations are present, The examination demonstrates no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
   },
   {
     id: "F",
-    text: "This is the first QT scan with No prior QT images available for comparison. The most accurate assessment is achieved by comparing the current QT scan to a prior QT scan. If no prior QT scan is available, this study serves as a baseline for future follow-ups. Subsequent QT scans can be utilized to assess segmentation quantification and evaluate changes over time, including doubling time, for treatment response assessment.",
+    text: "This is the first QT scan with No prior QT images available for comparison . The most accurate assessment is achieved by comparing the current QT scan to a prior QT scan. If no prior QT scan is available, this study serves as a baseline for future follow-ups. Subsequent QT scans can be utilized to assess segmentation quantification and evaluate changes over time, including doubling time, for treatment response assessment.",
+  },
+  {
+    id: "G",
+    text: "If the long standing palpable area has not been previously evaluated completely or if clinical concern persists, correlation with targeted ultrasound may be warranted.",
+  },
+  {
+    id: "H",
+    text: "Clinical consultation with your health care provider is recommended to determine the appropriate follow-up, which may include short-term imaging surveillance or targeted ultrasound for further characterization.",
+  },
+  {
+    id: "I",
+    text: "The examination demonstrates a QT imaging finding that correlates with the site of the reported concern. Though the examination shows tissue variations with low risk features but require further follow up to ensure they are benign and inflammatory innature.",
+  },
+  {
+    id: "L",
+    text: "The examination shows tissue variations with low-risk features that are not definitively abnormal but require further follow up to ensure they are benign.",
+  },
+  {
+    id: "M",
+    text: "Note that QT imaging may not detect all non-invasive or microinvasive lesions.",
+  },
+  {
+    id: "N",
+    text: "Breast specialist evaluation is recommended for further assessment as negative imaging should never preclude evaluation clinically.",
+  },
+  {
+    id: "O",
+    text: "Oncologist consultation is recommended for further management planning based on current findings.",
   },
   {
     id: "P",
@@ -839,7 +867,7 @@ export const additionalOptions = [
   },
   {
     id: "R",
-    text: "We are happy to review the QT scan again if additional evaluation (imaging or biopsy) is performed after the QT scan, as recommended by us, and the results can be included in our report as a correlative addendum.",
+    text: "Images were reviewed again. In view with the given history/data, it is prudent to further evaluate the lesion with a targeted ultrasound of the area.",
   },
   {
     id: "S",
@@ -847,11 +875,31 @@ export const additionalOptions = [
   },
   {
     id: "T",
-    text: "Note that QT imaging may not detect all non-invasive or microinvasive lesions.",
+    text: "Additional imaging such as targeted ultrasound is recommended to confirm the benign nature of these findings.",
   },
   {
     id: "U",
-    text: "Note that QT imaging may not detect all non-invasive or microinvasive lesions.",
+    text: "The findings are of an unclear etiology and need further evaluation and clinical correlation.",
+  },
+  {
+    id: "V",
+    text: "Further evaluation is recommended for a definitive diagnosis to ensure appropriate management.",
+  },
+  {
+    id: "W",
+    text: "Follow-up examination in 3 months specifically recommended for assessment of growth characteristics.",
+  },
+  {
+    id: "X",
+    text: "This is blind read. No pathology, no prior medical images, no clinical useful treatment history and no specific clinical symptoms were disclosed. Without this information, the QT imaging study may be of limited value to the patient.",
+  },
+  {
+    id: "Y",
+    text: "The examination shows changes in breast tissue that may represent cysts (fluid-filled spaces). While cysts are typically benign, further evaluation is needed to confirm this diagnosis.",
+  },
+  {
+    id: "Z",
+    text: "Image given location is for correlative location only.",
   },
 ];
 

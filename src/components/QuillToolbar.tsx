@@ -1,6 +1,196 @@
 import { Quill } from "react-quill-new";
 import type QuillType from "quill";
-// import ImageResize from "quill-image-resize-module-react";
+
+// Custom Image Resize Module
+class ImageResize {
+  quill: QuillType;
+  options: any;
+  img: HTMLImageElement | null = null;
+  overlay: HTMLElement | null = null;
+  boxes: HTMLElement[] = [];
+  isDragging = false;
+  startX = 0;
+  startY = 0;
+  startWidth = 0;
+  startHeight = 0;
+
+  static DEFAULTS = {
+    modules: ["Resize", "DisplaySize"],
+    handleStyles: {
+      position: "absolute",
+      height: "12px",
+      width: "12px",
+      backgroundColor: "white",
+      border: "1px solid #777",
+      boxSizing: "border-box",
+      cursor: "se-resize",
+    },
+    displayStyles: {
+      position: "absolute",
+      font: "12px/1.0 Arial, Helvetica, sans-serif",
+      padding: "4px 8px",
+      textAlign: "center",
+      color: "white",
+      backgroundColor: "black",
+      borderRadius: "3px",
+    },
+  };
+
+  constructor(quill: QuillType, options = {}) {
+    this.quill = quill;
+    this.options = Object.assign({}, ImageResize.DEFAULTS, options);
+
+    // Bind event handlers
+    this.handleClick = this.handleClick.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+
+    // Listen for image clicks
+    this.quill.root.addEventListener("click", this.handleClick, false);
+    document.addEventListener("mousedown", this.handleMouseDown, false);
+    document.addEventListener("mousemove", this.handleMouseMove, false);
+    document.addEventListener("mouseup", this.handleMouseUp, false);
+  }
+
+  handleClick(evt: MouseEvent) {
+    const target = evt.target as HTMLElement;
+    if (target && target.tagName && target.tagName.toUpperCase() === "IMG") {
+      if (this.img === target) {
+        return;
+      }
+      if (this.img) {
+        this.hide();
+      }
+      this.show(target as HTMLImageElement);
+    } else if (this.img) {
+      this.hide();
+    }
+  }
+
+  show(img: HTMLImageElement) {
+    this.img = img;
+    this.showOverlay();
+  }
+
+  showOverlay() {
+    if (!this.img) return;
+
+    const imgRect = this.img.getBoundingClientRect();
+    const containerRect = this.quill.root.getBoundingClientRect();
+
+    // Create overlay
+    this.overlay = document.createElement("div");
+    Object.assign(this.overlay.style, {
+      position: "absolute",
+      boxSizing: "border-box",
+      border: "1px dashed #444",
+      left: `${imgRect.left - containerRect.left - 1}px`,
+      top: `${imgRect.top - containerRect.top - 1}px`,
+      width: `${imgRect.width + 2}px`,
+      height: `${imgRect.height + 2}px`,
+    });
+
+    // Create resize handle
+    const box = document.createElement("div");
+    Object.assign(box.style, this.options.handleStyles, {
+      right: "-6px",
+      bottom: "-6px",
+    });
+    this.overlay.appendChild(box);
+    this.boxes.push(box);
+
+    // Create size display
+    const display = document.createElement("div");
+    Object.assign(display.style, this.options.displayStyles, {
+      left: "4px",
+      top: "-20px",
+    });
+    display.textContent = `${Math.round(imgRect.width)}px × ${Math.round(
+      imgRect.height
+    )}px`;
+    this.overlay.appendChild(display);
+
+    this.quill.root.parentNode?.appendChild(this.overlay);
+  }
+
+  hide() {
+    this.hideOverlay();
+    this.img = null;
+  }
+
+  hideOverlay() {
+    if (this.overlay) {
+      this.overlay.remove();
+      this.overlay = null;
+    }
+    this.boxes = [];
+  }
+
+  handleMouseDown(evt: MouseEvent) {
+    if (!this.img || !this.overlay) return;
+
+    const target = evt.target as HTMLElement;
+    if (this.boxes.includes(target)) {
+      this.isDragging = true;
+      this.startX = evt.clientX;
+      this.startY = evt.clientY;
+      this.startWidth = parseInt(
+        document.defaultView?.getComputedStyle(this.img).width || "0",
+        10
+      );
+      this.startHeight = parseInt(
+        document.defaultView?.getComputedStyle(this.img).height || "0",
+        10
+      );
+      evt.preventDefault();
+    }
+  }
+
+  handleMouseMove(evt: MouseEvent) {
+    if (!this.isDragging || !this.img || !this.overlay) return;
+
+    const deltaX = evt.clientX - this.startX;
+    const deltaY = evt.clientY - this.startY;
+    const newWidth = this.startWidth + deltaX;
+    const newHeight = this.startHeight + deltaY;
+
+    if (newWidth > 10 && newHeight > 10) {
+      this.img.style.width = `${newWidth}px`;
+      this.img.style.height = `${newHeight}px`;
+
+      // Update overlay
+      const imgRect = this.img.getBoundingClientRect();
+      const containerRect = this.quill.root.getBoundingClientRect();
+
+      Object.assign(this.overlay.style, {
+        left: `${imgRect.left - containerRect.left - 1}px`,
+        top: `${imgRect.top - containerRect.top - 1}px`,
+        width: `${imgRect.width + 2}px`,
+        height: `${imgRect.height + 2}px`,
+      });
+
+      // Update size display
+      const display = this.overlay.querySelector(
+        "div:last-child"
+      ) as HTMLElement;
+      if (display) {
+        display.textContent = `${Math.round(newWidth)}px × ${Math.round(
+          newHeight
+        )}px`;
+      }
+    }
+  }
+
+  handleMouseUp() {
+    if (this.isDragging) {
+      this.isDragging = false;
+    }
+  }
+}
+
+// Register the custom ImageResize module
+Quill.register("modules/imageResize", ImageResize);
 
 // Custom Undo button icon component for Quill editor. You can import it directly
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
@@ -51,7 +241,6 @@ Font.whitelist = [
   "lucida",
 ];
 Quill.register(Font, true);
-// Quill.register("modules/imageResize", ImageResize);
 
 // Modules object for setting up the Quill editor
 export const createModules = (toolbarId: string) => ({
@@ -62,14 +251,13 @@ export const createModules = (toolbarId: string) => ({
       redo: redoChange,
     },
   },
-  // imageResize: {
-  //   parchment: Quill.import("parchment"),
-  //   modules: ["Resize", "DisplaySize", "Toolbar"],
-  // },
   history: {
     delay: 3000,
     maxStack: 100,
     userOnly: true,
+  },
+  imageResize: {
+    modules: ["Resize", "DisplaySize"],
   },
 });
 
@@ -94,6 +282,9 @@ export const formats = [
   "color",
   "code-block",
   "table",
+  "width", // Add width format for image resizing
+  "height", // Add height format for image resizing
+  "style", // Add style format for image resizing
 ];
 
 // Quill Toolbar component

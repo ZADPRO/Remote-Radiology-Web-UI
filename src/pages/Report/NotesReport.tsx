@@ -831,10 +831,12 @@ const NotesReport: React.FC<Props> = ({
 
  ${
    textEditor.CommonImpresRecommTextRightVal.value === "A" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "B" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "E" ||
    textEditor.CommonImpresRecommTextRightVal.value === "I" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "N" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "T"
+   textEditor.CommonImpresRecommTextRightVal.value === "L" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "M" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "U" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "Y"
      ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
      : ``
  }
@@ -853,10 +855,12 @@ ${
 
    ${
      textEditor.CommonImpresRecommTextRightVal.value !== "A" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "B" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "E" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "N" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "T"
+     textEditor.CommonImpresRecommTextRightVal.value !== "L" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "M" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "U" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "Y"
        ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
        : ``
    }
@@ -868,11 +872,11 @@ ${
     getAnswer(133) === "Present"
       ? `
         <br/><p><strong>LEFT BREAST:</strong></p>
-  <p><strong>Impression:</strong></p>
+  <strong>Impression:</strong>
   ${
     textEditor.ImpressionText.value
-      ? `<p>${textEditor.ImpressionText.value}</p>`
-      : ``
+      ? `<br/><p>${textEditor.ImpressionText.value}</p>`
+      : `<p></p>`
   }
   ${
     textEditor.OptionalImpressionText.value.length > 7
@@ -882,15 +886,21 @@ ${
 
  ${
    textEditor.CommonImpresRecommTextVal.value === "A" ||
-   textEditor.CommonImpresRecommTextVal.value === "B" ||
+   textEditor.CommonImpresRecommTextVal.value === "E" ||
    textEditor.CommonImpresRecommTextVal.value === "I" ||
-   textEditor.CommonImpresRecommTextVal.value === "N" ||
-   textEditor.CommonImpresRecommTextVal.value === "T"
+   textEditor.CommonImpresRecommTextVal.value === "L" ||
+   textEditor.CommonImpresRecommTextVal.value === "M" ||
+   textEditor.CommonImpresRecommTextVal.value === "U" ||
+   textEditor.CommonImpresRecommTextVal.value === "Y"
      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
   <p><strong>Recommendation:</strong></p>
- <p> ${textEditor.RecommendationText.value}</p>
+  ${
+  textEditor.RecommendationText.value
+    ? `<p>${textEditor.RecommendationText.value}</p>`
+    : ""
+}
  ${
    textEditor.OptionalRecommendationText.value.length > 7
      ? `<p>${textEditor.OptionalRecommendationText.value}</p>`
@@ -899,10 +909,12 @@ ${
   
   ${
     textEditor.CommonImpresRecommTextVal.value !== "A" &&
-    textEditor.CommonImpresRecommTextVal.value !== "B" &&
+    textEditor.CommonImpresRecommTextVal.value !== "E" &&
     textEditor.CommonImpresRecommTextVal.value !== "I" &&
-    textEditor.CommonImpresRecommTextVal.value !== "N" &&
-    textEditor.CommonImpresRecommTextVal.value !== "T"
+    textEditor.CommonImpresRecommTextVal.value !== "L" &&
+    textEditor.CommonImpresRecommTextVal.value !== "M" &&
+    textEditor.CommonImpresRecommTextVal.value !== "U" &&
+    textEditor.CommonImpresRecommTextVal.value !== "Y"
       ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
       : ``
   }
@@ -1080,7 +1092,8 @@ ${
             height="60vh"
           />
 
-          {(reportStatus === "Signed Off" || reportStatus === "Signed Off (A)") && (
+          {(reportStatus === "Signed Off" ||
+            reportStatus === "Signed Off (A)") && (
             <div className="flex flex-col mb-4">
               <div className="flex items-center justify-between">
                 <p className="text-2xl">Addendum</p>

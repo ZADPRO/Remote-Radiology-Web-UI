@@ -96,7 +96,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       setActive(true);
 
       await SpeechRecognition.startListening({
-        continuous: false,
+        continuous: true,
         language: "en-US",
         interimResults: false,
       });
@@ -197,7 +197,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
                 : "bg-[#f4e7e1] hover:bg-[#f9e2d7] text-[#3f3f3d]"
             }`}
           >
-            {listening && active ? <MicOff size={20} /> : <Mic size={20} />}
+            {listening && active ? <Mic size={20} /> : <MicOff size={20} />}
           </button>
         )}
       </div>

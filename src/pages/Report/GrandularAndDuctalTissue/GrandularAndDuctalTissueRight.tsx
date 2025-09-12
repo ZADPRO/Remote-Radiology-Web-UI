@@ -357,7 +357,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
         <div className="py-4 lg:pl-10 space-y-4">
           <MultiRadioOptionalInputInline
             label="S/P Mastectomy"
-            labelClassname="lg:w-[12rem]"
+            labelClassname="lg:w-[12rem] text-[#a4b2a1]"
             questionId={questionIds.grandularAndDuctalTissue}
             formData={reportFormData}
             handleInputChange={handleReportInputChange}
