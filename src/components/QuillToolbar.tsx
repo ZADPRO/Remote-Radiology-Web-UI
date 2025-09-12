@@ -73,7 +73,6 @@ export const createModules = (toolbarId: string) => ({
   },
 });
 
-
 // Formats objects for setting up the Quill editor
 export const formats = [
   "header",
@@ -87,8 +86,7 @@ export const formats = [
   "script",
   "blockquote",
   "background",
-  "list",
-  "bullet",
+  "list", // covers both ordered + bullet lists
   "indent",
   "link",
   "image",

@@ -2615,7 +2615,7 @@ const PatientQueue: React.FC = () => {
         {/* Table Container */}
         <div
           className={`rounded-lg grid w-full ${
-            role?.type == "patient" ? "h-[80%]" : "h-[76%]"
+            role?.type == "patient" ? "h-[68%]" : "h-[76%]"
           } border `}
           style={{
             background:
