@@ -93,8 +93,6 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     OverrideStatus: locationState?.OverrideStatus || "",
   };
 
-  console.log(locationState);
-
   useEffect(() => {
     if (
       controlData.fetchFormData == true &&
@@ -103,7 +101,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
     ) {
       handleFetchPatientForm(controlData.userId, controlData.appointmentId);
     }
-    console.log("---------------->", controlData?.OverrideStatus);
+    // console.log("---------------->", controlData?.OverrideStatus);
     if (
       controlData.OverrideStatus === "approved" &&
       controlData.userId != undefined &&
@@ -195,6 +193,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
         ) || null,
       overriderequest: overide,
       consent: controlData.consent,
+      patientIntakeStartTime: localStorage.getItem("patientIntakeStartTime") || "",
     };
 
     console.log("payload", payload);
@@ -204,7 +203,9 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       if (controlData.apiUpdate) {
         res = await patientInTakeService.updatePatientInTakeForm(payload);
       } else {
-        res = await patientInTakeService.addPatientInTakeForm(payload);
+        res = await patientInTakeService.addPatientInTakeForm(
+          payload,
+        );
       }
 
       if (res.status) {

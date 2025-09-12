@@ -163,6 +163,7 @@ const BiopsyInformation: React.FC<Props> = ({
                     "High-risk lesion",
                     "Indeterminate",
                     "Inadequate sample",
+                    "Other",
                     "Unknown",
                   ].map((option) => (
                     <div
@@ -193,6 +194,22 @@ const BiopsyInformation: React.FC<Props> = ({
                       </div>
                       {option === "Benign"
                         ? getAnswer(questionIds.Biopsyresult) === "Benign" && (
+                            <Input
+                              type="text"
+                              value={getAnswer(questionIds.Benignother)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  questionIds.Benignother,
+                                  e.target.value
+                                )
+                              }
+                              required
+                              placeholder="Specify"
+                              className="w-64 text-sm"
+                            />
+                          )
+                        : option === "Other"
+                        ? getAnswer(questionIds.Biopsyresult) === "Other" && (
                             <Input
                               type="text"
                               value={getAnswer(questionIds.Benignother)}

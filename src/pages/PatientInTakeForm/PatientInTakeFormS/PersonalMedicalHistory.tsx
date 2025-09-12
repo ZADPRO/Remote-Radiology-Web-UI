@@ -218,28 +218,18 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                             {getAnswer(
                               questionIds[item.posId as keyof QuestionIds]
                             ) === "Both" && <Label>R-</Label>}
-                            <DatePicker
-                              value={
-                                getAnswer(
-                                  questionIds[item.dateId as keyof QuestionIds]
-                                )
-                                  ? parseLocalDate(
-                                      getAnswer(
-                                        questionIds[
-                                          item.dateId as keyof QuestionIds
-                                        ]
-                                      )
-                                    )
-                                  : undefined
-                              }
-                              onChange={(e) =>
+                            <Input
+                              value={getAnswer(
+                                questionIds[item.dateId as keyof QuestionIds]
+                              )}
+                              onChange={(e) => {
                                 handleInputChange(
                                   questionIds[item.dateId as keyof QuestionIds],
-                                  e?.toLocaleDateString("en-CA") || ""
-                                )
-                              }
-                              disabledDates={dateDisablers.noFuture}
+                                  e.target.value || ""
+                                );
+                              }}
                               required
+                               placeholder="Date / Duration"
                             />
                           </div>
 
@@ -248,31 +238,21 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                           ) === "Both" && (
                             <div className="flex-1 flex gap-2 min-w-50 max-w-60">
                               <Label>L-</Label>
-                              <DatePicker
-                                value={
-                                  getAnswer(
-                                    questionIds[
-                                      item.dateIdAnother as keyof QuestionIds
-                                    ]
-                                  )
-                                    ? parseLocalDate(
-                                        getAnswer(
-                                          questionIds[
-                                            item.dateIdAnother as keyof QuestionIds
-                                          ]
-                                        )
-                                      )
-                                    : undefined
-                                }
-                                onChange={(e) =>
+                              <Input
+                                value={getAnswer(
+                                  questionIds[
+                                    item.dateIdAnother as keyof QuestionIds
+                                  ]
+                                )}
+                                onChange={(e) => {
                                   handleInputChange(
                                     questionIds[
                                       item.dateIdAnother as keyof QuestionIds
                                     ],
-                                    e?.toLocaleDateString("en-CA") || ""
-                                  )
-                                }
-                                disabledDates={dateDisablers.noFuture}
+                                    e.target.value || ""
+                                  );
+                                }}
+                                placeholder="Date / Duration"
                                 required
                               />
                             </div>

@@ -106,14 +106,16 @@ export const impressionRecommendation = [
     data: [
       {
         id: "0",
-        impression: "Incomplete Study",
+        impression: "Incomplete/Indeterminate Study",
         impressionText:
           "The imaging study demonstrates insufficient signal clarity, artifacts, or technical limitations that prevent complete evaluation of the breast tissue. Suboptimal image quality limits diagnostic confidence.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
         recommendation: "Repeat QT Imaging",
         recommendationText:
           "Repeat QT imaging is recommended for improved image quality and better diagnostic clarity.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f3f3f3",
       },
     ],
   },
@@ -126,135 +128,156 @@ export const impressionRecommendation = [
         impression: "Likely Benign Findings",
         impressionText:
           "The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
         recommendation: "Routine Annual Screening",
         recommendationText:
           "Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
       },
       {
         id: "1a",
         impression: "Likely Benign Findings + Architectural Distortion",
         impressionText:
           "The architectural distortion observed is attributed to post-operative or post-procedural changes. The examination demonstrates findings which are likely benign breast changes.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
         recommendation: "Routine Annual Screening",
         recommendationText:
           "Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
       },
       {
         id: "2",
         impression: "Low-Risk Characteristics",
         impressionText:
           "The examination shows tissue variations with low-risk features that are not definitively abnormal but require further follow up to ensure they are benign.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Short-Term Follow-Up 6 Months",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Short-Term Follow-Up 6m",
         recommendationText:
           "Return for follow-up imaging in 6 months to assess stability of current findings and ensure no interval progression.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff2cc",
       },
       {
         id: "2a",
-        impression: "Small Lesion — Too Small to Characteristics",
+        impression: "Low risk - too small",
         impressionText:
           "There is a small mass/ lesion which is too small to characterize.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Short term follow up is recommended",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Short-term Follow-up 6m",
         recommendationText: "Short term follow up is recommended.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff2cc",
       },
       {
         id: "3",
         impression: "Indeterminate Findings: Non palpable mass",
         impressionText:
           "The examination demonstrates indeterminate tissue changes that are not definitively abnormal but also not clearly benign. Further clinical correlation and follow-up imaging are advised to assess stability and significance.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Growth Rate Assessment in 3 Months",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Growth Rate Assessment 3m",
         recommendationText:
           "Follow-up examination in 3 months specifically recommended for assessment of growth characteristics.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff2cc",
       },
       {
         id: "3a",
         impression: "Indeterminate: Not Definitively Abnormal",
         impressionText:
-          "The examination shows some architectural variations The examination shows some tissue variations which are indeterminate in nature.  Further follow-up may be warranted.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Confirm Benign Nature with Targeted Ultrasound",
+          "The examination shows some architectural variations The examination shows some tissue variations which are indeterminate in nature. Further follow-up may be warranted.",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Confirm Benign Nature with Targ USG",
         recommendationText:
           "Additional imaging such as targeted ultrasound is recommended to confirm the benign nature of these findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
       {
         id: "3b",
-        impression: "Indeterminate: Calcifications",
+        impression: "Indeterminate: cyts",
         impressionText:
           "The examination demonstrates calcifications as described in the detailed findings. These calcium deposits require further evaluation and follow-up to determine their clinical significance.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Consultation with Health Care Provider or Breast Specialist",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Targ USG for Cystic Mass Evaluation",
         recommendationText:
           "Clinical consultation with your health care provider or a breast specialist is recommended to determine management of breast calcifications. Note that QT imaging may not detect all non-invasive or microinvasive lesions.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
       {
         id: "3c",
-        impression: "Indeterminate: Likely Cystic Changes",
+        impression: "Indeterminate: Calcifications",
         impressionText:
           "The examination shows changes in breast tissue that may represent cysts (fluid-filled spaces). While cysts are typically benign, further evaluation is needed to confirm this diagnosis.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Recommended Follow-Up and Imaging Correlation",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation:
+          "Clinical consulation with a breast specialist or health care provoider for Calcification Management ",
         recommendationText:
           "Additional imaging such as targeted ultrasound is recommended. Clinical follow-up with your health care provider is advised.If additional imaging demonstrates benign features, return for routine annual screening. Please communicate the findings of your outside evaluation with us so that we can correlate with what was seen on your QT.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "3d",
-        impression: "Benign Post-Surgical Changes + Fluid/Seroma",
+        impression: "Indeterminate : Postop changes + fluid/ seroma",
         impressionText:
           "The exam shows likely benign post-surgical findings of calcification, scarring and a possible seroma as described. There is no evidence of dominant masses or architectural distortion to suggest the presence of malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Consultation with Breast Specialist for Comprehensive Evaluation",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation",
         recommendationText:
           "Clinical consultation with a breast specialist is recommended for comprehensive evaluation of the current findings and determination of appropriate management strategy.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "3e",
-        impression: "Indeterminate: Post-Surgical vs. Recurrent",
+        impression: "Indeterminate: Post-surgical vs. Recurrence",
         impressionText:
           "The examination shows tissue variations that may represent either post-operative fibrosis (tissue scarring) or recurrent disease. Further follow-up and evaluation are required for definitive characterization.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Clinical Consultation + Interval Imaging + Ongoing Surveillance",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consultation + Surveillance",
         recommendationText:
           "Clinical consultation is recommended along with interval imaging and ongoing surveillance to monitor the stability of current findings and ensure appropriate management.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "3f",
         impression: "Indeterminate: Likely Fibrosis",
         impressionText:
           "The examination shows tissue variations that are likely to represent post-operative fibrosis (tissue scarring). Further follow-up and eval4buation are required for definitive characterization.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation: "Clinical Consultation + Surveillance",
         recommendationText:
           "Clinical consultation is recommended along with interval imaging and ongoing surveillance to monitor the stability of current findings and ensure appropriate management.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "3g",
         impression: "Indeterminate: Long Standing Findings",
         impressionText:
           "The examination shows long-standing tissue variations that have been present in previous studies. While stability suggests benign nature, continued surveillance is recommended to monitor for any interval changes.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Ultrasound Correlation if Clinically Indicated or Area Not Previously Evaluated",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "If persists - Targ Usg",
         recommendationText:
           "If the long standing palpable area has not been previously evaluated completely or if clinical concern persists, correlation with targeted ultrasound may be warranted.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
     ],
   },
@@ -266,171 +289,235 @@ export const impressionRecommendation = [
         id: "4",
         impression: "Pain But No LUMP + QT Finding",
         impressionText: "QT findings correspond to the patient's symptoms.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Clinical Correlation and Further Evaluation",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Monitoring",
         recommendationText:
           "Clinical correlation is advised. Additional imaging or follow-up may be considered based on overall clinical context.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "4a",
-        impression: "Palpable Lump – No QT Finding or Abnormal Image Findings",
+        impression: "Palp Lump - No QT Finding  or Ab/Normal image findings",
         impressionText:
           "No imaging findings are demonstrated in the region of the reported palpable concern. The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious / dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation:
-          "Specialist Evaluation and Targeted Ultrasound Recommendation",
+          "Breat specialist Evaluation, neg never preclude/Targ USG.",
         recommendationText:
           "Breast specialist evaluation is recommended for further assessment as negative imaging should never preclude evaluation of a clinically suspicious lesion.Targeted ultrasound evaluation is recommended for further assessment of the palpable finding. If Benign - Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4b",
         impression: "Palpable Lump + QT Finding",
         impressionText:
           "The examination demonstrates a QT imaging finding that correlates with the site of the reported palpable concern.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Additional Imaging and Clinical Consultation",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consultaion + Additional Imaging",
         recommendationText:
           "Clinical consultation and consider additional imaging is recommended for further characterization and management planning.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "4c",
-        impression: "Mammographic Calcifications + QT",
+        impression: "Mammo Calcifications + QT",
         impressionText:
           "QT imaging findings are also noted in the same region of calcifications as described on prior imaging.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation: "Breast Specialist Evaluation",
         recommendationText:
           "Breast specialist evaluation is recommended for further assessment and management of the calcifications.",
-
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4d",
         impression: "USG Solid Mass + QT",
         impressionText:
           "QT findings correspond to the solid mass identified on ultrasound.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation: "Breast Specialist Evaluation",
         recommendationText:
           "Breast specialist evaluation is recommended for comprehensive assessment and further management planning.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4e",
-        impression: "BIRADS 3 Findings + QT",
+        impression: "USG Birads 3 findings + QT",
         impressionText:
           "The examination shows tissue variations with low-risk features in the region of the BIRADS 3 lesion .These  are not definitively abnormal but require further follow up to ensure they are benign.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation: "Breast Specialist Evaluation",
         recommendationText:
           "Breast specialist evaluation is recommended to determine appropriate follow-up, which may include short-term surveillance or further testing.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4f",
         impression: "No QT Correlate for Abnormal Image Findings",
         impressionText:
           "The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious / dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Imaging Results and Recommended Clinical Correlation",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Correlation",
         recommendationText:
           "No corresponding abnormal findings are demonstrated on QT imaging. Clinical correlation is advised. Additional imaging or follow-up may be considered based on overall clinical context.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "4g",
-        impression: "Palpable Lump + Abnormal Imaging + QT Finding",
+        impression: "Palp Lump +Abn Imaging + QT Finding",
         impressionText:
           "The reported palpable abnormality is confirmed on imaging and demonstrates concerning features on QT.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
         recommendation: "Image-Guided Biopsy",
         recommendationText:
           "Image-guided biopsy is recommended for histopathological evaluation and definitive diagnosis.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#ad0000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4h",
         impression: "Palpable Lump + Indeterminate QT Finding",
         impressionText:
           "The examination shows tissue variations that are not definitively abnormal but require further evaluation and follow-up to determine clinical significance and stability over time.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Targeted Ultrasound and Follow-Up Recommendations",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Targ USG",
         recommendationText:
           "Clinical consultation is recommended for targeted breast ultrasound to further characterize imaging findings. If ultrasound demonstrates benign features, return for routine annual screening. Please communicate the findings of your outside evaluation with us so that we can correlate with what was seen on your QT.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
       {
-        id: "4i",
+        id: "4i1",
         impression: "Palpable Axillary Lump + No QT Finding",
         impressionText:
           "No imaging findings are demonstrated in the limited visible region of the reported palpable concern in axilla. The examination shows tissue variations with low-risk features that are not definitively abnormal but require further follow up to ensure they are benign in both breasts.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Targeted Ultrasound Recommendation and Follow-Up",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Targ USG",
         recommendationText:
           "Targeted ultrasound evaluation is recommended for further assessment of the palpable finding. If benign features are confirmed, routine annual screening may resume.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
+      },
+      {
+        id: "4i2",
+        impression: "Palpable Axillary Lump + QT Finding",
+        impressionText:
+          "The examination demonstrates a QT imaging finding that correlates with the site of the reported palpable concern in the right upper outer quadrant/ axillary tail region of the breast / medial axillary region. USG / MRI correlation is recommended for exact location , since the armpit cannot be completely visualised on QT. ",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "USG/ MRI",
+        recommendationText:
+          "Clinical consultation and additional imaging (with a targeted ultrasound / MRI ) are recommended for further characterization and management planning.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
       {
         id: "4j",
         impression: "BIRADS 3+ Growing Mass. QT benign",
         impressionText:
           "The examination shows tissue variations with low-risk features in the region of the BIRADS 3 lesion. These are not definitively abnormal but require further follow up to ensure they are benign. Though it has benign features, it appears to have grown slightly since her last evaluation.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Breast Specialist Evaluation and Follow-Up Recommendations",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Breast specialist evaluation",
         recommendationText:
           "Breast specialist evaluation is recommended to determine appropriate follow-up, which may include short-term surveillance or further testing.Should the mass be determined to be benign, yearly follow up is recommended.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "4k",
         impression: "No Correlate For Symptoms (NON LUMP)",
         impressionText:
           "No significant abnormality is identified in the region of reported symptoms. There is no evidence of dominant masses or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Clinical Monitoring and Indications for Targeted Ultrasound",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Targ USG",
         recommendationText:
           "Clinical monitoring of the symptomatic area is recommended. If a palpable mass or new concern develops, targeted ultrasound evaluation should be performed.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#ffd966",
       },
       {
         id: "4l",
         impression: "Lumpy Breasts",
         impressionText:
           "There are no discrete masses seen in either breast. The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Clinical Evaluation of Palpable Mass and Follow-Up Recommendations",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consultaion + If Bn - 1yr FU",
         recommendationText:
           "If the patient feels masses, then clinical evaluation with her provider or a breast specialist is recommended. A negative QT scan should not preclude evaluation of a clinically suspicious mass.If Benign - Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "4m",
-        impression: "Multiple / Mixed Abnormal Imaging Correlate",
+        impression: "Multiple / Mixed Abnormal Imaging Correlates",
         impressionText:
           "No suspicious imaging findings are demonstrated in the region of the reported palpable concern. Tissue variations with low-risk (BIRADS 3) features are noted in this region. These findings are not definitively abnormal but warrant follow-up imaging to confirm benign stability. The lesion, while demonstrating benign characteristics, appears to have shown slight interval growth compared to the prior evaluation. QT imaging findings correlate with the solid mass previously identified on ultrasound. The examination shows tissue variations that are not definitively abnormal but require further evaluation and follow-up to determine clinical significance and stability over time. QT imaging findings are also noted in the same region of calcifications as described on prior imaging.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Clinical Consultation and Follow-Up Imaging Recommendations",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consult +/- AI",
         recommendationText:
-          "Clinical consultation with your health care provider is recommended to determine the appropriate follow-up, which may include short-term imaging surveillance or targeted ultrasound for further characterization. If the findings are confirmed to be benign, return to routine annual breast imaging in 12 months is advised to monitor tissue stability and identify any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+          "Clinical consultation with your health care provider is recommended to determine the appropriate follow-up, which may include short-term imaging surveillance or targeted ultrasound for further characterization.If the findings are confirmed to be benign, return to routine annual breast imaging in 12 months is advised to monitor tissue stability and identify any interval changes.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
+      },
+      {
+        id: "4n",
+        impression: "mutiple cysts+ AI=ABn QT",
+        impressionText:
+          "The examination demonstrates findings of tissue abnormalities with indeterminate features. Further evaluation is required.",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Biopsy",
+        recommendationText:
+          "Clinical consultation with your health care provider is recommended for further evaluation, which may include additional imaging and/or image-guided tissue sampling ( biopsy) of the suspicious finding. Histopathological correlation is needed to determine the exact nature of the abnormality.",
+        recommendationTextColor: "#ad0000",
+        recommendationBackgroundColor: "#e6b8af",
       },
       {
         id: "5",
+        impression: "R/o Malignany",
+        impressionText:
+          "The examination demonstrates findings of significant tissue abnormalities with indeterminate features. Further evaluation is required.",
+        impressionTextColor: "#d32323",
+        impressionBackgroundColor: "transparent",
+        recommendation: "HHUS or Biospy ",
+        recommendationText:
+          "Clinical consultation with your health care provider is recommended for further evaluation, which may include additional imaging and/or image-guided tissue sampling (biopsy) of the suspicious finding. Histopathological correlation is needed to determine the exact nature of the abnormality.",
+        recommendationTextColor: "#ad0000",
+        recommendationBackgroundColor: "#e6b8af",
+      },
+      {
+        id: "5a",
         impression: "Suspicious for Malignancy",
         impressionText:
           "The examination demonstrates findings of significant tissue abnormalities with suspicious features. Further evaluation is required to rule out malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Clinical Consultation + Biopsy",
+        impressionTextColor: "#d32323",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Image-Guided Biopsy",
         recommendationText:
-          "Clinical consultation with your health care provider is recommended for further evaluation, which may include additional imaging and/or image-guided tissue sampling ( biopsy) of the suspicious finding. Histopathological correlation is needed to determine the exact nature of the abnormality.",
-        recommendationTextColor: "#f9f4ec",
+          "Clinical consultation with your health care provider is recommended for further evaluation, which may include additional imaging and/or image-guided tissue sampling (biopsy) of the suspicious finding. Histopathological correlation is needed to determine the exact nature of the abnormality.",
+        recommendationTextColor: "#ad0000",
+        recommendationBackgroundColor: "#e6b8af",
       },
     ],
   },
@@ -443,89 +530,120 @@ export const impressionRecommendation = [
         impression: "Known Malignancy",
         impressionText:
           "The examination shows tissue variations in the location of the previously biopsy-proven lesion as described in the detailed findings. Imaging findings are consistent with biopsy-proven malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Oncologist Follow-Up + Advanced Imaging",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consultation + AI + Survillence",
         recommendationText:
           "Clinical consultation with your health care provider is recommended for consideration of advanced imaging (such as MRI) and close clinical surveillance.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "6a",
-        impression: "Post-Malignancy Surveillance (After Treatment)",
+        impression:
+          "Known Malignancy Post-malignancy Surveillance (after complete treatment)",
         impressionText:
           "The examination demonstrates changes / tissue prominence are identified.in the setting of known malignancy with ongoing surveillance.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Breast Specialist Consultation",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consultation + MRI",
         recommendationText:
           "Given the history of malignancy, breast specialist consultation is recommended with clinical examination and possible additional imaging (ultrasound or MRI) to characterize the described areas.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "6b",
-        impression: "Known Malignancy - Before or Ongoing Treatment",
+        impression: "Known Malignancy cancer (before or ongoing treatment)",
         impressionText:
           "The examination demonstrates changes in the setting of known malignancy.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
         recommendation: "Oncologist Consultation",
         recommendationText:
           "Oncologist consultation is recommended for further management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9d2e9",
       },
       {
         id: "6c",
-        impression: "Known Malignancy - Biopsy Proven (Details Unknown)",
+        impression: "Known Malignancy biopsy proven cancer ( details unknown)",
         impressionText:
           "The examination demonstrates changes in the setting of known malignancy.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
         recommendation: "Oncologist Consultation",
         recommendationText:
           "Oncologist consultation is recommended for further management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9d2e9",
       },
       {
         id: "6d",
-        impression: "DCIS / LCIS with Possible Microinvasion +/- QT Finding",
+        impression:
+          "DCIS / LCIS with Possible Microinvasion +/- QT finding (OR)",
         impressionText:
           "Findings are consistent with known diagnosis of ductal carcinoma in situ (DCIS) and may represent microinvasive disease.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Breast Specialist Consultation",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Breast Specialist Evaluation(OR) ",
         recommendationText:
           "Clinical consultation with a breast specialist is recommended for management of DCIS. Note that QT imaging may not detect all non-invasive or microinvasive lesions.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "6e",
-        impression: "Known Malignancy - Equivocal / Indeterminate",
+        impression:
+          "Known Malignancy Equivocal / indetrminate - qt may not detect microinvasiver disease",
         impressionText:
           "Findings are equivocal and may represent either post-operative fibrosis or recurrent disease.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Histopathological Confirmation or Advanced Imaging",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "AI or Biopsy",
         recommendationText:
           "Histopathological confirmation or advanced imaging like targeted ultrasound or MRI is recommended for definitive characterization.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
       {
         id: "6f",
-        impression:
-          "Known Malignancy - First Scan for Cancer or DCIS Diagnosis",
+        impression: "Known Malignancy First scan for cancer / dcis diagnosis",
         impressionText:
           "The examination demonstrates changes in the setting of known malignancy as described above.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Breast Specialist Consultation + Baseline Recording",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "F +  Breast Specialist Evaluation",
         recommendationText:
           "This is the first QT scan with No prior QT images available for comparison . The most accurate assessment is achieved by comparing the current QT scan to a prior QT scan. If no prior QT scan is available, this study serves as a baseline for future follow-ups. Subsequent QT scans can be utilized to assess segmentation quantification and evaluate changes over time, including doubling time, for treatment response assessment. Breast specialist consultation is recommended for further management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "6g",
-        impression: "Known Malignancy - No sympt.-ve QT",
+        impression: "Known Malignancy - No sympt -ve QT",
         impressionText:
           "The architectural distortion observed is attributed to post-operative or post-procedural changes. The examination demonstrates findings which are likely benign breast changes.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Breast Specialist Evaluation and Follow-Up Planning",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Breast Specialist Evaluation",
         recommendationText:
           "Breast specialist evaluation is recommended to determine appropriate follow-up, which may include short-term surveillance or further testing.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "6h",
+        impression: "Known Malignancy with Lump",
+        impressionText:
+          "The examination demonstrates changes in the setting of known malignancy.",
+        impressionTextColor: "#a64d79",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical consult weith HCP",
+        recommendationText:
+          "Oncologist consultation is recommended for further management planning based on current findings.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
     ],
   },
@@ -535,70 +653,124 @@ export const impressionRecommendation = [
     data: [
       {
         id: "7",
-        impression: "Prev Benign. Now Benign",
+        impression: "Previous Benign. Now also Benign",
         impressionText:
           "The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy. Compared to the previous examination, no significant interval change is noted.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
         recommendation: "Routine Annual Screening",
         recommendationText:
           "Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
       },
       {
         id: "7a",
         impression: "Interval Progression",
         impressionText:
           "Compared to the previous examination, there is an interval increase in the size of the lesion. Clinical consultation is recommended for further management planning.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
         recommendation: "Clinical Consultation and Surveillance",
         recommendationText:
           "Clinical consultation with your health care provider or a breast specialist is recommended for further evaluation, which may include additional imaging and/or image-guided tissue sampling of the abnormal findings as described.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "7b",
         impression: "Interval Regression",
         impressionText:
           "Compared to the previous examination, there is an interval decrease in size/volume, suggestive of lesion regression or shrinkage.",
-        impressionTextColor: "#f9f4ec",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
         recommendation: "Clinical Correlation and Surveillance",
         recommendationText:
           "Given the regression of this lesion, it is not believed to be clinically significant. We recommend continued monitoring of this area with self exam and repeat imaging in 12 months to ensure stability under the clinical supervision of a breast specialist.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "7c",
         impression: "Stable Disease",
         impressionText:
           "Compared to the previous examination, no significant interval change is noted in lesion size, which therefore appears stable.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Ongoing Clinical Follow-Up and Annual Surveillance Recommendations",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation and Surveillance",
         recommendationText:
           "Despite the stability in the noted findings, clinical follow-up with a health care provider or a breast specialist, continued annual surveillance, and management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "7d",
         impression: "Technical Limitation for Comparison",
         impressionText:
           "Significant artifacts in the current transmission imaging limit accurate volume measurements and comparison with prior studies.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Clinical Correlation and Surveillance",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation and Surveillance",
         recommendationText:
           "Clinical follow-up with a health care provider, continued surveillance, and management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
       },
       {
         id: "7e",
         impression: "Mixed Response",
         impressionText:
           "Compared to the previous examination, there is interval increase in one of the lesions. Rest of them show interval decrease or resolution as described above. The examination shows tissue variations that are not definitively abnormal.",
-        impressionTextColor: "#f9f4ec",
-        recommendation: "Multidisciplinary Follow-Up",
+        impressionTextColor: "#3d85c6",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation and Surveillance",
         recommendationText:
           "Clinical consultation with a breast specialist or surgeon or oncologist is recommended for ongoing follow-up, continued surveillance, and management planning based on current findings.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
+      },
+    ],
+  },
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "8",
+        impression: "Inflammatory - No Symptoms",
+        impressionText:
+          "The examination demonstrates findings which are likely inflammatory in nature. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation",
+        recommendationText:
+          "Clinical correlation is advised. Additional imaging or follow-up may be considered based on overall clinical context.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
+      },
+      {
+        id: "8a",
+        impression: "Inflammatory - Symptoms",
+        impressionText:
+          "The examination demonstrates findings which are likely inflammatory in nature, which are likely to be causing the symptoms. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
+        impressionTextColor: "#e69138",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Clinical Consultation",
+        recommendationText:
+          "Clinical correlation is advised. Additional imaging or follow-up may be considered based on overall clinical context.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
+      },
+      {
+        id: "9",
+        impression: " ",
+        impressionText: "",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "",
+        recommendationText: "",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "transparent",
       },
     ],
   },
@@ -608,27 +780,29 @@ export const impressionRecommendation = [
     data: [
       {
         id: "10",
-        impression: "Benign with Implant Complications",
+        impression: "Benign with Implant findings - contracture / dispalcment",
         impressionText:
           "Implant findings as described above. Otherwise, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Routine Annual Breast Imaging Screening Recommendation",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Routine Annual Screening",
         recommendationText:
           "Return for routine annual breast imaging screening in 12 months to monitor breast tissue stability and detect any interval changes.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
       },
       {
         id: "10a",
-        impression: "Benign with Implant Complications",
+        impression: "Benign with Implant Rupture",
         impressionText:
           "Implant rupture  is identified as described in the detailed findings. Otherwise, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
-        impressionTextColor: "#f9f4ec",
-        recommendation:
-          "Implant Rupture Identified – Surgical Consultation Recommended",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Breast surgeon consult",
         recommendationText:
           "Implant rupture has been identified as described in the detailed findings. Consultation with breast surgeon is recommended for appropriate management.",
-        recommendationTextColor: "#f9f4ec",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
       },
     ],
   },
@@ -881,9 +1055,33 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
           <div>
             <Checkbox2
               checked={getAnswer(132) === "Present"}
-              onCheckedChange={(checked) =>
-                handleReportInputChange(132, checked ? "Present" : "Absent")
-              }
+              onCheckedChange={(checked) => {
+                handleReportInputChange(132, checked ? "Present" : "Absent");
+                setChangedOne((prev) => ({
+                  ...prev,
+                  recommendationRight: true,
+                  impressionRight: true,
+                  impressionaddtionalRight: true,
+                  recommendationaddtionalRight: true,
+                  commonImpressionRecommendationRight: true,
+                }));
+
+                setMainImpressionRecommendation((prev) => ({
+                  ...prev,
+                  selectedImpressionIdRight: "",
+                  selectedRecommendationIdRight: "",
+                  impressionTextRight: "",
+                  recommendationTextRight: "",
+                }));
+
+                setAdditionalImpressionRight([]);
+                setAdditionalRecommendationRight([]);
+                setCommonImpressRecomm((prev) => ({
+                  ...prev,
+                  idRight: "",
+                  textRight: "",
+                }));
+              }}
               className="w-5 h-5 mt-1"
             />
           </div>
@@ -935,21 +1133,26 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 content.recommendationText,
                             }));
                           }}
-                          className={`flex cursor-pointer border-b border-b-[#00000030] ${
+                          className={`flex cursor-pointer ${
                             isFirst ? "rounded-tl-lg" : ""
                           } ${isLast ? "rounded-bl-lg" : ""} ${
-                            isSelected ? "bg-[#d9ead3]" : ""
+                            isSelected
+                              ? "border-2 border-[#0000006d]"
+                              : "border-b border-b-[#00000030]"
                           } ${readOnly ? "pointer-events-none" : ""}`}
+                          style={{
+                            backgroundColor: content.impressionBackgroundColor,
+                            color: content.impressionTextColor,
+                          }}
                         >
                           <p
-                            className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                            style={{
-                              backgroundColor: content.impressionTextColor,
-                            }}
+                            className={`min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center`}
                           >
                             {content.id}
                           </p>
-                          <p className="text-sm pl-2 flex items-center font-semibold">
+                          <p
+                            className={`text-sm pl-2 flex items-center font-semibold`}
+                          >
                             {content.impression}
                           </p>
                         </div>
@@ -1117,21 +1320,21 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                           ref={(el) => {
                             recommendationRefsRight.current[content.id] = el;
                           }}
-                          className={`flex border-b border-b-[#00000030] ${
-                            isFirst ? "rounded-tl-lg" : ""
-                          } ${isLast ? "rounded-bl-lg" : ""} ${
+                          className={`flex ${isFirst ? "rounded-tl-lg" : ""} ${
+                            isLast ? "rounded-bl-lg" : ""
+                          } ${
                             mainImpressionRecommendation.selectedRecommendationIdRight ===
                             content.id
-                              ? "bg-[#d9ead3]"
-                              : ""
+                              ? "border-2 border-[#0000006d]"
+                              : "border-b border-b-[#00000030]"
                           } ${readOnly ? "pointer-events-none" : ""}`}
+                          style={{
+                            backgroundColor:
+                              content.recommendationBackgroundColor,
+                            color: content.recommendationTextColor,
+                          }}
                         >
-                          <p
-                            className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                            style={{
-                              backgroundColor: content.recommendationTextColor,
-                            }}
-                          >
+                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
                             {content.id}
                           </p>
                           <p className="text-sm pl-2 flex items-center font-semibold">
@@ -1331,9 +1534,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
           <div>
             <Checkbox2
               checked={getAnswer(133) === "Present"}
-              onCheckedChange={(checked) =>
-                handleReportInputChange(133, checked ? "Present" : "Absent")
-              }
+              onCheckedChange={(checked) => {
+                handleReportInputChange(133, checked ? "Present" : "Absent");
+
+                setChangedOne((prev) => ({
+                  ...prev,
+                  recommendation: true,
+                  impression: true,
+                  impressionaddtional: true,
+                  recommendationaddtional: true,
+                  commonImpressionRecommendation: true,
+                }));
+
+                setMainImpressionRecommendation((prev) => ({
+                  ...prev,
+                  selectedImpressionId: "",
+                  selectedRecommendationId: "",
+                  impressionText: "",
+                  recommendationText: "",
+                }));
+
+                setAdditionalImpression([]);
+                setAdditionalRecommendation([]);
+                setCommonImpressRecomm((prev) => ({
+                  ...prev,
+                  id: "",
+                  text: "",
+                }));
+              }}
               className="w-5 h-5 mt-1"
             />
           </div>
@@ -1384,18 +1612,19 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                               recommendationText: content.recommendationText,
                             }));
                           }}
-                          className={`flex cursor-pointer border-b border-b-[#00000030] ${
+                          className={`flex cursor-pointer ${
                             isFirst ? "rounded-tl-lg" : ""
                           } ${isLast ? "rounded-bl-lg" : ""} ${
-                            isSelected ? "bg-[#d9ead3]" : ""
+                            isSelected
+                              ? "border-2 border-[#0000006d]"
+                              : "border-b border-b-[#00000030]"
                           } ${readOnly ? "pointer-events-none" : ""}`}
+                          style={{
+                            backgroundColor: content.impressionBackgroundColor,
+                            color: content.impressionTextColor,
+                          }}
                         >
-                          <p
-                            className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                            style={{
-                              backgroundColor: content.impressionTextColor,
-                            }}
-                          >
+                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
                             {content.id}
                           </p>
                           <p className="text-sm pl-2 flex items-center font-semibold">
@@ -1564,21 +1793,21 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                           ref={(el) => {
                             recommendationRefs.current[content.id] = el;
                           }}
-                          className={`flex border-b border-b-[#00000030] ${
-                            isFirst ? "rounded-tl-lg" : ""
-                          } ${isLast ? "rounded-bl-lg" : ""} ${
+                          className={`flex ${isFirst ? "rounded-tl-lg" : ""} ${
+                            isLast ? "rounded-bl-lg" : ""
+                          } ${
                             mainImpressionRecommendation.selectedRecommendationId ===
                             content.id
-                              ? "bg-[#d9ead3]"
-                              : ""
+                              ? "border-2 border-[#0000006d]"
+                              : "border-b border-b-[#00000030]"
                           } ${readOnly ? "pointer-events-none" : ""}`}
+                          style={{
+                            backgroundColor:
+                              content.recommendationBackgroundColor,
+                            color: content.recommendationTextColor,
+                          }}
                         >
-                          <p
-                            className="min-w-[6rem] text-xs text-black font-semibold text-center px-2 py-1 flex items-center justify-center"
-                            style={{
-                              backgroundColor: content.recommendationTextColor,
-                            }}
-                          >
+                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
                             {content.id}
                           </p>
                           <p className="text-sm pl-2 flex items-center font-semibold">

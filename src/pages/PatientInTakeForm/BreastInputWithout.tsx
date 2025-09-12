@@ -175,14 +175,14 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         )}
                     </div>
 
-                    <div className="flex items-center w-48 space-x-2">
+                    <div className="flex items-center w-68 space-x-2">
                       <Label htmlFor="date" className="">
-                        Duration (Months)
+                        Duration
                       </Label>
                       <Input
                         name="date"
-                        type="number"
-                        placeholder="Months"
+                        type="text"
+                        placeholder="Specify"
                         value={getAnswerByQuestionId(Props.SDateRight)}
                         onChange={(e) => {
                           updateAnswer(Props.SDateRight, e.target.value);
@@ -275,14 +275,14 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                         )}
                     </div>
 
-                    <div className="flex items-center w-48 space-x-2">
+                    <div className="flex items-center w-68 space-x-2">
                       <Label htmlFor="date" className="">
-                        Duration (Months)
+                        Duration
                       </Label>
                       <Input
                         name="date"
-                        type="number"
-                        placeholder="Months"
+                        type="text"
+                        placeholder="Specify"
                         value={getAnswerByQuestionId(Props.SDate)}
                         onChange={(e) => {
                           updateAnswer(Props.SDate, e.target.value);

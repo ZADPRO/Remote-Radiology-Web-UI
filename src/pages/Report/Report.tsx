@@ -72,6 +72,8 @@ import {
 } from "./AutoPopulateReport";
 import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
+import { useSpeechRecognition } from "react-speech-recognition";
+import PreviewFile from "@/components/FileView/PreviewFile";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -244,11 +246,9 @@ const Report: React.FC = () => {
   }, [location]);
 
   const [openReportPreview, setOpenReportPreview] = useState(false);
+  const [openReportPreviewCurrent, setOpenReportPreviewCurrent] = useState(0);
 
-  const [openReportPreviewData, setOpenReportPreviewData] = useState({
-    base64Data: "",
-    contentType: "",
-  });
+  const [openReportPreviewData, setOpenReportPreviewData] = useState("");
 
   // Handle browser reload and back navigation
   useEffect(() => {
@@ -522,7 +522,7 @@ const Report: React.FC = () => {
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
 
-    console.log("^^^^", questionId);
+    console.log("^^^^", questionId, changedOne.reportQuestion);
     setChangedOne((prev) => ({
       ...prev,
       reportQuestion: prev.reportQuestion.includes(questionId)
@@ -553,7 +553,7 @@ const Report: React.FC = () => {
     "Reviewed 1 Edit": ["admin", "wgdoctor"],
     "Reviewed 2 Correct": ["codoctor"],
     "Reviewed 2 Edit": ["codoctor"],
-    "Insert Signature": ["admin", "wgdoctor", "doctor"],
+    "Insert Signature": ["admin", "wgdoctor", "doctor", "codoctor"],
     "Sign Off": ["doctor", "admin", "wgdoctor"],
     // Addendum: ["doctor", "admin"], // assuming doctor can handle addendums
   };
@@ -1760,32 +1760,10 @@ const Report: React.FC = () => {
     } else return "";
   };
 
-  const getPatientReport = async (fileId: number) => {
-    setLoading(true);
-
-    try {
-      const res = await reportService.getPatientInTakeFormReport(fileId);
-      if (res.status) {
-        if (res.data.file) {
-          setOpenReportPreview(true);
-          setOpenReportPreviewData({
-            base64Data: res.data.file?.base64Data,
-            contentType: res.data.file?.contentType,
-          });
-          console.log(res.data.file?.contentType);
-          // downloadDocumentFile(
-          //   res.data.file?.base64Data,
-          //   res.data.file?.contentType,
-          //   "Report"
-          // );
-        }
-      }
-      console.log("ee", res);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  const getPatientReport = async (questionId: number) => {
+    setOpenReportPreview(true);
+    setOpenReportPreviewCurrent(1);
+    setOpenReportPreviewData(getPatientAnswer(questionId));
   };
 
   const [timeOut, setTimeOut] = useState(false);
@@ -1798,13 +1776,28 @@ const Report: React.FC = () => {
     }, delay);
   };
 
+  const { listening, browserSupportsSpeechRecognition } =
+    useSpeechRecognition();
+
   useEffect(() => {
-    // start timer on mount
-    startTimer();
+    if (!browserSupportsSpeechRecognition) {
+      console.warn("Browser does not support speech recognition.");
+      return;
+    }
+
+    // ✅ Only start timer if mic is OFF
+    if (!listening) {
+      startTimer();
+    } else {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    }
 
     const handleUserActivity = () => {
       // extend the timer by +1s (so 11s instead of 10s)
-      startTimer(5000);
+      if (!listening) {
+        startTimer(5000);
+        console.log("###################=============>");
+      }
     };
 
     // listen for clicks & keypresses
@@ -1816,7 +1809,7 @@ const Report: React.FC = () => {
       window.removeEventListener("click", handleUserActivity);
       window.removeEventListener("keydown", handleUserActivity);
     };
-  }, []);
+  }, [listening]);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -1832,7 +1825,6 @@ const Report: React.FC = () => {
     useState(false);
 
   const fecthautosave = async () => {
-    console.log("hello%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     // i++;
     const payload = {
       changedOne: changedOne,
@@ -1924,7 +1916,7 @@ const Report: React.FC = () => {
       status: boolean;
       easeQTReportAccess: boolean;
     } = await reportService.autosaveReport(payload);
-    console.log("#########", payload.impressionaddtionalRight);
+    console.log("#########", payload.changedOne.reportQuestion);
     console.log(
       "#########",
       response.appointmentStatus[0].refAppointmentImpressionAdditionalRight
@@ -2390,13 +2382,66 @@ const Report: React.FC = () => {
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
+      {/* <VoiceRecognition /> */}
       {true && (
         <Dialog open={openReportPreview} onOpenChange={setOpenReportPreview}>
           <DialogContent
             style={{ background: "#fff" }}
-            className="w-[100vw] lg:w-[70vw] h-[90vh] overflow-y-auto p-0"
+            className="w-[100vw] lg:w-[90vw] h-[90vh] overflow-y-auto p-0"
           >
-            {openReportPreviewData.contentType === "application/pdf" ? (
+            <div className="h-[8vh] flex w-[100%] items-center justify-around px-2 ">
+              <Button
+                variant="greenTheme"
+                onClick={() => {
+                  if (openReportPreviewCurrent > 1) {
+                    const newIndex = openReportPreviewCurrent - 1;
+                    setOpenReportPreviewCurrent(newIndex);
+                  }
+                }}
+              >
+                Back
+              </Button>
+
+              <div>
+                {openReportPreviewCurrent}/
+                {(() => {
+                  try {
+                    return JSON.parse(openReportPreviewData || "[]").length;
+                  } catch {
+                    return 0;
+                  }
+                })()}
+              </div>
+
+              <Button
+                variant="greenTheme"
+                onClick={() => {
+                  const total = JSON.parse(
+                    openReportPreviewData || "[]"
+                  ).length;
+                  if (openReportPreviewCurrent < total) {
+                    const newIndex = openReportPreviewCurrent + 1;
+                    setOpenReportPreviewCurrent(newIndex);
+                  }
+                }}
+              >
+                Next
+              </Button>
+            </div>
+            <div className="w-[100%] h-[75vh]">
+              <PreviewFile
+                fileName={(() => {
+                  try {
+                    return JSON.parse(openReportPreviewData)[
+                      openReportPreviewCurrent - 1
+                    ];
+                  } catch {
+                    return "";
+                  }
+                })()}
+              />
+            </div>
+            {/* {openReportPreviewData.contentType === "application/pdf" ? (
               <div>
                 <iframe
                   src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
@@ -2412,7 +2457,7 @@ const Report: React.FC = () => {
                   className="w-full h-[80vh] object-contain border rounded-md"
                 />
               </div>
-            )}
+            )} */}
           </DialogContent>
         </Dialog>
       )}
@@ -2457,7 +2502,7 @@ const Report: React.FC = () => {
               { label: "General", value: 1 },
               { label: "Right", value: 2 },
               { label: "Left", value: 3 },
-              { label: "Impression", value: 5 },
+              { label: "Impression + Reco", value: 5 },
               { label: "Final Report", value: 4 },
             ].map(({ label, value }) => {
               const accessible = isTabAccessible(value);
@@ -2563,7 +2608,8 @@ const Report: React.FC = () => {
             </div>
           </div>
 
-          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
+          <div className="text-sm text-center text-gray-500">Reports</div>
+          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto mt-1 mb-4">
             <table className="min-w-full divide-y divide-gray-200  text-left">
               <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
                 <tr>
@@ -2612,9 +2658,9 @@ const Report: React.FC = () => {
                   }
 
                   return availableReports.map((report, idx) => {
-                    const reportItem = responsePatientInTake.find(
-                      (item) => item.questionId === report.questionId
-                    );
+                    // const reportItem = responsePatientInTake.find(
+                    //   (item) => item.questionId === report.questionId
+                    // );
 
                     return (
                       <tr key={report.questionId} className="text-xs">
@@ -2625,10 +2671,7 @@ const Report: React.FC = () => {
                         <td className="px-1 py-2 text-center">
                           <span
                             className="hover:underline cursor-pointer text-blue-500 text-xs"
-                            onClick={() =>
-                              reportItem?.refITFId &&
-                              getPatientReport(reportItem.refITFId)
-                            }
+                            onClick={() => getPatientReport(report.questionId)}
                           >
                             View
                           </span>
@@ -2646,7 +2689,8 @@ const Report: React.FC = () => {
             ["admin", "scribe", "radiologist", "wgdoctor", "manager"].includes(
               role?.type
             ) && ( */}
-          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto my-4">
+          <div className="text-sm text-center text-gray-500">Time stamp</div>
+          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto mt-1 mb-4">
             <table className="min-w-full divide-y divide-gray-200  text-left">
               <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
                 <tr>
@@ -2782,6 +2826,8 @@ const Report: React.FC = () => {
           {/* )} */}
 
           {role?.type && (
+            <>
+            <div className="text-sm text-center text-gray-500 mb-1">Status saver</div>
             <div
               className={`flex flex-wrap gap-2 ${
                 location?.readOnly ? "pointer-events-none" : ""
@@ -2971,13 +3017,7 @@ const Report: React.FC = () => {
                   } else if (status == "" && label == "Insert Signature") {
                     const date = new Date().toLocaleDateString();
                     console.log(userDetails);
-                    const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by Dr. ${
-                      userDetails.refUserFirstName
-                    },${
-                      userDetails.specialization
-                        ? "" + userDetails.specialization + ""
-                        : ""
-                    } on <em>${date}</em></strong></p></strong>`;
+                    const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
 
                     const notesData = Notes + signatureRow;
                     setNotes(notesData);
@@ -3053,6 +3093,7 @@ const Report: React.FC = () => {
                 </DialogContent>
               </Dialog>
             </div>
+            </>
           )}
         </div>
         <div className="w-[80%]">

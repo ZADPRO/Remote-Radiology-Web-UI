@@ -31,7 +31,7 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
 
   const chartData = [
     { key: "left", name: "Left", artifacts: totals.left, fill: "#ead1dc" },
-    { key: "right", name: "Right", artifacts: totals.right, fill: "#d9ead3" },
+    { key: "right", name: "Right", artifacts: totals.right, fill: "#b6d7a8" },
     { key: "both", name: "Both", artifacts: totals.both, fill: "#c9daf8" },
   ].filter((entry) => entry.artifacts > 0);
 
@@ -45,7 +45,7 @@ export function ArtifactsPie({ data, label }: ArtifactsPieProps) {
     },
     right: {
       label: "Right",
-      color: "#d9ead3",
+      color: "#b6d7a8",
     },
     both: {
       label: "Both",

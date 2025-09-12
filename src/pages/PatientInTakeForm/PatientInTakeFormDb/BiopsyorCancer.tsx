@@ -2,11 +2,9 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
-import DatePicker from "@/components/date-picker";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { IntakeOption } from "../PatientInTakeForm";
-import { parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
@@ -216,19 +214,17 @@ const BiopsyorCancer: React.FC<Props> = ({
               A. Date of diagnosis <span className="text-red-500">*</span>
             </Label>
             <div className="w-50 ml-4 lg:ml-0">
-              <DatePicker
+              <Input
                 value={
                   getAnswer(questionIds.datediagnosis)
-                    ? parseLocalDate(getAnswer(questionIds.datediagnosis))
-                    : undefined
                 }
                 onChange={(val) =>
                   handleInputChange(
                     questionIds.datediagnosis,
-                    val?.toLocaleDateString("en-CA") || ""
+                    val.target.value
                   )
                 }
-                disabledDates={(date) => date > new Date()}
+                placeholder="Date / Duration"
                 required
               />
             </div>

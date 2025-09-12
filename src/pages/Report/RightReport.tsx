@@ -179,30 +179,25 @@ const RightReport: React.FC<RightReportProps> = ({
       ComparisonPriorSyncStatus: isComparisonPriorRight ? true : false,
       ComparisonPriorReportText: isComparisonPriorRight ? true : false,
     });
-
     handleReportInputChange(questionId, value);
   };
 
-  useEffect(()=>{
-
-     setChangedOne({
+  useEffect(() => {
+    setChangedOne({
       ...changedOne,
       LesionsRightSyncStatus: true,
       LesionsRightReportText: true,
     });
+  }, [textEditor.LesionsRight.value]);
 
-  },[textEditor.LesionsRight.value])
-
-  useEffect(()=>{
-
-     setChangedOne({
+  useEffect(() => {
+    setChangedOne({
       ...changedOne,
       ComparisonPriorSyncStatus: true,
       ComparisonPriorReportText: true,
     });
+  }, [textEditor.ComparisonPrior.value]);
 
-  },[textEditor.ComparisonPrior.value])
-  
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
   return (

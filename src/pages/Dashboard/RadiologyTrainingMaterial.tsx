@@ -164,7 +164,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
       </DialogHeader>
  
       {/* Body */}
-      {user?.refRTId == 1 && (
+      {user?.refRTId == 1 || user?.refRTId == 9 && (
         <div className="px-6 space-y-6">
           {/* Upload Input */}
           <div className="space-y-2">

@@ -1,10 +1,8 @@
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
-import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
-import { parseLocalDate } from "@/lib/dateUtils";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import TextEditor from "@/components/TextEditor";
 import { Input } from "@/components/ui/input";
@@ -130,22 +128,18 @@ const CancerHistory: React.FC<Props> = ({
                 />
                 {getAnswer(questionIds.cancerDateStatus) === "Known" && (
                   <div className="w-65">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.cancerDate)
-                          ? parseLocalDate(getAnswer(questionIds.cancerDate))
-                          : undefined
-                      }
+                    <Input
+                      value={getAnswer(questionIds.cancerDate)}
                       onChange={(val) =>
                         handleInputChange(
                           questionIds.cancerDate,
-                          val?.toLocaleDateString("en-CA") || ""
+                          val.target.value
                         )
                       }
                       required={
                         getAnswer(questionIds.cancerDateStatus) === "Known"
                       }
-                      disabledDates={(date) => date > new Date()}
+                      placeholder="Date / Duration"
                     />
                   </div>
                 )}
@@ -299,24 +293,19 @@ const CancerHistory: React.FC<Props> = ({
                 {getAnswer(questionIds.cancerTreatmentdateStatus) ===
                   "Known" && (
                   <div className="w-65">
-                    <DatePicker
-                      value={
-                        getAnswer(questionIds.cancerTreatmentdate)
-                          ? parseLocalDate(
-                              getAnswer(questionIds.cancerTreatmentdate)
-                            )
-                          : undefined
-                      }
+                    <Input
+                      value={getAnswer(questionIds.cancerTreatmentdate)}
                       onChange={(val) =>
                         handleInputChange(
                           questionIds.cancerTreatmentdate,
-                          val?.toLocaleDateString("en-CA") || ""
+                          val.target.value
                         )
                       }
                       required={
-                        getAnswer(questionIds.cancerTreatmentdateStatus) === "Known"
+                        getAnswer(questionIds.cancerTreatmentdateStatus) ===
+                        "Known"
                       }
-                      disabledDates={(date) => date > new Date()}
+                      placeholder="Date / Duration"
                     />
                   </div>
                 )}

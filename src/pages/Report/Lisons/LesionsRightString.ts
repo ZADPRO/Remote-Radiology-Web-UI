@@ -84,7 +84,7 @@ export function LesionsRightString(
             locationText =
               data.locationclockposition === "0"
                 ? "Nipple"
-                : `${data.locationclockposition} o'clock`;
+                : `${data.locationclockposition} O'clock`;
           }
 
           let locationTextto = "";
@@ -95,7 +95,7 @@ export function LesionsRightString(
             locationTextto =
               data.locationclockpositionto === "0"
                 ? "Nipple"
-                : `${data.locationclockpositionto} o'clock`;
+                : `${data.locationclockpositionto} O'clock`;
           }
 
           // Level
@@ -106,7 +106,7 @@ export function LesionsRightString(
                 ? "P"
                 : data.locationLevel === "Axial"
                 ? "S"
-                : data.locationLevel === "Sagital"
+                : data.locationLevel === "Sagittal"
                 ? "M/L"
                 : "";
           }
@@ -174,10 +174,10 @@ export function LesionsRightString(
             ) {
               sentence += `, located in the range of ${levelText}${data.locationLevelPercentage} to ${levelText}${data.locationLevelPercentageto}`;
             } else {
-              sentence += `${data.locationLevel !== "Unknown" ? `, located at ${levelText}${data.locationLevelPercentage}`:""}`;
+              sentence += `${data.locationLevel !== "Unknown" ? `, located at ${data.locationLevel.toLowerCase()} ${levelText}${data.locationLevelPercentage}`:""}`;
             }
           } else if (levelText && data.locationLevel !== "unknown") {
-            sentence += `, located at ${levelText}`;
+            sentence += `, located at ${data.locationLevel.toLowerCase()} ${levelText}`;
           } 
 
           if (data.sizew || data.sizel || data.sizeh) {
@@ -284,7 +284,7 @@ export function LesionsRightString(
                 ? "P"
                 : data.locationLevel === "Axial"
                 ? "S"
-                : data.locationLevel === "Sagital"
+                : data.locationLevel === "Sagittal"
                 ? "M/L"
                 : "";
           }
@@ -437,7 +437,7 @@ export function LesionsRightString(
           //   locationText =
           //     data.locationclockposition === "0"
           //       ? "Nipple"
-          //       : `${data.locationclockposition} o'clock`;
+          //       : `${data.locationclockposition} O'clock`;
           // }
 
           // Level
@@ -448,7 +448,7 @@ export function LesionsRightString(
                 ? "P"
                 : data.locationLevel === "Axial"
                 ? "S"
-                : data.locationLevel === "Sagital"
+                : data.locationLevel === "Sagittal"
                 ? "M/L"
                 : "";
           }

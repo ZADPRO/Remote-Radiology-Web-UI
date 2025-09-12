@@ -3,7 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { technicianService } from "@/services/technicianServices";
 import { AxiosProgressEvent } from "axios";
-import { ArrowLeft, CloudUpload, Download, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, CloudUpload, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dicomFile from "../../assets/Patient-InTake Form/Dicomfile_img.png";
@@ -11,7 +11,7 @@ import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import DragAndDropUploadBox from "@/components/ui/CustomComponents/DragAndDropFileUpload";
 import { reportService } from "@/services/reportService";
 import { DicomFile } from "../Report/DicomList";
-import { downloadDicom, removeDicom } from "@/lib/commonUtlis";
+import { removeDicom } from "@/lib/commonUtlis";
 
 type Side = "Left" | "Right";
 
@@ -342,13 +342,13 @@ const UploadDicomFiles: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                    <Download
+                    {/* <Download
                       onClick={() => {
                         downloadDicom(file.DFId, file.FileName);
                       }}
                       size={16}
                       className="text-gray-600 cursor-pointer hover:bg-accent"
-                    />
+                    /> */}
 
                     <Trash2 
                     size={16}

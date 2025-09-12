@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import FormHeader from "../FormHeader";
 import { Label } from "@/components/ui/label";
-import DatePicker from "@/components/date-picker";
 import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
 import { IntakeOption } from "../PatientInTakeForm";
-import { downloadDocumentFile } from "@/lib/commonUtlis";
-import { parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
+import FileView from "@/components/FileView/FileView";
+import { Trash } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface QuestionIds {
   thermogramYesNo: number;
@@ -81,6 +81,7 @@ interface ImagingSectionProps {
   reportDetailsId: number;
   formData: IntakeOption[];
   handleInputChange: (questionId: number, value: string) => void;
+  readOnly: boolean;
 }
 
 const ImagingSection: React.FC<ImagingSectionProps> = ({
@@ -94,38 +95,49 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
   reportDetailsId,
   formData,
   handleInputChange,
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
-  const [selectedFileName, setSelectedFileName] = useState("");
 
   const showDetails = getAnswer(yesNoId) === "Yes";
   const showUpload =
     showDetails && getAnswer(reportAvailableId) === "Available";
-  const uploadedFileName = getAnswer(reportDetailsId);
-
-  const getFile = formData.find((q) => q.questionId === reportDetailsId)?.file;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFileName(file.name); // Optimistic UI update
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      try {
-        const response = await uploadService.uploadFile({
-          formFile: formDataObj,
-        });
-        if (response.status) {
-          handleInputChange(reportDetailsId, response.fileName);
-        } else {
-          setSelectedFileName(""); // Revert on failure
+    const files = e.target.files;
+    if (!files) return;
+
+    const values = JSON.parse(getAnswer(reportDetailsId) || "[]");
+
+    for (const file of files) {
+      if (file) {
+        const formDataObj = new FormData();
+        formDataObj.append("file", file);
+        try {
+          const response = await uploadService.uploadFile({
+            formFile: formDataObj,
+          });
+          if (response.status) {
+            values.push(response.fileName);
+          }
+        } catch (error) {
+          console.error("File upload failed:", error);
         }
-      } catch (error) {
-        console.error("File upload failed:", error);
-        setSelectedFileName(""); // Revert on failure
       }
     }
+    handleInputChange(reportDetailsId, JSON.stringify(values));
+  };
+
+  const handleDeleteFile = (fileToDelete: string) => {
+    // parse existing array of file names
+    const values: string[] = JSON.parse(getAnswer(reportDetailsId) || "[]");
+
+    // filter out the file to delete
+    const updatedValues = values.filter((file) => file !== fileToDelete);
+
+    // save updated list back to formData
+    handleInputChange(reportDetailsId, JSON.stringify(updatedValues));
   };
 
   return (
@@ -197,20 +209,16 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
           ))}
           {getAnswer(dateKnownId) === "Known" && (
             <div className="flex items-center gap-2">
-              <Label className="text-sm font-medium">DATE</Label>
+              {/* <Label className="text-sm font-medium">DATE</Label> */}
               <div className="w-48">
-                <DatePicker
-                  value={
-                    getAnswer(dateId) ? parseLocalDate(getAnswer(dateId)) : undefined
-                  }
+                <Input
+                  type="text"
+                  value={getAnswer(dateId)}
                   onChange={(val) =>
-                    handleInputChange(
-                      dateId,
-                      val?.toLocaleDateString("en-CA") || ""
-                    )
+                    handleInputChange(dateId, val.target.value)
                   }
-                  disabledDates={(date) => date > new Date()}
                   required={getAnswer(reportAvailableId) == "Available"}
+                  placeholder="Date / Duration"
                 />
               </div>
             </div>
@@ -257,30 +265,56 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                 type="file"
                 accept=".pdf, .jpg, .jpeg, .png"
                 className="sr-only"
+                multiple
                 onChange={handleFileChange}
-                required={!(selectedFileName || uploadedFileName)}
+                required={(() => {
+                  let parsed: any[] = [];
+                  try {
+                    parsed = JSON.parse(getAnswer(reportDetailsId) || "[]");
+                  } catch {
+                    parsed = [];
+                  }
+                  return parsed.length === 0;
+                })()}
               />
               Upload File
             </label>
-
-            {(selectedFileName || uploadedFileName) && (
-              <span
-                className={`text-sm break-words ${
-                  uploadedFileName && "pointer-events-auto cursor-pointer"
-                }`}
-                onClick={() => {
-                  getFile &&
-                    downloadDocumentFile(
-                      getFile?.base64Data,
-                      getFile?.contentType,
-                      "Report"
-                    );
-                }}
-              >
-                {selectedFileName || uploadedFileName}
-              </span>
-            )}
           </div>
+          {getAnswer(reportDetailsId) &&
+            (() => {
+              try {
+                const fileNames: string[] = JSON.parse(
+                  getAnswer(reportDetailsId)
+                );
+
+                return fileNames.length > 0 ? (
+                  <div className="w-full space-y-2">
+                    {fileNames.map((fileName, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
+                      >
+                        {/* File name (downloadable) */}
+                        <FileView fileName={fileName} />
+
+                        {/* Delete icon */}
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => handleDeleteFile(fileName)}
+                        >
+                          {readOnly ? null : (
+                            <Trash size={15} className="text-red-500" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null;
+              } catch (err) {
+                console.error("Invalid reportDetails JSON:", err);
+                return null;
+              }
+            })()}
         </>
       )}
     </div>
@@ -377,8 +411,13 @@ const PreviousImaging: React.FC<Props> = ({
         className="uppercase"
       />
       <div className="bg-[#fff]">
-              {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
-            </div>
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
+      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
           {imagingSections.map((sectionProps) => (
@@ -387,6 +426,7 @@ const PreviousImaging: React.FC<Props> = ({
               {...sectionProps}
               formData={formData}
               handleInputChange={handleInputChange}
+              readOnly={readOnly}
             />
           ))}
           <div className="flex flex-col sm:flex-row gap-2">

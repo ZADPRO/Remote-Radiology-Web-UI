@@ -1,5 +1,4 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
-import { formatReadableDate } from "@/utlis/calculateAge";
 // interface QuestionConfig {
 //     label: string;
 //     answer: string;
@@ -153,7 +152,7 @@ export function DbFormReportGenerator(
   }
 
   if (biopsy.datediagnosis !== "") {
-    biopsyReport.push(`date: ${formatReadableDate(biopsy.datediagnosis)}`);
+    biopsyReport.push(`date: ${biopsy.datediagnosis}`);
   }
 
   if (biopsy.grade !== "Unknown" && biopsy.grade !== "") {
@@ -311,7 +310,7 @@ export function DbFormReportGenerator(
           sentence.length === 1 ? "is" : "are"
         } being ${treatment.Surgical.toLowerCase()}${
           treatment.approachDate.length > 0
-            ? ` on ${formatReadableDate(treatment.approachDate)}`
+            ? `: ${treatment.approachDate}`
             : ""
         }.`;
 
@@ -329,7 +328,7 @@ export function DbFormReportGenerator(
       treatmentreport.push(
         `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Neoadjuvant therapy ${treatment.Neoadjuvant.toLocaleLowerCase()}${
           treatment.neoadjuvantDate.length > 0
-            ? ` on ${formatReadableDate(treatment.neoadjuvantDate)}`
+            ? `: ${treatment.neoadjuvantDate}`
             : ""
         }.</li></ol>`
       );
@@ -342,7 +341,7 @@ export function DbFormReportGenerator(
       treatmentreport.push(
         `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Adjuvant therapy ${treatment.Adjuvant.toLocaleLowerCase()}${
           treatment.adjuvantDate.length > 0
-            ? ` on ${formatReadableDate(treatment.adjuvantDate)}`
+            ? `: ${treatment.adjuvantDate}`
             : ""
         }.</li></ol>`
       );
@@ -355,7 +354,7 @@ export function DbFormReportGenerator(
       treatmentreport.push(
         `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Cryoablation ${treatment.cryoblation.toLocaleLowerCase()}${
           treatment.cryoablationDate.length > 0
-            ? ` on ${formatReadableDate(treatment.cryoablationDate)}`
+            ? `: ${treatment.cryoablationDate}`
             : ""
         }.</li></ol>`
       );
@@ -365,7 +364,7 @@ export function DbFormReportGenerator(
       treatmentreport.push(
         `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>${treatment.otherspecify} ${treatment.other.toLowerCase()}${
           treatment.otherDate.length > 0
-            ? ` on ${formatReadableDate(treatment.otherDate)}`
+            ? `: ${treatment.otherDate}`
             : ""
         }.</li></ol>`
       );

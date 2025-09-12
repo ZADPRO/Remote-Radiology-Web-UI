@@ -1,6 +1,7 @@
 import { decrypt, encrypt } from "@/Helper";
 import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
+import { FileData } from "./commonServices";
 
 export interface AppointmentStatus {
   refAppointmentAccessId: number;
@@ -63,6 +64,11 @@ export interface FinalAddendumText {
   refAppointmentId: string;
   refUserId: number;
   refUserCustId: string;
+}
+
+export interface ViewFileRes {
+  status: boolean;
+  data: FileData;
 }
 
 export const reportService = {
@@ -162,9 +168,7 @@ export const reportService = {
     const payload = encrypt({ appintmentId: appointmentId }, token);
 
     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_USERSERVICE
-      }/intakeform/allowoverride`,
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/allowoverride`,
       { encryptedData: payload },
       {
         headers: {
@@ -371,6 +375,25 @@ export const reportService = {
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     console.log(decryptedData);
+    return decryptedData;
+  },
+
+  getFileView: async (fileName: string) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ filename: fileName }, token);
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/reportintakeform/viewFiles`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: ViewFileRes = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
     return decryptedData;
   },
 

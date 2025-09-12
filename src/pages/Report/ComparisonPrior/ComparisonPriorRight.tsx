@@ -65,7 +65,7 @@ const LESION_STATUS_OPTIONS = [
   "Interval decrease",
   "Stable",
   "Resolved",
-  "Not well visualised in current study",
+  "Not well visualized in current study",
 ];
 const TABLE_HEADERS = ["Lesion ID", "Findings", "Current", "Previous"];
 const TABLE_ROWS = [
@@ -555,7 +555,18 @@ const ComparisonPriorRight: React.FC<Props> = ({
                   <TextEditor
                     value={editorVal[i] || ""}
                     onChange={(val, _, source) => {
-                      if (source === "user") {
+                      if (source === "voice") {
+                        // Immediate update for speech recognition (no debounce)
+                        setEditorVal((prev) => {
+                          const updated = [...prev];
+                          updated[i] = val;
+                          return updated;
+                        });
+
+                        // Still update sync status (you can debounce this if needed)
+                        updateLesionField(i, "syncStatus", false);
+                      } else if (source === "user") {
+                        // Debounced update for typing (your existing function)
                         updateTextEditorValue(i, val);
                       }
                     }}

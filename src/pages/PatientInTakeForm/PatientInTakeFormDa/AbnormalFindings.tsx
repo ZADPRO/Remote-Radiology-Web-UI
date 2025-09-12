@@ -4,10 +4,8 @@ import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
-import DatePicker from "@/components/date-picker";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
@@ -334,7 +332,12 @@ const AbnormalFindings: React.FC<Props> = ({
         className="uppercase"
       />
       <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
+        {
+          <TextEditor
+            value={PatientHistoryReportGenerator(formData)}
+            readOnly={true}
+          />
+        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
@@ -351,7 +354,7 @@ const AbnormalFindings: React.FC<Props> = ({
                         }
                     /> */}
             <div className="w-65 ml-4 lg:ml-0">
-              <DatePicker
+              {/* <DatePicker
                 value={
                   getAnswer(questionIds.abnormality)
                     ? parseLocalDate(getAnswer(questionIds.abnormality))
@@ -364,6 +367,13 @@ const AbnormalFindings: React.FC<Props> = ({
                   )
                 }
                 disabledDates={dateDisablers.noFuture}
+              /> */}
+              <Input
+                value={getAnswer(questionIds.abnormality)}
+                onChange={(val) =>
+                  handleInputChange(questionIds.abnormality, val.target.value)
+                }
+                placeholder="Date / Duration"
               />
             </div>
           </div>

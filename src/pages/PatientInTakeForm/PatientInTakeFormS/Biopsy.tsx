@@ -3,15 +3,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
-import { useState } from "react";
+// import { useState } from "react";
 import { uploadService } from "@/services/commonServices";
-import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { downloadDocumentFile } from "@/lib/commonUtlis";
-import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import TextEditor from "@/components/TextEditor";
 import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
+import { Input } from "@/components/ui/input";
+import { Trash } from "lucide-react";
+import FileView from "@/components/FileView/FileView";
 
 interface QuestionIds {
   previousBiopsy: number;
@@ -40,40 +40,54 @@ const Biopsy: React.FC<Props> = ({
   questionIds,
   readOnly,
 }) => {
-  console.log(formData);
-
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
 
-  const [selectedFileName, setSelectedFileName] = useState("");
-  const uploadedFileName = getAnswer(questionIds.reportDetails);
+  // const [selectedFileName, setSelectedFileName] = useState("");
+  // const uploadedFileName = getAnswer(questionIds.reportDetails);
   const showBiopsyDetails = getAnswer(questionIds.previousBiopsy) !== "No";
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFileName(file.name); // Optimistic UI update
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      try {
-        const response = await uploadService.uploadFile({
-          formFile: formDataObj,
-        });
-        if (response.status) {
-          handleInputChange(questionIds.reportDetails, response.fileName);
-        } else {
-          setSelectedFileName(""); // Revert on failure
+    const files = e.target.files;
+    if (!files) return;
+
+    const values = JSON.parse(getAnswer(questionIds.reportDetails) || "[]");
+
+    for (const file of files) {
+      if (file) {
+        const formDataObj = new FormData();
+        formDataObj.append("file", file);
+        try {
+          const response = await uploadService.uploadFile({
+            formFile: formDataObj,
+          });
+          if (response.status) {
+            values.push(response.fileName);
+          }
+        } catch (error) {
+          console.error("File upload failed:", error);
         }
-      } catch (error) {
-        console.error("File upload failed:", error);
-        setSelectedFileName(""); // Revert on failure
       }
     }
+    handleInputChange(questionIds.reportDetails, JSON.stringify(values));
   };
 
-  const getFile = formData.find(
-    (q) => q.questionId === questionIds.reportDetails
-  )?.file;
+  // const getFile = formData.find(
+  //   (q) => q.questionId === questionIds.reportDetails
+  // )?.file;
+
+  const handleDeleteFile = (fileToDelete: string) => {
+    // parse existing array of file names
+    const values: string[] = JSON.parse(
+      getAnswer(questionIds.reportDetails) || "[]"
+    );
+
+    // filter out the file to delete
+    const updatedValues = values.filter((file) => file !== fileToDelete);
+
+    // save updated list back to formData
+    handleInputChange(questionIds.reportDetails, JSON.stringify(updatedValues));
+  };
 
   return (
     <div className="flex flex-col h-full relative">
@@ -137,7 +151,19 @@ const Biopsy: React.FC<Props> = ({
               {getAnswer(questionIds.previousBiopsy) === "Yes" && (
                 <div className="flex items-center gap-2">
                   <div>
-                    <DatePicker
+                    <Input
+                      value={getAnswer(questionIds.previousBiopsyDate)}
+                      onChange={(val) =>
+                        handleInputChange(
+                          questionIds.previousBiopsyDate,
+                          val.target.value
+                        )
+                      }
+                      className="w-full lg:w-42"
+                      placeholder="Date / Duration"
+                      required={showBiopsyDetails}
+                    />
+                    {/* <DatePicker
                       value={
                         getAnswer(questionIds.previousBiopsyDate)
                           ? parseLocalDate(
@@ -153,7 +179,7 @@ const Biopsy: React.FC<Props> = ({
                       }
                       disabledDates={(date) => date > new Date()}
                       required={showBiopsyDetails}
-                    />
+                    /> */}
                   </div>
                 </div>
               )}
@@ -319,7 +345,7 @@ const Biopsy: React.FC<Props> = ({
                       <span className="text-sm text-muted-foreground">
                         Please Upload the Report
                       </span>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-start gap-3">
                         <Label className="text-sm font-medium">
                           Upload Report
                         </Label>
@@ -328,34 +354,65 @@ const Biopsy: React.FC<Props> = ({
                             type="file"
                             accept=".pdf, .jpg, .jpeg, .png"
                             className="sr-only"
+                            multiple
                             onChange={handleFileChange}
                             required={
                               getAnswer(questionIds.reportAvailablity) ===
                                 "Available" &&
-                              !(selectedFileName || uploadedFileName)
+                              (() => {
+                                try {
+                                  return JSON.parse(
+                                    getAnswer(questionIds.reportDetails) || "[]"
+                                  );
+                                } catch {
+                                  return [];
+                                }
+                              })().length === 0
                             }
                           />
                           Upload File
                         </label>
-                        {(selectedFileName || uploadedFileName) && (
-                          <span
-                            className={`text-sm ${
-                              uploadedFileName &&
-                              "pointer-events-auto cursor-pointer"
-                            }`}
-                            onClick={() => {
-                              console.log(getFile);
-                              getFile &&
-                                downloadDocumentFile(
-                                  getFile?.base64Data,
-                                  getFile?.contentType,
-                                  "Report"
-                                );
-                            }}
-                          >
-                            {selectedFileName || uploadedFileName}
-                          </span>
-                        )}
+
+                        {getAnswer(questionIds.reportDetails) &&
+                          (() => {
+                            try {
+                              const fileNames: string[] = JSON.parse(
+                                getAnswer(questionIds.reportDetails)
+                              );
+
+                              return fileNames.length > 0 ? (
+                                <div className="w-full space-y-2">
+                                  {fileNames.map((fileName, index) => (
+                                    <div
+                                      key={index}
+                                      className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
+                                    >
+                                      {/* File name (downloadable) */}
+                                      <FileView fileName={fileName} />
+
+                                      {/* Delete icon */}
+                                      <div
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleDeleteFile(fileName)
+                                        }
+                                      >
+                                        {readOnly ? null : (
+                                          <Trash
+                                            size={15}
+                                            className="text-red-500"
+                                          />
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : null;
+                            } catch (err) {
+                              console.error("Invalid reportDetails JSON:", err);
+                              return null;
+                            }
+                          })()}
                       </div>
                     </div>
                   )}

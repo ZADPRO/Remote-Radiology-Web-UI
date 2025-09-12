@@ -40,12 +40,12 @@ export function ComparisonPriorRightString(
   }
 
   // const formatLocation = (clock: string, pos: string, _ = "") =>
-  //   `${clock === "0" ? "Nipple" : `${clock}'o Clock`}, P${pos}`;
+  //   `${clock === "0" ? "Nipple" : `${clock} O'clock`}, P${pos}`;
 
   const comparisonVal: string[] = dataArray.map((data, index) => {
     if (data.syncStatus) {
       const lesionId = `${side === "Right" ? "R" : "L"}${index + 1}`;
-      // const prevLoc = formatLocation(
+      // const PreviousLoc = formatLocation(
       //   data.locationpclock,
       //   data.locationpposition
       // );
@@ -77,19 +77,19 @@ export function ComparisonPriorRightString(
           ${
             (data.sizec || data.sizep) &&
             `<p>Size: ${data.sizec ? `${data.sizec} mm` : ""}${
-              data.sizep ? ` (prev: ${data.sizep} mm)` : ""
+              data.sizep ? ` (Previous: ${data.sizep} mm)` : ""
             }</p>`
           }
           ${
             (data.volumec || data.volumep) &&
             `<p>Volume: ${data.volumec ? `${data.volumec} mm³` : ""}${
-              data.volumep ? ` (prev: ${data.volumep} mm³)` : ""
+              data.volumep ? ` (Previous: ${data.volumep} mm³)` : ""
             }</p>`
           }
           ${
             (data.speedc || data.speedp) &&
             `<p>Speed of sound: ${data.speedc ? `${data.speedc} m/s` : ""}${
-              data.speedp ? ` (prev: ${data.speedp} m/s)` : ""
+              data.speedp ? ` (Previous: ${data.speedp} m/s)` : ""
             }<p/>`
           }
           ${
@@ -102,12 +102,12 @@ export function ComparisonPriorRightString(
                     ? `${
                         data.locationcclock === "0"
                           ? "Nipple"
-                          : `${data.locationcclock}'o clock`
+                          : `${data.locationcclock} O'clock`
                       }`
                     : ``
                 }${
                   data.locationcposition
-                    ? `${data.locationcclock ? " ," : ""}P${
+                    ? `${data.locationcclock ? ", " : ""}P${
                         data.locationcposition
                       }`
                     : ""
@@ -115,20 +115,20 @@ export function ComparisonPriorRightString(
                   data.locationpclock ||
                   data.locationpposition ||
                   (data.locationpclock && data.locationpposition)
-                    ? ` ( Prev: ${
+                    ? ` (Previous: ${
                         data.locationpclock
                           ? `${
                               data.locationpclock === "0"
                                 ? "Nipple"
-                                : `${data.locationpclock}'o clock`
+                                : `${data.locationpclock} O'clock`
                             }`
                           : ""
                       }${
                         data.locationpposition
-                          ? `${data.locationpclock ? " ," : ""}P${
+                          ? `${data.locationpclock ? ", " : ""}P${
                               data.locationpposition
-                            } `
-                          : " "
+                            }`
+                          : ""
                       })`
                     : ""
                 }`

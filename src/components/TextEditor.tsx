@@ -1,16 +1,18 @@
-import React, { useEffect, useId, useRef } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import ReactQuill from "react-quill-new"; // or 'react-quill'
 import "react-quill-new/dist/quill.snow.css";
-// import TableUI from "quill-table-ui";
-// import "quill-table-ui/dist/index.css";
 import QuillToolbar, { createModules, formats } from "./QuillToolbar";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { Mic } from "lucide-react";
 
 interface TextEditorProps {
   value: string;
   onChange?: (
     content: string,
     delta: any,
-    source: "user" | "api" | "silent",
+    source: "user" | "api" | "silent" | "voice",
     editor: any
   ) => void;
   placeholder?: string;
@@ -19,42 +21,6 @@ interface TextEditorProps {
   onManualEdit?: () => void;
   height?: string;
 }
-
-// Register the table UI module
-// Quill.register("modules/tableUI", TableUI);
-
-// const modules = {
-//   toolbar: [
-//     [{ header: [1, 2, 3, false] }],
-//     ["bold", "italic", "underline"],
-//     [{ list: "ordered" }, { list: "bullet" }],
-//     [{ 'indent': '-1'}, { 'indent': '+1' }],
-//     ["blockquote", "code-block"],
-//     [{ align: [] }],
-//     [{ color: [] }, { background: [] }],
-//     ["link", "image"],
-//     ["clean"],
-//     // ["table"], // Add the table button here
-//   ],
-//   tableUI: true, // enable table UI module
-// };
-
-// const formats = [
-//   "header",
-//   "bold",
-//   "italic",
-//   "underline",
-//   "list",
-//   'indent',
-//   "blockquote",
-//   "code-block",
-//   "align",
-//   "color",
-//   "background",
-//   "link",
-//   "image",
-//   "table",
-// ];
 
 const TextEditor: React.FC<TextEditorProps> = ({
   value,
@@ -68,15 +34,98 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const quillRef = useRef<ReactQuill | null>(null);
   const toolbarId = useId();
 
+  // Local speech recognition for THIS editor only
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+  const [focused, setFocused] = useState(false);
+  const [active, setActive] = useState(false); // mic active state
+
+  const [lastTranscript, setLastTranscript] = useState("");
+
+  // New state to track the starting index of transcription
+  // const [transcriptStartIndex, setTranscriptStartIndex] = useState<
+  //   number | null
+  // >(null);
+
+  // Update the editor with the full transcript
+
+  const restoreMedicalTerms = (text: string) => {
+    return text.replace(/\*{3,}/g, (match) => {
+      // If censorship detected, try to replace based on context
+      // Expand this dictionary with real terms
+      const medicalTerms = ["nipple", "breast"];
+      for (const word of medicalTerms) {
+        if (text.toLowerCase().includes(word[0])) {
+          return word;
+        }
+      }
+      return match;
+    });
+  };
+  useEffect(() => {
+    if (focused && active && quillRef.current) {
+      const editor = quillRef.current.getEditor();
+      const restoredTranscript = restoreMedicalTerms(transcript);
+
+      // Compare word by word instead of just string length
+      const oldWords = lastTranscript.trim().split(/\s+/);
+      const newWords = restoredTranscript.trim().split(/\s+/);
+
+      // Find the part that's actually new
+      const newPart = newWords.slice(oldWords.length).join(" ");
+
+      if (newPart) {
+        const selection = editor.getSelection(true);
+        const index = selection?.index ?? editor.getLength();
+
+        editor.insertText(index, newPart + " "); // add space after
+        editor.setSelection(index + newPart.length + 1);
+
+        onChange?.(editor.root.innerHTML, "", "voice", editor);
+      }
+
+      setLastTranscript(restoredTranscript);
+    }
+  }, [transcript, focused, active]);
+
+  const startListening = async () => {
+    if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+      alert("Your browser does not support speech recognition.");
+      return;
+    }
+
+    try {
+      resetTranscript();
+      setActive(true);
+
+      await SpeechRecognition.startListening({
+        continuous: false,
+        language: "en-US",
+        interimResults: true,
+      });
+    } catch (error) {
+      console.error("Speech recognition error:", error);
+      alert(
+        "Microphone not accessible. Please check your permissions or device settings."
+      );
+      setActive(false);
+    }
+  };
+
+  const stopListening = () => {
+    setActive(false);
+    SpeechRecognition.stopListening();
+    // setTranscriptStartIndex(null); // Reset the start index
+  };
+
+  // Manual edit tracker
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
 
     const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
       if (source === "user") {
-        onManualEdit?.(); // trigger sync breaker
+        onManualEdit?.();
       }
-      // console.log(delta, oldDelta, source)
     };
 
     editor.on("text-change", handleTextChange);
@@ -85,50 +134,77 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
-  // const [mic, setMic] = useState(false);
+  // Focus tracking
+  useEffect(() => {
+    const editor = quillRef.current?.getEditor();
+    if (!editor) return;
+
+    const handleSelectionChange = (range: any) => {
+      if (range) {
+        setFocused(true);
+      } else {
+        setFocused(false);
+        stopListening();
+      }
+    };
+
+    const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
+      if (source === "api") {
+        onManualEdit?.();
+      }
+    };
+
+    editor.on("text-change", handleTextChange);
+    editor.on("selection-change", handleSelectionChange);
+    return () => {
+      editor.on("text-change", handleTextChange);
+      editor.off("selection-change", handleSelectionChange);
+    };
+  }, [onManualEdit]);
 
   return (
-    <div>
-      {/* {mic ? (
-        <button
-          onClick={() => {
-            setMic(false);
-          }}
-        >
-          OFF
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            setMic(true);
-          }}
-        >
-          ON
-        </button>
-      )} */}
-      <div
-        className={`border rounded-xl bg-background p-4 shadow-sm ${className} ${
-          readOnly ? "cursor-not-allowed" : ""
-        }`}
-      >
-        <style>{`
+    <div
+      className={`relative border rounded-xl bg-background p-4 shadow-sm ${className} ${
+        readOnly ? "cursor-not-allowed" : ""
+      }`}
+    >
+      <style>{`
         .ql-container {
           height: ${height ? height : "auto"};
         }
       `}</style>
-        <QuillToolbar id={toolbarId} />
-        <ReactQuill
-          ref={quillRef}
-          value={value}
-          onChange={onChange}
-          modules={createModules(toolbarId)}
-          formats={formats}
-          theme="snow"
-          placeholder={placeholder}
-          readOnly={readOnly}
-        />
+
+      <QuillToolbar id={toolbarId} />
+      <ReactQuill
+        ref={quillRef}
+        value={value}
+        onChange={onChange}
+        modules={createModules(toolbarId)}
+        formats={formats}
+        theme="snow"
+        placeholder={placeholder}
+        readOnly={readOnly}
+      />
+
+      <div className="w-full flex justify-end items-center mt-2">
+        {/* Mic button – scoped to this editor */}
+        {focused && !readOnly && (
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()} // keep focus in editor
+            onClick={listening ? stopListening : startListening}
+            className={`p-3 rounded-full shadow-lg transition-colors ${
+              listening && active
+                ? "bg-[red] hover:bg-[red] text-[#fff]"
+                : "bg-[#f4e7e1] hover:bg-[#f9e2d7] text-[#3f3f3d]"
+            }`}
+          >
+            {listening && active ? <Mic size={20} /> : <Mic size={20} />}
+          </button>
+        )}
       </div>
     </div>
+    // a3b1a0
   );
 };
 
