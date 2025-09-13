@@ -403,18 +403,18 @@ const PatientQueue: React.FC = () => {
                 return false;
 
               // Always filter out 'Predraft'
-              if (
-                refAppointmentComplete === "Predraft" &&
-                (role?.type === "technician" || role?.type === "manager")
-              )
-                return false;
+              // if (
+              //   refAppointmentComplete === "Predraft" &&
+              //   (role?.type === "technician" || role?.type === "manager")
+              // )
+              //   return false;
 
-              // Always filter out 'Draft'
-              if (
-                refAppointmentComplete === "Draft" &&
-                (role?.type === "technician" || role?.type === "manager")
-              )
-                return false;
+              // // Always filter out 'Draft'
+              // if (
+              //   refAppointmentComplete === "Draft" &&
+              //   (role?.type === "technician" || role?.type === "manager")
+              // )
+              //   return false;
 
               // 🔴 NEW: For doctor or codoctor, only allow if status is 'Reviewed 1' or 'Reviewed 2'
               if (
@@ -1541,7 +1541,7 @@ const PatientQueue: React.FC = () => {
               className="cursor-pointer"
               onClick={column.getToggleSortingHandler()}
             >
-              Report
+              QT Report
             </span>
             <Popover>
               <PopoverTrigger asChild>
