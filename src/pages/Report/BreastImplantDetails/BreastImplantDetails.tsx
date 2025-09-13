@@ -36,6 +36,9 @@ const BreastImplantDetails: React.FC<Props> = ({
   reportFormData,
   handleReportInputChange,
 }) => {
+  const getAnswer = (id: number) =>
+    reportFormData.find((q) => q.questionId === id)?.answer || "";
+
   return (
     <div className="w-full">
       <Label
@@ -77,9 +80,10 @@ const BreastImplantDetails: React.FC<Props> = ({
                 },
               ]}
             />
-            {reportFormData.find(
-              (q) => q.questionId === questionIds.implantConfiguration
-            )?.answer === "Bilateral Dissimilar" && (
+            {(getAnswer(questionIds.implantConfiguration) ===
+              "Bilateral Dissimilar" ||
+              getAnswer(questionIds.implantConfiguration) ===
+                "Bilateral Similar") && (
               <Input
                 className="w-[300px] ml-[12.5rem]"
                 placeholder="Specify"
@@ -109,9 +113,10 @@ const BreastImplantDetails: React.FC<Props> = ({
               ]}
             />
 
-            {reportFormData.find(
-              (q) => q.questionId === questionIds.implantConfiguration
-            )?.answer !== "Bilateral Dissimilar" && (
+            {(getAnswer(questionIds.implantConfiguration) !==
+              "Bilateral Dissimilar" &&
+              getAnswer(questionIds.implantConfiguration) !==
+                "Bilateral Similar") && (
               <MultiRadioOptionalInputInline
                 label="Implant Material"
                 labelClassname="w-[12rem]"

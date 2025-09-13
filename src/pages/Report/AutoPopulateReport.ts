@@ -64,16 +64,18 @@ export function AutoPopulateReport(
         breastImpantQuestions.implantConfiguration,
         "Bilateral Similar"
       );
-      getreportAnswer(breastImpantQuestions.implantMaterial) === "" &&
+      getreportAnswer(breastImpantQuestions.bilateraldissimilar) === "" &&
         handleReportInputChange(
-          breastImpantQuestions.implantMaterial,
-          getPatientAnswer(527)
-        );
-
-      getreportAnswer(breastImpantQuestions.implantMaterialOther) === "" &&
-        handleReportInputChange(
-          breastImpantQuestions.implantMaterialOther,
-          getPatientAnswer(528)
+          breastImpantQuestions.bilateraldissimilar,
+          `R-${
+            getPatientAnswer(80) === "Other"
+              ? getPatientAnswer(81)
+              : getPatientAnswer(80)
+          },L-${
+            getPatientAnswer(168) === "Other"
+              ? getPatientAnswer(169)
+              : getPatientAnswer(168)
+          }`
         );
     } else if (
       getPatientAnswer(423) === "true" &&

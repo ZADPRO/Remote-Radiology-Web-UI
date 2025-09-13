@@ -55,14 +55,13 @@ export function generateBreastImplantDetailsHTML(
   }
 
   html += `which are ${position.toLowerCase()} in position, with speed of sound consistent with ${
-    config === "Bilateral Dissimilar"
+    config === "Bilateral Dissimilar" || config === "Bilateral Similar"
       ? ` ${getAnswer(questionIds.bilateraldissimilar)}`
       : `${material == "Other" ? `${materialOther}` : material.toLowerCase()}`
   }. `;
 
   if (displacement.length > 0) {
     if (displacement !== "None") {
-console.log('BreastImplantDetailsEditor.ts -------------------------- >  64  ');
       html += `The displacement is noted in ${
         displacement === "Both"
           ? "both sides"
