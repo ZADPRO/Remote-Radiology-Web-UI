@@ -96,7 +96,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       setActive(true);
 
       await SpeechRecognition.startListening({
-        continuous: false,
+        continuous: true,
         language: "en-US",
         interimResults: false,
       });
@@ -109,10 +109,15 @@ const TextEditor: React.FC<TextEditorProps> = ({
     }
   };
 
-  const stopListening = () => {
+  // const stopListening = () => {
+  //   setActive(false);
+  //   SpeechRecognition.stopListening();
+  //   // setTranscriptStartIndex(null); // Reset the start index
+  // };
+
+  const stopListening = async() => {
     setActive(false);
-    SpeechRecognition.stopListening();
-    // setTranscriptStartIndex(null); // Reset the start index
+    await SpeechRecognition.abortListening(); // ensures mic is fully released
   };
 
   // Manual edit tracker
@@ -155,7 +160,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
     editor.on("text-change", handleTextChange);
     editor.on("selection-change", handleSelectionChange);
     return () => {
-      editor.on("text-change", handleTextChange);
+      editor.off("text-change", handleTextChange);
       editor.off("selection-change", handleSelectionChange);
     };
   }, [onManualEdit]);

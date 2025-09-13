@@ -412,23 +412,39 @@ export function SFormGeneration(
     // }`;
 
     if (breastimplants.implantBothDirection === "true") {
-      text += `Breast implant present on the both, ${
-        breastimplants.implantsSpecifyBoth.toLocaleLowerCase() !== "other"
-          ? breastimplants.implantsSpecifyBoth.toLocaleLowerCase()
-          : breastimplants.implantsOthersSpecifyBoth.toLocaleLowerCase()
-      } type, since ${breastimplants.implantDateBoth} year${
-        breastimplants.implantDateBoth === "1" ? "" : "s"
-      }${
-        breastimplants.explantsBoth === "Yes"
-          ? `,  explant done${
-              breastimplants.explantsDateKnownBoth === "Yes"
-                ? ` ${breastimplants.explantsDateBoth} year${
-                    breastimplants.explantsDateBoth === "1" ? "" : "s"
-                  } ago`
-                : ""
-            }.`
-          : "."
-      }`;
+      text += `Breast implant present on the`;
+
+       text += ` left, ${
+          breastimplants.implantsSpecify.toLocaleLowerCase() !== "other"
+            ? breastimplants.implantsSpecify.toLocaleLowerCase()
+            : breastimplants.implantsOthersSpecify.toLocaleLowerCase()
+        } type, since ${breastimplants.implantDateLeft}${
+          breastimplants.explants === "Yes"
+            ? `,  explant done${
+                breastimplants.explantsDateKnown === "Yes"
+                  ? ` ${breastimplants.explantsDate}`
+                  : ""
+              }`
+            : ""
+        }`;
+
+        text += `${breastimplants.implantsRightSpecify.length > 0  ? `,` : ""} right, ${
+          breastimplants.implantsRightSpecify.toLocaleLowerCase() !== "other"
+            ? breastimplants.implantsRightSpecify.toLocaleLowerCase()
+            : breastimplants.implantsRightOthersSpecify.toLocaleLowerCase()
+        } type, since ${breastimplants.implantDateRight}${
+          breastimplants.explantsRight === "Yes"
+            ? `,  explant done${
+                breastimplants.explantsDateKnownRight === "Yes"
+                  ? ` ${breastimplants.explantsDateRight}`
+                  : ""
+              }`
+            : ""
+        }`;
+
+        text += `.`;
+
+
     } else if (
       breastimplants.implantLeft === "true" ||
       breastimplants.implantRight === "true" ||
@@ -442,15 +458,11 @@ export function SFormGeneration(
           breastimplants.implantsSpecify.toLocaleLowerCase() !== "other"
             ? breastimplants.implantsSpecify.toLocaleLowerCase()
             : breastimplants.implantsOthersSpecify.toLocaleLowerCase()
-        } type, since ${breastimplants.implantDateLeft} year${
-          breastimplants.implantDateLeft === "1" ? "" : "s"
-        }${
+        } type, since ${breastimplants.implantDateLeft}${
           breastimplants.explants === "Yes"
             ? `,  explant done${
                 breastimplants.explantsDateKnown === "Yes"
-                  ? ` ${breastimplants.explantsDate} year${
-                      breastimplants.explantsDate === "1" ? "" : "s"
-                    } ago`
+                  ? ` ${breastimplants.explantsDate}`
                   : ""
               }`
             : ""
@@ -461,15 +473,11 @@ export function SFormGeneration(
           breastimplants.implantsRightSpecify.toLocaleLowerCase() !== "other"
             ? breastimplants.implantsRightSpecify.toLocaleLowerCase()
             : breastimplants.implantsRightOthersSpecify.toLocaleLowerCase()
-        } type, since ${breastimplants.implantDateRight} year${
-          breastimplants.implantDateRight === "1" ? "" : "s"
-        }${
+        } type, since ${breastimplants.implantDateRight}${
           breastimplants.explantsRight === "Yes"
             ? `,  explant done${
                 breastimplants.explantsDateKnownRight === "Yes"
-                  ? ` ${breastimplants.explantsDateRight} year${
-                      breastimplants.explantsDateRight === "1" ? "" : "s"
-                    } ago`
+                  ? ` ${breastimplants.explantsDateRight}`
                   : ""
               }`
             : ""

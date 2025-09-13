@@ -74,7 +74,6 @@ import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
-
 export interface ReportQuestion {
   refRITFId?: number;
   questionId: number;
@@ -2380,6 +2379,40 @@ const Report: React.FC = () => {
     }
   }, [timeOut]);
 
+  const PatientStatusColor: React.FC<{ status: string }> = ({ status }) => {
+  switch (status) {
+    case "Patient Intake Form Fill":
+      return (
+        <span className="text-gray-400">
+          Patient Intake Form Fill Completed
+        </span>
+      );
+    case "Patient Intake Override Form Fill":
+      return (
+        <span className="text-gray-400">
+          Patient Intake Override Form Fill
+        </span>
+      );
+    case "Technologist Form Fill":
+      return <span className="text-gray-400">Technologist Form Fill</span>;
+    case "Predraft":
+      return <span className="text-[#8e7cc3]">Predraft</span>;
+    case "Draft":
+      return <span className="text-[#3c78d8]">Draft</span>;
+    case "Reviewed 1":
+      return <span className="text-[#e69138]">Reviewed 1</span>;
+    case "Reviewed 2":
+      return <span className="text-[#bf9000]">Reviewed 2</span>;
+    case "Signed Off":
+      return <span className="text-[#38761d]">Signed Off</span>;
+    case "Changes":
+      return <span className="text-gray-400">Saved Changes</span>;
+    default:
+      return <span className="text-gray-400">Unknown Status</span>;
+  }
+};
+
+
   return (
     <div className="h-dvh bg-[#edd1ce]">
       {/* <VoiceRecognition /> */}
@@ -2764,12 +2797,12 @@ const Report: React.FC = () => {
 
                         <td className="px-2 py-2 text-[10px] text-center font-semibold">
                           <span
-                            className={
-                              item.refRHHandleEndTime &&
-                              item.refRHHandleStatus !== "Changes"
-                                ? "text-green-600"
-                                : "text-gray-400"
-                            }
+                            // className={
+                            //   item.refRHHandleEndTime &&
+                            //   item.refRHHandleStatus !== "Changes"
+                            //     ? "text-green-600"
+                            //     : "text-gray-400"
+                            // }
                           >
                             {item.refRHHandleEndTime ? (
                               <>
@@ -2777,12 +2810,13 @@ const Report: React.FC = () => {
                                   <form>
                                     <DialogTrigger asChild>
                                       <div className="cursor-pointer">
-                                        {item.refRHHandleStatus === "Changes"
+                                        {/* {item.refRHHandleStatus === "Changes"
                                           ? "Saved Changes"
                                           : item.refRHHandleStatus +
-                                            " Completed"}
+                                            " Completed"} */}
                                         {/* {item.refRHHandleStatus +
                                               " Completed"} */}
+                                              <PatientStatusColor status={item.refRHHandleStatus} />
                                       </div>
                                     </DialogTrigger>
                                     <DialogContent className="">
@@ -2827,272 +2861,275 @@ const Report: React.FC = () => {
 
           {role?.type && (
             <>
-            <div className="text-sm text-center text-gray-500 mb-1">Status saver</div>
-            <div
-              className={`flex flex-wrap gap-2 ${
-                location?.readOnly ? "pointer-events-none" : ""
-              }`}
-            >
-              {/* Buttons */}
-              {/* {tab === 4 && subTab === 4 && ( */}
-              <>
+              <div className="text-sm text-center text-gray-500 mb-1">
+                Status saver
+              </div>
+              <div
+                className={`flex flex-wrap gap-2 ${
+                  location?.readOnly ? "pointer-events-none" : ""
+                }`}
+              >
+                {/* Buttons */}
+                {/* {tab === 4 && subTab === 4 && ( */}
+                <>
+                  <Button
+                    variant="greenTheme"
+                    className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                    onClick={() => setLoadTemplateStatus(true)}
+                    disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                  >
+                    Load Template
+                  </Button>
+
+                  <Dialog
+                    onOpenChange={setLoadTemplateStatus}
+                    open={loadTemplateStatus}
+                  >
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Load Template</DialogTitle>
+                      </DialogHeader>
+
+                      <div className="flex gap-4">
+                        <Input
+                          type="text"
+                          placeholder="Search template..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="mb-3 text-xs"
+                        />
+                        <PopoverDialog
+                          open={popoverOpen}
+                          onOpenChange={setPopoverOpen}
+                        >
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <PopoverTriggerDialog asChild>
+                              <Button
+                                variant="greenTheme"
+                                className="text-xs text-white"
+                                onClick={() => setPopoverOpen(true)}
+                              >
+                                <Plus size={16} />
+                              </Button>
+                            </PopoverTriggerDialog>
+                            <PopoverContentDialog className="w-80">
+                              <div className="grid gap-4">
+                                <div className="space-y-2">
+                                  <h4 className="leading-none font-medium">
+                                    Upload New Template
+                                  </h4>
+                                </div>
+                                <form
+                                  onSubmit={(e) => {
+                                    e.preventDefault();
+                                    uploadReportFormate();
+                                  }}
+                                >
+                                  <div className="grid gap-2">
+                                    <div className="flex flex-col gap-2">
+                                      <Label htmlFor="width">Name</Label>
+                                      <Input
+                                        id="name"
+                                        className="col-span-2 h-8"
+                                        value={fileName}
+                                        onChange={(e) => {
+                                          setFilename(e.target.value);
+                                        }}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                      <Label htmlFor="width">Upload File</Label>
+                                      <Input
+                                        id="file"
+                                        type="file"
+                                        accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        className="col-span-2 h-8"
+                                        // value={fileName}
+                                        onChange={handleFileChange}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                      <Button
+                                        variant="greenTheme"
+                                        className="text-xs text-white"
+                                        type="submit"
+                                      >
+                                        {popoverLoading ? (
+                                          <Loader className="animate-spin w-4 h-4" />
+                                        ) : (
+                                          "Upload Template"
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </PopoverContentDialog>
+                          </div>
+                        </PopoverDialog>
+                      </div>
+
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {filteredTemplates.length > 0 ? (
+                          filteredTemplates.map((data: any) => (
+                            <div
+                              key={data.refRFId}
+                              className="text-xs px-3 py-2 rounded-sm border border-gray-200"
+                            >
+                              <div className=" flex justify-between items-center">
+                                <div>{data.refRFName}</div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="greenTheme"
+                                    className="text-xs text-white px-3 py-1 h-6"
+                                    onClick={() => {
+                                      !loadingStatus &&
+                                        getTemplate(data.refRFId);
+                                    }}
+                                  >
+                                    {loadingStatus === data.refRFId ? (
+                                      <Loader className="animate-spin w-4 h-4" />
+                                    ) : (
+                                      "Load"
+                                    )}
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    className="text-xs text-white px-3 py-1 h-6"
+                                    onClick={() => {
+                                      !deleteLoadingStatus &&
+                                        deleteTemplate(data.refRFId);
+                                    }}
+                                  >
+                                    {deleteLoadingStatus === data.refRFId ? (
+                                      <Loader className="animate-spin w-4 h-4" />
+                                    ) : (
+                                      <Trash />
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                              {role.id === 1 && (
+                                <div>
+                                  Created By:{" "}
+                                  <strong>{data.refUserCustId}</strong>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center text-sm text-gray-500">
+                            No templates found.
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </>
+                {/* )} */}
                 <Button
+                  // key={index}
                   variant="greenTheme"
-                  className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
-                  onClick={() => setLoadTemplateStatus(true)}
-                  disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                  onClick={ReportResetAll}
+                  // disabled={!isAllowed}
+                  // hidden={
+                  //   label == "Insert Signature" &&
+                  //   !(tab === 4 && subTab === 4)
+                  // }
                 >
-                  Load Template
+                  Reset to Default
                 </Button>
 
-                <Dialog
-                  onOpenChange={setLoadTemplateStatus}
-                  open={loadTemplateStatus}
-                >
-                  <DialogContent className="sm:max-w-md">
+                {reportStages.map(({ label, editStatus, status }, index) => {
+                  const isAllowed = stageRoleMap[label]?.includes(role?.type);
+
+                  const handleClick = () => {
+                    if (!isAllowed) return;
+
+                    if (label === "Sign Off") {
+                      setShowMailDialog(true); // open dialog
+                    } else if (status == "" && label == "Insert Signature") {
+                      const date = new Date().toLocaleDateString();
+                      console.log(userDetails);
+                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+
+                      const notesData = Notes + signatureRow;
+                      setNotes(notesData);
+                      setsyncStatus({
+                        ...syncStatus,
+                        Notes: false,
+                      });
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        syncStatus: true,
+                        reportTextContent: true,
+                      }));
+                    } else {
+                      handleReportSubmit(status, editStatus); // directly call
+                    }
+                  };
+
+                  return (
+                    <Button
+                      key={index}
+                      variant="greenTheme"
+                      className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                      onClick={handleClick}
+                      disabled={!isAllowed}
+                      hidden={
+                        label == "Insert Signature" &&
+                        !(tab === 4 && subTab === 4)
+                      }
+                    >
+                      {label}
+                    </Button>
+                  );
+                })}
+                <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
+                  <DialogContent className="sm:max-w-[400px]">
                     <DialogHeader>
-                      <DialogTitle>Load Template</DialogTitle>
+                      <DialogTitle>Select Email Recipients</DialogTitle>
+                      <DialogDescription>
+                        Select recipients to proceed with sending the email.
+                      </DialogDescription>
                     </DialogHeader>
 
-                    <div className="flex gap-4">
-                      <Input
-                        type="text"
-                        placeholder="Search template..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mb-3 text-xs"
-                      />
-                      <PopoverDialog
-                        open={popoverOpen}
-                        onOpenChange={setPopoverOpen}
-                      >
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <PopoverTriggerDialog asChild>
-                            <Button
-                              variant="greenTheme"
-                              className="text-xs text-white"
-                              onClick={() => setPopoverOpen(true)}
-                            >
-                              <Plus size={16} />
-                            </Button>
-                          </PopoverTriggerDialog>
-                          <PopoverContentDialog className="w-80">
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="leading-none font-medium">
-                                  Upload New Template
-                                </h4>
-                              </div>
-                              <form
-                                onSubmit={(e) => {
-                                  e.preventDefault();
-                                  uploadReportFormate();
-                                }}
-                              >
-                                <div className="grid gap-2">
-                                  <div className="flex flex-col gap-2">
-                                    <Label htmlFor="width">Name</Label>
-                                    <Input
-                                      id="name"
-                                      className="col-span-2 h-8"
-                                      value={fileName}
-                                      onChange={(e) => {
-                                        setFilename(e.target.value);
-                                      }}
-                                      required
-                                    />
-                                  </div>
-                                  <div className="flex flex-col gap-2">
-                                    <Label htmlFor="width">Upload File</Label>
-                                    <Input
-                                      id="file"
-                                      type="file"
-                                      accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                      className="col-span-2 h-8"
-                                      // value={fileName}
-                                      onChange={handleFileChange}
-                                      required
-                                    />
-                                  </div>
-                                  <div className="flex flex-col gap-2">
-                                    <Button
-                                      variant="greenTheme"
-                                      className="text-xs text-white"
-                                      type="submit"
-                                    >
-                                      {popoverLoading ? (
-                                        <Loader className="animate-spin w-4 h-4" />
-                                      ) : (
-                                        "Upload Template"
-                                      )}
-                                    </Button>
-                                  </div>
-                                </div>
-                              </form>
-                            </div>
-                          </PopoverContentDialog>
-                        </div>
-                      </PopoverDialog>
+                    <div>
+                      <Select value={mailOption} onValueChange={setMailOption}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Choose recipient" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="patient">Patient</SelectItem>
+                          <SelectItem value="scancenter">
+                            Scan Center Manager
+                          </SelectItem>
+                          <SelectItem value="both">
+                            Patient and Scan Center Manager
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    <div className="space-y-2 max-h-64 overflow-y-auto">
-                      {filteredTemplates.length > 0 ? (
-                        filteredTemplates.map((data: any) => (
-                          <div
-                            key={data.refRFId}
-                            className="text-xs px-3 py-2 rounded-sm border border-gray-200"
-                          >
-                            <div className=" flex justify-between items-center">
-                              <div>{data.refRFName}</div>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="greenTheme"
-                                  className="text-xs text-white px-3 py-1 h-6"
-                                  onClick={() => {
-                                    !loadingStatus && getTemplate(data.refRFId);
-                                  }}
-                                >
-                                  {loadingStatus === data.refRFId ? (
-                                    <Loader className="animate-spin w-4 h-4" />
-                                  ) : (
-                                    "Load"
-                                  )}
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  className="text-xs text-white px-3 py-1 h-6"
-                                  onClick={() => {
-                                    !deleteLoadingStatus &&
-                                      deleteTemplate(data.refRFId);
-                                  }}
-                                >
-                                  {deleteLoadingStatus === data.refRFId ? (
-                                    <Loader className="animate-spin w-4 h-4" />
-                                  ) : (
-                                    <Trash />
-                                  )}
-                                </Button>
-                              </div>
-                            </div>
-                            {role.id === 1 && (
-                              <div>
-                                Created By:{" "}
-                                <strong>{data.refUserCustId}</strong>
-                              </div>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center text-sm text-gray-500">
-                          No templates found.
-                        </div>
-                      )}
-                    </div>
+                    <DialogFooter>
+                      <Button
+                        variant="greenTheme"
+                        disabled={!mailOption}
+                        onClick={() => {
+                          setShowMailDialog(false);
+                          handleReportSubmit("Signed Off", false); // Pass what you need
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </DialogFooter>
                   </DialogContent>
                 </Dialog>
-              </>
-              {/* )} */}
-              <Button
-                // key={index}
-                variant="greenTheme"
-                className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                onClick={ReportResetAll}
-                // disabled={!isAllowed}
-                // hidden={
-                //   label == "Insert Signature" &&
-                //   !(tab === 4 && subTab === 4)
-                // }
-              >
-                Reset to Default
-              </Button>
-
-              {reportStages.map(({ label, editStatus, status }, index) => {
-                const isAllowed = stageRoleMap[label]?.includes(role?.type);
-
-                const handleClick = () => {
-                  if (!isAllowed) return;
-
-                  if (label === "Sign Off") {
-                    setShowMailDialog(true); // open dialog
-                  } else if (status == "" && label == "Insert Signature") {
-                    const date = new Date().toLocaleDateString();
-                    console.log(userDetails);
-                    const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
-
-                    const notesData = Notes + signatureRow;
-                    setNotes(notesData);
-                    setsyncStatus({
-                      ...syncStatus,
-                      Notes: false,
-                    });
-                    setChangedOne((prev) => ({
-                      ...prev,
-                      syncStatus: true,
-                      reportTextContent: true,
-                    }));
-                  } else {
-                    handleReportSubmit(status, editStatus); // directly call
-                  }
-                };
-
-                return (
-                  <Button
-                    key={index}
-                    variant="greenTheme"
-                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                    onClick={handleClick}
-                    disabled={!isAllowed}
-                    hidden={
-                      label == "Insert Signature" &&
-                      !(tab === 4 && subTab === 4)
-                    }
-                  >
-                    {label}
-                  </Button>
-                );
-              })}
-              <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
-                <DialogContent className="sm:max-w-[400px]">
-                  <DialogHeader>
-                    <DialogTitle>Select Email Recipients</DialogTitle>
-                    <DialogDescription>
-                      Select recipients to proceed with sending the email.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div>
-                    <Select value={mailOption} onValueChange={setMailOption}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose recipient" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="patient">Patient</SelectItem>
-                        <SelectItem value="scancenter">
-                          Scan Center Manager
-                        </SelectItem>
-                        <SelectItem value="both">
-                          Patient and Scan Center Manager
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <DialogFooter>
-                    <Button
-                      variant="greenTheme"
-                      disabled={!mailOption}
-                      onClick={() => {
-                        setShowMailDialog(false);
-                        handleReportSubmit("Signed Off", false); // Pass what you need
-                      }}
-                    >
-                      Submit
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
+              </div>
             </>
           )}
         </div>
