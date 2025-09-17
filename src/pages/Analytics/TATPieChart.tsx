@@ -13,6 +13,7 @@ interface TATPieChartProps {
 }
 
 export function TATPieChart({ data }: TATPieChartProps) {
+  console.log("_______________>>>>",data);
   const stat = data[0] ?? {
     gt_10_days: 0,
     le_1_day: 0,

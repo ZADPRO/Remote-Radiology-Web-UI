@@ -202,7 +202,7 @@ export const impressionRecommendation = [
       },
       {
         id: "3b",
-        impression: "Indeterminate: cyts",
+        impression: "Indeterminate: Calcifications",
         impressionText:
           "The examination demonstrates calcifications as described in the detailed findings. These calcium deposits require further evaluation and follow-up to determine their clinical significance.",
         impressionTextColor: "#829c70",
@@ -215,7 +215,7 @@ export const impressionRecommendation = [
       },
       {
         id: "3c",
-        impression: "Indeterminate: Calcifications",
+        impression: "Indeterminate:  Cysts",
         impressionText:
           "The examination shows changes in breast tissue that may represent cysts (fluid-filled spaces). While cysts are typically benign, further evaluation is needed to confirm this diagnosis.",
         impressionTextColor: "#829c70",

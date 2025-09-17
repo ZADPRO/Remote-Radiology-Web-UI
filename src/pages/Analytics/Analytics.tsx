@@ -225,6 +225,7 @@ const Analytics: React.FC = () => {
 
   const fetchOverallScanCenter = async (scId: number) => {
     try {
+      console.log("Hiii I am FRom fetch Scan Center")
       if (!dateRange.from || !dateRange.to) {
         console.error("Date range is incomplete.");
         return;
@@ -276,7 +277,7 @@ const Analytics: React.FC = () => {
           Redo: getCount(res.RightRecommendation, "Redo"),
           USGSFU: getCount(res.RightRecommendation, "USG/ SFU"), // note exact name in your array
         });
-        setTatStats([]);
+        // setTatStats([]);
         setTechArtifacts(res.TechArtificate || []);
         setReportArtifacts(res.ReportArtificate || []);
       }
@@ -304,7 +305,8 @@ const Analytics: React.FC = () => {
         format(dateRange?.to, "yyyy-MM-dd")
       );
       if (res.status) {
-        console.log("---->", res);
+              console.log("Hiii I am FRom fetch User")
+        console.log("---->", res.DurationBucketModel ? res.DurationBucketModel : []);
 
         setUserOverAllAnalaytics(
           res.OverAllAnalytics ? res.OverAllAnalytics : []
@@ -377,7 +379,7 @@ const Analytics: React.FC = () => {
     )
       return;
     // setTempRole({ id: 0, type: "" });
-    setTatStats([]);
+    // setTatStats([]);
 
     if (["admin", "scadmin"].includes(role.type)) {
       if (userSelectedValue) {

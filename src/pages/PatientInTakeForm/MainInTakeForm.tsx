@@ -168,7 +168,6 @@ const MainInTakeForm: React.FC<Props> = ({
         : setSelectedOption(
             formData.find((item) => item.questionId === 170)?.answer || ""
           );
-          
     } else {
       // Suggestion logic
       let suggestion = "";
@@ -291,22 +290,20 @@ const MainInTakeForm: React.FC<Props> = ({
             <ArrowLeft />
             <span className="text-lg font-semibold">Back</span>
           </Button>
-          {
-            !patientDetails?.reportview && (
-              <>
+          {!patientDetails?.reportview && (
+            <>
               <img
-            src={logo}
-            alt="logo"
-            className="hidden lg:block h-20 w-40 pr-2 object-contain"
-          />
-          <img
-            src={logo}
-            alt="logo"
-            className="lg:hidden h-20 w-40 object-contain"
-          />
-              </>
-            )
-          }
+                src={logo}
+                alt="logo"
+                className="hidden lg:block h-20 w-40 pr-2 object-contain"
+              />
+              <img
+                src={logo}
+                alt="logo"
+                className="lg:hidden h-20 w-40 object-contain"
+              />
+            </>
+          )}
         </div>
 
         {/* Content Centered Vertically */}
@@ -348,27 +345,25 @@ const MainInTakeForm: React.FC<Props> = ({
 
       {/* Right Panel */}
       <div className="w-full lg:w-1/2 lg:p-6 flex flex-col items-end lg:overflow-auto border lg:border-none border-gray-500 rounded-lg">
-        {
-          !patientDetails?.reportview && (
-            <div className="hidden lg:inline h-20 w-70 mb-10 self-end">
-          <div className="h-18 bg-[#fff] font-semibold flex flex-col items-start justify-center w-70 rounded p-3 my-5 text-sm self-end">
-            <div className="capitalize flex">
-              <div className="flex w-[6rem]">Patient Name</div>{" "}
-              <div>: {patientDetails?.name}</div>
+        {!patientDetails?.reportview && (
+          <div className="hidden lg:inline h-20 w-70 mb-10 self-end">
+            <div className="h-18 bg-[#fff] font-semibold flex flex-col items-start justify-center w-70 rounded p-3 my-5 text-sm self-end">
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient Name</div>{" "}
+                <div>: {patientDetails?.name}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Patient ID</div>{" "}
+                <div>: {patientDetails?.custId}</div>
+              </div>
+              <div className="capitalize flex">
+                <div className="flex w-[6rem]">Scan Center</div>{" "}
+                <div>: {patientDetails?.scancenterCustId}</div>
+              </div>
+              {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
             </div>
-            <div className="capitalize flex">
-              <div className="flex w-[6rem]">Patient ID</div>{" "}
-              <div>: {patientDetails?.custId}</div>
-            </div>
-            <div className="capitalize flex">
-              <div className="flex w-[6rem]">Scan Center</div>{" "}
-              <div>: {patientDetails?.scancenterCustId}</div>
-            </div>
-            {/* <img src={logo} alt="logo" className="w-full h-full object-contain" /> */}
           </div>
-        </div>
-          )
-        }
+        )}
 
         {selectedOption && (
           <div className="w-full">
@@ -438,12 +433,14 @@ const MainInTakeForm: React.FC<Props> = ({
               </div>
             </div>
 
-            {formData.some(
+            {(formData.some(
               (item) =>
                 item.answer === "true" &&
                 item.questionId >= 171 &&
                 item.questionId <= 201
-            ) && (
+            ) ||
+              (formData.find((item) => item.questionId === 485)?.answer
+                ?.length ?? 0) > 0) && (
               <div className="hidden lg:inline">
                 <div className="w-2/3 flex flex-col align-items justify-center mt-4 mx-auto gap-4">
                   {selectedOption === "1" ? (
@@ -468,12 +465,14 @@ const MainInTakeForm: React.FC<Props> = ({
           </div>
         )}
       </div>
-      {formData.some(
+      {(formData.some(
         (item) =>
           item.answer === "true" &&
           item.questionId >= 171 &&
           item.questionId <= 201
-      ) && (
+      ) ||
+        (formData.find((item) => item.questionId === 485)?.answer?.length ??
+          0) > 0) && (
         <div className="inline lg:hidden mt-4">
           <div className="flex flex-col gap-2 items-center ">
             {selectedOption === "1" ? (

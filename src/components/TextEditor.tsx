@@ -6,6 +6,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { Mic, MicOff } from "lucide-react";
+import { useAuth } from "@/pages/Routes/AuthContext";
 
 interface TextEditorProps {
   value: string;
@@ -47,6 +48,8 @@ const TextEditor: React.FC<TextEditorProps> = ({
   // >(null);
 
   // Update the editor with the full transcript
+
+  const { role } = useAuth();
 
   const restoreMedicalTerms = (text: string) => {
     return text.replace(/\*{3,}/g, (match) => {
@@ -115,9 +118,19 @@ const TextEditor: React.FC<TextEditorProps> = ({
   //   // setTranscriptStartIndex(null); // Reset the start index
   // };
 
-  const stopListening = async() => {
+  const stopListening = async () => {
     setActive(false);
     await SpeechRecognition.abortListening(); // ensures mic is fully released
+  };
+
+  // Apply styles based on role
+  const applyRoleStyles = (editor: any) => {
+    if (role?.id === 8) {
+      const selection = editor.getSelection();
+      if (selection) {
+        editor.format("background", "#ffc266"); // Apply to current selection
+      }
+    }
   };
 
   // Manual edit tracker
@@ -128,6 +141,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
     const handleTextChange = (_delta: any, _oldDelta: any, source: string) => {
       if (source === "user") {
         onManualEdit?.();
+        applyRoleStyles(editor);
       }
     };
 
@@ -144,6 +158,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
     const handleSelectionChange = (range: any) => {
       if (range) {
+        applyRoleStyles(editor);
         setFocused(true);
       } else {
         setFocused(false);
@@ -165,9 +180,31 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
+
+  useEffect(() => {
+    const editorEl = quillRef.current?.editor?.root;
+    if (!editorEl) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && role?.id === 8) {
+        const editor = quillRef.current?.getEditor();
+        if (editor) {
+          setTimeout(() => {
+            applyRoleStyles(editor); // re-apply after line break
+          }, 0);
+        }
+      }
+    };
+
+    editorEl.addEventListener("keydown", handleKeyDown);
+    return () => {
+      editorEl.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [role]);
+
   return (
     <div
-      className={`relative border rounded-xl bg-background p-4 shadow-sm ${className} ${
+      className={`flex flex-col justify-center items-center border rounded-xl bg-background p-4 shadow-sm ${className} ${
         readOnly ? "cursor-not-allowed" : ""
       }`}
     >
@@ -179,6 +216,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
       <QuillToolbar id={toolbarId} />
       <ReactQuill
+        className="w-[555px]"
         ref={quillRef}
         value={value}
         onChange={onChange}
@@ -192,7 +230,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       <div className="w-full flex justify-end items-center mt-2">
         {/* Mic button – scoped to this editor */}
         {focused && !readOnly && (
-          <button
+          <button 	
             type="button"
             onMouseDown={(e) => e.preventDefault()} // keep focus in editor
             onClick={listening ? stopListening : startListening}

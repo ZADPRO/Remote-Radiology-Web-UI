@@ -190,7 +190,6 @@ const GeneralReport: React.FC<RightReportProps> = ({
             <div className="flex justify-between mb-2">
               <span className="text-2xl">Image Preview</span>
             </div>
-
             <TextEditor
               value={textEditor.breastImplantImage.value}
               onChange={textEditor.breastImplantImage.onChange}
@@ -297,7 +296,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
             <div className="flex justify-between mb-2">
               <span className="text-2xl">Image Preview</span>
             </div>
-
+            {textEditor.symmetryImage.value}
             <TextEditor
               value={textEditor.symmetryImage.value}
               onChange={textEditor.symmetryImage.onChange}

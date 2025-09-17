@@ -19,6 +19,7 @@ import {
   FinalAddendumText,
   ReportHistoryData,
   reportService,
+  GetOldReport
 } from "@/services/reportService";
 import { ArrowLeft, Loader } from "lucide-react";
 import {
@@ -74,6 +75,7 @@ import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
+
 export interface ReportQuestion {
   refRITFId?: number;
   questionId: number;
@@ -127,6 +129,7 @@ interface ReportTemplate {
   refRFCreatedBy: number;
   refRFCreatedAt: string;
   refUserCustId: string;
+  refRFAccessStatus: string;
 }
 
 type ReportStageLabel =
@@ -222,7 +225,7 @@ const Report: React.FC = () => {
 
   // const [selected, setSelected] = useState<"correct" | "edit">("correct");
 
-  const { role } = useAuth();
+  const { role, user } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation().state;
@@ -360,33 +363,33 @@ const Report: React.FC = () => {
       const categoryId = assignData?.appointmentStatus[0]?.refCategoryId;
 
       if (categoryId === 1) {
-        reason += `<div><strong>Indication:</strong> Screening<br/>
+        reason += `<div><strong>Indication:</strong> Screening : Routine Annual Checkup.<br/>
         <div><strong>History: </strong><br/>
-          <div><strong>Reason for having this QT scan: </strong>
+          <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> S. Routine Breast Screening (For Routine Screening first-time or annual checkup with No Prior Abnormal Findings)</p>`;
       } else if (categoryId === 2) {
         // reason += "" + DaFormReportGenerator(responsePatientInTake);
-        reason += `<div><strong>Indication:</strong> Abnormal Symptom or Imaging<br/>
+        reason += `<div><strong>Indication:</strong> Diagnostic : For further evaluation of an Abnormal Symptom  or Image finding.<br/>
         <div><strong>History: </strong><br/>
-          <div><strong>Reason for having this QT scan: </strong>
+          <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
         // reason += DbFormReportGenerator(responsePatientInTake);
-        reason += `<div><strong>Indication:</strong> Biopsy Proven Disease<br/>
+        reason += `<div><strong>Indication:</strong> Diagnostic : For further evaluation of a biopsy diagnosis.<br/>
         <div><strong>History: </strong><br/>
-          <div><strong>Reason for having this QT scan: </strong>
+          <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Db. Diagnostic - Biopsy Confirmed DCIS or Breast Cancer Diagnosis</p>`;
       } else if (categoryId === 4) {
         // reason += DcFormGeneration(responsePatientInTake);
-        reason += `<div><strong>Indication:</strong> Comparison to Prior<br/>
+        reason += `<div><strong>Indication:</strong> Comparative Study as follow up to a prior QT scan.<br/>
         <div><strong>History: </strong><br/>
-          <div><strong>Reason for having this QT scan: </strong>
+          <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
         `;
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
@@ -577,6 +580,8 @@ const Report: React.FC = () => {
     ResponseTechnicianForm[]
   >([]);
 
+  const [oldReport, setOldReport] = useState<GetOldReport[]>([]);
+
   const [loadTemplateStatus, setLoadTemplateStatus] = useState(false);
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -584,6 +589,7 @@ const Report: React.FC = () => {
   const [deleteLoadingStatus, setDeleteLoadingStatus] = useState(0);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [fileName, setFilename] = useState("");
+  const [accessStatus, setAccessStatus] = useState("private");
   const [fileData, setFileData] = useState("");
   const [popoverLoading, setPopoverLoading] = useState(false);
 
@@ -863,6 +869,7 @@ const Report: React.FC = () => {
         status: boolean;
         ScanCenterImg: FileData;
         ScancenterAddress: string;
+        oldReport: GetOldReport[];
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -876,6 +883,24 @@ const Report: React.FC = () => {
         setScanCenterImg(response.ScanCenterImg);
         setScanCenterAddress(response.ScancenterAddress);
         setScanCenterImg(response.ScanCenterImg);
+        setOldReport(response.oldReport || [])
+
+        if (
+          response.appointmentStatus[0]
+            .refAppointmentImpressionAdditionalRight !==
+          optionalImpressionRecommendation.selectedImpressionIdRight ||
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight !==
+          optionalImpressionRecommendation.selectedRecommendationIdRight ||
+          response.appointmentStatus[0].refAppointmentImpressionAdditional !==
+          optionalImpressionRecommendation.selectedImpressionId ||
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditional !==
+          optionalImpressionRecommendation.selectedRecommendationId
+        ) {
+          setAdditionalChangesChangeStatus(!additionalChangesChangeStatus);
+        }
+
         setAssignData({
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [],
@@ -893,6 +918,7 @@ const Report: React.FC = () => {
           selectedRecommendationIdRight:
             response.appointmentStatus[0].refAppointmentRecommendationRight,
         }));
+
         setOptionalImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
@@ -907,6 +933,7 @@ const Report: React.FC = () => {
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditionalRight,
         }));
+
         setShowOptional(() => ({
           impression:
             response.appointmentStatus[0].refAppointmentImpressionAdditional !=
@@ -931,7 +958,10 @@ const Report: React.FC = () => {
               .refAppointmentCommonImpressionRecommendationRight,
         }));
 
-        if (response.appointmentStatus[0].refAppointmentPatietHistory) {
+        if (
+          response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
+          false
+        ) {
           setPatientHistory(
             response.appointmentStatus[0].refAppointmentPatietHistory
           );
@@ -1321,8 +1351,8 @@ const Report: React.FC = () => {
       23: getReportAnswer(23) === "" || "Normal" ? "Normal" : "",
       18:
         getReportAnswer(18) === "" ||
-        getPatientAnswer("Right" === "Right" ? 112 : 113) ||
-        "Absent"
+          getPatientAnswer("Right" === "Right" ? 112 : 113) ||
+          "Absent"
           ? getPatientAnswer("Right" === "Right" ? 112 : 113) || "Absent"
           : "",
       112: getReportAnswer(112) === "" || "Present" ? "Present" : "",
@@ -1462,7 +1492,7 @@ const Report: React.FC = () => {
         id: number;
         status: boolean;
         refUserCustId: string;
-      } = await reportService.uploadTemplate(fileName, fileData);
+      } = await reportService.uploadTemplate(fileName, fileData, accessStatus);
 
       console.log(response);
 
@@ -1471,15 +1501,17 @@ const Report: React.FC = () => {
           {
             refRFName: fileName,
             refRFId: response.id,
-            refRFCreatedBy: 0,
+            refRFCreatedBy: user?.refUserId,
             refRFCreatedAt: "",
             refUserCustId: response.refUserCustId,
+            refRFAccessStatus: accessStatus,
           },
           ...prev,
         ]);
         setPopoverOpen(false);
         setFileData("");
         setFilename("");
+        setAccessStatus("private");
       }
     } catch (error) {
       console.log(error);
@@ -1503,6 +1535,26 @@ const Report: React.FC = () => {
     setDeleteLoadingStatus(0);
   };
 
+  const updateTemplate = async (id: number, accessStatus: string) => {
+    try {
+      const response: {
+        status: boolean;
+      } = await reportService.updateTemplate(id, accessStatus);
+
+      if (response.status) {
+        setTemplates((prevTemplates) =>
+          prevTemplates.map((template) =>
+            template.refRFId === id
+              ? { ...template, refRFAccessStatus: accessStatus }
+              : template
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getTemplate = async (id: number) => {
     setLoadingStatus(id);
     try {
@@ -1518,11 +1570,10 @@ const Report: React.FC = () => {
           `
           <div>
    <div style="text-align: right;">
-  ${
-    ScanCenterImg?.base64Data
-      ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="100" height="100"/>`
-      : ""
-  }
+  ${ScanCenterImg?.base64Data
+            ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="100" height="100"/>`
+            : ""
+          }
 </div>
       </div>
            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -1530,40 +1581,35 @@ const Report: React.FC = () => {
                 <tr>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(
-                      1
-                    )}</td>
+            1
+          )}</td>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${
-                      getPatientAnswer(2)
-                        ? formatDateWithAge(getPatientAnswer(2))
-                        : ""
-                    }</td>
+                    <td style="border: 1px solid #000; padding: 4px;">${getPatientAnswer(2)
+            ? formatDateWithAge(getPatientAnswer(2))
+            : ""
+          }</td>
                                 </tr>
                                 <tr>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
-                                    <td style="border: 1px solid #000; padding: 4px;"> ${
-                                      getPatientAnswer(6) === "female"
-                                        ? "F"
-                                        : getPatientAnswer(6).toUpperCase()
-                                    }</td>
+                                    <td style="border: 1px solid #000; padding: 4px;"> ${getPatientAnswer(6) === "female"
+            ? "F"
+            : getPatientAnswer(6).toUpperCase()
+          }</td>
                                     <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${
-                      assignData?.appointmentStatus[0]?.refSCCustId
-                    }, ${ScanCenterAddress}</td>
+                    <td style="border: 1px solid #000; padding: 4px;">${assignData?.appointmentStatus[0]?.refSCCustId
+          }, ${ScanCenterAddress}</td>
                 </tr>
                 <tr>
                 <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${
-                      patientDetails.refUserCustId
-                    }</td>
+                    <td style="border: 1px solid #000; padding: 4px;">${patientDetails.refUserCustId
+          }</td>
                     <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
-                    <td style="border: 1px solid #000; padding: 4px;">${
-                      assignData?.appointmentStatus[0]?.refAppointmentDate
-                        ? formatReadableDate(
-                            assignData?.appointmentStatus[0]?.refAppointmentDate
-                          )
-                        : ""
-                    }</td>
+                    <td style="border: 1px solid #000; padding: 4px;">${assignData?.appointmentStatus[0]?.refAppointmentDate
+            ? formatReadableDate(
+              assignData?.appointmentStatus[0]?.refAppointmentDate
+            )
+            : ""
+          }</td>
                     
                 </tr>
             </table>
@@ -1582,8 +1628,8 @@ const Report: React.FC = () => {
     <br />
     
             ` +
-            response.message[0].refRFText +
-            `
+          response.message[0].refRFText +
+          `
             <br/>
              <h3><strong>RIGHT BREAST:</strong></h3>
   <p><strong>IMPRESSION:</strong></p>
@@ -1765,6 +1811,12 @@ const Report: React.FC = () => {
     setOpenReportPreviewData(getPatientAnswer(questionId));
   };
 
+  const getOldReport = async (data: string) => {
+    setOpenReportPreview(true);
+    setOpenReportPreviewCurrent(1);
+    setOpenReportPreviewData(data);
+  };
+
   const [timeOut, setTimeOut] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimer = (delay = 5000) => {
@@ -1830,8 +1882,8 @@ const Report: React.FC = () => {
       reportIntakeForm:
         changedOne.reportQuestion.length > 0
           ? reportFormData.filter((item) =>
-              changedOne.reportQuestion.includes(item.questionId)
-            )
+            changedOne.reportQuestion.includes(item.questionId)
+          )
           : [],
       reportTextContent: Notes,
       appointmentId: stateData.appointmentId,
@@ -1854,12 +1906,12 @@ const Report: React.FC = () => {
       commonImpressionRecommendationRight: commonImpressRecomm.idRight,
       artificatsLeft:
         getReportAnswer(breastDensityandImageLeftQuestions.artifactsPresent) ==
-        "Yes"
+          "Yes"
           ? true
           : false,
       artificatsRight:
         getReportAnswer(breastDensityandImageRightQuestions.artifactsPresent) ==
-        "Yes"
+          "Yes"
           ? true
           : false,
       patienthistory: patientHistory,
@@ -1916,23 +1968,19 @@ const Report: React.FC = () => {
       easeQTReportAccess: boolean;
     } = await reportService.autosaveReport(payload);
     console.log("#########", payload.changedOne.reportQuestion);
-    console.log(
-      "#########",
-      response.appointmentStatus[0].refAppointmentImpressionAdditionalRight
-    );
 
     if (response.status) {
       if (
         response.appointmentStatus[0]
           .refAppointmentImpressionAdditionalRight !==
-          optionalImpressionRecommendation.selectedImpressionIdRight ||
+        optionalImpressionRecommendation.selectedImpressionIdRight ||
         response.appointmentStatus[0]
           .refAppointmentRecommendationAdditionalRight !==
-          optionalImpressionRecommendation.selectedRecommendationIdRight ||
+        optionalImpressionRecommendation.selectedRecommendationIdRight ||
         response.appointmentStatus[0].refAppointmentImpressionAdditional !==
-          optionalImpressionRecommendation.selectedImpressionId ||
+        optionalImpressionRecommendation.selectedImpressionId ||
         response.appointmentStatus[0].refAppointmentRecommendationAdditional !==
-          optionalImpressionRecommendation.selectedRecommendationId
+        optionalImpressionRecommendation.selectedRecommendationId
       ) {
         setAdditionalChangesChangeStatus(!additionalChangesChangeStatus);
       }
@@ -1954,6 +2002,7 @@ const Report: React.FC = () => {
         selectedRecommendationIdRight:
           response.appointmentStatus[0].refAppointmentRecommendationRight,
       }));
+
       setOptionalImpressionRecommendation((prev) => ({
         ...prev,
         selectedImpressionId:
@@ -2380,38 +2429,77 @@ const Report: React.FC = () => {
   }, [timeOut]);
 
   const PatientStatusColor: React.FC<{ status: string }> = ({ status }) => {
-  switch (status) {
-    case "Patient Intake Form Fill":
-      return (
-        <span className="text-gray-400">
-          Patient Intake Form Fill Completed
-        </span>
-      );
-    case "Patient Intake Override Form Fill":
-      return (
-        <span className="text-gray-400">
-          Patient Intake Override Form Fill
-        </span>
-      );
-    case "Technologist Form Fill":
-      return <span className="text-gray-400">Technologist Form Fill</span>;
-    case "Predraft":
-      return <span className="text-[#8e7cc3]">Predraft</span>;
-    case "Draft":
-      return <span className="text-[#3c78d8]">Draft</span>;
-    case "Reviewed 1":
-      return <span className="text-[#e69138]">Reviewed 1</span>;
-    case "Reviewed 2":
-      return <span className="text-[#bf9000]">Reviewed 2</span>;
-    case "Signed Off":
-      return <span className="text-[#38761d]">Signed Off</span>;
-    case "Changes":
-      return <span className="text-gray-400">Saved Changes</span>;
-    default:
-      return <span className="text-gray-400">Unknown Status</span>;
-  }
-};
+    switch (status) {
+      case "Patient Intake Form Fill":
+        return (
+          <span className="text-gray-400">
+            Patient Intake Form Fill Completed
+          </span>
+        );
+      case "Patient Intake Override Form Fill":
+        return (
+          <span className="text-gray-400">
+            Patient Intake Override Form Fill
+          </span>
+        );
+      case "Technologist Form Fill":
+        return <span className="text-gray-400">Technologist Form Fill</span>;
+      case "Predraft":
+        return <span className="text-[#8e7cc3]">Predraft</span>;
+      case "Draft":
+        return <span className="text-[#3c78d8]">Draft</span>;
+      case "Reviewed 1":
+        return <span className="text-[#e69138]">Reviewed 1</span>;
+      case "Reviewed 2":
+        return <span className="text-[#bf9000]">Reviewed 2</span>;
+      case "Signed Off":
+        return <span className="text-[#38761d]">Signed Off</span>;
+      case "Changes":
+        return <span className="text-gray-400">Saved Changes</span>;
+      default:
+        return <span className="text-gray-400">Unknown Status</span>;
+    }
+  };
 
+  const menuOptions = [
+    {
+      label: "Thermogram",
+      indexVal: 1,
+    },
+    {
+      label: "Mammogram",
+      indexVal: 2,
+    },
+    {
+      label: "Breast Ultrasound / HERscan",
+      indexVal: 3,
+    },
+    {
+      label: "Breast MRI",
+      indexVal: 4,
+    },
+    {
+      label: "PET/CT Scan",
+      indexVal: 5,
+    },
+    {
+      label: "QT Imaging",
+      indexVal: 6,
+    },
+    {
+      label:
+        "Other Imaging or Scans",
+      indexVal: 7,
+    },
+    {
+      label: "Biopsy Report",
+      indexVal: 8,
+    },
+    {
+      label: "Other Report",
+      indexVal: 9,
+    },
+  ];
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -2517,11 +2605,10 @@ const Report: React.FC = () => {
               onClick={() => {
                 setTab(value);
               }}
-              className={`flex-1 flex items-center justify-center text-sm 2xl:text-lg rounded-t-[2rem] border-t border-x font-semibold transition-all duration-150 relative ${
-                tab === value
-                  ? "bg-[#f8f4eb] rounded-t-[2rem] h-[95%] mt-auto shadow-md border-t"
-                  : "hover:bg-[#b8c2b5] rounded-t-[2rem] h-[85%] mt-auto border-t"
-              }transition-colors duration-50 ease-in cursor-pointer`}
+              className={`flex-1 flex items-center justify-center text-sm 2xl:text-lg rounded-t-[2rem] border-t border-x font-semibold transition-all duration-150 relative ${tab === value
+                ? "bg-[#f8f4eb] rounded-t-[2rem] h-[95%] mt-auto shadow-md border-t"
+                : "hover:bg-[#b8c2b5] rounded-t-[2rem] h-[85%] mt-auto border-t"
+                }transition-colors duration-50 ease-in cursor-pointer`}
             >
               {label}
             </div>
@@ -2544,17 +2631,15 @@ const Report: React.FC = () => {
                   <div
                     key={label}
                     onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs ${
-                      label !== "Final Report"
-                        ? "text-[#e06666]"
-                        : "text-[#3f3f3d]"
-                    }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
-                      accessible
+                    className={`flex-1 max-w-xl text-xs ${label !== "Final Report"
+                      ? "text-[#e06666]"
+                      : "text-[#3f3f3d]"
+                      }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${accessible
                         ? subTab === value
                           ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
                           : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
                         : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
-                    }`}
+                      }`}
                   >
                     {label}
                   </div>
@@ -2566,9 +2651,8 @@ const Report: React.FC = () => {
 
       <div className="flex w-full">
         <div
-          className={`w-[20%] ${
-            tab == 1 || tab == 2 ? "h-[100vh]" : "h-[90vh]"
-          } overflow-y-auto bg-[#f4e7e1] p-3`}
+          className={`w-[20%] ${tab == 1 || tab == 2 ? "h-[100vh]" : "h-[90vh]"
+            } overflow-y-auto bg-[#f4e7e1] p-3`}
         >
           <Button
             type="button"
@@ -2623,12 +2707,12 @@ const Report: React.FC = () => {
               <span className="font-semibold">
                 {assignData?.appointmentStatus[0]?.refAppointmentDate
                   ? new Date(
-                      assignData.appointmentStatus[0].refAppointmentDate
-                    ).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })
+                    assignData.appointmentStatus[0].refAppointmentDate
+                  ).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
                   : "-"}
               </span>
             </div>
@@ -2641,7 +2725,7 @@ const Report: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-sm text-center text-gray-500">Reports</div>
+          <div className="text-sm text-center text-gray-500">Other reports</div>
           <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto mt-1 mb-4">
             <table className="min-w-full divide-y divide-gray-200  text-left">
               <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
@@ -2717,6 +2801,66 @@ const Report: React.FC = () => {
             </table>
           </div>
 
+          <div className="text-sm text-center text-gray-500">Other Old reports</div>
+          <div className="overflow-auto max-h-[40vh] rounded-md shadow border border-gray-200 w-full max-w-3xl mx-auto mt-1 mb-4">
+            <table className="min-w-full divide-y divide-gray-200  text-left">
+              <thead className="bg-[#a3b1a0] text-white text-[12px] text-center 2xl:text-base sticky top-0 z-10">
+                <tr>
+                  <th className="px-1 py-2 w-1/6 font-semibold">S.No</th>
+                  <th className="px-1 py-2 w-3/6 font-semibold text-center">
+                    Report Title
+                  </th>
+                  <th className="px-1 py-2 w-2/6 font-semibold">File</th>
+                </tr>
+              </thead>
+
+              <tbody className="bg-white">
+                {(() => {
+
+                  if (oldReport && oldReport.length === 0) {
+                    return (
+                      <tr className="bg-[#f9f2ea]">
+                        <td
+                          colSpan={3}
+                          className="text-center py-2 text-xs text-gray-500"
+                        >
+                          No Reports Found
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  return oldReport.map((report: GetOldReport, idx: number) => {
+                    // const reportItem = responsePatientInTake.find(
+                    //   (item) => item.questionId === report.questionId
+                    // );
+
+                    return (
+                      <tr key={idx} className="text-xs">
+                        <td className="px-1 py-2 text-center w-12">
+                          {idx + 1}
+                        </td>
+                        <td className="px-1 py-2 text-left"> {
+                          menuOptions.find(
+                            (option) => option.indexVal === report.refORCategoryId
+                          )?.label
+                        }</td>
+                        <td className="px-1 py-2 text-center">
+                          <span
+                            className="hover:underline cursor-pointer text-blue-500 text-xs"
+                            onClick={() => getOldReport(report.files)}
+                          >
+                            View
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  });
+                })()}
+              </tbody>
+            </table>
+          </div>
+
           {/* Table Content */}
           {/* {role?.type &&
             ["admin", "scribe", "radiologist", "wgdoctor", "manager"].includes(
@@ -2735,7 +2879,7 @@ const Report: React.FC = () => {
               </thead>
               <tbody>
                 {assignData?.reportHistoryData &&
-                assignData?.reportHistoryData.length > 0 ? (
+                  assignData?.reportHistoryData.length > 0 ? (
                   <>
                     {assignData?.reportHistoryData.map((item, idx) => (
                       <tr
@@ -2797,12 +2941,12 @@ const Report: React.FC = () => {
 
                         <td className="px-2 py-2 text-[10px] text-center font-semibold">
                           <span
-                            // className={
-                            //   item.refRHHandleEndTime &&
-                            //   item.refRHHandleStatus !== "Changes"
-                            //     ? "text-green-600"
-                            //     : "text-gray-400"
-                            // }
+                          // className={
+                          //   item.refRHHandleEndTime &&
+                          //   item.refRHHandleStatus !== "Changes"
+                          //     ? "text-green-600"
+                          //     : "text-gray-400"
+                          // }
                           >
                             {item.refRHHandleEndTime ? (
                               <>
@@ -2816,7 +2960,9 @@ const Report: React.FC = () => {
                                             " Completed"} */}
                                         {/* {item.refRHHandleStatus +
                                               " Completed"} */}
-                                              <PatientStatusColor status={item.refRHHandleStatus} />
+                                        <PatientStatusColor
+                                          status={item.refRHHandleStatus}
+                                        />
                                       </div>
                                     </DialogTrigger>
                                     <DialogContent className="">
@@ -2865,9 +3011,8 @@ const Report: React.FC = () => {
                 Status saver
               </div>
               <div
-                className={`flex flex-wrap gap-2 ${
-                  location?.readOnly ? "pointer-events-none" : ""
-                }`}
+                className={`flex flex-wrap gap-2 ${location?.readOnly ? "pointer-events-none" : ""
+                  }`}
               >
                 {/* Buttons */}
                 {/* {tab === 4 && subTab === 4 && ( */}
@@ -2951,6 +3096,29 @@ const Report: React.FC = () => {
                                       />
                                     </div>
                                     <div className="flex flex-col gap-2">
+                                      <Label htmlFor="width">
+                                        Access Status
+                                      </Label>
+                                      <Select
+                                        value={accessStatus}
+                                        onValueChange={(value) =>
+                                          setAccessStatus(value)
+                                        }
+                                      >
+                                        <SelectTrigger className="w-full bg-white text-sm">
+                                          <SelectValue placeholder="Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="private">
+                                            Private
+                                          </SelectItem>
+                                          <SelectItem value="public">
+                                            Public
+                                          </SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
                                       <Button
                                         variant="greenTheme"
                                         className="text-xs text-white"
@@ -2973,52 +3141,184 @@ const Report: React.FC = () => {
 
                       <div className="space-y-2 max-h-64 overflow-y-auto">
                         {filteredTemplates.length > 0 ? (
-                          filteredTemplates.map((data: any) => (
-                            <div
-                              key={data.refRFId}
-                              className="text-xs px-3 py-2 rounded-sm border border-gray-200"
-                            >
-                              <div className=" flex justify-between items-center">
-                                <div>{data.refRFName}</div>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="greenTheme"
-                                    className="text-xs text-white px-3 py-1 h-6"
-                                    onClick={() => {
-                                      !loadingStatus &&
-                                        getTemplate(data.refRFId);
-                                    }}
+                          <>
+                            {/* Personal Templates */}
+                            <Label>Personal</Label>
+                            {filteredTemplates.filter(
+                              (data: any) =>
+                                data.refRFCreatedBy.toString() ===
+                                user?.refUserId.toString()
+                            ).length > 0 ? (
+                              filteredTemplates
+                                .filter(
+                                  (data: any) =>
+                                    data.refRFCreatedBy.toString() ===
+                                    user?.refUserId.toString()
+                                )
+                                .map((data: any) => (
+                                  <div
+                                    key={data.refRFId}
+                                    className="text-xs px-3 py-2 rounded-sm border border-gray-200"
                                   >
-                                    {loadingStatus === data.refRFId ? (
-                                      <Loader className="animate-spin w-4 h-4" />
-                                    ) : (
-                                      "Load"
+                                    <div className="flex justify-between items-center">
+                                      <div>{data.refRFName}</div>
+                                      <div className="flex gap-2">
+                                        <Select
+                                          value={data.refRFAccessStatus}
+                                          onValueChange={(value) =>
+                                            updateTemplate(data.refRFId, value)
+                                          }
+                                        >
+                                          <SelectTrigger className="w-full bg-white text-sm">
+                                            <SelectValue placeholder="Status" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="private">
+                                              Private
+                                            </SelectItem>
+                                            <SelectItem value="public">
+                                              Public
+                                            </SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                        <Button
+                                          variant="greenTheme"
+                                          className="text-xs text-white px-3 py-1 h-6"
+                                          onClick={() => {
+                                            !loadingStatus &&
+                                              getTemplate(data.refRFId);
+                                          }}
+                                        >
+                                          {loadingStatus === data.refRFId ? (
+                                            <Loader className="animate-spin w-4 h-4" />
+                                          ) : (
+                                            "Load"
+                                          )}
+                                        </Button>
+                                        <Button
+                                          variant="destructive"
+                                          className="text-xs text-white px-3 py-1 h-6"
+                                          onClick={() => {
+                                            !deleteLoadingStatus &&
+                                              deleteTemplate(data.refRFId);
+                                          }}
+                                        >
+                                          {deleteLoadingStatus ===
+                                            data.refRFId ? (
+                                            <Loader className="animate-spin w-4 h-4" />
+                                          ) : (
+                                            <Trash />
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    {role.id === 1 && (
+                                      <div>
+                                        Created By:{" "}
+                                        <strong>{data.refUserCustId}</strong>
+                                      </div>
                                     )}
-                                  </Button>
-                                  <Button
-                                    variant="destructive"
-                                    className="text-xs text-white px-3 py-1 h-6"
-                                    onClick={() => {
-                                      !deleteLoadingStatus &&
-                                        deleteTemplate(data.refRFId);
-                                    }}
-                                  >
-                                    {deleteLoadingStatus === data.refRFId ? (
-                                      <Loader className="animate-spin w-4 h-4" />
-                                    ) : (
-                                      <Trash />
-                                    )}
-                                  </Button>
-                                </div>
+                                  </div>
+                                ))
+                            ) : (
+                              <div className="text-xs text-gray-500 px-3 py-2">
+                                No personal templates available.
                               </div>
-                              {role.id === 1 && (
-                                <div>
-                                  Created By:{" "}
-                                  <strong>{data.refUserCustId}</strong>
-                                </div>
-                              )}
-                            </div>
-                          ))
+                            )}
+
+                            {/* Public Templates */}
+                            <Label>Public</Label>
+                            {filteredTemplates.filter(
+                              (data: any) =>
+                                data.refRFCreatedBy.toString() !==
+                                user?.refUserId.toString()
+                            ).length > 0 ? (
+                              filteredTemplates
+                                .filter(
+                                  (data: any) =>
+                                    data.refRFCreatedBy.toString() !==
+                                    user?.refUserId.toString()
+                                )
+                                .map((data: any) => (
+                                  <div
+                                    key={data.refRFId}
+                                    className="text-xs px-3 py-2 rounded-sm border border-gray-200"
+                                  >
+                                    <div className="flex justify-between items-center">
+                                      <div>{data.refRFName}</div>
+                                      <div className="flex gap-2">
+                                        {role.id === 1 && (
+                                          <>
+                                            <Select
+                                              value={data.refRFAccessStatus}
+                                              onValueChange={(value) =>
+                                                updateTemplate(
+                                                  data.refRFId,
+                                                  value
+                                                )
+                                              }
+                                            >
+                                              <SelectTrigger className="w-full bg-white text-sm">
+                                                <SelectValue placeholder="Status" />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="private">
+                                                  Private
+                                                </SelectItem>
+                                                <SelectItem value="public">
+                                                  Public
+                                                </SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                          </>
+                                        )}
+                                        <Button
+                                          variant="greenTheme"
+                                          className="text-xs text-white px-3 py-1 h-6"
+                                          onClick={() => {
+                                            !loadingStatus &&
+                                              getTemplate(data.refRFId);
+                                          }}
+                                        >
+                                          {loadingStatus === data.refRFId ? (
+                                            <Loader className="animate-spin w-4 h-4" />
+                                          ) : (
+                                            "Load"
+                                          )}
+                                        </Button>
+                                        {role.id === 1 && (
+                                          <>
+                                            <Button
+                                              variant="destructive"
+                                              className="text-xs text-white px-3 py-1 h-6"
+                                              onClick={() => {
+                                                !deleteLoadingStatus &&
+                                                  deleteTemplate(data.refRFId);
+                                              }}
+                                            >
+                                              {deleteLoadingStatus ===
+                                                data.refRFId ? (
+                                                <Loader className="animate-spin w-4 h-4" />
+                                              ) : (
+                                                <Trash />
+                                              )}
+                                            </Button>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      Created By:{" "}
+                                      <strong>{data.refUserCustId}</strong>
+                                    </div>
+                                  </div>
+                                ))
+                            ) : (
+                              <div className="text-xs text-gray-500 px-3 py-2">
+                                No public templates available.
+                              </div>
+                            )}
+                          </>
                         ) : (
                           <div className="text-center text-sm text-gray-500">
                             No templates found.
@@ -3034,11 +3334,11 @@ const Report: React.FC = () => {
                   variant="greenTheme"
                   className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
                   onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
+                // disabled={!isAllowed}
+                // hidden={
+                //   label == "Insert Signature" &&
+                //   !(tab === 4 && subTab === 4)
+                // }
                 >
                   Reset to Default
                 </Button>
@@ -3606,7 +3906,7 @@ const Report: React.FC = () => {
               Stay
             </Button>
             <Button variant="destructive" onClick={() => handleLeave(false)}>
-              Leave Anyway
+              Lock case
             </Button>
             <Button variant="greenTheme" onClick={() => handleLeave(true)}>
               Save and Leave
