@@ -140,7 +140,7 @@ const Analytics: React.FC = () => {
     scancenterselect: ["admin", "manager"],
     totalCorrect: ["admin", "radiologist", "wgdoctor", "codoctor"],
     totalEdit: ["admin", "radiologist", "wgdoctor", "codoctor"],
-    recoCodeCount: ["admin", "manager", "wgdoctor", "scadmin"],
+    recoCodeCount: ["admin", "manager", "wgdoctor", "scadmin", "radiologist"],
     TAT: [
       "admin",
       "radiologist",
@@ -177,6 +177,7 @@ const Analytics: React.FC = () => {
       "scadmin",
       "technician",
       "codoctor",
+      "radiologist",
     ],
     reportArtifact: [
       "admin",
@@ -185,6 +186,7 @@ const Analytics: React.FC = () => {
       "scadmin",
       "technician",
       "codoctor",
+      "radiologist",
     ],
   } as const;
 
