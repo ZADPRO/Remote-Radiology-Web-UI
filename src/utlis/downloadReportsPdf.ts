@@ -85,24 +85,51 @@ function processContentSpacing(content: any): any {
   }
 
   if (typeof content === "object" && content !== null) {
-    // If the content is a table, we force its widths to expand
+    // Log every node for debugging
+    console.log(content);
+
+    // Table: force full width
     if (content.table && content.table.body) {
       const colCount = content.table.body[0]?.length || 0;
-      // This is the key change: always set widths to force full page width
-      if (colCount > 0) {
-        content.table.widths = Array(colCount).fill("*");
-      }
+      if (colCount > 0) content.table.widths = Array(colCount).fill("*");
     }
 
     // Preserve text margins
-    if (content.text !== undefined) {
-      content.margin = content.margin || [0, 0, 0, 0];
+    if (content.text !== undefined) content.margin = content.margin || [0, 0, 0, 0];
+
+    // IMAGE HANDLING
+    // if (content.image) {
+    //   const maxWidth = 500; // maximum width in PDF points
+    //   if (!content.width || content.width > maxWidth) {
+    //     content.width = maxWidth;
+    //   }
+    //   // Fit image proportionally
+    //   content.fit = [maxWidth, 500];
+    //   console.log("Processed image:", {
+    //     src: content.image,
+    //     width: content.width,
+    //     fit: content.fit,
+    //   });
+    // }
+    if (content.image) {
+      // If no width specified or width > 500, set width = 500
+      if (!content.width || content.width > 500) {
+        content.width = 500;
+      }
+      // Optional: maintain aspect ratio by not setting height
     }
 
+    // Sometimes images are inside a 'stack' array (common for html-to-pdfmake)
+    if (content.stack && Array.isArray(content.stack)) {
+      content.stack = content.stack.map((item: any) => processContentSpacing(item));
+    }
+
+    // Recursive handling for 'content' arrays (nested divs, paragraphs, etc.)
     if (content.content) {
       content.content = processContentSpacing(content.content);
     }
 
+    // Recursive handling for table body
     if (content.table && content.table.body) {
       content.table.body = processContentSpacing(content.table.body);
     }
@@ -110,6 +137,7 @@ function processContentSpacing(content: any): any {
 
   return content;
 }
+
 
 /**
  * Generates and downloads a PDF from an HTML string with correct table sizing.

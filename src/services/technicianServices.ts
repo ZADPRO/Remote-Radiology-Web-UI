@@ -107,9 +107,9 @@ export interface TechnicianPatientQueue {
   refAppointmentMailSendStatus: string;
   dicomFiles: DicomFiles[];
   GetCorrectEditModel: {
-    isHandleCorrect: boolean,
-    isHandleEdited: boolean
-  }
+    isHandleCorrect: boolean;
+    isHandleEdited: boolean;
+  };
   reportStatus: string;
   refOverrideStatus: string;
 }
@@ -128,6 +128,22 @@ export interface Remarks {
   refRemarksMessage: string;
   refUserId: number;
   refUserCustId: string;
+}
+
+export interface GetOldReportRes {
+  status: boolean;
+  message: string;
+  data: ListOldReportModel[];
+}
+
+export interface ListOldReportModel {
+  refORId: number;
+  refUserId: number;
+  refAppointmentId: number;
+  refORCategoryId: number;
+  refORFilename: string;
+  refORCreatedAt: string;
+  refORCreatedBy: string;
 }
 
 export const technicianService = {
@@ -152,10 +168,7 @@ export const technicianService = {
 
   listAllRemarks: async (appointmentId: number) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt(
-      { appointmentId },
-      token
-    );
+    const payload = encrypt({ appointmentId }, token);
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_PROFILESERVICE
@@ -501,6 +514,89 @@ export const technicianService = {
       }
     );
     const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  listOldReport: async (
+    appointmentId: number,
+    patientId: number,
+    categoryId: number
+  ) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        patientId: patientId,
+        appointmentId: appointmentId,
+        categoryId: categoryId,
+      },
+      token
+    );
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/reportintakeform/listAllOldReport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: GetOldReportRes = decrypt(
+      res.data.data,
+      res.data.token
+    );
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  uploadOldReportFile: async ({ formFile }: UploadFilePayload) => {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/addOldReport`,
+      formFile,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(res);
+    const decryptData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptData;
+  },
+
+  deleteOldReportFile: async (ORId: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        refORId: ORId,
+      },
+      token
+    );
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/reportintakeform/deleteOldReport`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: GetOldReportRes = decrypt(
+      res.data.data,
+      res.data.token
+    );
     tokenService.setToken(res.data.token);
     return decryptedData;
   },

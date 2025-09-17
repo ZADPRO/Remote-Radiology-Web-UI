@@ -41,6 +41,12 @@ export interface AppointmentStatus {
   refAppointmentLymphnodeImageTextLeft: string;
 }
 
+export interface GetOldReport {
+  refORCategoryId: number;
+  files: string;
+}
+
+
 export interface ReportHistoryData {
   HandleUserName: string;
   refRHHandleEndTime: string;
@@ -116,10 +122,14 @@ export const reportService = {
     return decryptedData;
   },
 
-  uploadTemplate: async (fileName: string, fileData: string) => {
+  uploadTemplate: async (
+    fileName: string,
+    fileData: string,
+    accessStatus: string
+  ) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(
-      { name: fileName, formateTemplate: fileData },
+      { name: fileName, formateTemplate: fileData, accessStatus: accessStatus },
       token
     );
 
@@ -149,6 +159,28 @@ export const reportService = {
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/deleteReportFormate`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  updateTemplate: async (id: number, accessStatus: string) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt({ id: id, accessStatus: accessStatus }, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/updateReportFormate`,
       { encryptedData: payload },
       {
         headers: {

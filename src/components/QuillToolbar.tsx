@@ -99,7 +99,7 @@ export const formats = [
 
 // Quill Toolbar component
 export const QuillToolbar = ({ id }: { id: string }) => (
-  <div id={id}>
+  <div className="w-[555px]" id={id}>
     <span className="ql-formats">
       {/* <select className="ql-font" defaultValue="arial">
         <option value="arial">Arial</option>

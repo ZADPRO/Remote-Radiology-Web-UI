@@ -17,6 +17,9 @@ import {
   XCircle,
   Download,
   Eye,
+  CloudUpload,
+  Loader2Icon,
+  Trash,
 } from "lucide-react";
 
 import {
@@ -58,6 +61,7 @@ import {
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import {
   DicomFiles,
+  ListOldReportModel,
   Remarks,
   TechnicianPatientQueue,
   technicianService,
@@ -93,6 +97,7 @@ import SendMailDialog from "./SendMailDialog";
 import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
 import { formatReadableDateWithDefault } from "@/utlis/calculateAge";
+import FileView from "@/components/FileView/FileView";
 
 interface staffData {
   refUserCustId: string;
@@ -687,8 +692,8 @@ const PatientQueue: React.FC = () => {
                 column.getIsSorted() === "asc"
                   ? "Sorted ascending"
                   : column.getIsSorted() === "desc"
-                  ? "Sorted descending"
-                  : "Not sorted"
+                    ? "Sorted descending"
+                    : "Not sorted"
               }
             >
               {column.getIsSorted() === "asc" ? (
@@ -739,8 +744,8 @@ const PatientQueue: React.FC = () => {
             value instanceof Date
               ? value
               : typeof value === "string" || typeof value === "number"
-              ? new Date(value)
-              : null;
+                ? new Date(value)
+                : null;
 
           if (!rowDate || isNaN(rowDate.getTime())) return true; // Don't filter invalid dates
 
@@ -908,7 +913,7 @@ const PatientQueue: React.FC = () => {
                 <div className="flex w-full px-1 items-center justify-center">
                   {/* <div className="flex w-full px-1 items-center justify-center">
                   <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
-                  <Label className=" max-w-19 2xl:max-w-30 truncate">
+                  <Label className=" max-w-15 2xl:max-w-30 truncate">
                     {row.original.refUserFirstName}
                   </Label>
                 </div>
@@ -1026,7 +1031,7 @@ const PatientQueue: React.FC = () => {
                               >
                                 <Checkbox2
                                   checked={isSelected}
-                                  onCheckedChange={() => {}}
+                                  onCheckedChange={() => { }}
                                 />
                                 <span>{formName}</span>
                               </CommandItem>
@@ -1119,7 +1124,7 @@ const PatientQueue: React.FC = () => {
                   ) : (
                     formName
                   )}
-                  {} -{" "}
+                  { } -{" "}
                 </span>
               )}
               {statusContent}
@@ -1207,9 +1212,34 @@ const PatientQueue: React.FC = () => {
       },
       {
         id: "technicianForm",
+        accessorFn: (row) => {
+          const tempStatus = getFormStatus(row.refAppointmentComplete);
+          const formStatus = tempStatus?.technicianForm;
+          const appointmentComplete = row.refAppointmentComplete;
+
+          if (formStatus) {
+            return "View";
+          } else if (
+            (currentUserRole === "technician" || currentUserRole === "admin") &&
+            (appointmentComplete === "fillform" ||
+              appointmentComplete === "noteligible")
+          ) {
+            return "Not Yet Started";
+          } else if (
+            currentUserRole === "technician" ||
+            currentUserRole === "admin"
+          ) {
+            return "Start";
+          } else {
+            return "Not Filled";
+          }
+        },
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+            <div
+              onClick={column.getToggleSortingHandler()}
+              className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
+            >
               <div>Tech</div>
               <div>Form</div>
             </div>
@@ -1388,6 +1418,7 @@ const PatientQueue: React.FC = () => {
                           .join("_") + "_L.zip"
                       )
                     }
+                    className="hover:bg-[#d4d5ca]"
                   >
                     ({leftCount})<Download />
                     <span className="sr-only">Left DICOM</span>
@@ -1415,6 +1446,7 @@ const PatientQueue: React.FC = () => {
                           .join("_") + "_R.zip"
                       )
                     }
+                    className="hover:bg-[#d4d5ca]"
                   >
                     ({rightCount})<Download />
                     <span className="sr-only">Right DICOM</span>
@@ -1425,32 +1457,6 @@ const PatientQueue: React.FC = () => {
               </div>
             );
           }
-          // if (
-          //   isTechnician &&
-          //   !hasDicom &&
-          //   row.original.refAppointmentComplete === "reportformfill"
-          // ) {
-          //   return (
-          //     <div className="text-center w-full">
-          //       <button
-          //         className="hover:underline cursor-pointer font-bold"
-          //         onClick={() =>
-          //           navigate("../uploadDicoms", {
-          //             state: {
-          //               appointmentId,
-          //               userId,
-          //               name: row.original.refUserFirstName,
-          //               custId: row.original.refUserCustId,
-          //               scancenterCustId: row.original.refSCCustId,
-          //             },
-          //           })
-          //         }
-          //       >
-          //         Upload DICOM
-          //       </button>
-          //     </div>
-          //   );
-          // }
 
           if (!hasDicom) {
             return (
@@ -1532,17 +1538,272 @@ const PatientQueue: React.FC = () => {
           }
         },
       },
+
+      {
+        id: "oldreport",
+        header: () => (
+          <div className="flex items-center justify-center gap-1">
+            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer">
+              <div>Old</div>
+              <div>Report</div>
+            </div>
+          </div>
+        ),
+        cell: ({ row }) => {
+          const [dialogOpen, setDialogOpen] = useState(false);
+          const [reportData, setReportData] = useState<ListOldReportModel[]>(
+            []
+          );
+
+          const [OldLoading, setOldLoading] = useState(false);
+          const menuOptions = [
+            {
+              label: "Thermogram",
+              indexVal: 1,
+            },
+            {
+              label: "Mammogram",
+              indexVal: 2,
+            },
+            {
+              label: "Breast Ultrasound / HERscan",
+              indexVal: 3,
+            },
+            {
+              label: "Breast MRI",
+              indexVal: 4,
+            },
+            {
+              label: "PET/CT Scan",
+              indexVal: 5,
+            },
+            {
+              label: "QT Imaging",
+              indexVal: 6,
+            },
+            {
+              label:
+                "Other Imaging or Scans ( Like Bone scans, Scintimammography, etc)",
+              indexVal: 7,
+            },
+            {
+              label: "Biopsy Report",
+              indexVal: 8,
+            },
+            {
+              label: "Other Report",
+              indexVal: 9,
+            },
+          ];
+
+          const [currentOpen, setCurrentOpen] = useState(1);
+
+          const ListAllOldReport = async (
+            appointmentId: number,
+            patientId: number,
+            categoryId: number
+          ) => {
+            setCurrentOpen(categoryId);
+            setOldLoading(true);
+            const response = await technicianService.listOldReport(
+              appointmentId,
+              patientId,
+              categoryId
+            );
+
+            console.log(response);
+
+            if (response.status) {
+              setReportData(response.data || []);
+            }
+            setOldLoading(false);
+          };
+
+          const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, appointmentId: number,
+            patientId: number,
+            categoryId: number) => {
+            setOldLoading(true);
+            const files = e.target.files;
+            if (!files) return;
+
+
+            for (const file of files) {
+              if (file) {
+                const formDataObj = new FormData();
+                formDataObj.append("file", file);
+                formDataObj.append("patientId", patientId.toString());
+                formDataObj.append("categoryId", categoryId.toString());
+                formDataObj.append("appointmentId", appointmentId.toString());
+                try {
+                  await technicianService.uploadOldReportFile({
+                    formFile: formDataObj,
+                  });
+                  // if (response.status) {
+                  //   values.push(response.fileName);
+                  // }
+                } catch (error) {
+                  console.error("File upload failed:", error);
+                }
+              }
+            }
+            ListAllOldReport(
+              appointmentId,
+              patientId,
+              categoryId
+            );
+          };
+
+
+          const handleDeleteFile = async (ORId: number, appointmentId: number,
+            patientId: number,
+            categoryId: number) => {
+
+            setOldLoading(true);
+
+            await technicianService.deleteOldReportFile(ORId);
+
+            ListAllOldReport(
+              appointmentId,
+              patientId,
+              categoryId
+            );
+
+          };
+
+          return (
+            <div className="flex items-center cursor-pointer justify-center gap-1">
+              <CloudUpload
+                onClick={() => {
+                  setDialogOpen(true);
+                  ListAllOldReport(
+                    row.original.refAppointmentId,
+                    row.original.refUserId,
+                    1
+                  );
+                }}
+                size={20}
+              />
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="w-[98%] lg:w-[90%] h-[90vh]">
+                  <DialogHeader>
+                    <DialogTitle>Upload Old Report</DialogTitle>
+                  </DialogHeader>
+                  <div className="w-full h-[78vh] flex">
+                    <div className="w-[30%] h-[78vh] p-3 bg-[#a4b2a1] rounded-l-lg overflow-y-auto">
+                      {menuOptions.map((data) => (
+                        <div
+                          onClick={() => {
+                            // setCurrentOpen(data.indexVal);
+                            ListAllOldReport(
+                              row.original.refAppointmentId,
+                              row.original.refUserId,
+                              data.indexVal
+                            );
+                          }}
+                          className={`w-[100%] cursor-pointer p-3 ${currentOpen === data.indexVal
+                            ? `bg-[#f8f3eb] rounded-lg text-[#a4b2a1]`
+                            : `text-[#ffffff]`
+                            }`}
+                        >
+                          {data.label}
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      className={`w-[70%] h-[78vh] bg-[#f8e3e1] rounded-r-lg overflow-y-auto ${OldLoading ? `flex justify-center items-center` : ``
+                        } `}
+                    >
+                      {OldLoading ? (
+                        <Loader2Icon
+                          size={25}
+                          className="animate-spin  text-[#3f3f3d]"
+                        />
+                      ) : (
+                        <>
+                          <div className="text-lg my-2 font-bold text-[#3f3f3d] text-center">
+                            {
+                              menuOptions.find(
+                                (option) => option.indexVal === currentOpen
+                              )?.label
+                            }
+                          </div>
+
+                          <div className=" flex gap-1 px-3 ">
+                            <Label className="text-xs font-bold">
+                              UPLOAD REPORT
+                            </Label>
+
+                            <label className="cursor-pointer border px-3 py-1 rounded bg-white hover:bg-gray-100 w-fit">
+                              <input
+                                type="file"
+                                accept=".pdf, .jpg, .jpeg, .png"
+                                className="sr-only"
+                                multiple
+                                onChange={(e) => {
+                                  handleFileChange(e, row.original.refAppointmentId, row.original.refUserId, currentOpen)
+                                }}
+                              />
+                              Upload File
+                            </label>
+                          </div>
+
+                          <div className=" space-y-2 px-2 lg:px-10 my-5">
+                            {
+                              reportData.length > 0 ? (
+                                <>
+                                {reportData.map((fileName, index) => (
+                              <div
+                                key={index}
+                                className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
+                              >
+                                {/* File name (downloadable) */}
+                                <FileView fileName={fileName.refORFilename} />
+
+                                {/* Delete icon */}
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    handleDeleteFile(
+                                      fileName.refORId,
+                                      row.original.refAppointmentId,
+                                      row.original.refUserId,
+                                      currentOpen
+                                    )
+                                  }
+                                >
+                                  <Trash size={15} className="text-red-500" />
+                                </div>
+                              </div>
+                            ))}
+                                </>
+                              ) : (
+                                <div>No Report Uploaded</div>
+                              )
+                            }
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          );
+        },
+      },
+
       {
         id: "reportStatus",
         accessorFn: (row) => row.reportStatus ?? "-",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            <span
-              className="cursor-pointer"
+            <div
               onClick={column.getToggleSortingHandler()}
+              className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
             >
-              QT Report
-            </span>
+              <div>QT</div>
+              <div>Report</div>
+            </div>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1642,12 +1903,11 @@ const PatientQueue: React.FC = () => {
 
           return (
             <div
-              className={`text-center ${
-                row.original.reportStatus === "Urgent" ? "text-[red]" : ""
-              } w-full`}
+              className={`text-center ${row.original.reportStatus === "Urgent" ? "text-[red]" : ""
+                } w-full`}
             >
               {!row.original.dicomFiles ||
-              row.original.dicomFiles.length === 0 ? (
+                row.original.dicomFiles.length === 0 ? (
                 <span>-</span>
               ) : row.original.refAppointmentComplete === "reportformfill" ? (
                 <span
@@ -1824,7 +2084,7 @@ const PatientQueue: React.FC = () => {
                           >
                             <Checkbox2
                               checked={isSelected}
-                              onCheckedChange={() => {}}
+                              onCheckedChange={() => { }}
                             />
                             <span>{statusLabel}</span>
                           </CommandItem>
@@ -1886,8 +2146,8 @@ const PatientQueue: React.FC = () => {
                   <div>Not</div>
                   <div>Eligible</div>
                   {role?.type === "admin" ||
-                  role?.type === "scadmin" ||
-                  role?.type === "technician" ? (
+                    role?.type === "scadmin" ||
+                    role?.type === "technician" ? (
                     <>
                       <br />{" "}
                       <div
@@ -2058,8 +2318,15 @@ const PatientQueue: React.FC = () => {
       },
       {
         id: "assigned",
-        header: () => (
-          <div className="text-center flex  justify-center items-center">
+        accessorFn: (row) =>
+          row.refAppointmentAssignedUserId === 0
+            ? ""
+            : String(row.refAppointmentAssignedUserId),
+        header: ({ column }) => (
+          <div
+            onClick={column.getToggleSortingHandler()}
+            className="text-center flex  justify-center items-center cursor-pointer"
+          >
             Assign
           </div>
         ),
@@ -2110,7 +2377,7 @@ const PatientQueue: React.FC = () => {
                       (tech) =>
                         (tech.refSCId === 0 ||
                           tech.refSCId.toString() ===
-                            row.original.refSCId.toString()) && (
+                          row.original.refSCId.toString()) && (
                           <SelectItem
                             key={tech.refUserId}
                             value={String(tech.refUserId)}
@@ -2129,6 +2396,7 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
+        enableColumnFilter: true,
       },
 
       {
@@ -2180,9 +2448,8 @@ const PatientQueue: React.FC = () => {
                 <TooltipTrigger asChild disabled={!latestRemark}>
                   <Input
                     tabIndex={-1}
-                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-35 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
-                      !latestRemark ? "italic text-gray-500 text-[5px]" : ""
-                    }`}
+                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-30 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${!latestRemark ? "italic text-gray-500 text-[5px]" : ""
+                      }`}
                     readOnly
                     value={latestRemark || "No remarks yet"}
                   />
@@ -2222,7 +2489,7 @@ const PatientQueue: React.FC = () => {
                 <Button
                   variant="pinkTheme"
                   size="icon"
-                  className="w-8 h-8"
+                  className="w-8 h-8 p-0"
                   title="Add Remark"
                   onClick={() => {
                     setRemark("");
@@ -2235,7 +2502,7 @@ const PatientQueue: React.FC = () => {
                 <Button
                   variant="greenTheme"
                   size="icon"
-                  className="w-8 h-8"
+                  className="w-8 h-8 p-0"
                   title="View Remarks"
                   disabled={row.original.refAppointmentRemarks.length === 0}
                   onClick={() => {
@@ -2344,6 +2611,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm",
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "patientReportMail",
@@ -2362,6 +2630,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // Start/View logic handled in cell
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "assigned",
       "refAppointmentComplete",
@@ -2379,6 +2648,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // only "View" if filled
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2397,6 +2667,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // only "View" if filled
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "patientReportMail",
@@ -2421,6 +2692,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2439,6 +2711,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // only "View" if filled
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2455,6 +2728,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm", // only "View" if filled
       "dicom",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2474,6 +2748,7 @@ const PatientQueue: React.FC = () => {
       "technicianForm", // only "View" if filled
       "dicom",
       "dicomFull",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2492,6 +2767,7 @@ const PatientQueue: React.FC = () => {
       "patientFormAndStatus",
       "technicianForm",
       "dicom",
+      "oldreport",
       "reportStatus",
       "refAppointmentComplete",
       "assigned",
@@ -2615,9 +2891,8 @@ const PatientQueue: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className={`rounded-lg grid w-full ${
-            role?.type == "patient" ? "h-[68%]" : "h-[76%]"
-          } border `}
+          className={`rounded-lg grid w-full ${role?.type == "patient" ? "h-[68%]" : "h-[76%]"
+            } border `}
           style={{
             background:
               "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
@@ -2648,9 +2923,9 @@ const PatientQueue: React.FC = () => {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>

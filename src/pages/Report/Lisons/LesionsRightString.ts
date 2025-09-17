@@ -174,11 +174,17 @@ export function LesionsRightString(
             ) {
               sentence += `, located in the range of ${levelText}${data.locationLevelPercentage} to ${levelText}${data.locationLevelPercentageto}`;
             } else {
-              sentence += `${data.locationLevel !== "Unknown" ? `, located at ${data.locationLevel.toLowerCase()} ${levelText}${data.locationLevelPercentage}`:""}`;
+              sentence += `${
+                data.locationLevel !== "Unknown"
+                  ? `, located at ${data.locationLevel.toLowerCase()} ${levelText}${
+                      data.locationLevelPercentage
+                    }`
+                  : ""
+              }`;
             }
           } else if (levelText && data.locationLevel !== "unknown") {
             sentence += `, located at ${data.locationLevel.toLowerCase()} ${levelText}`;
-          } 
+          }
 
           if (data.sizew || data.sizel || data.sizeh) {
             sentence += `. The lesion is measuring `;
@@ -504,7 +510,7 @@ export function LesionsRightString(
             (data.debris && data.debris !== "not present") ||
             data.Volumne
           ) {
-            sentence += `. These are noted to be `;
+            sentence += `. The largest is noted to be `;
           }
 
           // width Size
@@ -558,6 +564,10 @@ export function LesionsRightString(
           // Volume
           if (data.Volumne) {
             sentence += `. It has an estimated volume of approximately ${data.Volumne} cubic mm`;
+          }
+
+          if (data.distancenipple) {
+            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -636,7 +646,7 @@ export function LesionsRightString(
       "multiple simple cysts",
       getAnswer(questionIds.multipleCystsDatar)
     );
-    finalHTML += createHTMLFromData(
+    finalHTML += createMultipleCyst(
       "multiple simple cysts",
       getAnswer(questionIds.multipleCystsDatar)
     );
