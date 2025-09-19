@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   noneCheckbox: number;
@@ -81,14 +79,6 @@ const IntervalImagingHistory: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Interval Imaging History" className="uppercase" />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <div className="flex flex-col gap-4">

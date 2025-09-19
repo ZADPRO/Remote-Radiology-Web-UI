@@ -251,7 +251,7 @@ const InvoicePopUp: React.FC<Props> = () => {
               >
                 User
               </div>
-              {role.id === 1 && (
+              {/* {role.id === 1 && (
                 <div
                   onClick={() => {
                     setType("3");
@@ -268,7 +268,7 @@ const InvoicePopUp: React.FC<Props> = () => {
                 >
                   Edit Amount
                 </div>
-              )}
+              )} */}
               <div
                 onClick={() => {
                   setType("4");

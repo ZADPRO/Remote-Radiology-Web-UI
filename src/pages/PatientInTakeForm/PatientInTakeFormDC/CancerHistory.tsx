@@ -4,9 +4,7 @@ import { Label } from "@/components/ui/label";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Textarea } from "@/components/ui/textarea";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
-import TextEditor from "@/components/TextEditor";
 import { Input } from "@/components/ui/input";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 
 interface QuestionIds {
@@ -50,14 +48,6 @@ const CancerHistory: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Cancer History" className="uppercase" />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <MultiOptionRadioGroup

@@ -177,10 +177,10 @@ const Login: React.FC = () => {
               >
                 {isVerifying ? "Verifying..." : "Login"}
               </Button>
-              
+
             </div>
 
-            <div className="text-sm mx-auto text-[#525252]">
+            {/* <div className="text-sm mx-auto text-[#525252]">
               Don't have an account?{" "}
               <span
                 className="text-[#91c3ce] font-bold hover:underline cursor-pointer"
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
               >
                 Sign Up
               </span>
-            </div>
+            </div> */}
           </form>
         </div>
       </div>

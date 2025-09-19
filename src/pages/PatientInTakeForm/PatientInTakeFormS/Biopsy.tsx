@@ -7,8 +7,6 @@ import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/Labe
 import { uploadService } from "@/services/commonServices";
 import { IntakeOption } from "../PatientInTakeForm";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 import { Input } from "@/components/ui/input";
 import { Trash } from "lucide-react";
 import FileView from "@/components/FileView/FileView";
@@ -92,14 +90,6 @@ const Biopsy: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Biopsy" className="uppercase" />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto p-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10">
           <div className="flex flex-col flex-wrap gap-x-4 gap-y-2">

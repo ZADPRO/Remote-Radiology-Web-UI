@@ -4,8 +4,6 @@ import { Label } from "@/components/ui/label";
 import { uploadService } from "@/services/commonServices";
 import { Textarea } from "@/components/ui/textarea";
 import { IntakeOption } from "../PatientInTakeForm";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 import FileView from "@/components/FileView/FileView";
 import { Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -410,14 +408,6 @@ const PreviousImaging: React.FC<Props> = ({
         FormTitle="Previous Imaging in past 3 years"
         className="uppercase"
       />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-8 pb-10 relative">
           {imagingSections.map((sectionProps) => (

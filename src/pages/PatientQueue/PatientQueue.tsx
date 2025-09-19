@@ -20,6 +20,8 @@ import {
   CloudUpload,
   Loader2Icon,
   Trash,
+  CircleCheckBig,
+  Circle,
 } from "lucide-react";
 
 import {
@@ -254,8 +256,8 @@ const PatientQueue: React.FC = () => {
           text: "Reviewed 1",
           report: true,
           color: "#e69138",
-          editAccess: ["scribe", "admin", "codoctor", "wgdoctor"],
-          readOnlyAccess: ["scribe", "admin", "wgdoctor"],
+          editAccess: ["scribe", "admin", "wgdoctor", "codoctor", "doctor"],
+          readOnlyAccess: ["scribe", "admin", "wgdoctor", "codoctor", "doctor"],
         };
       }
 
@@ -265,7 +267,7 @@ const PatientQueue: React.FC = () => {
           report: true,
           color: "#bf9000",
           editAccess: ["scribe", "admin", "doctor", "wgdoctor", "codoctor"],
-          readOnlyAccess: ["scribe", "admin", "technician", "wgdoctor"],
+          readOnlyAccess: ["scribe", "admin", "technician", "wgdoctor", "codoctor"],
         };
       }
 
@@ -311,8 +313,6 @@ const PatientQueue: React.FC = () => {
         };
       }
 
-      console.log(status);
-
       if (status === "noteligible") {
         return {
           text: "Not Eligible",
@@ -349,7 +349,6 @@ const PatientQueue: React.FC = () => {
     setLoading(true);
     try {
       const res = await technicianService.listAllRemarks(appointmentId);
-      console.log(res);
       if (res.status) {
         return res.message;
       } else {
@@ -367,7 +366,6 @@ const PatientQueue: React.FC = () => {
     try {
       if (role?.type == "patient") {
         const res = await appointmentService.listPatientMedicalHistory();
-        console.log("Fetching medical history...", res);
         if (res.status) {
           setPatientQueue(res.data);
         } else {
@@ -375,9 +373,10 @@ const PatientQueue: React.FC = () => {
           console.warn("API response status is false, or no data:", res);
           setPatientQueue([]); // Ensure patientQueue is empty if API indicates failure
         }
+
+        
       } else {
         const res = await technicianService.listPatientQueue();
-        console.log("Fetching patient queue...", res);
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
@@ -426,7 +425,8 @@ const PatientQueue: React.FC = () => {
                 role?.type === "codoctor" &&
                 refAppointmentComplete !== "Reviewed 1" &&
                 refAppointmentComplete !== "Reviewed 2" &&
-                refAppointmentComplete !== "Signed Off"
+                refAppointmentComplete !== "Signed Off" &&
+                refAppointmentComplete !== "Signed Off (A)"
               )
                 return false;
 
@@ -437,7 +437,6 @@ const PatientQueue: React.FC = () => {
 
           setStaffData(res.staffData);
           setPatientQueue(filteredData);
-          console.log(res.staffData);
         } else {
           // Handle error or empty data scenario from API response
           console.warn("API response status is false, or no data:", res);
@@ -466,7 +465,6 @@ const PatientQueue: React.FC = () => {
       );
       if (res.status) {
         // setPatientQueue(res.data);
-        console.log(res.data);
       } else {
         // Handle error or empty data scenario from API response
         console.warn("API response status is false, or no data:", res);
@@ -497,7 +495,6 @@ const PatientQueue: React.FC = () => {
       if (res.status) {
         fetchPatientQueue();
         // setPatientQueue(res.data);
-        console.log(res);
       } else {
         // Handle error or empty data scenario from API response
         console.warn("API response status is false, or no data:", res);
@@ -547,14 +544,10 @@ const PatientQueue: React.FC = () => {
     }
   };
 
-  console.log(selectedRowIds);
-
   const handleAllReportsDownload = async () => {
     try {
       setLoading(true);
-      console.log(selectedRowIds);
       const res = await reportService.getPatientReport(selectedRowIds);
-      console.log(res);
 
       if (res.status) {
         res.data?.map((reportData) => {
@@ -578,9 +571,7 @@ const PatientQueue: React.FC = () => {
   const handleAllConsentDownload = async () => {
     try {
       setLoading(true);
-      console.log(selectedRowIds);
       const res = await reportService.getPatientConsent(selectedRowIds);
-      console.log(res);
 
       if (res.status) {
         res.data?.map((reportData) => {
@@ -623,11 +614,6 @@ const PatientQueue: React.FC = () => {
                   }
                   onCheckedChange={(e) => {
                     if (e) {
-                      console.log(
-                        table
-                          .getRowModel()
-                          .rows.map((row) => row.original.refAppointmentId)
-                      );
                       // Select all - add all appointment IDs
                       setSelectedRowIds(
                         table
@@ -1611,8 +1597,6 @@ const PatientQueue: React.FC = () => {
               categoryId
             );
 
-            console.log(response);
-
             if (response.status) {
               setReportData(response.data || []);
             }
@@ -1622,10 +1606,9 @@ const PatientQueue: React.FC = () => {
           const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, appointmentId: number,
             patientId: number,
             categoryId: number) => {
-            setOldLoading(true);
-            const files = e.target.files;
-            if (!files) return;
-
+              setOldLoading(true);
+              const files = e.target.files;
+              if (!files) return;
 
             for (const file of files) {
               if (file) {
@@ -1700,12 +1683,16 @@ const PatientQueue: React.FC = () => {
                               data.indexVal
                             );
                           }}
-                          className={`w-[100%] cursor-pointer p-3 ${currentOpen === data.indexVal
+                          className={`w-[100%] flex gap-2 cursor-pointer p-3 ${currentOpen === data.indexVal
                             ? `bg-[#f8f3eb] rounded-lg text-[#a4b2a1]`
                             : `text-[#ffffff]`
                             }`}
                         >
-                          {data.label}
+                          <div>
+                            {currentOpen === data.indexVal
+                            ? <CircleCheckBig size={20} />
+                            : <Circle size={20} />
+                            }</div><div>{data.label}</div>
                         </div>
                       ))}
                     </div>
@@ -1863,13 +1850,11 @@ const PatientQueue: React.FC = () => {
 
           const handleViewClick = async () => {
             const currentUserId = currentUser;
-            console.log("hello");
             if (hasEditAccess) {
               const { status, accessId, custId } = await handleCheckAccess(
                 row.original.refAppointmentId
               );
               setCurrentAccess(custId);
-              console.log("ss", status);
               if (status && accessId === currentUserId) {
                 // Direct edit access
                 navigate("/report", {
@@ -1889,7 +1874,6 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              console.log("hello11111");
               navigate("/report", {
                 state: {
                   appointmentId: row.original.refAppointmentId,
@@ -2681,6 +2665,7 @@ const PatientQueue: React.FC = () => {
       "consentView",
       "refSCCustId",
       "patientFormAndStatus",
+      "oldreport",
       "reportStatus",
     ],
     doctor: [

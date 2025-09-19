@@ -6,8 +6,6 @@ import TwoOptionRadioGroup from "@/components/ui/CustomComponents/TwoOptionRadio
 // import DatePicker from "@/components/date-picker";
 import { IntakeOption } from "../PatientInTakeForm";
 // import { parseLocalDate } from "@/lib/dateUtils";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   performed: number;
@@ -59,14 +57,6 @@ const BiopsyInformation: React.FC<Props> = ({
         FormTitle="BIOPSY INFORMATION (if applicable)"
         className="uppercase"
       />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* A. Biopsy performed? */}

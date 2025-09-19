@@ -18,7 +18,8 @@ const ResetPassword: React.FC = () => {
   const location = useLocation();
   const email = (location.state as { email?: string })?.email || "";
   const token = (location.state as { token?: string })?.token || "";
-  const scancenterId = (location.state as { scancenterId?: number })?.scancenterId || 0;
+  const scancenterId =
+    (location.state as { scancenterId?: number })?.scancenterId || 0;
 
   const [passwordRules, setPasswordRules] = useState({
     minLength: false,
@@ -87,15 +88,23 @@ const ResetPassword: React.FC = () => {
 
     try {
       setErrorMessage("");
-      const response = await authenticationService.resetPassword({
-        password: formData.newPassword, 
-        consent: consent
-      }, token);
+      const response = await authenticationService.resetPassword(
+        {
+          password: formData.newPassword,
+          consent: consent,
+        },
+        token
+      );
       console.log(response);
       if (response.status) {
         refreshToken();
         setSuccess(true);
-        setTimeout(() => navigate(`/${role?.type}/dashboard`), 2000);
+
+        if (role?.type === "patient") {
+          setTimeout(() => navigate(`/patient/myCare`), 2000);
+        } else {
+          setTimeout(() => navigate(`/${role?.type}/dashboard`), 2000);
+        }
       } else {
         setErrorMessage(response.data.message || "Password reset failed.");
       }
@@ -114,11 +123,7 @@ const ResetPassword: React.FC = () => {
         style={{ backgroundImage: `url(${loginTexture})` }}
         className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#F9F5EF] lg:bg-cover lg:bg-center lg:bg-no-repeat"
       >
-        <img
-          src={loginImg}
-          alt="Login"
-          className="w-[90%] lg:w-[80%]"
-        />
+        <img src={loginImg} alt="Login" className="w-[90%] lg:w-[80%]" />
       </div>
 
       {/* Right section */}
@@ -148,9 +153,7 @@ const ResetPassword: React.FC = () => {
 
             <div className="grid gap-6">
               <div className="grid gap-2 text-[14px]">
-                <Label htmlFor="newPassword">
-                  New Password
-                </Label>
+                <Label htmlFor="newPassword">New Password</Label>
                 <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -200,9 +203,7 @@ const ResetPassword: React.FC = () => {
               </div>
 
               <div className="grid gap-2 text-[14px]">
-                <Label htmlFor="confirmPassword">
-                  Confirm Password
-                </Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative flex items-center rounded-md border bg-[#A3B1A1] border-[#3F3F3D] pr-2 focus-within:ring-3 focus-within:ring-ring/50 focus-within:border-gray-400 focus-within:ring-offset-0 shadow-xs transition-[color,box-shadow]">
                   <Input
                     id="confirmPassword"
@@ -275,41 +276,44 @@ const ResetPassword: React.FC = () => {
 
       <Dialog open={isEditDialogOpen}>
         {role?.type == "technician" ? (
-          <TechConsentForm scId={scancenterId} onSubmit={(consent) => consent && setConsent(consent)} setDialogOpen={setIsEditDialogOpen}/>
+          <TechConsentForm
+            scId={scancenterId}
+            onSubmit={(consent) => consent && setConsent(consent)}
+            setDialogOpen={setIsEditDialogOpen}
+          />
         ) : (
-           <DialogContent
-          style={{
-            background:
-              "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
-          }}
-          className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
-        >
-          <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
-            {/* Logo (Left) */}
-            <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
-              <img
-                src={logoNew}
-                alt="logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
+          <DialogContent
+            style={{
+              background:
+                "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
+            }}
+            className="h-11/12 w-[90vw] lg:w-[70vw] overflow-y-auto p-0"
+          >
+            <DialogHeader className="bg-[#eac9c5] border-1 border-b-gray-400 flex flex-col lg:flex-row items-center justify-between px-4 py-2">
+              {/* Logo (Left) */}
+              <div className="h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0">
+                <img
+                  src={logoNew}
+                  alt="logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
 
-            {/* Centered Content */}
-            <div className="flex-1 text-center">
-              <h2 className="text-2xl font-semibold">User Consent Form</h2>
-              <p className="text-sm text-gray-600 max-w-md mx-auto">
-                EaseQT Platform
-              </p>
-            </div>
+              {/* Centered Content */}
+              <div className="flex-1 text-center">
+                <h2 className="text-2xl font-semibold">User Consent Form</h2>
+                <p className="text-sm text-gray-600 max-w-md mx-auto">
+                  EaseQT Platform
+                </p>
+              </div>
 
-            {/* Spacer to balance logo width */}
-            <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
-          </DialogHeader>
+              {/* Spacer to balance logo width */}
+              <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
+            </DialogHeader>
 
-          <UserConsent setEditingDialogOpen={setIsEditDialogOpen}/>
-        </DialogContent>
+            <UserConsent setEditingDialogOpen={setIsEditDialogOpen} />
+          </DialogContent>
         )}
-       
       </Dialog>
     </div>
   );

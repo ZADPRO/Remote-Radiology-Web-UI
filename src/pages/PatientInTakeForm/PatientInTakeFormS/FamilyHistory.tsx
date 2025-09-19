@@ -6,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   relatives: number;
@@ -58,9 +56,6 @@ const FamilyHistory: React.FC<Props> = ({
         name={name}
         custId={custId}
       />
-      <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:py-0 lg:px-20 space-y-8 pb-10">
           <MultiOptionRadioGroup

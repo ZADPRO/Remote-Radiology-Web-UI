@@ -1,8 +1,6 @@
 import FormHeader from "../FormHeader";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   clinicalStatus: number;
@@ -35,14 +33,6 @@ const CurrentClinicalStatus: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full">
       <FormHeader FormTitle="Current Clinical Status" className="uppercase" />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-4">
           {/* <Label className="font-semibold text-base">

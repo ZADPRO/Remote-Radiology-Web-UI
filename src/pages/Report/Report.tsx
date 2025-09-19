@@ -3032,7 +3032,7 @@ const Report: React.FC = () => {
                   >
                     <DialogContent className="sm:max-w-md">
                       <DialogHeader>
-                        <DialogTitle>Load Template</DialogTitle>
+                        <DialogTitle>Load template to server</DialogTitle>
                       </DialogHeader>
 
                       <div className="flex gap-4">
@@ -3192,7 +3192,7 @@ const Report: React.FC = () => {
                                           {loadingStatus === data.refRFId ? (
                                             <Loader className="animate-spin w-4 h-4" />
                                           ) : (
-                                            "Load"
+                                            "Load as report"
                                           )}
                                         </Button>
                                         <Button
@@ -3283,7 +3283,7 @@ const Report: React.FC = () => {
                                           {loadingStatus === data.refRFId ? (
                                             <Loader className="animate-spin w-4 h-4" />
                                           ) : (
-                                            "Load"
+                                            "Load as report"
                                           )}
                                         </Button>
                                         {role.id === 1 && (
@@ -3354,7 +3354,7 @@ const Report: React.FC = () => {
                     } else if (status == "" && label == "Insert Signature") {
                       const date = new Date().toLocaleDateString();
                       console.log(userDetails);
-                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName} MD, on <em>${date}</em></strong></p></strong>`;
 
                       const notesData = Notes + signatureRow;
                       setNotes(notesData);

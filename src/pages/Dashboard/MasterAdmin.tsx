@@ -1,7 +1,14 @@
 // src/Dashboard/MasterAdmin.tsx
 
 import React, { JSX, useEffect, useState } from "react";
-import { BellIcon, ChartPie, PersonStanding, Settings2 } from "lucide-react";
+import {
+  BellIcon,
+  ChartPie,
+  HelpCircleIcon,
+  PersonStanding,
+  Settings2,
+  Shield,
+} from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,11 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "../Routes/AuthContext";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import RadiologistProfile from "../Profile/RadiologistProfile";
 import ScanCenterAdminProfile from "../Profile/ScanCenterAdminProfile";
 import ScribeProfile from "../Profile/ScribeProfile";
@@ -34,6 +37,7 @@ import ConsentForm from "./ConsentForm/ConsentForm";
 import { Button } from "@/components/ui/button";
 import NotificationDialog from "./Notifications/Notification";
 import { notificationService } from "@/services/notificationService";
+import UserManual from "./UserManual/UserManual";
 
 const MasterAdmin: React.FC = () => {
   const navigate = useNavigate();
@@ -76,6 +80,7 @@ const MasterAdmin: React.FC = () => {
   const [BrochureMobileMenu, setBrochureMobileMenu] = useState(false);
   const [BrochureMenuopen, setBrochureMenuopen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
+  const [userManualOpen, setUserManualOpen] = useState<boolean>(false);
 
   const [activeDialogContent, setActiveDialogContent] =
     useState<JSX.Element | null>(null);
@@ -104,6 +109,11 @@ const MasterAdmin: React.FC = () => {
         label: "Analytics",
         path: "/admin/analytics",
         icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
+      {
+        label: "Audit Logs",
+        path: "/admin/auditLogs",
+        icon: <Shield className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     scadmin: [
@@ -290,28 +300,28 @@ const MasterAdmin: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   useEffect(() => {
-  const getUnreadNotificationCount = async () => {
-    try {
-      const res = await notificationService.getUnreadNotificationCount();
-      // console.log("Unread count:", res);
-      // optionally set state here
-      setUnreadCount(res.totalcount);
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-    }
-  };
+    const getUnreadNotificationCount = async () => {
+      try {
+        const res = await notificationService.getUnreadNotificationCount();
+        // console.log("Unread count:", res);
+        // optionally set state here
+        setUnreadCount(res.totalcount);
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
 
-  // initial call
-  getUnreadNotificationCount();
-
-  // set interval
-  const interval = setInterval(() => {
+    // initial call
     getUnreadNotificationCount();
-  }, 5000); // every 5 sec
 
-  // cleanup on unmount
-  return () => clearInterval(interval);
-}, []);
+    // set interval
+    const interval = setInterval(() => {
+      getUnreadNotificationCount();
+    }, 5000); // every 5 sec
+
+    // cleanup on unmount
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={`flex h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]`}>
@@ -514,14 +524,19 @@ const MasterAdmin: React.FC = () => {
           </div>
 
           <div className="flex items-center">
-            {/* <Button
+            <Button
               variant="outline"
-              className="rounded-3xl bg-[#f8f3eb]"
+              className="rounded-3xl bg-[#f8f3eb] mr-2 w-10 h-10"
               size="icon"
+              onClick={() => setUserManualOpen(true)}
             >
               <HelpCircleIcon />
-            </Button> */}
-            <div className="relative" hidden={role?.type === "patient" || role?.type == "scadmin"}>
+            </Button>
+
+            <div
+              className="relative"
+              hidden={role?.type === "patient" || role?.type == "scadmin"}
+            >
               <Button
                 variant="outline"
                 className="rounded-3xl bg-[#f8f3eb] w-10 h-10"
@@ -620,6 +635,12 @@ const MasterAdmin: React.FC = () => {
           {notificationOpen && (
             <Dialog open={notificationOpen} onOpenChange={setNotificationOpen}>
               <NotificationDialog />
+            </Dialog>
+          )}
+
+          {userManualOpen && (
+            <Dialog open={userManualOpen} onOpenChange={setUserManualOpen}>
+              <UserManual />
             </Dialog>
           )}
         </header>
