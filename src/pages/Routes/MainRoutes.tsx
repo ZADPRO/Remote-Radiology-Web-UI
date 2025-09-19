@@ -52,6 +52,9 @@ import Analytics from "../Analytics/Analytics";
 import NewInvoice from "../Invoice/NewInvoice";
 import AddWGPerformingProvider from "../AddWGPerformingProvider/AddWGPerformingProvider";
 import ManageWGPerformingProvider from "../ManageWGPerformingProvider/ManageWGPerformingProvider";
+import AuditLogs from "../AuditLogs/AuditLogs";
+import ManagePatient from "../ManagePatient/ManagePatient";
+import AddPatient from "../AddPatient/AddPatient";
 
 // Define a type for route configurations to improve readability and type safety
 interface AppRoute {
@@ -67,10 +70,13 @@ const MainRoutes: React.FC = () => {
   const adminRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
     { path: "dashboard", element: <Dashboard /> },
+    { path: "auditLogs", element: <AuditLogs /> },
     { path: "administration", element: <Administration /> },
     { path: "analytics", element: <Analytics /> },
     { path: "addScanCenter", element: <AddScanCenter /> },
     { path: "viewScanCenter/:id", element: <ViewScanCenter /> },
+    { path: "managePatient", element: <ManagePatient /> },
+    { path: "addPatient", element: <AddPatient /> },
     { path: "addRadiologist", element: <AddRadiologist /> },
     { path: "addScanCenterAdmin", element: <AddScanCenterAdmin /> },
     { path: "addTechnician", element: <AddTechnician /> },
@@ -96,7 +102,9 @@ const MainRoutes: React.FC = () => {
     { index: true, element: <Navigate to="dashboard" replace /> },
     { path: "dashboard", element: <Dashboard /> },
     { path: "administration/:id", element: <ViewScanCenter /> },
+    { path: "managePatient", element: <ManagePatient /> },
     { path: "manageTechnician", element: <ManageTechnician /> },
+    { path: "addPatient", element: <AddPatient /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
     { path: "addTechnician", element: <AddTechnician /> },
@@ -157,6 +165,8 @@ const MainRoutes: React.FC = () => {
     { path: "manageScribe", element: <ManageScribe /> },
     { path: "manageScanCenter", element: <ManageScanCenter /> },
     { path: "viewScanCenter/:id", element: <ViewScanCenter /> },
+    { path: "managePatient", element: <ManagePatient /> },
+    { path: "addPatient", element: <AddPatient /> },
     { path: "addRadiologist", element: <AddRadiologist /> },
     { path: "addScanCenterAdmin", element: <AddScanCenterAdmin /> },
     { path: "addTechnician", element: <AddTechnician /> },

@@ -18,8 +18,6 @@ import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/Labe
 import { useAuth } from "@/pages/Routes/AuthContext";
 import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import { calculateAge } from "@/utlis/calculateAge";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   fullName: number;
@@ -72,6 +70,11 @@ const PersonalInformation: React.FC<Props> = ({
   useEffect(() => {
     if (!formData || formData.length === 0 || !user) return;
 
+    console.log(
+      parseLocalDate(user?.refUserDOB ? user?.refUserDOB : "") +
+        "-------------->"
+    );
+
     getAnswer(questionIds.fullName) == "" &&
       handleInputChange(questionIds.fullName, user?.refUserFirstName);
     getAnswer(questionIds.email) == "" &&
@@ -79,6 +82,18 @@ const PersonalInformation: React.FC<Props> = ({
     user?.refCODOPhoneNo1 &&
       getAnswer(questionIds.phone) == "" &&
       handleInputChange(questionIds.phone, user?.refCODOPhoneNo1);
+
+    if (user?.refUserDOB && getAnswer(questionIds.dob) === "") {
+      handleInputChange(questionIds.dob, user.refUserDOB);
+      handleInputChange(
+        questionIds.age,
+        user?.refUserDOB ? String(calculateAge(formatLocalDate(new Date(user?.refUserDOB))) || 0) : ""
+      );
+    }
+
+    user?.refUserGender &&
+      getAnswer(questionIds.gender) == "" &&
+      handleInputChange(questionIds.gender, user?.refUserGender);
   }, []);
 
   useEffect(() => {
@@ -146,12 +161,6 @@ const PersonalInformation: React.FC<Props> = ({
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Personal Information" className="uppercase" />
       <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
       </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
@@ -448,10 +457,11 @@ const PersonalInformation: React.FC<Props> = ({
         OverrideStatus !== "approved" && (
           <div className="flex justify-center items-center pb-5">
             <div
-            className={`px-6 py-3 rounded-lg w-fit text-base font-semibold border shadow-sm border-red-500 text-red-700 bg-red-100`}
-          >
-            Please contact Center Manager to evaluate your eligibility for the scan.
-          </div>
+              className={`px-6 py-3 rounded-lg w-fit text-base font-semibold border shadow-sm border-red-500 text-red-700 bg-red-100`}
+            >
+              Please contact Center Manager to evaluate your eligibility for the
+              scan.
+            </div>
           </div>
         )}
 

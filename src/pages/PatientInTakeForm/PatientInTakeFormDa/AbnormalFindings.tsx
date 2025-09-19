@@ -6,9 +6,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSelect";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { IntakeOption } from "../PatientInTakeForm";
-import TextEditor from "@/components/TextEditor";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   abnormality: number;
@@ -331,14 +329,6 @@ const AbnormalFindings: React.FC<Props> = ({
         FormTitle="ABNORMAL FINDINGS(more details)"
         className="uppercase"
       />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(formData)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/*A. Date abnormality was detected */}

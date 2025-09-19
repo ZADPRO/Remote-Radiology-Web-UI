@@ -323,8 +323,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     }
                     required={
                       getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) === ""
+                      getAnswerByQuestionId(Props.LQID) === ""
                     }
                   />
                 </div>
@@ -452,8 +451,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     }
                     required={
                       getAnswerByQuestionId(Props.RQID) === "" &&
-                      getAnswerByQuestionId(Props.LQID) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) === ""
+                      getAnswerByQuestionId(Props.LQID) === ""
                     }
                   />
                 </div>

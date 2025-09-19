@@ -258,7 +258,7 @@ const NotesReport: React.FC<Props> = ({
       : false;
   const glandularRight =
     getAnswer(grandularAndDuctalTissueRightQuestions.grandularSelect) ==
-    "Present"
+      "Present"
       ? true
       : false;
   const lessionsRight =
@@ -281,7 +281,7 @@ const NotesReport: React.FC<Props> = ({
       : false;
   const glandularLeft =
     getAnswer(grandularAndDuctalTissueRightQuestions.grandularSelect) ==
-    "Present"
+      "Present"
       ? true
       : false;
   const lessionsLeft =
@@ -338,11 +338,10 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
-    ${
-      ScanCenterImg?.base64Data
-        ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="100" height="100"/>`
-        : ""
-    }
+    ${ScanCenterImg?.base64Data
+          ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="100" height="100"/>`
+          : ""
+        }
       </div>
     <table width="100%" style="width: 100%; border-collapse: collapse; font-size: 14px;">
       <tbody>
@@ -350,9 +349,8 @@ const NotesReport: React.FC<Props> = ({
           <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
           <td style="border: 1px solid #000; padding: 4px;">${name}</td>
           <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-          <td style="border: 1px solid #000; padding: 4px;">${
-            studyTime ? formatDateWithAge(studyTime) : ""
-          }</td>
+          <td style="border: 1px solid #000; padding: 4px;">${studyTime ? formatDateWithAge(studyTime) : ""
+        }</td>
         </tr>
         <tr>
           <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
@@ -362,13 +360,12 @@ const NotesReport: React.FC<Props> = ({
         </tr>
         <tr>
           <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
-          <td style="border: 1px solid #000; padding: 4px;">${
-            patientDetails.refUserCustId
-          }</td>
+          <td style="border: 1px solid #000; padding: 4px;">${patientDetails.refUserCustId
+        }</td>
           <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
           <td style="border: 1px solid #000; padding: 4px;">${formatReadableDate(
-            AppointmentDate
-          )}</td>
+          AppointmentDate
+        )}</td>
         </tr>
       </tbody>
     </table>
@@ -384,72 +381,57 @@ const NotesReport: React.FC<Props> = ({
 
   <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2. The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
 
-  ${
-    getAnswer(1) === "Present"
-      ? `
+  ${getAnswer(1) === "Present"
+          ? `
     <br />
-  <div><strong>BREAST IMPLANTS:</strong><br />${
-    textEditor.breastImplant.value
-  }${
-          textEditor.breastImplantImage.value
+  <div><strong>BREAST IMPLANTS:</strong><br />${textEditor.breastImplant.value
+          }${textEditor.breastImplantImage.value
             ? textEditor.breastImplantImage.value
             : ""
-        }</div>
+          }</div>
     `
-      : ``
-  }
+          : ``
+        }
 
-  ${
-    textEditor.symmetry.value
-      ? `
+  ${textEditor.symmetry.value
+          ? `
     <br />
-  <div>${textEditor.symmetry.value}${
-          textEditor.symmetryImage.value ? textEditor.symmetryImage.value : ""
-        }</div>
+  <div>${textEditor.symmetry.value}${textEditor.symmetryImage.value ? textEditor.symmetryImage.value : ""
+          }</div>
     `
-      : ``
-  }
+          : ``
+        }
   <br />
 
-  ${
-    getAnswer(130) === "Present"
-      ? `
+  ${getAnswer(130) === "Present"
+          ? `
     <p><strong>RIGHT BREAST FINDINGS:</strong></p>
 
-  ${
-    breastDensityRight
-      ? `<span>${textEditor.breastDensityandImageRight.value}</span>${
-          textEditor.breastDensityandImageRightImage.value.length > 7
-            ? `<span>${textEditor.breastDensityandImageRightImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-  ${
-    nippleAreolaRight
-      ? `${textEditor.nippleAreolaSkinRight.value}${
-          textEditor.nippleAreolaSkinRightImage.value.length > 7
-            ? `<span>${textEditor.nippleAreolaSkinRightImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-  ${
-    glandularRight
-      ? `<p><strong>Glandular and ductal tissue: </strong></p>${
-          textEditor.grandularAndDuctalTissueRight.value
-        }${
-          textEditor.grandularAndDuctalTissueRightImage.value.length > 7
-            ? `<span>${textEditor.grandularAndDuctalTissueRightImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-  ${
-    lessionsRight
-      ? `${
-          lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
-            ? lesionsVal["simple cyst"]
+  ${breastDensityRight
+            ? `<span>${textEditor.breastDensityandImageRight.value}</span>${textEditor.breastDensityandImageRightImage.value.length > 7
+              ? `<span>${textEditor.breastDensityandImageRightImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+  ${nippleAreolaRight
+            ? `${textEditor.nippleAreolaSkinRight.value}${textEditor.nippleAreolaSkinRightImage.value.length > 7
+              ? `<span>${textEditor.nippleAreolaSkinRightImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+  ${glandularRight
+            ? `<p><strong>Glandular and ductal tissue: </strong></p>${textEditor.grandularAndDuctalTissueRight.value
+            }${textEditor.grandularAndDuctalTissueRightImage.value.length > 7
+              ? `<span>${textEditor.grandularAndDuctalTissueRightImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+  ${lessionsRight
+            ? `${lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
+              ? lesionsVal["simple cyst"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(lesionsRightQuestions.simplecrstDatar);
@@ -464,11 +446,10 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["complex cystic structure"] &&
-          lesionsVal["complex cystic structure"].length > 0
-            ? lesionsVal["complex cystic structure"]
+              : ""
+            }${lesionsVal["complex cystic structure"] &&
+              lesionsVal["complex cystic structure"].length > 0
+              ? lesionsVal["complex cystic structure"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(lesionsRightQuestions.complexcrstDatar);
@@ -482,11 +463,10 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["heterogeneous tissue prominence"] &&
-          lesionsVal["heterogeneous tissue prominence"].length > 0
-            ? lesionsVal["heterogeneous tissue prominence"]
+              : ""
+            }${lesionsVal["heterogeneous tissue prominence"] &&
+              lesionsVal["heterogeneous tissue prominence"].length > 0
+              ? lesionsVal["heterogeneous tissue prominence"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(
@@ -502,11 +482,10 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["hypertrophic tissue with microcysts"] &&
-          lesionsVal["hypertrophic tissue with microcysts"].length > 0
-            ? lesionsVal["hypertrophic tissue with microcysts"]
+              : ""
+            }${lesionsVal["hypertrophic tissue with microcysts"] &&
+              lesionsVal["hypertrophic tissue with microcysts"].length > 0
+              ? lesionsVal["hypertrophic tissue with microcysts"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(
@@ -522,11 +501,10 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["fibronodular density"] &&
-          lesionsVal["fibronodular density"].length > 0
-            ? lesionsVal["fibronodular density"]
+              : ""
+            }${lesionsVal["fibronodular density"] &&
+              lesionsVal["fibronodular density"].length > 0
+              ? lesionsVal["fibronodular density"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(
@@ -542,11 +520,10 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["multiple simple cysts"] &&
-          lesionsVal["multiple simple cysts"].length > 0
-            ? lesionsVal["multiple simple cysts"]
+              : ""
+            }${lesionsVal["multiple simple cysts"] &&
+              lesionsVal["multiple simple cysts"].length > 0
+              ? lesionsVal["multiple simple cysts"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(
@@ -562,10 +539,9 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }${
-          lesionsVal["others"] && lesionsVal["others"].length > 0
-            ? lesionsVal["others"]
+              : ""
+            }${lesionsVal["others"] && lesionsVal["others"].length > 0
+              ? lesionsVal["others"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
                   const raw = getAnswer(lesionsRightQuestions.OtherDatar);
@@ -579,348 +555,311 @@ const NotesReport: React.FC<Props> = ({
                   );
                 })
                 .join("")
-            : ""
-        }`
-      : ``
-  }
-  ${
-    lymphRight
-      ? `<div><strong>Lymph Nodes: </strong>${
-          textEditor.LymphNodesRight.value
-        }${
-          textEditor.LymphNodesRightImage.value.length > 7
-            ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }<div>`
-      : ``
-  }
-  ${
-    comparisonRight
-      ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
-          .map((data, index) => {
-            let dataArray: any[] = [];
-            const raw = getAnswer(ComparisonPriorRightQuestion.LesionCompTable);
-            dataArray = raw ? JSON.parse(raw) : [];
+              : ""
+            }`
+            : ``
+          }
+  ${lymphRight
+            ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesRight.value
+            }${textEditor.LymphNodesRightImage.value.length > 7
+              ? `<span>${textEditor.LymphNodesRightImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }<div>`
+            : ``
+          }
+  ${comparisonRight
+            ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
+              .map((data, index) => {
+                let dataArray: any[] = [];
+                const raw = getAnswer(ComparisonPriorRightQuestion.LesionCompTable);
+                dataArray = raw ? JSON.parse(raw) : [];
 
-            return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
-          })
-          .join("<br/>")}</p><br/>`
-      : ``
-  }
+                return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
+              })
+              .join("<br/>")}</p><br/>`
+            : ``
+          }
     `
-      : ``
-  }
+          : ``
+        }
   
-  ${
-    getAnswer(131) === "Present"
-      ? `
+  ${getAnswer(131) === "Present"
+          ? `
     <p><strong>LEFT BREAST FINDINGS:</strong></p>
 
-  ${
-    breastDensityLeft
-      ? `<span>${textEditor.breastDensityandImageLeft.value}</span>${
-          textEditor.breastDensityandImageLeftImage.value.length > 7
-            ? `<span>${textEditor.breastDensityandImageLeftImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-  ${
-    nippleAreolaLeft
-      ? `${textEditor.nippleAreolaSkinLeft.value}${
-          textEditor.nippleAreolaSkinLeftImage.value.length > 7
-            ? `<span>${textEditor.nippleAreolaSkinLeftImage.value}<br/><span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-  ${
-    glandularLeft
-      ? `<p><strong>Glandular and ductal tissue: </strong></p>${
-          textEditor.grandularAndDuctalTissueLeft.value
-        }${
-          textEditor.grandularAndDuctalTissueLeftImage.value.length > 7
-            ? `<span>${textEditor.grandularAndDuctalTissueLeftImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }`
-      : ``
-  }
-    ${
-      lessionsLeft
-        ? `${
-            lesionsValLeft["simple cyst"] &&
-            lesionsValLeft["simple cyst"].length > 0
+  ${breastDensityLeft
+            ? `<span>${textEditor.breastDensityandImageLeft.value}</span>${textEditor.breastDensityandImageLeftImage.value.length > 7
+              ? `<span>${textEditor.breastDensityandImageLeftImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+  ${nippleAreolaLeft
+            ? `${textEditor.nippleAreolaSkinLeft.value}${textEditor.nippleAreolaSkinLeftImage.value.length > 7
+              ? `<span>${textEditor.nippleAreolaSkinLeftImage.value}<br/><span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+  ${glandularLeft
+            ? `<p><strong>Glandular and ductal tissue: </strong></p>${textEditor.grandularAndDuctalTissueLeft.value
+            }${textEditor.grandularAndDuctalTissueLeftImage.value.length > 7
+              ? `<span>${textEditor.grandularAndDuctalTissueLeftImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }`
+            : ``
+          }
+    ${lessionsLeft
+            ? `${lesionsValLeft["simple cyst"] &&
+              lesionsValLeft["simple cyst"].length > 0
               ? lesionsValLeft["simple cyst"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(lesionsLeftQuestions.simplecrstDatar);
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(lesionsLeftQuestions.simplecrstDatar);
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      "" +
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    "" +
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["complex cystic structure"] &&
-            lesionsValLeft["complex cystic structure"].length > 0
+            }${lesionsValLeft["complex cystic structure"] &&
+              lesionsValLeft["complex cystic structure"].length > 0
               ? lesionsValLeft["complex cystic structure"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.complexcrstDatar
-                    );
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsLeftQuestions.complexcrstDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["heterogeneous tissue prominence"] &&
-            lesionsValLeft["heterogeneous tissue prominence"].length > 0
+            }${lesionsValLeft["heterogeneous tissue prominence"] &&
+              lesionsValLeft["heterogeneous tissue prominence"].length > 0
               ? lesionsValLeft["heterogeneous tissue prominence"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.HeterogeneousDatar
-                    );
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsLeftQuestions.HeterogeneousDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["hypertrophic tissue with microcysts"] &&
-            lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
+            }${lesionsValLeft["hypertrophic tissue with microcysts"] &&
+              lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
               ? lesionsValLeft["hypertrophic tissue with microcysts"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.HypertrophicDatar
-                    );
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsLeftQuestions.HypertrophicDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["fibronodular density"] &&
-            lesionsValLeft["fibronodular density"].length > 0
+            }${lesionsValLeft["fibronodular density"] &&
+              lesionsValLeft["fibronodular density"].length > 0
               ? lesionsValLeft["fibronodular density"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.fibronodulardensityDatar
-                    );
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsLeftQuestions.fibronodulardensityDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["multiple simple cysts"] &&
-            lesionsValLeft["multiple simple cysts"].length > 0
+            }${lesionsValLeft["multiple simple cysts"] &&
+              lesionsValLeft["multiple simple cysts"].length > 0
               ? lesionsValLeft["multiple simple cysts"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.multipleCystsDatar
-                    );
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsLeftQuestions.multipleCystsDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }${
-            lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
+            }${lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
               ? lesionsValLeft["others"]
-                  .map((data, index) => {
-                    let dataArray: any[] = [];
-                    const raw = getAnswer(lesionsLeftQuestions.OtherDatar);
-                    dataArray = raw ? JSON.parse(raw) : [];
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(lesionsLeftQuestions.OtherDatar);
+                  dataArray = raw ? JSON.parse(raw) : [];
 
-                    return (
-                      data +
-                      (dataArray[index]?.ImageText
-                        ? dataArray[index].ImageText
-                        : "")
-                    );
-                  })
-                  .join("")
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
               : ""
-          }`
-        : ``
-    }
-  ${
-    lymphLeft
-      ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesLeft.value}${
-          textEditor.LymphNodesLeftImage.value.length > 7
-            ? `<span>${textEditor.LymphNodesLeftImage.value}<br/></span>`
-            : "<p><br/></p>"
-        }</div>`
-      : ``
-  }
-  ${
-    comparisonLeftVal
-      ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
-          .map((data, index) => {
-            let dataArray: any[] = [];
-            const raw = getAnswer(ComparisonPriorLeftQuestion.LesionCompTable);
-            dataArray = raw ? JSON.parse(raw) : [];
+            }`
+            : ``
+          }
+  ${lymphLeft
+            ? `<div><strong>Lymph Nodes: </strong>${textEditor.LymphNodesLeft.value}${textEditor.LymphNodesLeftImage.value.length > 7
+              ? `<span>${textEditor.LymphNodesLeftImage.value}<br/></span>`
+              : "<p><br/></p>"
+            }</div>`
+            : ``
+          }
+  ${comparisonLeftVal
+            ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
+              .map((data, index) => {
+                let dataArray: any[] = [];
+                const raw = getAnswer(ComparisonPriorLeftQuestion.LesionCompTable);
+                dataArray = raw ? JSON.parse(raw) : [];
 
-            return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
-          })
-          .join("<br/>")}</p>`
-      : ``
-  }
+                return data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "");
+              })
+              .join("<br/>")}</p>`
+            : ``
+          }
     `
-      : ``
-  }
+          : ``
+        }
 
 
-  ${
-    getAnswer(132) === "Present"
-      ? `
+  ${getAnswer(132) === "Present"
+          ? `
   <p><strong>RIGHT BREAST:</strong></p>
   <strong>Impression:</strong>
-  ${
-    textEditor.ImpressionTextRight.value
-      ? `<br/><p>${textEditor.ImpressionTextRight.value}</p>`
-      : "<p></p>"
-  }
-  ${
-    textEditor.OptionalImpressionTextRight.value.length > 7
-      ? ` <p> ${textEditor.OptionalImpressionTextRight.value}</p>`
-      : ""
-  }
+  ${textEditor.ImpressionTextRight.value
+            ? `<br/><p>${textEditor.ImpressionTextRight.value}</p>`
+            : "<p></p>"
+          }
+  ${textEditor.OptionalImpressionTextRight.value.length > 7
+            ? ` <p> ${textEditor.OptionalImpressionTextRight.value}</p>`
+            : ""
+          }
 
- ${
-   textEditor.CommonImpresRecommTextRightVal.value === "A" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "E" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "I" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "L" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "M" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "U" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "Y"
-     ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
-     : ``
- }
+ ${textEditor.CommonImpresRecommTextRightVal.value === "A" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "E" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "I" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "L" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "M" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "U" ||
+            textEditor.CommonImpresRecommTextRightVal.value === "Y"
+            ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
+            : ``
+          }
 
   <p><strong>Recommendation:</strong></p>
-${
-  textEditor.RecommendationTextRight.value
-    ? `<p>${textEditor.RecommendationTextRight.value}</p>`
-    : ""
-}
-  ${
-    textEditor.OptionalRecommendationTextRight.value.length > 7
-      ? `<p>${textEditor.OptionalRecommendationTextRight.value}</p>`
-      : ""
-  }
+${textEditor.RecommendationTextRight.value
+            ? `<p>${textEditor.RecommendationTextRight.value}</p>`
+            : ""
+          }
+  ${textEditor.OptionalRecommendationTextRight.value.length > 7
+            ? `<p>${textEditor.OptionalRecommendationTextRight.value}</p>`
+            : ""
+          }
 
-   ${
-     textEditor.CommonImpresRecommTextRightVal.value !== "A" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "E" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "L" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "M" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "U" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "Y"
-       ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
-       : ``
-   }
+   ${textEditor.CommonImpresRecommTextRightVal.value !== "A" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "E" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "I" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "L" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "M" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "U" &&
+            textEditor.CommonImpresRecommTextRightVal.value !== "Y"
+            ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
+            : ``
+          }
     `
-      : ``
-  }
+          : ``
+        }
 
-  ${
-    getAnswer(133) === "Present"
-      ? `
+  ${getAnswer(133) === "Present"
+          ? `
         <br/><p><strong>LEFT BREAST:</strong></p>
   <strong>Impression:</strong>
-  ${
-    textEditor.ImpressionText.value
-      ? `<br/><p>${textEditor.ImpressionText.value}</p>`
-      : `<p></p>`
-  }
-  ${
-    textEditor.OptionalImpressionText.value.length > 7
-      ? ` <p> ${textEditor.OptionalImpressionText.value}</p>`
-      : ""
-  }
+  ${textEditor.ImpressionText.value
+            ? `<br/><p>${textEditor.ImpressionText.value}</p>`
+            : `<p></p>`
+          }
+  ${textEditor.OptionalImpressionText.value.length > 7
+            ? ` <p> ${textEditor.OptionalImpressionText.value}</p>`
+            : ""
+          }
 
- ${
-   textEditor.CommonImpresRecommTextVal.value === "A" ||
-   textEditor.CommonImpresRecommTextVal.value === "E" ||
-   textEditor.CommonImpresRecommTextVal.value === "I" ||
-   textEditor.CommonImpresRecommTextVal.value === "L" ||
-   textEditor.CommonImpresRecommTextVal.value === "M" ||
-   textEditor.CommonImpresRecommTextVal.value === "U" ||
-   textEditor.CommonImpresRecommTextVal.value === "Y"
-     ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
-     : ``
- }
+ ${textEditor.CommonImpresRecommTextVal.value === "A" ||
+            textEditor.CommonImpresRecommTextVal.value === "E" ||
+            textEditor.CommonImpresRecommTextVal.value === "I" ||
+            textEditor.CommonImpresRecommTextVal.value === "L" ||
+            textEditor.CommonImpresRecommTextVal.value === "M" ||
+            textEditor.CommonImpresRecommTextVal.value === "U" ||
+            textEditor.CommonImpresRecommTextVal.value === "Y"
+            ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
+            : ``
+          }
   <p><strong>Recommendation:</strong></p>
-  ${
-  textEditor.RecommendationText.value
-    ? `<p>${textEditor.RecommendationText.value}</p>`
-    : ""
-}
- ${
-   textEditor.OptionalRecommendationText.value.length > 7
-     ? `<p>${textEditor.OptionalRecommendationText.value}</p>`
-     : ""
- }
+  ${textEditor.RecommendationText.value
+            ? `<p>${textEditor.RecommendationText.value}</p>`
+            : ""
+          }
+ ${textEditor.OptionalRecommendationText.value.length > 7
+            ? `<p>${textEditor.OptionalRecommendationText.value}</p>`
+            : ""
+          }
   
-  ${
-    textEditor.CommonImpresRecommTextVal.value !== "A" &&
-    textEditor.CommonImpresRecommTextVal.value !== "E" &&
-    textEditor.CommonImpresRecommTextVal.value !== "I" &&
-    textEditor.CommonImpresRecommTextVal.value !== "L" &&
-    textEditor.CommonImpresRecommTextVal.value !== "M" &&
-    textEditor.CommonImpresRecommTextVal.value !== "U" &&
-    textEditor.CommonImpresRecommTextVal.value !== "Y"
-      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
-      : ``
-  }
+  ${textEditor.CommonImpresRecommTextVal.value !== "A" &&
+            textEditor.CommonImpresRecommTextVal.value !== "E" &&
+            textEditor.CommonImpresRecommTextVal.value !== "I" &&
+            textEditor.CommonImpresRecommTextVal.value !== "L" &&
+            textEditor.CommonImpresRecommTextVal.value !== "M" &&
+            textEditor.CommonImpresRecommTextVal.value !== "U" &&
+            textEditor.CommonImpresRecommTextVal.value !== "Y"
+            ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
+            : ``
+          }
     `
-      : ``
-  }
+          : ``
+        }
   <br/><strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
   <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
   <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
@@ -931,18 +870,18 @@ ${
   <i><p>QT’s first blinded trial: Malik B, Iuanow E, Klock J. An Exploratory Multi-reader, Multicase Study Comparing Transmission Ultrasound to Mammography on Recall Rates and Detection Rates for Breast Cancer Lesions. Academic Radiology February 2021. https://www.sciencedirect.com/science/article/pii/S1076633220306462 ; https://doi.org/10.1016/j.acra.2020.11.011 </p></i>
   <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
 ` +
-          (textEditor.addendumText.value.length > 0
-            ? "<br/><h3><strong>ADDENDUM:</strong></h3>" +
-              textEditor.addendumText.value
-            : "")
+        (textEditor.addendumText.value.length > 0
+          ? "<br/><p><strong>ADDENDUM:</strong></p>" +
+          textEditor.addendumText.value
+          : "")
       );
     } else {
       setNotes(
-        Notes.split("<h3><strong>ADDENDUM:</strong></h3>")[0] +
-          (textEditor.addendumText.value.length > 0
-            ? "<h3><strong>ADDENDUM:</strong></h3>" +
-              textEditor.addendumText.value
-            : "")
+        Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
+        (textEditor.addendumText.value.length > 0
+          ? "<p><strong>ADDENDUM:</strong></p>" +
+          textEditor.addendumText.value
+          : "")
       );
     }
   }, [
@@ -1094,42 +1033,42 @@ ${
 
           {(reportStatus === "Signed Off" ||
             reportStatus === "Signed Off (A)") && (
-            <div className="flex flex-col mb-4">
-              <div className="flex items-center justify-between">
-                <p className="text-2xl">Addendum</p>
-                <Button
-                  variant="default"
-                  className="mt-3 mb-2"
-                  onClick={() => {
-                    if (addButton) {
-                      handleAddAddendum();
-                    } else {
-                      setAddButton(true);
-                    }
-                  }}
-                >
-                  {addButton ? (
-                    <>
-                      <Save />
-                      <span>Save</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus />
-                      <span>Add</span>
-                    </>
-                  )}
-                </Button>
+              <div className="flex flex-col mb-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-2xl">Addendum</p>
+                  <Button
+                    variant="default"
+                    className="mt-3 mb-2"
+                    onClick={() => {
+                      if (addButton) {
+                        handleAddAddendum();
+                      } else {
+                        setAddButton(true);
+                      }
+                    }}
+                  >
+                    {addButton ? (
+                      <>
+                        <Save />
+                        <span>Save</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus />
+                        <span>Add</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {addButton && (
+                  <Textarea
+                    placeholder="Add Addendum"
+                    value={addendumText}
+                    onChange={(e) => setAddendumText(e.target.value)}
+                  />
+                )}
               </div>
-              {addButton && (
-                <Textarea
-                  placeholder="Add Addendum"
-                  value={addendumText}
-                  onChange={(e) => setAddendumText(e.target.value)}
-                />
-              )}
-            </div>
-          )}
+            )}
         </div>
       </div>
     </>

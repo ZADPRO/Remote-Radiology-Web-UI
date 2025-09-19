@@ -89,7 +89,7 @@ export interface OverAllAnalytics {
   totalsform: number;
   totaltiming: number;
   leftannualscreening: number;
-  leftusgsfu:number;
+  leftusgsfu: number;
   leftBiopsy: number;
   leftBreastradiologist: number;
   leftClinicalCorrelation: number;
@@ -116,7 +116,7 @@ export interface OverAllScanCenterAnalytics {
   totaldbform: number;
   totaldcform: number;
   leftannualscreening: number;
-  leftusgsfu:number;
+  leftusgsfu: number;
   leftBiopsy: number;
   leftBreastradiologist: number;
   leftClinicalCorrelation: number;
@@ -131,6 +131,17 @@ export interface OverAllScanCenterAnalytics {
   rightRedo: number;
 }
 
+export interface RefAuditTransHistory {
+  refTHId: number;
+  transTypeId: number;
+  refTHData: string;
+  refTHTime: Date;
+  refUserId: number;
+  refTHActionBy: number;
+  refUserCustId: number;
+}
+
+
 export const analyticsService = {
   overallScanCenter: async (
     SCId: number,
@@ -143,8 +154,7 @@ export const analyticsService = {
       token
     );
     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_USERSERVICE
+      `${import.meta.env.VITE_API_URL_USERSERVICE
       }/analaytics/admin/overallonescancenter`,
       { encryptedData: payload },
       {
@@ -209,6 +219,27 @@ export const analyticsService = {
       ReportArtificate: TotalArtifacts[];
       TechArtificate: TotalArtifacts[];
       OverAllAnalytics: OverAllAnalytics[];
+    } = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  getAuditLog: async (
+  ) => {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/listauditlog`,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+      status: boolean;
+      data: RefAuditTransHistory[];
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     return decryptedData;

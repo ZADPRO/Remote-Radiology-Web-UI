@@ -356,6 +356,21 @@ const ViewScanCenter: React.FC = () => {
                 >
                   Manage Reviewer
                 </Button>
+                <Button
+                  type="button"
+                  variant="pinkTheme"
+                  className=" w-full lg:w-auto p-6 font-semibold"
+                  onClick={() =>
+                    navigate("../managePatient", {
+                      state: {
+                        scanCenterId: formData.refSCId,
+                        SCName: formData.refSCCustId,
+                      },
+                    })
+                  }
+                >
+                  MANAGE PATIENTS
+                </Button>
               </div>
               <Button
                 variant="link"

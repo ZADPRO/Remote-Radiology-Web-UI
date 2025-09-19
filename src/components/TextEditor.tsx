@@ -128,7 +128,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
     if (role?.id === 8) {
       const selection = editor.getSelection();
       if (selection) {
-        editor.format("background", "#e06666"); // Apply to current selection
+        editor.format("background", "#f4cccc"); // Apply to current selection
       }
     }
   };

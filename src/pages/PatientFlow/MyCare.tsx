@@ -1,47 +1,33 @@
-import DatePicker from "@/components/date-picker";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  AppointmentAdd,
-  appointmentService,
-} from "@/services/patientInTakeFormService";
-import React, { useState } from "react";
+import React from "react";
 import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { dateDisablers, formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
-import { Dialog } from "@/components/ui/dialog";
-import PatientInformation from "../Dashboard/PatientBrouchure/PatientInformation";
-import ConsentForm from "../Dashboard/ConsentForm/ConsentForm";
-
-interface AppointmentDetails {
-  appointmentId: number,
-  scId: number,
-  SCCustId: string
-}
+// interface AppointmentDetails {
+//   appointmentId: number,
+//   scId: number,
+//   SCCustId: string
+// }
 
 const MyCare: React.FC = () => {
-  const [appointmentData, setAppointmentData] = useState<AppointmentAdd>({
-    refSCId: "",
-    refAppointmentDate: "",
-  });
+  // const [appointmentData, setAppointmentData] = useState<AppointmentAdd>({
+  //   refSCId: "",
+  //   refAppointmentDate: "",
+  // });
 
-  console.log(appointmentData)
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // console.log(appointmentData)
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string | null>(null);
 
-  const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] = useState<boolean>(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  // const [isEditDialogBroucherOpen, setIsEditDialogBroucherOpen] = useState<boolean>(false);
+  // const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
-  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
-    appointmentId: 0,
-    scId: 0,
-    SCCustId: ""
-  })
+  // const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
+  //   appointmentId: 0,
+  //   scId: 0,
+  //   SCCustId: ""
+  // })
 
   const { user } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const getGreetingWithEmoji = () => {
     const hour = new Date().getHours();
@@ -53,55 +39,54 @@ const MyCare: React.FC = () => {
 
   const greeting = getGreetingWithEmoji();
 
-  const handleSubmitAppointment = async () => {
-    setIsLoading(true); // Set loading to true when submission starts
-    setError(null); // Clear any previous errors
+  // const handleSubmitAppointment = async () => {
+  //   setIsLoading(true); // Set loading to true when submission starts
+  //   setError(null); // Clear any previous errors
 
-    try {
-      const res = await appointmentService.addAppointment(appointmentData);
+  //   try {
+  //     const res = await appointmentService.addAppointment(appointmentData);
 
-      if (res.status) {
-        // navigate("../medicalHistory");
-        setAppointmentDetails({
-          appointmentId: res.AppointmentId,
-          scId: res.SCId,
-          SCCustId: res.SCCustId
-        });
-        setIsEditDialogBroucherOpen(true);
+  //     if (res.status) {
+  //       // navigate("../medicalHistory");
+  //       setAppointmentDetails({
+  //         appointmentId: res.AppointmentId,
+  //         scId: res.SCId,
+  //         SCCustId: res.SCCustId
+  //       });
+  //       setIsEditDialogBroucherOpen(true);
 
-        console.log(res)
-      } else {
-        // Assuming 'res.message' contains the error message from the API
-        const errorMessage =
-          res.message || "Failed to add appointment. Please try again.";
-        setError(errorMessage);
-      }
-    } catch (err) {
-      console.error("Error adding appointment:", err);
-      const errorMessage =
-        "An unexpected error occurred. Please try again later.";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false); // Set loading to false when submission finishes (success or failure)
-    }
-  };
+  //       console.log(res)
+  //     } else {
+  //       // Assuming 'res.message' contains the error message from the API
+  //       const errorMessage =
+  //         res.message || "Failed to add appointment. Please try again.";
+  //       setError(errorMessage);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error adding appointment:", err);
+  //     const errorMessage =
+  //       "An unexpected error occurred. Please try again later.";
+  //     setError(errorMessage);
+  //   } finally {
+  //     setIsLoading(false); // Set loading to false when submission finishes (success or failure)
+  //   }
+  // };
 
   return (
-    <div className="max-w-6xl mx-auto py-6 mb-5 lg:h-[90vh] px-4 lg:px-0 lg:py-10">
+    <div className="max-w-6xl mx-auto py-6 mb-5 lg:h-[90vh] px-4 lg:px-0 lg:py-10 flex flex-col  justify-center">
       {/* Greeting Section */}
-      <div>
+      <div className="mx-5">
         <div className="flex items-center gap-2 text-gray-600 text-sm">
           <span>{greeting.emoji}</span>
           <span>{greeting.text}</span>
         </div>
         <h2
-          className={`font-bold text-[#1E1E4B] mt-1 ${
-            (user?.refUserFirstName || "").length +
-              (user?.refUserLastName || "").length <
+          className={`font-bold text-[#1E1E4B] mt-1 ${(user?.refUserFirstName || "").length +
+            (user?.refUserLastName || "").length <
             12
-              ? "text-2xl sm:text-3xl"
-              : "text-xl"
-          }`}
+            ? "text-2xl sm:text-3xl"
+            : "text-xl"
+            }`}
         >
           {(user?.refUserFirstName || "") + " " + (user?.refUserLastName || "")}
         </h2>
@@ -112,7 +97,7 @@ const MyCare: React.FC = () => {
         {/* <h1 className="font-bold text-4xl leading-tight tracking-wide sm:text-5xl lg:text-6xl lg:leading-[108%]">
           Gentle Care Confident Screening
         </h1> */}
-        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+        {/* <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
           <strong className="font-semibold text-lg text-gray-900">
             QT (Quantitative Transmission) Imaging
           </strong>
@@ -122,25 +107,40 @@ const MyCare: React.FC = () => {
           revolutionary method provides a safe, comfortable, fast,
           radiation-free, and highly efficient alternative to traditional breast
           imaging techniques.
-        </p>
+        </p> */}
       </div>
 
       {/* Appointment Form and Image Section */}
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmitAppointment();
-        }}
-        className="bg-radial-greeting flex flex-col rounded-lg mt-4 lg:flex-row"
+        // onSubmit={(e) => {
+        //   e.preventDefault();
+        //   handleSubmitAppointment();
+        // }}
+        className="bg-radial-greeting flex mx-5 flex-col rounded-lg lg:flex-row"
       >
         {/* Form Section */}
         <div className="flex flex-col gap-4 px-4 py-6 w-full lg:w-[50%] lg:px-15 lg:py-10">
-          <Label className="text-sm sm:text-base">
+          <div className="w-full mt-4 space-y-1 md:w-[80%] lg:w-[100%]">
+            {/* <h1 className="font-bold text-4xl leading-tight tracking-wide sm:text-5xl lg:text-6xl lg:leading-[108%]">
+          Gentle Care Confident Screening
+        </h1> */}
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <strong className="font-semibold text-lg text-gray-900">
+                QT (Quantitative Transmission) Imaging
+              </strong>
+              , also known as Breast Acoustic CT, is a cutting-edge technology for
+              breast cancer screening. Utilizing advanced sound-wave imaging, it
+              generates a 3D reconstruction of the breast in minutes. This
+              revolutionary method provides a safe, comfortable, fast,
+              radiation-free, and highly efficient alternative to traditional breast
+              imaging techniques.
+            </p>
+          </div>
+          {/* <Label className="text-sm sm:text-base">
             <span className="text-red-500">*</span>Kindly use the code that was
             sent to your email
           </Label>
 
-          {/* Scan Code */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <Label className="min-w-[120px] sm:min-w-[150px]">Scan Code</Label>
             <Input
@@ -158,7 +158,6 @@ const MyCare: React.FC = () => {
             />
           </div>
 
-          {/* Date of Appointment */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <Label
               htmlFor="appointment-date"
@@ -181,10 +180,8 @@ const MyCare: React.FC = () => {
             </div>
           </div>
 
-          {/* Error Message Display */}
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-          {/* Submit Button */}
           <div className="flex items-end justify-end mt-4">
             <Button
               className="bg-[#A3B1A1] hover:bg-[#81927f] w-full sm:w-full lg:w-2/5"
@@ -193,7 +190,7 @@ const MyCare: React.FC = () => {
             >
               {isLoading ? "Processing..." : "Proceed"}
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Image Section */}
@@ -202,12 +199,12 @@ const MyCare: React.FC = () => {
           <img
             src={women_img}
             alt="women_img"
-            className="absolute bottom-0 left-11/12 transform -translate-x-1/2 h-[20rem] object-contain sm:h-[25rem] lg:h-[30rem]"
+            className="absolute bottom-0 left-11/12 transform -translate-x-1/2 h-[20rem] object-contain sm:h-[25rem] lg:h-[25rem] xl:h-[30rem]"
           />
         </div>
       </form>
 
-      {isEditDialogBroucherOpen && (
+      {/* {isEditDialogBroucherOpen && (
         <Dialog
           open={isEditDialogBroucherOpen}
           onOpenChange={setIsEditDialogBroucherOpen}
@@ -241,7 +238,7 @@ const MyCare: React.FC = () => {
             scId={appointmentDetails.scId}
           />
         </Dialog>
-      )}
+      )} */}
     </div>
   );
 };

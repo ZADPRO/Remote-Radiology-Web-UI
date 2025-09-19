@@ -4,8 +4,6 @@ import { Separator } from "@/components/ui/separator";
 import FormHeader from "../FormHeader";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Label } from "@/components/ui/label";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 type Props = {
   data: any;
@@ -143,14 +141,6 @@ const CurrentBreastSymptoms: React.FC<Props> = (Props) => {
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="CURRENT BREAST SYMPTOMS" className="uppercase" />
-      <div className="bg-[#fff]">
-        {
-          <TextEditor
-            value={PatientHistoryReportGenerator(Props.data)}
-            readOnly={true}
-          />
-        }
-      </div>
       <div className={Props.readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 lg:pr-2 space-y-8 pb-10">
           <MultiOptionRadioGroup

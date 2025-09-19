@@ -95,7 +95,8 @@ function processContentSpacing(content: any): any {
     }
 
     // Preserve text margins
-    if (content.text !== undefined) content.margin = content.margin || [0, 0, 0, 0];
+    if (content.text !== undefined)
+      content.margin = content.margin || [0, 0, 0, 0];
 
     // IMAGE HANDLING
     // if (content.image) {
@@ -121,7 +122,18 @@ function processContentSpacing(content: any): any {
 
     // Sometimes images are inside a 'stack' array (common for html-to-pdfmake)
     if (content.stack && Array.isArray(content.stack)) {
-      content.stack = content.stack.map((item: any) => processContentSpacing(item));
+      content.stack = content.stack.map((item: any) =>
+        processContentSpacing(item)
+      );
+    }
+
+    if (content.ol && Array.isArray(content.ol)) {
+      // Convert ordered list (ol) to unordered list (ul) with bullets
+      content.ul = content.ol;
+      delete content.ol;
+
+      // Optional: force bullet style
+      content.type = "disc"; // 'disc' | 'circle' | 'square'
     }
 
     // Recursive handling for 'content' arrays (nested divs, paragraphs, etc.)
@@ -137,7 +149,6 @@ function processContentSpacing(content: any): any {
 
   return content;
 }
-
 
 /**
  * Generates and downloads a PDF from an HTML string with correct table sizing.
@@ -162,6 +173,7 @@ export function downloadReportsPdf(
         h2: { margin: [0, 0, 0, 0] as [number, number, number, number] },
         h3: { margin: [0, 0, 0, 0] as [number, number, number, number] },
       },
+      listType: "ul",
     });
 
     // Step 3: Process content for proper spacing and force full-width tables

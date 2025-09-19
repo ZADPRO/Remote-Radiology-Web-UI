@@ -5,9 +5,7 @@ import FormHeader from "../FormHeader";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { IntakeOption } from "../PatientInTakeForm";
-import TextEditor from "@/components/TextEditor";
 import SingleBreastPositionPicker from "@/components/ui/CustomComponents/SingleBreastPositionPicker";
-import { PatientHistoryReportGenerator } from "@/pages/Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface QuestionIds {
   datediagnosis: number;
@@ -203,9 +201,6 @@ const BiopsyorCancer: React.FC<Props> = ({
         FormTitle="Biopsy or Cancer Diagnosis Details"
         className="uppercase"
       />
-      <div className="bg-[#fff]">
-        {<TextEditor value={PatientHistoryReportGenerator(formData)} readOnly={true} />}
-      </div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/*A. Date of diagnosis */}

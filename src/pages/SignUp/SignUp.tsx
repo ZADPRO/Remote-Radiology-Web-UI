@@ -29,6 +29,7 @@ const SignUp: React.FC = () => {
     otp: "",
     password: "",
     confirmPassword: "",
+    scancentercode: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -46,10 +47,10 @@ const SignUp: React.FC = () => {
   };
 
   const [passwordRules, setPasswordRules] = useState({
-  minLength: false,
-  hasNumber: false,
-  hasSpecialChar: false,
-});
+    minLength: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
 
   const navigate = useNavigate();
 
@@ -134,34 +135,34 @@ const SignUp: React.FC = () => {
   };
 
   const handleReLogin = async () => {
-  setReSend(true);
-  setError("");
-  setTimerKey((prevKey) => prevKey + 1);
-  try {
-    await handleVerifyUser();
-  } finally {
-    setReSend(false);
-    setTimerFinished(false);
-  }
-};
+    setReSend(true);
+    setError("");
+    setTimerKey((prevKey) => prevKey + 1);
+    try {
+      await handleVerifyUser();
+    } finally {
+      setReSend(false);
+      setTimerFinished(false);
+    }
+  };
 
   const handleVerifyUser = async () => {
-  try {
-    const res = await signupService.getOtp(formData);
+    try {
+      const res = await signupService.getOtp(formData);
 
-    if (res.data?.status) {
-      setStep(2);
-    } else {
-      setError(res.data?.message || "Failed to get Passcode.");
+      if (res.data?.status) {
+        setStep(2);
+      } else {
+        setError(res.data?.message || "Failed to get Passcode.");
+      }
+    } catch (error) {
+      console.error("Verify User Error:", error);
+      setError("Something went wrong. Please try again.");
     }
-  } catch (error) {
-    console.error("Verify User Error:", error);
-    setError("Something went wrong. Please try again.");
-  }
-};
+  };
 
 
-  const handleVerifyOtp = async() => {
+  const handleVerifyOtp = async () => {
     try {
       const tempFormData = {
         ...formData,
@@ -169,7 +170,7 @@ const SignUp: React.FC = () => {
       };
       const res = await signupService.verifyOtp(tempFormData);
       console.log(res);
-      if(res.data.status) {
+      if (res.data.status) {
         setStep(3);
         return;
       } else {
@@ -181,7 +182,7 @@ const SignUp: React.FC = () => {
     }
   }
 
-  const handleRegister = async() => {
+  const handleRegister = async () => {
     try {
       const tempFormData = {
         ...formData,
@@ -189,7 +190,7 @@ const SignUp: React.FC = () => {
       };
       const res = await signupService.signup(tempFormData);
       console.log(res);
-      if(res.data.status) {
+      if (res.data.status) {
         setSuccess(true);
         refreshToken();
         setTimeout(() => {
@@ -334,15 +335,33 @@ const SignUp: React.FC = () => {
                     required
                   />
                 </div>
+
+                <div className="grid gap-2 text-[14px]">
+                  <Label htmlFor="email">
+                    Scan Center Code
+                  </Label>
+                  <Input
+                    id="scancentercode"
+                    type="scancentercode"
+                    className="bg-[#A3B1A1] border border-[#3F3F3D]"
+                    placeholder="Scan center code"
+                    value={formData.scancentercode}
+                    onChange={(e) =>
+                      setFormData({ ...formData, scancentercode: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
                 <div className="text-sm mx-auto text-[#525252]">
-              Already have an account?{" "}
-              <span
-                className="text-[#91c3ce] font-bold hover:underline cursor-pointer"
-                onClick={() => navigate("/")}
-              >
-                Log In
-              </span>
-            </div>
+                  Already have an account?{" "}
+                  <span
+                    className="text-[#91c3ce] font-bold hover:underline cursor-pointer"
+                    onClick={() => navigate("/")}
+                  >
+                    Log In
+                  </span>
+                </div>
               </>
             )}
 
@@ -378,9 +397,8 @@ const SignUp: React.FC = () => {
                         Didn't receive the code?{" "}
                         <span
                           onClick={() => handleReLogin()}
-                          className={`text-[#277EBE] font-[600] cursor-pointer hover:underline ${
-                            reSend ? "opacity-50 pointer-events-none" : ""
-                          }`}
+                          className={`text-[#277EBE] font-[600] cursor-pointer hover:underline ${reSend ? "opacity-50 pointer-events-none" : ""
+                            }`}
                         >
                           {reSend ? "Resending..." : "Re-send"}
                         </span>
@@ -491,31 +509,31 @@ const SignUp: React.FC = () => {
             )}
 
             {success && (
-                <div className="flex justify-start items-center">
-                  <svg
-                    className="checkmark"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 52 52"
-                  >
-                    <circle
-                      className="checkmark__circle"
-                      cx="26"
-                      cy="26"
-                      r="25"
-                      fill="none"
-                    />
-                    <path
-                      className="checkmark__check"
-                      fill="none"
-                      d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                    />
-                  </svg>
+              <div className="flex justify-start items-center">
+                <svg
+                  className="checkmark"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 52 52"
+                >
+                  <circle
+                    className="checkmark__circle"
+                    cx="26"
+                    cy="26"
+                    r="25"
+                    fill="none"
+                  />
+                  <path
+                    className="checkmark__check"
+                    fill="none"
+                    d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                  />
+                </svg>
 
-                  <span className="text-sm font-semibold verified-text">
-                    Account Created Successfully
-                  </span>
-                </div>
-              )}
+                <span className="text-sm font-semibold verified-text">
+                  Account Created Successfully
+                </span>
+              </div>
+            )}
 
             <Button
               type="submit"

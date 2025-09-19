@@ -17,7 +17,6 @@ import { ArrowLeft, Loader } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth } from "../Routes/AuthContext";
 import { parseLocalDate } from "@/lib/dateUtils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import SignatureCanvas from "react-signature-canvas";
@@ -32,8 +31,6 @@ const NewInvoice: React.FC<Props> = () => {
   const { type, id, date } = location.state || {};
 
   const [loading, setLoading] = useState(false);
-
-  const { role } = useAuth();
 
   const [input, setInput] = useState({
     refSCId: 0,
@@ -555,7 +552,7 @@ const NewInvoice: React.FC<Props> = () => {
                       required
                       placeholder="Quantity"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      readOnly={!(role?.type == "admin")}
+                      // readOnly={!(role?.type == "admin")}
                     />
                   </div>
                   <div className="w-full flex flex-col gap-1 sm:gap-2">
@@ -573,14 +570,17 @@ const NewInvoice: React.FC<Props> = () => {
                       required
                       placeholder="Amount"
                       className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      readOnly={!(role?.type == "admin")}
+                      // readOnly={!(role?.type == "admin")}
                     />
                   </div>
                 </div>
                 <div className="py-3 sm:py-4 lg:py-5 px-3 sm:px-4 flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-6">
                   <div className="text-lg sm:text-xl font-bold">Total</div>
                   <div className="text-lg sm:text-xl font-bold">
-                    {input.amount * input.quantity}/-
+                    {input.amount && input.quantity
+                      ? input.amount * input.quantity
+                      : 0}
+                    /-
                   </div>
                 </div>
               </div>

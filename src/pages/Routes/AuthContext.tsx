@@ -39,6 +39,8 @@ export interface UserProfile {
   refRTId: number;
   refSCId: number;
   refCODOEmail: string;
+  refUserDOB: string;
+  refUserGender: string;
   profileImgFile: FileData | null;
 }
 

@@ -115,7 +115,6 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           );
                         }}
                         required={
-                          getAnswerByQuestionId(Props.OtherInputQId) === "" &&
                           !["true"].includes(
                             getAnswerByQuestionId(Props.RQID)
                           ) &&
@@ -217,7 +216,6 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                           );
                         }}
                         required={
-                          getAnswerByQuestionId(Props.OtherInputQId) === "" &&
                           !["true"].includes(
                             getAnswerByQuestionId(Props.RQID)
                           ) &&
