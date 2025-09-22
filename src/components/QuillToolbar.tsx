@@ -54,7 +54,7 @@ Quill.register(Font, true);
 Quill.register("modules/imageResize", ImageResize);
 
 // Modules object for setting up the Quill editor
-export const createModules = (toolbarId: string, readOnly = false) => {
+export const createModules = (toolbarId: string) => {
   const modules: any = {
     toolbar: {
       container: `#${toolbarId}`,
@@ -63,19 +63,16 @@ export const createModules = (toolbarId: string, readOnly = false) => {
         redo: redoChange,
       },
     },
+    imageResize: {
+      parchment: Quill.import("parchment"),
+      modules: ["Resize", "DisplaySize", "Toolbar"],
+    },
     history: {
       delay: 3000,
       maxStack: 100,
       userOnly: true,
     },
   };
-
-  if (!readOnly) {
-    modules.imageResize = {
-      parchment: Quill.import("parchment"),
-      modules: ["Resize", "DisplaySize", "Toolbar"],
-    };
-  }
 
   return modules;
 };
