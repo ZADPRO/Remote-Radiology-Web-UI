@@ -216,11 +216,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
       <QuillToolbar id={toolbarId} />
       <ReactQuill
-        className="w-[555px]"
+        className={`w-[555px] `}
         ref={quillRef}
         value={value}
         onChange={onChange}
-        modules={createModules(toolbarId)}
+        modules={createModules(toolbarId, readOnly)}
         formats={formats}
         theme="snow"
         placeholder={placeholder}

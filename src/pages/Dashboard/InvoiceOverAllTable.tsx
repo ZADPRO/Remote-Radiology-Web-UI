@@ -114,16 +114,18 @@ const InvoiceOverAllTable: React.FC<Props> = ({
     const months = new Set<string>();
     const users = new Set<string>();
 
-    overallInvoiceHistory.forEach((item) => {
-      if (item.refIHFromDate) {
-        months.add(formatReadableDateWithoutDate(item.refIHFromDate));
-      }
+    if (overallInvoiceHistory && overallInvoiceHistory.length > 0) {
+      overallInvoiceHistory.forEach((item) => {
+        if (item.refIHFromDate) {
+          months.add(formatReadableDateWithoutDate(item.refIHFromDate));
+        }
 
-      const user = item.refSCId === 0 ? item.refUserCustId : item.refSCCustId;
-      if (user) {
-        users.add(user);
-      }
-    });
+        const user = item.refSCId === 0 ? item.refUserCustId : item.refSCCustId;
+        if (user) {
+          users.add(user);
+        }
+      });
+    }
 
     return {
       uniqueMonths: Array.from(months).sort(),
@@ -380,7 +382,7 @@ const InvoiceOverAllTable: React.FC<Props> = ({
 
   // Setup table instance
   const table = useReactTable({
-    data: overallInvoiceHistory,
+    data: overallInvoiceHistory ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -415,15 +417,27 @@ const InvoiceOverAllTable: React.FC<Props> = ({
         </TableHeader>
 
         <TableBody className="divide-y divide-gray-100">
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover:bg-gray-50">
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border border-gray-300 px-4 py-2">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+          {table.getRowModel().rows.length > 0 ? (
+            <>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="hover:bg-gray-50">
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="border border-gray-300 px-4 py-2"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
+            </>
+          ) : (
+            `No Invoice Found`
+          )}
         </TableBody>
       </Table>
 

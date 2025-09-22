@@ -190,11 +190,11 @@ const MasterAdmin: React.FC = () => {
       },
     ],
     patient: [
-      {
-        label: "Home",
-        path: "/patient/myCare",
-        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
-      },
+      // {
+      //   label: "Home",
+      //   path: "/patient/myCare",
+      //   icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      // },
       {
         label: "My Files",
         path: "/patient/medicalHistory",
@@ -524,14 +524,16 @@ const MasterAdmin: React.FC = () => {
           </div>
 
           <div className="flex items-center">
-            <Button
-              variant="outline"
-              className="rounded-3xl bg-[#f8f3eb] mr-2 w-10 h-10"
-              size="icon"
-              onClick={() => setUserManualOpen(true)}
-            >
-              <HelpCircleIcon />
-            </Button>
+            {role?.type !== "patient" && (
+              <Button
+                variant="outline"
+                className="rounded-3xl bg-[#f8f3eb] mr-2 w-10 h-10"
+                size="icon"
+                onClick={() => setUserManualOpen(true)}
+              >
+                <HelpCircleIcon />
+              </Button>
+            )}
 
             <div
               className="relative"

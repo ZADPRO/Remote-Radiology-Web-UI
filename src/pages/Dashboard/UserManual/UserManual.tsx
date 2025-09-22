@@ -8,8 +8,12 @@ import React from "react";
 import WELLGREENPERFORMINPROVIDERUSERMANUAL from "../../../assets/UserManual/WELLGREEN PERFORMIN PROVIDER USER MANUAL.pdf";
 import TECHNICIANUSERMANUAL from "../../../assets/UserManual/TECHNICIAN USER MANUAL.pdf";
 import WELLGREENMANAGERUSERMANUAL from "../../../assets/UserManual/WELLGREEN MANAGER USER MANUAL.pdf";
-import SCRIBEUSERMANUAL from "../../../assets/UserManual/SCRIBE USER MANUAL.pdf";
-import RADIOLOGYUSERMANUAL from "../../../assets/UserManual/RADIOLOGY USER MANUAL.pdf";
+import SCANCENTREADMINUSERMANUAL from "../../../assets/UserManual/SCAN CENTRE ADMIN USER MANUAL.pdf";
+import SCRIBEUSERMANUAL from "../../../assets/UserManual/SCRIBE LOGIN USER MANUAL.pdf";
+import RADIOLOGYUSERMANUAL from "../../../assets/UserManual/RADIOLOGY LOGIN USER MANUAL.pdf";
+import CENTREREVIEWERUSERMANUAL from "../../../assets/UserManual/CENTRE REVIEWER USER MANUAL.pdf";
+import SCANCENTREPERFORMINGPROVIDERUSERMANUAL from "../../../assets/UserManual/SCAN CENTRE PERFORMING PROVIDER USER MANUAL.pdf";
+import ADMINUSERMANUAL from "../../../assets/UserManual/ADMIN LOGIN USER MANUAL.pdf";
 
 const UserManual: React.FC = () => {
   const { role } = useAuth();
@@ -17,21 +21,21 @@ const UserManual: React.FC = () => {
   const ViewFile = () => {
     switch (role?.type) {
       case "admin":
-        return null;
+        return ADMINUSERMANUAL;
       case "technician":
         return TECHNICIANUSERMANUAL;
       case "scadmin":
-        return null;
+        return SCANCENTREADMINUSERMANUAL;
       case "patient":
         return null;
       case "doctor":
-        return null;
+        return SCANCENTREPERFORMINGPROVIDERUSERMANUAL;
       case "radiologist":
         return RADIOLOGYUSERMANUAL;
       case "scribe":
         return SCRIBEUSERMANUAL;
       case "codoctor":
-        return null;
+        return CENTREREVIEWERUSERMANUAL;
       case "manager":
         return WELLGREENMANAGERUSERMANUAL;
       case "wgdoctor":

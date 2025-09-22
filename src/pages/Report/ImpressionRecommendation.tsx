@@ -120,14 +120,135 @@ export const impressionRecommendation = [
     ],
   },
   {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "0NA",
+        impression: "Prior breast imaging is needed for interpretation",
+        impressionText:
+          "Prior breast imaging is needed for interpretation",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Prior breast imaging is needed for interpretation.",
+        recommendationText:
+          "Prior breast imaging is needed for interpretation.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff",
+      },
+    ],
+  },
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "N1",
+        impression: "Unremarkable",
+        impressionText:
+          "Normal 1: The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in 1 year",
+        recommendationText:
+          "Return in 1 year for annual examination as clinically warranted.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
+      },
+      {
+        id: "N2",
+        impression: "Unremarkable with benign finding",
+        impressionText:
+          "Normal 2: Benign. The exam is unremarkable with benign finding(s). There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in 1 year",
+        recommendationText:
+          "Return in 1 year for annual examination as clinically warranted.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
+      },
+    ],
+  },
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "A1",
+        impression: "Indeterminate",
+        impressionText:
+          "Abnormal 1: Indeterminate. The exam shows likely benign finding(s) as described. However, short-term interval follow-up is recommended.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in _____weeks",
+        recommendationText: "Return in ____ weeks for follow-up.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff2cc",
+      },
+      {
+        id: "A2",
+        impression: "Possible malignancy",
+        impressionText:
+          "Abnormal 2: Possible malignancy. The exam shows finding(s) with characteristics suggesting possible malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Consult with physician",
+        recommendationText:
+          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "A3",
+        impression: "Most likely malignant",
+        impressionText:
+          "Abnormal 3: Most likely malignant. The exam shows finding(s) with characteristics that are most likely malignant.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Consult with physician",
+        recommendationText:
+          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "A4",
+        impression: "Known malignancy",
+        impressionText:
+          "Abnormal 4: Known malignancy. The exam shows the previously known malignancy/ies.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Management of the known malignancy",
+        recommendationText:
+          "Management of the known malignancy and any new finding(s) should be based on the clinical assessment.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+    ],
+  },
+  {
     impressionColor: "#c47194",
     recommendationColor: "#9c3f6d",
     data: [
       {
         id: "1",
-        impression: "Likely Benign Findings",
+        impression: "Unremarkable",
         impressionText:
-          "The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
+          "The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+        impressionTextColor: "#829c70",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in 1 year",
+        recommendationText:
+          "Return in 1 year for annual examination as clinically warranted.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
+      },
+      {
+        id: "1a",
+        impression: "Likely Benign Findings + Architectural Distortion",
+        impressionText:
+          "The architectural distortion observed is attributed to post-operative or post-procedural changes. The examination demonstrates findings which are likely benign breast changes.",
         impressionTextColor: "#829c70",
         impressionBackgroundColor: "transparent",
         recommendation: "Routine Annual Screening",
@@ -137,10 +258,10 @@ export const impressionRecommendation = [
         recommendationBackgroundColor: "#d9ead3",
       },
       {
-        id: "1a",
-        impression: "Likely Benign Findings + Architectural Distortion",
+        id: "1b",
+        impression: "Likely Benign Findings",
         impressionText:
-          "The architectural distortion observed is attributed to post-operative or post-procedural changes. The examination demonstrates findings which are likely benign breast changes.",
+          "The examination demonstrates findings which are likely benign breast changes. While tissue variations are present, there is no evidence of suspicious/dominant masses, or architectural distortion to suggest malignancy.",
         impressionTextColor: "#829c70",
         impressionBackgroundColor: "transparent",
         recommendation: "Routine Annual Screening",
@@ -866,6 +987,10 @@ export const additionalOptions = [
     text: "There are no QT findings to explain her right breast pain. The patient should monitor the breast area of pain. If a lump or other palpable finding appears in this area, a targeted ultrasound of the area should be performed.",
   },
   {
+    id: "Q",
+    text: "Scars, dense breast tissue, and breast implants can obscure masses and other findings.",
+  },
+  {
     id: "R",
     text: "Images were reviewed again. In view with the given history/data, it is prudent to further evaluate the lesion with a targeted ultrasound of the area.",
   },
@@ -900,6 +1025,18 @@ export const additionalOptions = [
   {
     id: "Z",
     text: "Image given location is for correlative location only.",
+  },
+  {
+    id: "1NA",
+    text: "Consult with physician or healthcare provider for management of any other clinical findings.",
+  },
+  {
+    id: "2NA",
+    text: "Results were discussed with ____ on [date and time of the discussion]",
+  },
+  {
+    id: "3NA",
+    text: "The written report was provided to [___] on [___].",
   },
 ];
 

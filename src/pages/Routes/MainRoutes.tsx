@@ -19,7 +19,6 @@ import ResetPassword from "../Login/ResetPassword";
 import MasterAdmin from "../Dashboard/MasterAdmin";
 import Dashboard from "../Dashboard/Dashboard";
 import Administration from "../Administration/Administration";
-import MyCare from "../PatientFlow/MyCare";
 
 // Patient Intake Forms
 import PatientInTakeForm from "../PatientInTakeForm/PatientInTakeForm";
@@ -188,9 +187,9 @@ const MainRoutes: React.FC = () => {
   ];
 
   const patientRoutes: AppRoute[] = [
-    { index: true, element: <Navigate to="myCare" replace /> },
-    { path: "dashboard", element: <Dashboard /> },
-    { path: "myCare", element: <MyCare /> },
+    { index: true, element: <Navigate to="medicalHistory" replace /> },
+    // { path: "dashboard", element: <Dashboard /> },
+    // { path: "myCare", element: <MyCare /> },
     { path: "medicalHistory", element: <PatientQueue /> },
   ];
 
