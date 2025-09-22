@@ -112,6 +112,7 @@ export interface TechnicianPatientQueue {
   };
   reportStatus: string;
   refOverrideStatus: string;
+  OldReportCount: string;
 }
 
 export interface ResponseTechnicianForm {

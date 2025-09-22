@@ -593,24 +593,31 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                         {formatReadableDate(newAppointment)}
                         <br />
                         <br />
+                        <b>To get started, please follow these steps:</b>
+                        <br />
+                        <br />
                         <b>
-                          1. Log in:{" "}
-                          <a href="https://easeqtremote.brightoncloudtech.com">
-                            https://easeqtremote.brightoncloudtech.com
+                          Log in:{" "}
+                          <a href="https://easeqt.wellthgreen.com">
+                            https://easeqt.wellthgreen.com
                           </a>
                         </b>
                         <br />
                         <br />
-                        <b>2. Enter details: </b>
-                        Once logged in with your email ID{" "}
-                        <b>{formData.refCODOEmail}</b> using your password.
+                        <b>Access your account: </b>
+                        Use your email ID <b>{formData.refCODOEmail}</b>and use
+                        your password to log in and complete your details.
                         <br />
                         <br />
-                        If you have any questions or need assistance, please
-                        don’t hesitate to reach out to us. We’re here to make
-                        this process as seamless as possible for you. Warm
-                        regards, {ScanCenter.name} Scan Centre Team - Contact
-                        Info
+                        If you have any questions or need any assistance, our
+                        team is here to help. Please don’t hesitate to contact
+                        us—we’re committed to making this process as easy and
+                        hassle-free as possible.
+                        <br />
+                        <br />
+                        Warm regards,
+                        <br />
+                        <strong>{ScanCenter.name} Scan Center Team</strong>
                       </div>
                       <Button variant="greenTheme" onClick={handleCopyContent}>
                         Copy
@@ -638,8 +645,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                           <div className="text-center text-gray-700 text-base space-y-4">
                             <p>
                               You have successfully been onboarded as a{" "}
-                              <strong>Patient</strong> at{" "}
-                              <strong>Wellthgreen Theranostics</strong>.
+                              <strong>Patient</strong> on{" "}
+                              <strong>easeQT</strong>.
                             </p>
                             <p>Your login credentials are as follows:</p>
 
@@ -660,22 +667,21 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
 
                             {/* Login button */}
                             <a
-                              href="https://easeqtremote.brightoncloudtech.com/"
+                              href="https://easeqt.wellthgreen.com/"
                               className="inline-block mt-4 px-6 py-3 bg-[#c6d4c0] text-white font-semibold rounded-md shadow hover:bg-[#b2c2ac] transition"
                             >
                               Login Now
                             </a>
 
                             <p className="pt-4">
-                              If you did not request this registration, please
+                              If you did not request it, please
                               ignore this email.
                             </p>
                           </div>
 
                           {/* Footer */}
                           <div className="text-center text-xs text-gray-600 border-t border-gray-300 pt-4 mt-6">
-                            &copy; {new Date().getFullYear()} Wellthgreen
-                            Theranostics. All rights reserved.
+                            &copy; {new Date().getFullYear()} Wellthgreen. All rights reserved.
                           </div>
                         </div>
                       </div>

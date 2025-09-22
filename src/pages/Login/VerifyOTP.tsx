@@ -79,7 +79,8 @@ const VerifyOTP: React.FC = () => {
       const response = await authenticationService.loginVerify(payload);
 
       if (response.data.data.status) {
-        const { token, RoleType, PasswordStatus, ScancenterId } = response.data.data;
+        const { token, RoleType, PasswordStatus, ScancenterId } =
+          response.data.data;
         console.log(response);
         setIsVerifying(false);
 
@@ -129,7 +130,9 @@ const VerifyOTP: React.FC = () => {
           setShowSuccess(true);
           sessionStorage.setItem("resetToken", token);
           setTimeout(() => {
-            navigate("/resetPass", { state: { email: email, token: token, scancenterId: ScancenterId } });
+            navigate("/resetPass", {
+              state: { email: email, token: token, scancenterId: ScancenterId },
+            });
           }, 2000);
           return;
         } else {
@@ -160,11 +163,7 @@ const VerifyOTP: React.FC = () => {
         style={{ backgroundImage: `url(${loginTexture})` }}
         className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#F9F5EF] lg:bg-cover lg:bg-center lg:bg-no-repeat"
       >
-        <img
-          src={loginImg}
-          alt="Login"
-          className="w-[90%] lg:w-[80%]"
-        />
+        <img src={loginImg} alt="Login" className="w-[90%] lg:w-[80%]" />
       </div>
 
       {/* Right section */}
@@ -174,10 +173,13 @@ const VerifyOTP: React.FC = () => {
           className="hidden w-auto h-[15%] mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 lg:w-[70%]">
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            handleVerify();
-          }} className="flex flex-col gap-6">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleVerify();
+            }}
+            className="flex flex-col gap-6"
+          >
             <div className="flex flex-col items-center gap-2 text-center">
               {/* <div className="items-center justify-around gap-10% pb-3 hidden lg:flex">
                 <img src={logo} alt="logo" className="w-[20%] h-[20%]" />
@@ -198,12 +200,14 @@ const VerifyOTP: React.FC = () => {
 
             <div className="flex items-center justify-center">
               <InputOTP
+                type="number"
                 maxLength={6}
                 value={otp}
                 onChange={(val) => {
                   setOtp(val);
                   if (errorMessage) setErrorMessage(null); // Clear on change
                 }}
+                required
               >
                 <InputOTPGroup className="space-x-2 font-bold">
                   {[0, 1, 2, 3, 4, 5].map((index) => (
