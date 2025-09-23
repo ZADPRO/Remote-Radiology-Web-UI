@@ -202,9 +202,9 @@ const PatientQueue: React.FC = () => {
       if (status === "fillform" || status === "technologistformfill") {
         return {
           text: "-",
-          report: false,
+          report: true,
           color: "grey",
-          editAccess: [],
+          editAccess: ["scribe", "admin", "radiologist", "wgdoctor", "doctor"],
           readOnlyAccess: [],
         };
       }
@@ -224,14 +224,8 @@ const PatientQueue: React.FC = () => {
           text: "Predraft",
           report: true,
           color: "#8e7cc3",
-          editAccess: ["radiologist", "admin", "scribe", "wgdoctor", "doctor"],
-          readOnlyAccess: [
-            "scribe",
-            "radiologist",
-            "admin",
-            "wgdoctor",
-            "doctor",
-          ],
+          editAccess: ["radiologist", "admin", "scribe", "wgdoctor"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
         };
       }
 
@@ -240,14 +234,8 @@ const PatientQueue: React.FC = () => {
           text: "Draft",
           report: true,
           color: "#3c78d8",
-          editAccess: ["admin", "scribe", "radiologist", "wgdoctor", "doctor"],
-          readOnlyAccess: [
-            "scribe",
-            "radiologist",
-            "admin",
-            "wgdoctor",
-            "doctor",
-          ],
+          editAccess: ["admin", "scribe", "radiologist", "wgdoctor"],
+          readOnlyAccess: ["scribe", "radiologist", "admin", "wgdoctor"],
         };
       }
 
@@ -389,7 +377,12 @@ const PatientQueue: React.FC = () => {
               // Always filter out 'fillform'
               if (
                 refAppointmentComplete === "fillform" &&
-                role?.type !== "admin"
+                role?.type !== "admin" &&
+                role?.type !== "scribe" &&
+                role?.type !== "radiologist" &&
+                role?.type !== "wgdoctor" &&
+                role?.type !== "doctor" &&
+                role?.type !== "manager"
               )
                 return false;
 
@@ -1667,11 +1660,9 @@ const PatientQueue: React.FC = () => {
                 }}
                 size={20}
               />
-              {
-                row.original.OldReportCount !== "0" && (
-                  <Label>{row.original.OldReportCount}</Label>
-                )
-              }
+              {row.original.OldReportCount !== "0" && (
+                <Label>{row.original.OldReportCount}</Label>
+              )}
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="w-[98%] lg:w-[90%] h-[90vh]">
                   <DialogHeader>
@@ -1863,16 +1854,11 @@ const PatientQueue: React.FC = () => {
           const hasEditAccess = status?.editAccess?.includes(role);
           const hasReadOnlyAccess = status?.readOnlyAccess?.includes(role);
 
-          // if (!status?.report || (!hasEditAccess && !hasReadOnlyAccess)) {
-          //   return <div className="text-center text-gray-400">-</div>;
-          // }
+          if (!status?.report || (!hasEditAccess && !hasReadOnlyAccess)) {
+            return <div className="text-center text-gray-400">-</div>;
+          }
 
           const handleViewClick = async () => {
-            console.log("1234567------------->");
-            console.log(
-              "PatientQueue.tsx / hasEditAccess / 1866 -------------------  ",
-              hasEditAccess
-            );
             const currentUserId = currentUser;
             if (hasEditAccess) {
               const { status, accessId, custId } = await handleCheckAccess(
@@ -2300,7 +2286,8 @@ const PatientQueue: React.FC = () => {
           const isSignedOff =
             row.original.refAppointmentComplete?.toLowerCase() ===
               "signed off" ||
-            row.original.refAppointmentComplete?.toLowerCase() === "signed off (a)";
+            row.original.refAppointmentComplete?.toLowerCase() ===
+              "signed off (a)";
           const hasMailSent = row.original.refAppointmentMailSendStatus !== "";
 
           return (
