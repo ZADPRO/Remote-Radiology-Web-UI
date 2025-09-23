@@ -110,6 +110,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     refUserProfileImg: "",
     refUserStatus: false,
     refDDEaseQTReportAccess: false,
+    refDDNAsystemReportAccess: false,
   });
 
   const [files, setFiles] = useState<TempFilesState>({
@@ -293,6 +294,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         malpracticeinsureance_files: tempMalpractice,
         digital_signature: formData.digital_signature,
         easeQTReportAccess: formData.refDDEaseQTReportAccess,
+        naSystemreportAcess: formData.refDDNAsystemReportAccess,
       };
       console.log("payload", payload);
       const res = await doctorService.updatePerformingProvider(payload);
@@ -540,12 +542,40 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                       id="qtAccess"
                       className="cursor-pointer"
                       checked={formData.refDDEaseQTReportAccess}
-                      onCheckedChange={(checked: boolean) =>
+                      onCheckedChange={(checked: boolean) => {
                         setFormData((prev) => ({
                           ...prev,
                           refDDEaseQTReportAccess: checked,
+                          ...(checked
+                            ? {}
+                            : { refDDNAsystemReportAccess: false }),
+                        }));
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="self-start mt-2 w-full">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-base">
+                        NA System Access
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Toggle to enable access
+                      </p>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={formData.refDDNAsystemReportAccess}
+                      onCheckedChange={(checked: boolean) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          refDDNAsystemReportAccess: checked,
                         }))
                       }
+                      disabled={!formData.refDDEaseQTReportAccess}
                     />
                   </div>
                 </div>
@@ -773,7 +803,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
           <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm " htmlFor="npi">
-                NPI 
+                NPI
                 {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
@@ -790,7 +820,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm" htmlFor="specialization">
-                Specialization 
+                Specialization
                 {/* <span className="text-red-500">*</span> */}
               </Label>
               <Input
@@ -953,7 +983,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 className="text-sm font-medium"
                 htmlFor="malpractice-upload"
               >
-                Malpractice Insurance 
+                Malpractice Insurance
                 {/* <span className="text-red-500">*</span> */}
               </Label>
 
@@ -1093,7 +1123,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm" htmlFor="digital-signature-upload">
                 Digital Signature
-                 {/* <span className="text-red-500">*</span> */}
+                {/* <span className="text-red-500">*</span> */}
               </Label>
 
               <FileUploadButton

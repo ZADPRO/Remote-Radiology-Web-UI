@@ -729,16 +729,16 @@ const Report: React.FC = () => {
   });
 
   const accessibleTabs = [1, 2, 3, 5]; // Tabs requiring access
-  const finalTab = 4; // Final Report is always accessible
+  const finalTab = [1,2,3,4]; // Final Report is always accessible
 
   // Only check easeQTReportAccess for restricted roles
 
-  const isTabAccessible = (value: number) => {
-    return (
-      value === finalTab ||
-      (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
-    );
-  };
+const isTabAccessible = (value: number) => {
+  return (
+    finalTab.includes(value) || 
+    (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
+  );
+};
 
   const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
   const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
@@ -1210,14 +1210,14 @@ const Report: React.FC = () => {
           setNotes(response.reportTextContentData[0]?.refRTCText);
         }
 
-        let notesStatus = false;
+        // let notesStatus = false;
 
         if (response.easeQTReportAccess) {
           if (
             response.reportTextContentData[0]?.refRTSyncStatus === null ||
             response.reportTextContentData[0]?.refRTSyncStatus
           ) {
-            notesStatus = true;
+            // notesStatus = true;
           }
         }
 
@@ -1264,7 +1264,7 @@ const Report: React.FC = () => {
           LymphNodesLeft:
             response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
             false,
-          Notes: notesStatus,
+          Notes: syncStatus.Notes,
           ImpressionsRecommendations: true,
           symmetry:
             response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
@@ -1632,7 +1632,7 @@ const Report: React.FC = () => {
 
   <br />
 
-  <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound imaging of both breasts was performed using the QT Ultrasound Series 2000 Model-A scanner. Breast density was determined using the Quantitative Breast Density calculator. Images were reviewed in the QTviewer v2.6.2. The nipple-areolar complex, skin, Cooper's ligaments, breast fat distribution, penetrating arteries and veins, glandular and ductal tissues were evaluated. Images were reviewed in coronal, transaxial and sagittal planes.</p>
+  <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound breast imaging was performed using the QT Scanner. Images were reviewed with the QTviewer in coronal, axial, and sagittal planes.</p>
 
     <br />
     
@@ -2126,16 +2126,16 @@ const Report: React.FC = () => {
         setNotes(response.reportTextContentData[0]?.refRTCText);
       }
 
-      let notesStatus = false;
+      // let notesStatus = false;
 
-      if (response.easeQTReportAccess) {
-        if (
-          response.reportTextContentData[0]?.refRTSyncStatus === null ||
-          response.reportTextContentData[0]?.refRTSyncStatus
-        ) {
-          notesStatus = true;
-        }
-      }
+      // if (response.easeQTReportAccess) {
+      //   if (
+      //     response.reportTextContentData[0]?.refRTSyncStatus === null ||
+      //     response.reportTextContentData[0]?.refRTSyncStatus
+      //   ) {
+      //     notesStatus = true;
+      //   }
+      // }
 
       // console.log(
       //   "***",
@@ -2346,7 +2346,7 @@ const Report: React.FC = () => {
         LymphNodesLeft:
           response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
           false,
-        Notes: notesStatus,
+        Notes: syncStatus.Notes,
         ImpressionsRecommendations: true,
         symmetry:
           response.reportTextContentData[0]?.refRTSymmetrySyncStatus !== false,

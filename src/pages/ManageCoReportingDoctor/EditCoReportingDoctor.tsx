@@ -105,6 +105,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     refUserProfileImg: "",
     refUserStatus: false,
     refCDEaseQTReportAccess: false,
+    refCDNAsystemReportAccess: false,
   });
 
   const [files, setFiles] = useState<TempFilesState>({
@@ -248,6 +249,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
         malpracticeinsureance_files: tempMalpractice,
         digital_signature: formData.digital_signature,
         easeQTReportAccess: formData.refCDEaseQTReportAccess,
+        naSystemreportAcess: formData.refCDNAsystemReportAccess,
       };
       console.log("payload", payload);
       const res = await doctorService.updateCoDoctor(payload);
@@ -491,12 +493,39 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                       id="qtAccess"
                       className="cursor-pointer"
                       checked={formData.refCDEaseQTReportAccess}
-                      onCheckedChange={(checked: boolean) =>
+                      onCheckedChange={(checked: boolean) => {
                         setFormData((prev) => ({
                           ...prev,
                           refCDEaseQTReportAccess: checked,
+                          ...(checked
+                            ? {}
+                            : { refCDNAsystemReportAccess: false }),
+                        }));
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="self-start mt-2 w-full">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-base">
+                        NA System Access
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Toggle to enable access
+                      </p>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={formData.refCDNAsystemReportAccess}
+                      onCheckedChange={(checked: boolean) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          refCDNAsystemReportAccess: checked,
                         }))
                       }
+                      disabled={!formData.refCDEaseQTReportAccess}
                     />
                   </div>
                 </div>

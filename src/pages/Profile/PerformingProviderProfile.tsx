@@ -18,8 +18,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../Routes/AuthContext"; // Assuming this might be used later or for consistency
 
 const PerformingProviderProfile: React.FC = () => {
-  const { user } = useAuth(); 
-  const scanCenterId = user?.refSCId; 
+  const { user } = useAuth();
+  const scanCenterId = user?.refSCId;
   const performingProviderId = user?.refUserId;
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -239,7 +239,8 @@ const PerformingProviderProfile: React.FC = () => {
           </div>
           <div>
             <Label>Driving License</Label>
-            {formData.drivers_license && formData.driversLicenseFile?.base64Data ? (
+            {formData.drivers_license &&
+            formData.driversLicenseFile?.base64Data ? (
               <div
                 className="mt-1 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
                 onClick={() =>
