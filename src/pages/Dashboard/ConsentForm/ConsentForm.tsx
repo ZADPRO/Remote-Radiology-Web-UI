@@ -29,9 +29,9 @@ const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const signatureRow = `<br/><h3 class=\"ql-align-right\"><strong>Electronically signed by</strong></h3><h3 class=\"ql-align-right\"><strong>${
+  const signatureRow = `<br/><h6 class=\"ql-align-right\"><strong>Electronically signed by</strong></h6><h6 class=\"ql-align-right\"><strong>${
                       user?.refUserFirstName
-                    },</strong></h3><h3 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h3>`;
+                    },</strong></h6><h6 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h6>`;
 
   const listConsent = async () => {
     setLoading(true);
