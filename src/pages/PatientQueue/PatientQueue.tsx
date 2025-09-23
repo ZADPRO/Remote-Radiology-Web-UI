@@ -382,7 +382,8 @@ const PatientQueue: React.FC = () => {
                 role?.type !== "radiologist" &&
                 role?.type !== "wgdoctor" &&
                 role?.type !== "doctor" &&
-                role?.type !== "manager"
+                role?.type !== "manager" &&
+                role?.type !== "technician"
               )
                 return false;
 

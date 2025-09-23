@@ -30,7 +30,7 @@ const TechConsentForm: React.FC<Props> = ({ onSubmit, scId, setDialogOpen }) => 
 
   const [loading, setLoading] = useState(false);
 
-  const signatureRow = `<br/><h3 class=\"ql-align-right\"><strong>Electronically signed</strong></h3><h3 class=\"ql-align-right\"></h3><h3 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h3>`;
+  const signatureRow = `<br/><h6 class=\"ql-align-right\"><strong>Electronically signed</strong></h6><h6 class=\"ql-align-right\"></h6><h6 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h6>`;
 
   const listConsent = async () => {
     setLoading(true);
