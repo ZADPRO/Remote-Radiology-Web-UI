@@ -207,7 +207,18 @@ const TechnicianPatientIntakeForm: React.FC<
       if (res.status) {
         console.log("------------------------?", res);
 
-        setPatientFormData(res.data);
+        if (res.data) {
+          setPatientFormData(res.data);
+        } else {
+          setPatientFormData(
+            Array.from({ length: 500 }, (_, index) => ({
+              refITFId: 0,
+              questionId: 1 + index,
+              answer: "",
+              verifyTechnician: false,
+            }))
+          );
+        }
 
         const parsedAuditData = res.auditdata.map((item: any) => {
           let parsedTHData = [];
@@ -264,6 +275,13 @@ const TechnicianPatientIntakeForm: React.FC<
 
       if (res.TechIntakeData) {
         setTechnicianFormData(res.TechIntakeData);
+      } else {
+        setTechnicianFormData(
+          Array.from({ length: 56 }, (_, index) => ({
+            questionId: 1 + index,
+            answer: "",
+          }))
+        );
       }
     } catch (error) {
       console.log(error);
@@ -310,7 +328,7 @@ const TechnicianPatientIntakeForm: React.FC<
     setSubmitError(null);
     try {
       const categoryId = patientFormData.find((item) => item.questionId == 170);
-      
+
       if (categoryId) {
         const payload = {
           patientId: controlData.userId,
@@ -318,8 +336,16 @@ const TechnicianPatientIntakeForm: React.FC<
           appointmentId: controlData.appointmentId,
           updatedAnswers: patientFormData,
           technicianAnswers: technicianFormData,
-          artificatsLeft: (getTechnicianFormAnswer(41) == "Left" || getTechnicianFormAnswer(41) == "Both") ? true : false,
-          artificatsRight: (getTechnicianFormAnswer(41) == "Right" || getTechnicianFormAnswer(41) == "Both") ? true : false,
+          artificatsLeft:
+            getTechnicianFormAnswer(41) == "Left" ||
+            getTechnicianFormAnswer(41) == "Both"
+              ? true
+              : false,
+          artificatsRight:
+            getTechnicianFormAnswer(41) == "Right" ||
+            getTechnicianFormAnswer(41) == "Both"
+              ? true
+              : false,
         };
         console.log("payload", payload);
         const res = await appointmentService.addTechnicianInTakeForm(payload);
@@ -700,7 +726,7 @@ const TechnicianPatientIntakeForm: React.FC<
             <div className="h-full flex items-center justify-between py-4 mt-2 lg:mt-0">
               <button
                 type="button"
-                 className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 ml-2 mb-[2px] max-w-[10rem] rounded-md"
+                className="flex items-center bg-[#a4b2a1] justify-center text-sm 2xl:text-xl font-medium cursor-pointer px-2 ml-2 mb-[2px] max-w-[10rem] rounded-md"
                 onClick={() => {
                   const currentIndex = options.indexOf(selectedSection);
                   if (currentIndex === 0) {
@@ -734,14 +760,14 @@ const TechnicianPatientIntakeForm: React.FC<
       </div>
 
       {!controlData.readOnly && (
-                <TechnicianFormSubmitDialog
-                  open={isDialogOpen}
-                  onClose={handleCloseDialog}
-                  onSubmit={handleAddTechnicianForm}
-                  isSubmitting={isSubmitting}
-                  error={submitError}
-                />
-              )}
+        <TechnicianFormSubmitDialog
+          open={isDialogOpen}
+          onClose={handleCloseDialog}
+          onSubmit={handleAddTechnicianForm}
+          isSubmitting={isSubmitting}
+          error={submitError}
+        />
+      )}
 
       {/* <div className=" h-[8vh] flex items-end justify-center pb-1 text-sm">
         Copyright © Wellthgreen

@@ -131,14 +131,25 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       );
 
       if (res.status) {
+        console.log(
+          "PatientInTakeForm.tsx / res / 133 -------------------  ",
+          controlData.apiUpdate && controlData.categoryId
+        );
         if (controlData.apiUpdate && controlData.categoryId) {
           console.log("Before update:", res.data);
 
-          const updatedData = res.data.map((item: any) =>
+          let updatedData = res.data.map((item: any) =>
             item.questionId === 170
               ? { ...item, answer: String(controlData.categoryId) }
               : item
           );
+
+          if (res.data === null) {
+            updatedData = Array.from({ length: 555 }, (_, index) => ({
+              questionId: 1 + index,
+              answer: "",
+            }));
+          }
 
           console.log(
             "After update:",
@@ -160,7 +171,20 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
             console.log("Hello --------------->", newData);
             setFormData(newData);
           } else {
-            setFormData(res.data);
+
+             let updatedData = res.data.map((item: any) =>
+            item.questionId === 170
+              ? { ...item, answer: String(controlData.categoryId) }
+              : item
+          );
+
+          if (res.data === null) {
+            updatedData = Array.from({ length: 555 }, (_, index) => ({
+              questionId: 1 + index,
+              answer: "",
+            }));
+          }
+            setFormData(updatedData);
           }
         }
       }
@@ -193,7 +217,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
         ) || null,
       overriderequest: overide,
       consent: controlData.consent,
-      patientIntakeStartTime: localStorage.getItem("patientIntakeStartTime") || "",
+      patientIntakeStartTime:
+        localStorage.getItem("patientIntakeStartTime") || "",
     };
 
     console.log("payload", payload);
@@ -203,9 +228,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       if (controlData.apiUpdate) {
         res = await patientInTakeService.updatePatientInTakeForm(payload);
       } else {
-        res = await patientInTakeService.addPatientInTakeForm(
-          payload,
-        );
+        res = await patientInTakeService.addPatientInTakeForm(payload);
       }
 
       if (res.status) {
