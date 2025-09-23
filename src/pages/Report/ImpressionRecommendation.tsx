@@ -146,7 +146,7 @@ export const impressionRecommendation = [
         id: "N1",
         impression: "Unremarkable",
         impressionText:
-          "Normal 1: The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+          "The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Return in 1 year",
@@ -159,7 +159,7 @@ export const impressionRecommendation = [
         id: "N2",
         impression: "Unremarkable with benign finding",
         impressionText:
-          "Normal 2: Benign. The exam is unremarkable with benign finding(s). There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+          "The exam is unremarkable with benign finding(s). There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Return in 1 year",
@@ -178,7 +178,7 @@ export const impressionRecommendation = [
         id: "A1",
         impression: "Indeterminate",
         impressionText:
-          "Abnormal 1: Indeterminate. The exam shows likely benign finding(s) as described. However, short-term interval follow-up is recommended.",
+          "The exam shows likely benign finding(s) as described. However, short-term interval follow-up is recommended.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Return in _____weeks",
@@ -190,7 +190,7 @@ export const impressionRecommendation = [
         id: "A2",
         impression: "Possible malignancy",
         impressionText:
-          "Abnormal 2: Possible malignancy. The exam shows finding(s) with characteristics suggesting possible malignancy.",
+          "The exam shows finding(s) with characteristics suggesting possible malignancy.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Consult with physician",
@@ -203,7 +203,7 @@ export const impressionRecommendation = [
         id: "A3",
         impression: "Most likely malignant",
         impressionText:
-          "Abnormal 3: Most likely malignant. The exam shows finding(s) with characteristics that are most likely malignant.",
+          "The exam shows finding(s) with characteristics that are most likely malignant.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Consult with physician",
@@ -216,7 +216,7 @@ export const impressionRecommendation = [
         id: "A4",
         impression: "Known malignancy",
         impressionText:
-          "Abnormal 4: Known malignancy. The exam shows the previously known malignancy/ies.",
+          "The exam shows the previously known malignancy/ies.",
         impressionTextColor: "#000000",
         impressionBackgroundColor: "transparent",
         recommendation: "Management of the known malignancy",
