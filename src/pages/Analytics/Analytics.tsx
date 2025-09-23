@@ -142,12 +142,12 @@ const Analytics: React.FC = () => {
     totalEdit: ["admin", "radiologist", "wgdoctor", "codoctor"],
     recoCodeCount: ["admin", "manager", "wgdoctor", "scadmin", "radiologist"],
     TAT: [
-      "admin",
-      "radiologist",
-      "technician",
-      "codoctor",
-      "doctor",
-      "wgdoctor",
+      // "admin",
+      // "radiologist",
+      // "technician",
+      // "codoctor",
+      // "doctor",
+      // "wgdoctor",
     ],
     totalCaseCountPopover: ["radiologist"],
     previousMonth: [
