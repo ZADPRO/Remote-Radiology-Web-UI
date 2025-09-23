@@ -1976,7 +1976,9 @@ const isTabAccessible = (value: number) => {
       status: boolean;
       easeQTReportAccess: boolean;
     } = await reportService.autosaveReport(payload);
-    console.log("#########", payload.changedOne.reportQuestion);
+    console.log("#########", payload.changedOne.reportQuestion); 
+
+    
 
     if (response.status) {
       if (
