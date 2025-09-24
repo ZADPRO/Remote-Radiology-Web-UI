@@ -200,11 +200,12 @@ const VerifyOTP: React.FC = () => {
 
             <div className="flex items-center justify-center">
               <InputOTP
-                type="number"
                 maxLength={6}
                 value={otp}
                 onChange={(val) => {
-                  setOtp(val);
+                  if (/^\d*$/.test(val)) {
+                    setOtp(val);
+                  }
                   if (errorMessage) setErrorMessage(null); // Clear on change
                 }}
                 required

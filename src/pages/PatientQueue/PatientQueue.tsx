@@ -98,7 +98,7 @@ import PatientConsentDialog from "./PatientConsentDialog";
 import SendMailDialog from "./SendMailDialog";
 import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
-import { formatReadableDateWithDefault } from "@/utlis/calculateAge";
+import { formatReadableDate } from "@/utlis/calculateAge";
 import FileView from "@/components/FileView/FileView";
 
 interface staffData {
@@ -369,6 +369,7 @@ const PatientQueue: React.FC = () => {
         }
       } else {
         const res = await technicianService.listPatientQueue();
+        console.log("PatientQueue.tsx / res / 371 -------------------  ", res);
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
@@ -715,34 +716,37 @@ const PatientQueue: React.FC = () => {
         cell: ({ row }) => {
           return (
             <div className="text-center w-auto whitespace-normal break-words">
-              {formatReadableDateWithDefault(row.original.refAppointmentDate)}
+              {formatReadableDate(row.original.refAppointmentDate)}
             </div>
           ); // Format date for display
         },
         enableColumnFilter: true,
         filterFn: (row, columnId, filterValue) => {
-          const value = row.getValue(columnId);
+          const value = row.getValue(columnId); // e.g., "2025-12-30"
+          if (!value) return true;
+          if (typeof value !== "string") return true;
 
-          // Convert the row value to a Date if it's valid
-          const rowDate =
-            value instanceof Date
-              ? value
-              : typeof value === "string" || typeof value === "number"
-              ? new Date(value)
-              : null;
+          const [rowYear, rowMonth, rowDay] = value.split("-").map(Number);
+          if (!rowYear || !rowMonth || !rowDay) return true;
 
-          if (!rowDate || isNaN(rowDate.getTime())) return true; // Don't filter invalid dates
-
-          // Extract and validate filter range
           const { from, to } = filterValue || {};
-          if (!(from instanceof Date) || !(to instanceof Date)) return true;
+          if (!from && !to) return true;
 
-          // Normalize all dates to 00:00:00 for comparison
-          const rowTime = new Date(rowDate).setHours(0, 0, 0, 0);
-          const fromTime = new Date(from).setHours(0, 0, 0, 0);
-          const toTime = new Date(to).setHours(0, 0, 0, 0);
+          // Convert selected dates safely
+          const fromYear = from ? from.getFullYear() : rowYear;
+          const fromMonth = from ? from.getMonth() + 1 : rowMonth;
+          const fromDay = from ? from.getDate() : rowDay;
 
-          return rowTime >= fromTime && rowTime <= toTime;
+          const toYear = to ? to.getFullYear() : rowYear;
+          const toMonth = to ? to.getMonth() + 1 : rowMonth;
+          const toDay = to ? to.getDate() : rowDay;
+
+          // Compare as YYYYMMDD numbers
+          const rowNum = rowYear * 10000 + rowMonth * 100 + rowDay;
+          const fromNum = fromYear * 10000 + fromMonth * 100 + fromDay;
+          const toNum = toYear * 10000 + toMonth * 100 + toDay;
+
+          return rowNum >= fromNum && rowNum <= toNum;
         },
       },
       {

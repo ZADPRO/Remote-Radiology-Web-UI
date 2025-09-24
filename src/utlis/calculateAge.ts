@@ -16,30 +16,56 @@ export function calculateAge(dob: string) {
   return age;
 }
 
+// export function formatDateWithAge(dob: string): string {
+//   const birthDate = new Date(dob);
+//   const today = new Date();
+
+//   // Format date (e.g., "May 10, 1996")
+//   const options: Intl.DateTimeFormatOptions = {
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//   };
+//   const formattedDate = birthDate.toLocaleDateString("en-US", options);
+
+//   // Calculate age
+//   let age = today.getFullYear() - birthDate.getFullYear();
+//   const monthDiff = today.getMonth() - birthDate.getMonth();
+//   if (
+//     monthDiff < 0 ||
+//     (monthDiff === 0 && today.getDate() < birthDate.getDate())
+//   ) {
+//     age--;
+//   }
+
+//   return `${formattedDate} (${age} y)`;
+// }
+
 export function formatDateWithAge(dob: string): string {
-  const birthDate = new Date(dob);
+  // Parse DOB
+  const [birthYearStr, birthMonthStr, birthDayStr] = dob.split("-");
+  const birthYear = parseInt(birthYearStr, 10);
+  const birthMonth = parseInt(birthMonthStr, 10);
+  const birthDay = parseInt(birthDayStr, 10);
+
+  // Get system date as reference
   const today = new Date();
+  const refYear = today.getFullYear();
+  const refMonth = today.getMonth() + 1; // getMonth() is 0-based
+  const refDay = today.getDate();
 
-  // Format date (e.g., "May 10, 1996")
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const formattedDate = birthDate.toLocaleDateString("en-US", options);
+  const formattedDate = formatReadableDate(dob);
 
-  // Calculate age
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthDate.getDate())
-  ) {
+  // Calculate age manually
+  let age = refYear - birthYear;
+  if (refMonth < birthMonth || (refMonth === birthMonth && refDay < birthDay)) {
     age--;
   }
 
   return `${formattedDate} (${age} y)`;
 }
+
+
 
 export function formatReadableDate(input: string): string {
   if (input) {
