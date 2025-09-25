@@ -2942,6 +2942,11 @@ const Report: React.FC = () => {
               Date:{" "}
               <span className="font-semibold">
                 {assignData?.appointmentStatus[0]?.refAppointmentDate
+                  ? formatReadableDate(
+                      assignData?.appointmentStatus[0]?.refAppointmentDate
+                    )
+                  : ""}
+                {/* {assignData?.appointmentStatus[0]?.refAppointmentDate
                   ? new Date(
                       assignData.appointmentStatus[0].refAppointmentDate
                     ).toLocaleDateString("en-GB", {
@@ -2949,7 +2954,7 @@ const Report: React.FC = () => {
                       month: "short",
                       year: "numeric",
                     })
-                  : "-"}
+                  : "-"} */}
               </span>
             </div>
 
