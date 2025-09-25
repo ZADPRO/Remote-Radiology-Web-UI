@@ -43,9 +43,7 @@ import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression, {
   additionalOptions,
-  impressionRecommendation,
   NAadditionalOptions,
-  NAimpressionRecommendation,
 } from "./ImpressionRecommendation";
 import {
   Select,
@@ -915,102 +913,102 @@ const Report: React.FC = () => {
           naSystemReportAccess: response.naSystemReportAccess || false,
         });
 
-        let MainOptions = impressionRecommendation;
-        if (
-          assignData?.naSystemReportAccess &&
-          getReportAnswer(81) === "true"
-        ) {
-          MainOptions = NAimpressionRecommendation;
-        }
+        // let MainOptions = impressionRecommendation;
+        // if (
+        //   (response.naSystemReportAccess || false) &&
+        //   getReportAnswer(81) === "true"
+        // ) {
+        //   MainOptions = NAimpressionRecommendation;
+        // }
 
         setMainImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpression,
-          impressionText:
-            MainOptions.flatMap((cat) => cat.data).find(
-              (item) =>
-                item.id ===
-                response.appointmentStatus[0].refAppointmentImpression
-            )?.impressionText || "",
+          // impressionText:
+          //   MainOptions.flatMap((cat) => cat.data).find(
+          //     (item) =>
+          //       item.id ===
+          //       response.appointmentStatus[0].refAppointmentImpression
+          //   )?.impressionText || "",
           selectedRecommendationId:
             response.appointmentStatus[0].refAppointmentRecommendation,
-          recommendationText:
-            MainOptions.flatMap((cat) => cat.data).find(
-              (item) =>
-                item.id ===
-                response.appointmentStatus[0].refAppointmentImpression
-            )?.recommendationText || "",
+          // recommendationText:
+          //   MainOptions.flatMap((cat) => cat.data).find(
+          //     (item) =>
+          //       item.id ===
+          //       response.appointmentStatus[0].refAppointmentImpression
+          //   )?.recommendationText || "",
           selectedImpressionIdRight:
             response.appointmentStatus[0].refAppointmentImpressionRight,
-          impressionTextRight:
-            MainOptions.flatMap((cat) => cat.data).find(
-              (item) =>
-                item.id ===
-                response.appointmentStatus[0].refAppointmentImpressionRight
-            )?.impressionText || "",
+          // impressionTextRight:
+          //   MainOptions.flatMap((cat) => cat.data).find(
+          //     (item) =>
+          //       item.id ===
+          //       response.appointmentStatus[0].refAppointmentImpressionRight
+          //   )?.impressionText || "",
           selectedRecommendationIdRight:
             response.appointmentStatus[0].refAppointmentRecommendationRight,
-          recommendationTextRight:
-            MainOptions.flatMap((cat) => cat.data).find(
-              (item) =>
-                item.id ===
-                response.appointmentStatus[0].refAppointmentImpressionRight
-            )?.recommendationText || "",
+          // recommendationTextRight:
+          //   MainOptions.flatMap((cat) => cat.data).find(
+          //     (item) =>
+          //       item.id ===
+          //       response.appointmentStatus[0].refAppointmentImpressionRight
+          //   )?.recommendationText || "",
         }));
 
         setOptionalImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpressionAdditional,
-          impressionText: (response.appointmentStatus[0]
-            .refAppointmentImpressionAdditional.length > 0
-            ? JSON.parse(
-                response.appointmentStatus[0].refAppointmentImpressionAdditional
-              )
-            : []
-          )
-            .map((item: any) => item.text)
-            .join("<br/>"),
+          // impressionText: (response.appointmentStatus[0]
+          //   .refAppointmentImpressionAdditional.length > 0
+          //   ? JSON.parse(
+          //       response.appointmentStatus[0].refAppointmentImpressionAdditional
+          //     )
+          //   : []
+          // )
+          //   .map((item: any) => item.text)
+          //   .join("<br/>"),
           selectedRecommendationId:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditional,
-          recommendationText: (response.appointmentStatus[0]
-            .refAppointmentRecommendationAdditional.length > 0
-            ? JSON.parse(
-                response.appointmentStatus[0]
-                  .refAppointmentRecommendationAdditional
-              )
-            : []
-          )
-            .map((item: any) => item.text)
-            .join("<br/>"),
+          // recommendationText: (response.appointmentStatus[0]
+          //   .refAppointmentRecommendationAdditional.length > 0
+          //   ? JSON.parse(
+          //       response.appointmentStatus[0]
+          //         .refAppointmentRecommendationAdditional
+          //     )
+          //   : []
+          // )
+          //   .map((item: any) => item.text)
+          //   .join("<br/>"),
           selectedImpressionIdRight:
             response.appointmentStatus[0]
               .refAppointmentImpressionAdditionalRight,
-          impressionTextRight: (response.appointmentStatus[0]
-            .refAppointmentImpressionAdditionalRight.length > 0
-            ? JSON.parse(
-                response.appointmentStatus[0]
-                  .refAppointmentImpressionAdditionalRight
-              )
-            : []
-          )
-            .map((item: any) => item.text)
-            .join("<br/>"),
+          // impressionTextRight: (response.appointmentStatus[0]
+          //   .refAppointmentImpressionAdditionalRight.length > 0
+          //   ? JSON.parse(
+          //       response.appointmentStatus[0]
+          //         .refAppointmentImpressionAdditionalRight
+          //     )
+          //   : []
+          // )
+          //   .map((item: any) => item.text)
+          //   .join("<br/>"),
           selectedRecommendationIdRight:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditionalRight,
-          recommendationTextRight: (response.appointmentStatus[0]
-            .refAppointmentRecommendationAdditionalRight.length > 0
-            ? JSON.parse(
-                response.appointmentStatus[0]
-                  .refAppointmentRecommendationAdditionalRight
-              )
-            : []
-          )
-            .map((item: any) => item.text)
-            .join("<br/>"),
+          // recommendationTextRight: (response.appointmentStatus[0]
+          //   .refAppointmentRecommendationAdditionalRight.length > 0
+          //   ? JSON.parse(
+          //       response.appointmentStatus[0]
+          //         .refAppointmentRecommendationAdditionalRight
+          //     )
+          //   : []
+          // )
+          //   .map((item: any) => item.text)
+          //   .join("<br/>"),
         }));
 
         setShowOptional(() => ({
@@ -1030,7 +1028,7 @@ const Report: React.FC = () => {
 
         let Commonoptions = additionalOptions;
         if (
-          assignData?.naSystemReportAccess &&
+          (response.naSystemReportAccess || false) &&
           getReportAnswer(81) === "true"
         ) {
           Commonoptions = NAadditionalOptions;
@@ -1374,6 +1372,7 @@ const Report: React.FC = () => {
 
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
+        fecthautosave();
 
         response.Addendum &&
           setAddendumText(
