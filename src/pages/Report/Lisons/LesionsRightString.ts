@@ -130,7 +130,11 @@ export function LesionsRightString(
             namePart === "hypertrophic tissue with microcysts"
               ? "n area of"
               : ""
-          } ${namePart ?? "lesion"}${
+          } ${
+            namePart === "solid mass / nodule"
+              ? `solid mass`
+              : namePart ?? "lesion"
+          }${
             namePart === "multiple simple cysts" && data.atleast
               ? ` atleast ${data.atleast}`
               : ""
@@ -679,7 +683,6 @@ export function LesionsRightString(
       true
     );
   }
-
 
   return JSON.stringify(lesionsVal);
 }
