@@ -11,7 +11,12 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
-import { ChangedOneState, ReportQuestion } from "./Report";
+import {
+  AssignReportResponse,
+  ChangedOneState,
+  ReportQuestion,
+} from "./Report";
+import { Switch } from "@/components/ui/switch";
 
 interface ImpressionProps {
   additionalChangesChangeStatus: boolean;
@@ -61,6 +66,7 @@ interface ImpressionProps {
       recommendationTextRight: string;
     }>
   >;
+  assignData: AssignReportResponse | null;
   showOptional: {
     impression: boolean;
     recommendation: boolean;
@@ -116,114 +122,6 @@ export const impressionRecommendation = [
           "Repeat QT imaging is recommended for improved image quality and better diagnostic clarity.",
         recommendationTextColor: "#000000",
         recommendationBackgroundColor: "#f3f3f3",
-      },
-    ],
-  },
-  {
-    impressionColor: "#a0a0a0",
-    recommendationColor: "#6e6e6e",
-    data: [
-      {
-        id: "0NA",
-        impression: "Prior breast imaging is needed for interpretation",
-        impressionText:
-          "Prior breast imaging is needed for interpretation",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Prior breast imaging is needed for interpretation.",
-        recommendationText:
-          "Prior breast imaging is needed for interpretation.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#fff",
-      },
-    ],
-  },
-  {
-    impressionColor: "#a0a0a0",
-    recommendationColor: "#6e6e6e",
-    data: [
-      {
-        id: "N1",
-        impression: "Unremarkable",
-        impressionText:
-          "The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Return in 1 year",
-        recommendationText:
-          "Return in 1 year for annual examination as clinically warranted.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#d9ead3",
-      },
-      {
-        id: "N2",
-        impression: "Unremarkable with benign finding",
-        impressionText:
-          "The exam is unremarkable with benign finding(s). There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Return in 1 year",
-        recommendationText:
-          "Return in 1 year for annual examination as clinically warranted.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#d9ead3",
-      },
-    ],
-  },
-  {
-    impressionColor: "#a0a0a0",
-    recommendationColor: "#6e6e6e",
-    data: [
-      {
-        id: "A1",
-        impression: "Indeterminate",
-        impressionText:
-          "The exam shows likely benign finding(s) as described. However, short-term interval follow-up is recommended.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Return in _____weeks",
-        recommendationText: "Return in ____ weeks for follow-up.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#fff2cc",
-      },
-      {
-        id: "A2",
-        impression: "Possible malignancy",
-        impressionText:
-          "The exam shows finding(s) with characteristics suggesting possible malignancy.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Consult with physician",
-        recommendationText:
-          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#f4cccc",
-      },
-      {
-        id: "A3",
-        impression: "Most likely malignant",
-        impressionText:
-          "The exam shows finding(s) with characteristics that are most likely malignant.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Consult with physician",
-        recommendationText:
-          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#f4cccc",
-      },
-      {
-        id: "A4",
-        impression: "Known malignancy",
-        impressionText:
-          "The exam shows the previously known malignancy/ies.",
-        impressionTextColor: "#000000",
-        impressionBackgroundColor: "transparent",
-        recommendation: "Management of the known malignancy",
-        recommendationText:
-          "Management of the known malignancy and any new finding(s) should be based on the clinical assessment.",
-        recommendationTextColor: "#000000",
-        recommendationBackgroundColor: "#f4cccc",
       },
     ],
   },
@@ -929,6 +827,126 @@ export const impressionRecommendation = [
   },
 ];
 
+export const NAimpressionRecommendation = [
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "0",
+        impression: "Prior breast imaging is needed for interpretation",
+        impressionText: "Prior breast imaging is needed for interpretation",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Prior breast imaging is needed for interpretation.",
+        recommendationText:
+          "Prior breast imaging is needed for interpretation.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff",
+      },
+    ],
+  },
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "N1",
+        impression: "Unremarkable",
+        impressionText:
+          "The exam is unremarkable. There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in 1 year",
+        recommendationText:
+          "Return in 1 year for annual examination as clinically warranted.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
+      },
+      {
+        id: "N2",
+        impression: "Unremarkable with benign finding",
+        impressionText:
+          "The exam is unremarkable with benign finding(s). There is no evidence of suspicious calcifications, dominant masses or architectural distortions to suggest the presence of malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in 1 year",
+        recommendationText:
+          "Return in 1 year for annual examination as clinically warranted.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#d9ead3",
+      },
+    ],
+  },
+  {
+    impressionColor: "#a0a0a0",
+    recommendationColor: "#6e6e6e",
+    data: [
+      {
+        id: "A1",
+        impression: "Indeterminate",
+        impressionText:
+          "The exam shows likely benign finding(s) as described. However, short-term interval follow-up is recommended.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Return in _____weeks",
+        recommendationText: "Return in ____ weeks for follow-up.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#fff2cc",
+      },
+      {
+        id: "A2",
+        impression: "Possible malignancy",
+        impressionText:
+          "The exam shows finding(s) with characteristics suggesting possible malignancy.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Consult with physician",
+        recommendationText:
+          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "A3",
+        impression: "Most likely malignant",
+        impressionText:
+          "The exam shows finding(s) with characteristics that are most likely malignant.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Consult with physician",
+        recommendationText:
+          "Consult with physician or healthcare provider regarding any additional testing that includes biopsy and/or additional imaging.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "A4",
+        impression: "Known malignancy",
+        impressionText: "The exam shows the previously known malignancy/ies.",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "Management of the known malignancy",
+        recommendationText:
+          "Management of the known malignancy and any new finding(s) should be based on the clinical assessment.",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#f4cccc",
+      },
+      {
+        id: "-",
+        impression: "",
+        impressionText: "",
+        impressionTextColor: "#000000",
+        impressionBackgroundColor: "transparent",
+        recommendation: "",
+        recommendationText: "",
+        recommendationTextColor: "#000000",
+        recommendationBackgroundColor: "#cfe2f3",
+      },
+    ],
+  },
+];
+
 export const additionalOptions = [
   {
     id: "A",
@@ -1026,16 +1044,19 @@ export const additionalOptions = [
     id: "Z",
     text: "Image given location is for correlative location only.",
   },
+];
+
+export const NAadditionalOptions = [
   {
-    id: "1NA",
+    id: "1",
     text: "Consult with physician or healthcare provider for management of any other clinical findings.",
   },
   {
-    id: "2NA",
+    id: "2",
     text: "Results were discussed with ____ on [date and time of the discussion]",
   },
   {
-    id: "3NA",
+    id: "3",
     text: "The written report was provided to [___] on [___].",
   },
 ];
@@ -1047,6 +1068,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
   setMainImpressionRecommendation,
   optionalImpressionRecommendation,
   setOptionalImpressionRecommendation,
+  assignData,
   commonImpressRecomm,
   setCommonImpressRecomm,
   readOnly,
@@ -1173,19 +1195,37 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
   //   );
   // }, []);
 
-  const selectedImpression = impressionRecommendation
-    .flatMap((group) => group.data)
-    .find(
-      (impression) =>
-        impression.id === mainImpressionRecommendation.selectedImpressionId
-    );
+  let ImpressionOption = impressionRecommendation;
 
-  const selectedImpressionRight = impressionRecommendation
-    .flatMap((group) => group.data)
-    .find(
-      (impression) =>
-        impression.id === mainImpressionRecommendation.selectedImpressionIdRight
-    );
+  if (assignData?.naSystemReportAccess && getAnswer(81) === "true") {
+    ImpressionOption = NAimpressionRecommendation;
+  }
+
+  let MacroOption = additionalOptions;
+
+  if (assignData?.naSystemReportAccess && getAnswer(81) === "true") {
+    MacroOption = NAadditionalOptions;
+  }
+
+  const selectedMacro =
+    MacroOption.find((opt) => opt.id === commonImpressRecomm.id)?.text || "";
+
+  const selectedMacroRight =
+    MacroOption.find((opt) => opt.id === commonImpressRecomm.idRight)?.text || "";
+
+  const selectedImpression = ImpressionOption.flatMap(
+    (group) => group.data
+  ).find(
+    (impression) =>
+      impression.id === mainImpressionRecommendation.selectedImpressionId
+  );
+
+  const selectedImpressionRight = ImpressionOption.flatMap(
+    (group) => group.data
+  ).find(
+    (impression) =>
+      impression.id === mainImpressionRecommendation.selectedImpressionIdRight
+  );
 
   useEffect(() => {
     const scrollToCenter = (el: HTMLDivElement | null) => {
@@ -1236,6 +1276,35 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
           readOnly ? "pointer-events-none" : ""
         }`}
       >
+        {assignData?.naSystemReportAccess && (
+          <div
+            className={`flex flex-col w-full items-start justify-between gap-4 ${
+              readOnly ? "pointer-events-none" : ""
+            }`}
+          >
+            <div className="self-end mt-2">
+              <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                <div>
+                  <Label className="font-semibold text-base">NA System</Label>
+                </div>
+                <Switch
+                  id="qtAccess"
+                  className="cursor-pointer"
+                  checked={
+                    getAnswer(81).length > 0 && getAnswer(81) === "true"
+                      ? true
+                      : false
+                  }
+                  onCheckedChange={(checked: boolean) => {
+                    if (!readOnly) {
+                      handleReportInputChange(81, checked ? "true" : "false");
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
         <div className={`flex gap-4 items-center mb-4 -ml-2`}>
           <div>
             <Checkbox2
@@ -1286,65 +1355,79 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   Impression
                 </div>
 
-                <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-                  {impressionRecommendation.map((contentCategory, index) =>
-                    contentCategory.data.map((content, idx) => {
-                      const isFirst = index === 0 && idx === 0;
-                      const isLast =
-                        index === impressionRecommendation.length - 1 &&
-                        idx === contentCategory.data.length - 1;
-                      const isSelected =
-                        mainImpressionRecommendation.selectedImpressionIdRight ===
-                        content.id;
+                <div
+                  className={`${
+                    assignData?.naSystemReportAccess && getAnswer(81) === "true"
+                      ? "h-[auto]"
+                      : "h-[65vh]"
+                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                >
+                  {(() => {
+                    let options = impressionRecommendation;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAimpressionRecommendation;
+                    }
 
-                      return (
-                        <div
-                          key={`impressionright-${content.id}-${idx}`}
-                          ref={(el) => {
-                            impressionRefsRight.current[content.id] = el;
-                          }}
-                          onClick={() => {
-                            setChangedOne((prev) => ({
-                              ...prev,
-                              impressionRight: true,
-                              recommendationRight: true,
-                            }));
-                            setMainImpressionRecommendation((prev) => ({
-                              ...prev,
-                              selectedImpressionIdRight: content.id,
-                              selectedRecommendationIdRight: content.id,
-                              impressionTextRight: content.impressionText,
-                              recommendationTextRight:
-                                content.recommendationText,
-                            }));
-                          }}
-                          className={`flex cursor-pointer ${
-                            isFirst ? "rounded-tl-lg" : ""
-                          } ${isLast ? "rounded-bl-lg" : ""} ${
-                            isSelected
-                              ? "border-2 border-[#0000006d]"
-                              : "border-b border-b-[#00000030]"
-                          } ${readOnly ? "pointer-events-none" : ""}`}
-                          style={{
-                            backgroundColor: content.impressionBackgroundColor,
-                            color: content.impressionTextColor,
-                          }}
-                        >
-                          <p
-                            className={`min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center`}
+                    return options.map((contentCategory, index) =>
+                      contentCategory.data.map((content, idx) => {
+                        const isFirst = index === 0 && idx === 0;
+                        const isLast =
+                          index === options.length - 1 &&
+                          idx === contentCategory.data.length - 1;
+                        const isSelected =
+                          mainImpressionRecommendation.selectedImpressionIdRight ===
+                          content.id;
+
+                        return (
+                          <div
+                            key={`impressionright-${content.id}-${idx}`}
+                            ref={(el) => {
+                              impressionRefsRight.current[content.id] = el;
+                            }}
+                            onClick={() => {
+                              setChangedOne((prev) => ({
+                                ...prev,
+                                impressionRight: true,
+                                recommendationRight: true,
+                              }));
+                              setMainImpressionRecommendation((prev) => ({
+                                ...prev,
+                                selectedImpressionIdRight: content.id,
+                                selectedRecommendationIdRight: content.id,
+                                impressionTextRight: content.impressionText,
+                                recommendationTextRight:
+                                  content.recommendationText,
+                              }));
+                            }}
+                            className={`flex cursor-pointer ${
+                              isFirst ? "rounded-tl-lg" : ""
+                            } ${isLast ? "rounded-bl-lg" : ""} ${
+                              isSelected
+                                ? "border-2 border-[#0000006d]"
+                                : "border-b border-b-[#00000030]"
+                            } ${readOnly ? "pointer-events-none" : ""}`}
+                            style={{
+                              backgroundColor:
+                                content.impressionBackgroundColor,
+                              color: content.impressionTextColor,
+                            }}
                           >
-                            {content.id}
-                          </p>
-                          <p
-                            className={`text-sm pl-2 flex items-center font-semibold`}
-                          >
-                            {content.impression}
-                          </p>
-                        </div>
-                      );
-                    })
-                  )}
+                            <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
+                              {content.id}
+                            </p>
+                            <p className="text-sm pl-2 flex items-center font-semibold">
+                              {content.impression}
+                            </p>
+                          </div>
+                        );
+                      })
+                    );
+                  })()}
                 </div>
+
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
                   <Select
                     value={
@@ -1356,7 +1439,14 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         impressionRight: true,
                         recommendationRight: true,
                       }));
-                      const matched = impressionRecommendation
+                      let options = impressionRecommendation;
+                      if (
+                        assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true"
+                      ) {
+                        options = NAimpressionRecommendation;
+                      }
+                      const matched = options
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
 
@@ -1375,15 +1465,33 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     </SelectTrigger>
 
                     <SelectContent>
-                      {impressionRecommendation.map((contentCategory) =>
-                        contentCategory.data.map((content, idx) => (
-                          <SelectItem
-                            key={`impressionright-${content.id}-${idx}`}
-                            value={content.id}
-                          >
-                            {content.id + " - " + content.impression}
-                          </SelectItem>
-                        ))
+                      {assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true" ? (
+                        <>
+                          {NAimpressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impressionright-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.impression}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {impressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impressionright-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.impression}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
                       )}
                     </SelectContent>
                   </Select>
@@ -1445,7 +1553,16 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             impressionaddtionalRight: true,
                           }));
 
-                          const matched = impressionRecommendation
+                          let options = impressionRecommendation;
+
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAimpressionRecommendation;
+                          }
+
+                          const matched = options
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
 
@@ -1467,15 +1584,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {impressionRecommendation.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
+                          {assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true" ? (
+                            <>
+                              {NAimpressionRecommendation.map(
+                                (contentCategory) =>
+                                  contentCategory.data.map((content, idx) => (
+                                    <SelectItem
+                                      key={`impression-${content.id}-${idx}`}
+                                      value={content.id}
+                                    >
+                                      {content.id + " - " + content.impression}
+                                    </SelectItem>
+                                  ))
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {impressionRecommendation.map((contentCategory) =>
+                                contentCategory.data.map((content, idx) => (
+                                  <SelectItem
+                                    key={`impression-${content.id}-${idx}`}
+                                    value={content.id}
+                                  >
+                                    {content.id + " - " + content.impression}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </>
                           )}
                         </SelectContent>
                       </Select>
@@ -1491,44 +1627,60 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   Recommendation
                 </div>
 
-                <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-                  {impressionRecommendation.map((category, index) =>
-                    category.data.map((content, idx) => {
-                      const isFirst = index === 0 && idx === 0;
-                      const isLast =
-                        index === impressionRecommendation.length - 1 &&
-                        idx === category.data.length - 1;
+                <div
+                  className={`${
+                    assignData?.naSystemReportAccess && getAnswer(81) === "true"
+                      ? "h-[auto]"
+                      : "h-[65vh]"
+                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                >
+                  {(() => {
+                    let options = impressionRecommendation;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAimpressionRecommendation;
+                    }
 
-                      return (
-                        <div
-                          key={`rec-${content.id}`}
-                          ref={(el) => {
-                            recommendationRefsRight.current[content.id] = el;
-                          }}
-                          className={`flex ${isFirst ? "rounded-tl-lg" : ""} ${
-                            isLast ? "rounded-bl-lg" : ""
-                          } ${
-                            mainImpressionRecommendation.selectedRecommendationIdRight ===
-                            content.id
-                              ? "border-2 border-[#0000006d]"
-                              : "border-b border-b-[#00000030]"
-                          } ${readOnly ? "pointer-events-none" : ""}`}
-                          style={{
-                            backgroundColor:
-                              content.recommendationBackgroundColor,
-                            color: content.recommendationTextColor,
-                          }}
-                        >
-                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
-                            {content.id}
-                          </p>
-                          <p className="text-sm pl-2 flex items-center font-semibold">
-                            {content.recommendation}
-                          </p>
-                        </div>
-                      );
-                    })
-                  )}
+                    return options.map((category, index) =>
+                      category.data.map((content, idx) => {
+                        const isFirst = index === 0 && idx === 0;
+                        const isLast =
+                          index === impressionRecommendation.length - 1 &&
+                          idx === category.data.length - 1;
+
+                        return (
+                          <div
+                            key={`rec-${content.id}`}
+                            ref={(el) => {
+                              recommendationRefsRight.current[content.id] = el;
+                            }}
+                            className={`flex ${
+                              isFirst ? "rounded-tl-lg" : ""
+                            } ${isLast ? "rounded-bl-lg" : ""} ${
+                              mainImpressionRecommendation.selectedRecommendationIdRight ===
+                              content.id
+                                ? "border-2 border-[#0000006d]"
+                                : "border-b border-b-[#00000030]"
+                            } ${readOnly ? "pointer-events-none" : ""}`}
+                            style={{
+                              backgroundColor:
+                                content.recommendationBackgroundColor,
+                              color: content.recommendationTextColor,
+                            }}
+                          >
+                            <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
+                              {content.id}
+                            </p>
+                            <p className="text-sm pl-2 flex items-center font-semibold">
+                              {content.recommendation}
+                            </p>
+                          </div>
+                        );
+                      })
+                    );
+                  })()}
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
@@ -1541,7 +1693,14 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         ...prev,
                         recommendationRight: true,
                       }));
-                      const matched = impressionRecommendation
+                      let options = impressionRecommendation;
+                      if (
+                        assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true"
+                      ) {
+                        options = NAimpressionRecommendation;
+                      }
+                      const matched = options
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
 
@@ -1558,15 +1717,33 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     </SelectTrigger>
 
                     <SelectContent>
-                      {impressionRecommendation.map((contentCategory) =>
-                        contentCategory.data.map((content, idx) => (
-                          <SelectItem
-                            key={`impressionright-${content.id}-${idx}`}
-                            value={content.id}
-                          >
-                            {content.id + " - " + content.recommendation}
-                          </SelectItem>
-                        ))
+                      {assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true" ? (
+                        <>
+                          {NAimpressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impressionright-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.recommendation}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {impressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impressionright-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.recommendation}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
                       )}
                     </SelectContent>
                   </Select>
@@ -1627,7 +1804,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             ...prev,
                             recommendationaddtionalRight: true,
                           }));
-                          const matched = impressionRecommendation
+                          let options = impressionRecommendation;
+
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAimpressionRecommendation;
+                          }
+                          const matched = options
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
 
@@ -1649,15 +1834,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {impressionRecommendation.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
+                          {assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true" ? (
+                            <>
+                              {NAimpressionRecommendation.map(
+                                (contentCategory) =>
+                                  contentCategory.data.map((content, idx) => (
+                                    <SelectItem
+                                      key={`impression-${content.id}-${idx}`}
+                                      value={content.id}
+                                    >
+                                      {content.id + " - " + content.impression}
+                                    </SelectItem>
+                                  ))
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {impressionRecommendation.map((contentCategory) =>
+                                contentCategory.data.map((content, idx) => (
+                                  <SelectItem
+                                    key={`impression-${content.id}-${idx}`}
+                                    value={content.id}
+                                  >
+                                    {content.id + " - " + content.impression}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </>
                           )}
                         </SelectContent>
                       </Select>
@@ -1678,9 +1882,14 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     ...prev,
                     commonImpressionRecommendationRight: true,
                   }));
-                  const selected = additionalOptions.find(
-                    (opt) => opt.id === value
-                  );
+                  let options = additionalOptions;
+                  if (
+                    assignData?.naSystemReportAccess &&
+                    getAnswer(81) === "true"
+                  ) {
+                    options = NAadditionalOptions;
+                  }
+                  const selected = options.find((opt) => opt.id === value);
                   if (selected) {
                     setCommonImpressRecomm({
                       ...commonImpressRecomm,
@@ -1694,19 +1903,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   <SelectValue placeholder="Select option" />
                 </SelectTrigger>
                 <SelectContent>
-                  {additionalOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {option.id} -{" "}
-                      {option.text.split(" ").slice(0, 10).join(" ")}
-                      ...
-                    </SelectItem>
-                  ))}
+                  {assignData?.naSystemReportAccess &&
+                  getAnswer(81) === "true" ? (
+                    <>
+                      {NAadditionalOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.id} -{" "}
+                          {option.text.split(" ").slice(0, 10).join(" ")}
+                          ...
+                        </SelectItem>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {additionalOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.id} -{" "}
+                          {option.text.split(" ").slice(0, 10).join(" ")}
+                          ...
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
                 </SelectContent>
               </Select>
 
-              {commonImpressRecomm.textRight && (
+              {selectedMacroRight && (
                 <div className="text-sm mt-2 p-2 rounded border whitespace-pre-wrap">
-                  {commonImpressRecomm.textRight}
+                  {selectedMacroRight}
                 </div>
               )}
             </div>
@@ -1766,59 +1990,75 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   Impression
                 </div>
 
-                <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-                  {impressionRecommendation.map((contentCategory, index) =>
-                    contentCategory.data.map((content, idx) => {
-                      const isFirst = index === 0 && idx === 0;
-                      const isLast =
-                        index === impressionRecommendation.length - 1 &&
-                        idx === contentCategory.data.length - 1;
-                      const isSelected =
-                        mainImpressionRecommendation.selectedImpressionId ===
-                        content.id;
+                <div
+                  className={`${
+                    assignData?.naSystemReportAccess && getAnswer(81) === "true"
+                      ? "h-[auto]"
+                      : "h-[65vh]"
+                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                >
+                  {(() => {
+                    let options = impressionRecommendation;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAimpressionRecommendation;
+                    }
+                    return options.map((contentCategory, index) =>
+                      contentCategory.data.map((content, idx) => {
+                        const isFirst = index === 0 && idx === 0;
+                        const isLast =
+                          index === impressionRecommendation.length - 1 &&
+                          idx === contentCategory.data.length - 1;
+                        const isSelected =
+                          mainImpressionRecommendation.selectedImpressionId ===
+                          content.id;
 
-                      return (
-                        <div
-                          key={`impression-${content.id}-${idx}`}
-                          ref={(el) => {
-                            impressionRefs.current[content.id] = el;
-                          }}
-                          onClick={() => {
-                            setChangedOne((prev) => ({
-                              ...prev,
-                              impression: true,
-                              recommendation: true,
-                            }));
-                            setMainImpressionRecommendation((prev) => ({
-                              ...prev,
-                              selectedImpressionId: content.id,
-                              selectedRecommendationId: content.id,
-                              impressionText: content.impressionText,
-                              recommendationText: content.recommendationText,
-                            }));
-                          }}
-                          className={`flex cursor-pointer ${
-                            isFirst ? "rounded-tl-lg" : ""
-                          } ${isLast ? "rounded-bl-lg" : ""} ${
-                            isSelected
-                              ? "border-2 border-[#0000006d]"
-                              : "border-b border-b-[#00000030]"
-                          } ${readOnly ? "pointer-events-none" : ""}`}
-                          style={{
-                            backgroundColor: content.impressionBackgroundColor,
-                            color: content.impressionTextColor,
-                          }}
-                        >
-                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
-                            {content.id}
-                          </p>
-                          <p className="text-sm pl-2 flex items-center font-semibold">
-                            {content.impression}
-                          </p>
-                        </div>
-                      );
-                    })
-                  )}
+                        return (
+                          <div
+                            key={`impression-${content.id}-${idx}`}
+                            ref={(el) => {
+                              impressionRefs.current[content.id] = el;
+                            }}
+                            onClick={() => {
+                              setChangedOne((prev) => ({
+                                ...prev,
+                                impression: true,
+                                recommendation: true,
+                              }));
+                              setMainImpressionRecommendation((prev) => ({
+                                ...prev,
+                                selectedImpressionId: content.id,
+                                selectedRecommendationId: content.id,
+                                impressionText: content.impressionText,
+                                recommendationText: content.recommendationText,
+                              }));
+                            }}
+                            className={`flex cursor-pointer ${
+                              isFirst ? "rounded-tl-lg" : ""
+                            } ${isLast ? "rounded-bl-lg" : ""} ${
+                              isSelected
+                                ? "border-2 border-[#0000006d]"
+                                : "border-b border-b-[#00000030]"
+                            } ${readOnly ? "pointer-events-none" : ""}`}
+                            style={{
+                              backgroundColor:
+                                content.impressionBackgroundColor,
+                              color: content.impressionTextColor,
+                            }}
+                          >
+                            <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
+                              {content.id}
+                            </p>
+                            <p className="text-sm pl-2 flex items-center font-semibold">
+                              {content.impression}
+                            </p>
+                          </div>
+                        );
+                      })
+                    );
+                  })()}
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
@@ -1830,7 +2070,14 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         impression: true,
                         recommendation: true,
                       }));
-                      const matched = impressionRecommendation
+                      let options = impressionRecommendation;
+                      if (
+                        assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true"
+                      ) {
+                        options = NAimpressionRecommendation;
+                      }
+                      const matched = options
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
 
@@ -1848,15 +2095,33 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     </SelectTrigger>
 
                     <SelectContent>
-                      {impressionRecommendation.map((contentCategory) =>
-                        contentCategory.data.map((content, idx) => (
-                          <SelectItem
-                            key={`impression-${content.id}-${idx}`}
-                            value={content.id}
-                          >
-                            {content.id + " - " + content.impression}
-                          </SelectItem>
-                        ))
+                      {assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true" ? (
+                        <>
+                          {NAimpressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impression-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.impression}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {impressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impression-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.impression}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
                       )}
                     </SelectContent>
                   </Select>
@@ -1918,7 +2183,16 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             impressionaddtional: true,
                           }));
 
-                          const matched = impressionRecommendation
+                          let options = impressionRecommendation;
+
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAimpressionRecommendation;
+                          }
+
+                          const matched = options
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
 
@@ -1940,15 +2214,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {impressionRecommendation.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
+                          {assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true" ? (
+                            <>
+                              {NAimpressionRecommendation.map(
+                                (contentCategory) =>
+                                  contentCategory.data.map((content, idx) => (
+                                    <SelectItem
+                                      key={`impression-${content.id}-${idx}`}
+                                      value={content.id}
+                                    >
+                                      {content.id + " - " + content.impression}
+                                    </SelectItem>
+                                  ))
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {impressionRecommendation.map((contentCategory) =>
+                                contentCategory.data.map((content, idx) => (
+                                  <SelectItem
+                                    key={`impression-${content.id}-${idx}`}
+                                    value={content.id}
+                                  >
+                                    {content.id + " - " + content.impression}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </>
                           )}
                         </SelectContent>
                       </Select>
@@ -1964,44 +2257,60 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   Recommendation
                 </div>
 
-                <div className="h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto">
-                  {impressionRecommendation.map((category, index) =>
-                    category.data.map((content, idx) => {
-                      const isFirst = index === 0 && idx === 0;
-                      const isLast =
-                        index === impressionRecommendation.length - 1 &&
-                        idx === category.data.length - 1;
+                <div
+                  className={`${
+                    assignData?.naSystemReportAccess && getAnswer(81) === "true"
+                      ? "h-[auto]"
+                      : "h-[65vh]"
+                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                >
+                  {(() => {
+                    let options = impressionRecommendation;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAimpressionRecommendation;
+                    }
 
-                      return (
-                        <div
-                          key={`rec-${content.id}`}
-                          ref={(el) => {
-                            recommendationRefs.current[content.id] = el;
-                          }}
-                          className={`flex ${isFirst ? "rounded-tl-lg" : ""} ${
-                            isLast ? "rounded-bl-lg" : ""
-                          } ${
-                            mainImpressionRecommendation.selectedRecommendationId ===
-                            content.id
-                              ? "border-2 border-[#0000006d]"
-                              : "border-b border-b-[#00000030]"
-                          } ${readOnly ? "pointer-events-none" : ""}`}
-                          style={{
-                            backgroundColor:
-                              content.recommendationBackgroundColor,
-                            color: content.recommendationTextColor,
-                          }}
-                        >
-                          <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
-                            {content.id}
-                          </p>
-                          <p className="text-sm pl-2 flex items-center font-semibold">
-                            {content.recommendation}
-                          </p>
-                        </div>
-                      );
-                    })
-                  )}
+                    return options.map((category, index) =>
+                      category.data.map((content, idx) => {
+                        const isFirst = index === 0 && idx === 0;
+                        const isLast =
+                          index === impressionRecommendation.length - 1 &&
+                          idx === category.data.length - 1;
+
+                        return (
+                          <div
+                            key={`rec-${content.id}`}
+                            ref={(el) => {
+                              recommendationRefs.current[content.id] = el;
+                            }}
+                            className={`flex ${
+                              isFirst ? "rounded-tl-lg" : ""
+                            } ${isLast ? "rounded-bl-lg" : ""} ${
+                              mainImpressionRecommendation.selectedRecommendationId ===
+                              content.id
+                                ? "border-2 border-[#0000006d]"
+                                : "border-b border-b-[#00000030]"
+                            } ${readOnly ? "pointer-events-none" : ""}`}
+                            style={{
+                              backgroundColor:
+                                content.recommendationBackgroundColor,
+                              color: content.recommendationTextColor,
+                            }}
+                          >
+                            <p className="min-w-[6rem] text-xs font-semibold text-center px-2 py-1 flex items-center justify-center">
+                              {content.id}
+                            </p>
+                            <p className="text-sm pl-2 flex items-center font-semibold">
+                              {content.recommendation}
+                            </p>
+                          </div>
+                        );
+                      })
+                    );
+                  })()}
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
@@ -2014,7 +2323,15 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         ...prev,
                         recommendation: true,
                       }));
-                      const matched = impressionRecommendation
+
+                      let options = impressionRecommendation;
+                      if (
+                        assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true"
+                      ) {
+                        options = NAimpressionRecommendation;
+                      }
+                      const matched = options
                         .flatMap((cat) => cat.data)
                         .find((item) => item.id === val);
 
@@ -2030,15 +2347,33 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     </SelectTrigger>
 
                     <SelectContent>
-                      {impressionRecommendation.map((contentCategory) =>
-                        contentCategory.data.map((content, idx) => (
-                          <SelectItem
-                            key={`impression-${content.id}-${idx}`}
-                            value={content.id}
-                          >
-                            {content.id + " - " + content.recommendation}
-                          </SelectItem>
-                        ))
+                      {assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true" ? (
+                        <>
+                          {NAimpressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impression-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.recommendation}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {impressionRecommendation.map((contentCategory) =>
+                            contentCategory.data.map((content, idx) => (
+                              <SelectItem
+                                key={`impression-${content.id}-${idx}`}
+                                value={content.id}
+                              >
+                                {content.id + " - " + content.recommendation}
+                              </SelectItem>
+                            ))
+                          )}
+                        </>
                       )}
                     </SelectContent>
                   </Select>
@@ -2099,7 +2434,17 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             ...prev,
                             recommendationaddtional: true,
                           }));
-                          const matched = impressionRecommendation
+
+                          let options = impressionRecommendation;
+
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAimpressionRecommendation;
+                          }
+
+                          const matched = options
                             .flatMap((cat) => cat.data)
                             .find((item) => item.id.toString() === val);
 
@@ -2121,15 +2466,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {impressionRecommendation.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
+                          {assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true" ? (
+                            <>
+                              {NAimpressionRecommendation.map(
+                                (contentCategory) =>
+                                  contentCategory.data.map((content, idx) => (
+                                    <SelectItem
+                                      key={`impression-${content.id}-${idx}`}
+                                      value={content.id}
+                                    >
+                                      {content.id + " - " + content.impression}
+                                    </SelectItem>
+                                  ))
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {impressionRecommendation.map((contentCategory) =>
+                                contentCategory.data.map((content, idx) => (
+                                  <SelectItem
+                                    key={`impression-${content.id}-${idx}`}
+                                    value={content.id}
+                                  >
+                                    {content.id + " - " + content.impression}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </>
                           )}
                         </SelectContent>
                       </Select>
@@ -2150,9 +2514,14 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                     ...prev,
                     commonImpressionRecommendation: true,
                   }));
-                  const selected = additionalOptions.find(
-                    (opt) => opt.id === value
-                  );
+                  let options = additionalOptions;
+                  if (
+                    assignData?.naSystemReportAccess &&
+                    getAnswer(81) === "true"
+                  ) {
+                    options = NAadditionalOptions;
+                  }
+                  const selected = options.find((opt) => opt.id === value);
                   if (selected) {
                     setCommonImpressRecomm({
                       ...commonImpressRecomm,
@@ -2166,19 +2535,34 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   <SelectValue placeholder="Select option" />
                 </SelectTrigger>
                 <SelectContent>
-                  {additionalOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {option.id} -{" "}
-                      {option.text.split(" ").slice(0, 10).join(" ")}
-                      ...
-                    </SelectItem>
-                  ))}
+                  {assignData?.naSystemReportAccess &&
+                  getAnswer(81) === "true" ? (
+                    <>
+                      {NAadditionalOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.id} -{" "}
+                          {option.text.split(" ").slice(0, 10).join(" ")}
+                          ...
+                        </SelectItem>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {additionalOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.id} -{" "}
+                          {option.text.split(" ").slice(0, 10).join(" ")}
+                          ...
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
                 </SelectContent>
               </Select>
 
-              {commonImpressRecomm.text && (
+              {selectedMacro && (
                 <div className="text-sm mt-2 p-2 rounded border whitespace-pre-wrap">
-                  {commonImpressRecomm.text}
+                  {selectedMacro}
                 </div>
               )}
             </div>

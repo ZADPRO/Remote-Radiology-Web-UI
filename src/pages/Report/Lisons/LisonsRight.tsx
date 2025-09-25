@@ -22,6 +22,8 @@ interface QuestionIds {
   fibronodulardensityDatar: number;
   multipleCystsstr: number;
   multipleCystsDatar: number;
+  solidmassstr: number;
+  solidmassDatar: number;
 }
 
 interface Props {
@@ -85,6 +87,10 @@ const LisonsRight: React.FC<Props> = ({
     reportFormData.find((q) => q.questionId === questionIds.multipleCystsstr)
       ?.answer,
     reportFormData.find((q) => q.questionId === questionIds.multipleCystsDatar)
+      ?.answer,
+      reportFormData.find((q) => q.questionId === questionIds.solidmassstr)
+      ?.answer,
+    reportFormData.find((q) => q.questionId === questionIds.solidmassDatar)
       ?.answer,
   ]);
 
@@ -172,6 +178,16 @@ const LisonsRight: React.FC<Props> = ({
             LabelVal={"Multiple Simple Cysts"}
             mainQId={questionIds.multipleCystsstr}
             DataQId={questionIds.multipleCystsDatar}
+            textEditorVal={textEditorVal}
+            textEditorOnChange={textEditorOnChange}
+          />
+
+          <LesionsOptions
+            reportFormData={reportFormData}
+            handleReportInputChange={handleReportInputChange}
+            LabelVal={"Solid mass / nodule"}
+            mainQId={questionIds.solidmassstr}
+            DataQId={questionIds.solidmassDatar}
             textEditorVal={textEditorVal}
             textEditorOnChange={textEditorOnChange}
           />

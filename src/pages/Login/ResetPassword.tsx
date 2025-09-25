@@ -101,7 +101,7 @@ const ResetPassword: React.FC = () => {
         setSuccess(true);
 
         if (role?.type === "patient") {
-          setTimeout(() => navigate(`/patient/myCare`), 2000);
+          setTimeout(() => navigate(`/patient/medicalHistory`), 2000);
         } else {
           setTimeout(() => navigate(`/${role?.type}/dashboard`), 2000);
         }

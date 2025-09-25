@@ -108,8 +108,8 @@ const BreastImplantDetails: React.FC<Props> = ({
               formData={reportFormData}
               handleInputChange={handleReportInputChange}
               options={[
-                { label: "Prepectoral", value: "Prepectoral" },
-                { label: "Subpectoral", value: "Subpectoral" },
+                { label: "Pre-pectoral (sub-glandular)", value: "Pre-pectoral (sub-glandular)" },
+                { label: "Subpectoral (Retro-pectoral)", value: "Subpectoral (Retro-pectoral)" },
               ]}
             />
 

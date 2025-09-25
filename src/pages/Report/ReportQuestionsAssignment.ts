@@ -73,6 +73,8 @@ export const lesionsRightQuestions = {
   multipleCystsDatar: 125,
   Otherstr: 45,
   OtherDatar: 46,
+  solidmassstr: 82,
+  solidmassDatar: 83,
 };
 
 export const LymphNodesRightQuestions = {
@@ -142,6 +144,8 @@ export const lesionsLeftQuestions = {
   fibronodulardensityDatar: 127,
   multipleCystsstr: 128,
   multipleCystsDatar: 129,
+  solidmassstr: 84,
+  solidmassDatar: 85,
 };
 
 export const LymphNodesLeftQuestions = {

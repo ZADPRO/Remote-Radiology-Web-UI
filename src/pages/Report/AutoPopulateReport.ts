@@ -1,6 +1,8 @@
 import {
   additionalOptions,
   impressionRecommendation,
+  NAadditionalOptions,
+  NAimpressionRecommendation,
 } from "./ImpressionRecommendation";
 import {
   breastDensityandImageRightQuestions,
@@ -24,7 +26,7 @@ export function AutoPopulateReport(
   handleReportInputChange: (questionId: number, value: string) => void
 ) {
   //Right Breast Access Check
-  getreportAnswer(130) === "" && handleReportInputChange(130, "Present");
+  getreportAnswer(130) === "" && handleReportInputChange(130, "Present"); 
 
   //Left Breast Access Check
   getreportAnswer(131) === "" && handleReportInputChange(131, "Present");
@@ -45,7 +47,7 @@ export function AutoPopulateReport(
   //   );
 
   // getPatientAnswer(questionIds.implantPositon) === "" &&
-  //   handleReportInputChange(questionIds.implantPositon, "Subpectoral");
+  //   handleReportInputChange(questionIds.implantPositon, "Subpectoral (Retro-pectoral)");
 
   // getPatientAnswer(questionIds.implantMaterial) === "" &&
   //   handleReportInputChange(
@@ -246,7 +248,7 @@ export function AutoPopulateReport(
   getreportAnswer(breastImpantQuestions.implantPositon) === "" &&
     handleReportInputChange(
       breastImpantQuestions.implantPositon,
-      "Subpectoral"
+      "Subpectoral (Retro-pectoral)"
     );
 
   getreportAnswer(symmetryQuestions.symmetry) == "" &&
@@ -409,22 +411,28 @@ export function AutoPopulateReportImpressRecomm(
   optionalImpressionRecommendation: any,
   setOptionalImpressionRecommendation: any,
   commonImpressRecomm: any,
-  setCommonImpressRecomm: any
+  setCommonImpressRecomm: any,
+  reportFormData: any,
+  assignData: any
 ) {
+  const getReportAnswer = (id: number) =>
+    reportFormData.find((q: any) => q.questionId === id)?.answer || "";
+
+  let MainOptions = impressionRecommendation;
+  if (assignData?.naSystemReportAccess && getReportAnswer(81) === "true") {
+    MainOptions = NAimpressionRecommendation;
+  }
+
   if (mainImpressionRecommendation.selectedImpressionId) {
     setMainImpressionRecommendation((prev: any) => ({
       ...prev,
       impressionText:
-        impressionRecommendation
-          .map((item) => item.data)
-          .flat()
-          .find(
-            (item) =>
-              item.id === mainImpressionRecommendation.selectedImpressionId
-          )?.impressionText || "", // default to empty string
+        MainOptions.flatMap((cat) => cat.data).find(
+          (item) =>
+            item.id === mainImpressionRecommendation.selectedImpressionId
+        )?.impressionText || "",
       recommendationText:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
@@ -437,16 +445,14 @@ export function AutoPopulateReportImpressRecomm(
     setMainImpressionRecommendation((prev: any) => ({
       ...prev,
       impressionTextRight:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
               item.id === mainImpressionRecommendation.selectedImpressionIdRight
           )?.impressionText || "",
       recommendationTextRight:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
@@ -460,16 +466,14 @@ export function AutoPopulateReportImpressRecomm(
     setOptionalImpressionRecommendation((prev: any) => ({
       ...prev,
       impressionText:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
               item.id === optionalImpressionRecommendation.selectedImpressionId
           )?.impressionText || "",
       recommendationText:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
@@ -483,8 +487,7 @@ export function AutoPopulateReportImpressRecomm(
     setOptionalImpressionRecommendation((prev: any) => ({
       ...prev,
       impressionTextRight:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
@@ -492,8 +495,7 @@ export function AutoPopulateReportImpressRecomm(
               optionalImpressionRecommendation.selectedImpressionIdRight
           )?.impressionText || "",
       recommendationTextRight:
-        impressionRecommendation
-          .map((item) => item.data)
+        MainOptions.map((item) => item.data)
           .flat()
           .find(
             (item) =>
@@ -503,21 +505,26 @@ export function AutoPopulateReportImpressRecomm(
     }));
   }
 
+  let MacroOption = additionalOptions;
+
+  if (assignData?.naSystemReportAccess && getReportAnswer(81) === "true") {
+    MacroOption = NAadditionalOptions;
+  }
+
   if (commonImpressRecomm.id) {
     setCommonImpressRecomm((prev: any) => ({
       ...prev,
       text:
-        additionalOptions.find((item) => item.id === commonImpressRecomm.id)
-          ?.text || "",
+        MacroOption.find((item) => item.id === commonImpressRecomm.id)?.text ||
+        "",
     }));
   }
   if (commonImpressRecomm.idRight) {
     setCommonImpressRecomm((prev: any) => ({
       ...prev,
       textRight:
-        additionalOptions.find(
-          (item) => item.id === commonImpressRecomm.idRight
-        )?.text || "",
+        MacroOption.find((item) => item.id === commonImpressRecomm.idRight)
+          ?.text || "",
     }));
   }
 

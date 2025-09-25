@@ -558,7 +558,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               </div>
               {mailoption === "sendbywon" ? (
                 <>
-                  <div className="my-5">
+                  <div className="my-5 pb-10">
                     <div className="flex gap-2 text-sm items-center mt-2">
                       Subject
                     </div>
@@ -575,7 +575,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       </Button>
                     </div>
                     <div className="flex gap-2 text-sm items-center mt-2">
-                      Subject
+                      Content
                     </div>
                     <div className="flex gap-2 text-sm items-center mt-2">
                       <div
@@ -632,7 +632,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       <Info size={15} /> Mail sent by admin@wellthgreen.com
                     </div>
                     <div className="w-full py-5">
-                      <div className="bg-gray-100 font-sans min-h-screen py-10">
+                      <div className=" font-sans min-h-screen py-10">
                         <div className="max-w-lg bg-[#EDD1CE] mx-auto p-8 rounded-lg shadow-md">
                           {/* Header */}
                           <div className="text-center pb-6">
