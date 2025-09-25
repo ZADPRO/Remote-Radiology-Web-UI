@@ -19,6 +19,8 @@ interface QuestionIds {
   fibronodulardensityDatar: number;
   multipleCystsstr: number;
   multipleCystsDatar: number;
+  solidmassstr: number;
+  solidmassDatar: number;
 }
 
 export type LesionKeys =
@@ -28,6 +30,7 @@ export type LesionKeys =
   | "hypertrophic tissue with microcysts"
   | "fibronodular density"
   | "multiple simple cysts"
+  | "solid mass / nodule"
   | "others";
 
 export type LesionsVal = Record<LesionKeys, string[]>;
@@ -58,6 +61,7 @@ export function LesionsRightString(
     "hypertrophic tissue with microcysts": [],
     "fibronodular density": [],
     "multiple simple cysts": [],
+    "solid mass / nodule": [],
     others: [],
   };
 
@@ -652,6 +656,17 @@ export function LesionsRightString(
     );
   }
 
+  if (getAnswer(questionIds.solidmassstr) === "Present") {
+    lesionsVal["solid mass / nodule"] = createHTMLFromData(
+      "solid mass / nodule",
+      getAnswer(questionIds.solidmassDatar)
+    );
+    finalHTML += createHTMLFromData(
+      "solid mass / nodule",
+      getAnswer(questionIds.solidmassDatar)
+    );
+  }
+
   if (getAnswer(questionIds.Otherstr) === "Present") {
     lesionsVal["others"] = createHTMLFromData(
       "others",
@@ -664,6 +679,7 @@ export function LesionsRightString(
       true
     );
   }
+
 
   return JSON.stringify(lesionsVal);
 }

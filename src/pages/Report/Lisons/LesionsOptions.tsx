@@ -43,6 +43,7 @@ const LesionsOptions: React.FC<Props> = ({
     "hypertrophic tissue with microcysts": [],
     "fibronodular density": [],
     "multiple simple cysts": [],
+    "solid mass / nodule": [],
     others: [],
   });
 
@@ -96,6 +97,7 @@ const LesionsOptions: React.FC<Props> = ({
         "hypertrophic tissue with microcysts": [],
         "fibronodular density": [],
         "multiple simple cysts": [],
+        "solid mass / nodule": [],        
         others: [],
       });
     }
@@ -859,7 +861,7 @@ const LesionsOptions: React.FC<Props> = ({
                             </div>
                           </div>
 
-                            {/* 3. Distance from Nipple */}
+                          {/* 3. Distance from Nipple */}
                           <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
                             <Label className="font-semibold text-base w-auto lg:w-52 flex-shrink-0">
                               Distance from Nipple
@@ -927,34 +929,34 @@ const LesionsOptions: React.FC<Props> = ({
                             //   );
                             // }}
                             onChange={(val, _, source) => {
-                              console.log("---------->",source)
-                                if (source === "voice") {
-                                  // Immediate update for speech recognition (no debounce)
-                                  const updated = { ...editorVal };
-                                  updated[sectionVal] = [
-                                    ...(updated[sectionVal] || []),
-                                  ];
-                                  updated[sectionVal][index] = val;
-                                  textEditorOnChange?.(JSON.stringify(updated));
+                              console.log("---------->", source);
+                              if (source === "voice") {
+                                // Immediate update for speech recognition (no debounce)
+                                const updated = { ...editorVal };
+                                updated[sectionVal] = [
+                                  ...(updated[sectionVal] || []),
+                                ];
+                                updated[sectionVal][index] = val;
+                                textEditorOnChange?.(JSON.stringify(updated));
 
-                                  // Still update sync status with debounce
-                                  debouncedUpdate(
-                                    index,
-                                    val,
-                                    sectionVal,
-                                    dataArray,
-                                    DataQId
-                                  );
-                                } else if (source === "user") {
-                                  // Debounced update for typing
-                                  debouncedUpdate(
-                                    index,
-                                    val,
-                                    sectionVal,
-                                    dataArray,
-                                    DataQId
-                                  );
-                                }
+                                // Still update sync status with debounce
+                                debouncedUpdate(
+                                  index,
+                                  val,
+                                  sectionVal,
+                                  dataArray,
+                                  DataQId
+                                );
+                              } else if (source === "user") {
+                                // Debounced update for typing
+                                debouncedUpdate(
+                                  index,
+                                  val,
+                                  sectionVal,
+                                  dataArray,
+                                  DataQId
+                                );
+                              }
                             }}
                           />
                         )}

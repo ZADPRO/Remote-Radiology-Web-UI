@@ -780,7 +780,7 @@ const ManagePatient: React.FC = () => {
           }}
           className="h-11/12 w-[90vw] lg:w-[80vw] overflow-y-auto"
         >
-          <DialogTitle>Edit Performing Provider</DialogTitle>
+          <DialogTitle>Edit Patient</DialogTitle>
 
           {selectedPerformingProviderId !== null && (
             <EditPatient

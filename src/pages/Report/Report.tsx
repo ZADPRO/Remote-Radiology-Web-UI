@@ -41,7 +41,12 @@ import { useAuth, UserRole } from "../Routes/AuthContext";
 import TextEditor from "@/components/TextEditor";
 import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import Impression from "./ImpressionRecommendation";
+import Impression, {
+  additionalOptions,
+  impressionRecommendation,
+  NAadditionalOptions,
+  NAimpressionRecommendation,
+} from "./ImpressionRecommendation";
 import {
   Select,
   SelectContent,
@@ -82,10 +87,11 @@ export interface ReportQuestion {
   answer: string;
 }
 
-interface AssignReportResponse {
+export interface AssignReportResponse {
   appointmentStatus: AppointmentStatus[];
   reportHistoryData: ReportHistoryData[];
   easeQTReportAccess: boolean;
+  naSystemReportAccess: boolean;
 }
 
 interface TextEditorContent {
@@ -551,10 +557,10 @@ const Report: React.FC = () => {
   const stageRoleMap: Record<ReportStageLabel, UserRole[]> = {
     Predraft: ["scribe", "admin", "wgdoctor"],
     Draft: ["radiologist", "admin", "wgdoctor"],
-    "Reviewed 1 Correct": ["admin", "wgdoctor"],
-    "Reviewed 1 Edit": ["admin", "wgdoctor"],
-    "Reviewed 2 Correct": ["codoctor"],
-    "Reviewed 2 Edit": ["codoctor"],
+    "Reviewed 1 Correct": ["admin", "wgdoctor", "doctor"],
+    "Reviewed 1 Edit": ["admin", "wgdoctor", "doctor"],
+    "Reviewed 2 Correct": ["codoctor", "doctor"],
+    "Reviewed 2 Edit": ["codoctor", "doctor"],
     "Insert Signature": ["admin", "wgdoctor", "doctor", "codoctor"],
     "Sign Off": ["doctor", "admin", "wgdoctor"],
     // Addendum: ["doctor", "admin"], // assuming doctor can handle addendums
@@ -729,16 +735,16 @@ const Report: React.FC = () => {
   });
 
   const accessibleTabs = [1, 2, 3, 5]; // Tabs requiring access
-  const finalTab = [1,2,3,4]; // Final Report is always accessible
+  const finalTab = [1, 2, 3, 4]; // Final Report is always accessible
 
   // Only check easeQTReportAccess for restricted roles
 
-const isTabAccessible = (value: number) => {
-  return (
-    finalTab.includes(value) || 
-    (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
-  );
-};
+  const isTabAccessible = (value: number) => {
+    return (
+      finalTab.includes(value) ||
+      (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
+    );
+  };
 
   const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
   const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
@@ -863,6 +869,7 @@ const isTabAccessible = (value: number) => {
         reportTextContentData: TextEditorContent[];
         technicianIntakeFormData: ResponseTechnicianForm[];
         easeQTReportAccess: boolean;
+        naSystemReportAccess: boolean;
         reportFormateList: any;
         userDeatils: any;
         patientDetails: any;
@@ -905,33 +912,105 @@ const isTabAccessible = (value: number) => {
           appointmentStatus: response.appointmentStatus,
           reportHistoryData: response.reportHistoryData || [],
           easeQTReportAccess: response.easeQTReportAccess || false,
+          naSystemReportAccess: response.naSystemReportAccess || false,
         });
+
+        let MainOptions = impressionRecommendation;
+        if (
+          assignData?.naSystemReportAccess &&
+          getReportAnswer(81) === "true"
+        ) {
+          MainOptions = NAimpressionRecommendation;
+        }
 
         setMainImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpression,
+          impressionText:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpression
+            )?.impressionText || "",
           selectedRecommendationId:
             response.appointmentStatus[0].refAppointmentRecommendation,
+          recommendationText:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpression
+            )?.recommendationText || "",
           selectedImpressionIdRight:
             response.appointmentStatus[0].refAppointmentImpressionRight,
+          impressionTextRight:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpressionRight
+            )?.impressionText || "",
           selectedRecommendationIdRight:
             response.appointmentStatus[0].refAppointmentRecommendationRight,
+          recommendationTextRight:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpressionRight
+            )?.recommendationText || "",
         }));
 
         setOptionalImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpressionAdditional,
+          impressionText: (response.appointmentStatus[0]
+            .refAppointmentImpressionAdditional.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0].refAppointmentImpressionAdditional
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedRecommendationId:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditional,
+          recommendationText: (response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditional.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentRecommendationAdditional
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedImpressionIdRight:
             response.appointmentStatus[0]
               .refAppointmentImpressionAdditionalRight,
+          impressionTextRight: (response.appointmentStatus[0]
+            .refAppointmentImpressionAdditionalRight.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentImpressionAdditionalRight
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedRecommendationIdRight:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditionalRight,
+          recommendationTextRight: (response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentRecommendationAdditionalRight
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
         }));
 
         setShowOptional(() => ({
@@ -949,13 +1028,35 @@ const isTabAccessible = (value: number) => {
               .refAppointmentRecommendationAdditionalRight != "",
         }));
 
+        let Commonoptions = additionalOptions;
+        if (
+          assignData?.naSystemReportAccess &&
+          getReportAnswer(81) === "true"
+        ) {
+          Commonoptions = NAadditionalOptions;
+        }
+
         setCommonImpressRecomm((prev) => ({
           ...prev,
           id: response.appointmentStatus[0]
             .refAppointmentCommonImpressionRecommendation,
+          text:
+            Commonoptions.find(
+              (opt) =>
+                opt.id ===
+                response.appointmentStatus[0]
+                  .refAppointmentCommonImpressionRecommendation
+            )?.text || "",
           idRight:
             response.appointmentStatus[0]
               .refAppointmentCommonImpressionRecommendationRight,
+          textRight:
+            Commonoptions.find(
+              (opt) =>
+                opt.id ===
+                response.appointmentStatus[0]
+                  .refAppointmentCommonImpressionRecommendationRight
+            )?.text || "",
         }));
 
         if (
@@ -1329,7 +1430,7 @@ const isTabAccessible = (value: number) => {
       //   getReportAnswer(2) === "" || "Bilateral Similar"
       //     ? "Bilateral Similar"
       //     : "",
-      // 3: getReportAnswer(3) === "" || "Subpectoral" ? "Subpectoral" : "",
+      // 3: getReportAnswer(3) === "" || "Subpectoral (Retro-pectoral)" ? "Subpectoral (Retro-pectoral)" : "",
       // 4: getReportAnswer(4) === "" || getPatientAnswer(80) ? getPatientAnswer(80) : "",
       5: getReportAnswer(5) === "" || "None" ? "None" : "",
       6: getReportAnswer(6) === "" || "None" ? "None" : "",
@@ -1702,6 +1803,36 @@ const isTabAccessible = (value: number) => {
         getTechnicianAnswer,
         handleReportInputChange
       );
+    } else {
+      //Right Breast Access Check
+      getReportAnswer(130) === "" && handleReportInputChange(130, "Present");
+
+      //Left Breast Access Check
+      getReportAnswer(131) === "" && handleReportInputChange(131, "Present");
+
+      //Right Recommendation
+      getReportAnswer(132) === "" && handleReportInputChange(132, "Present");
+
+      //Left Recommendation
+      getReportAnswer(133) === "" && handleReportInputChange(133, "Present");
+
+      //BREAST DENSITY & IMAGE QUALITY (Right)
+      getReportAnswer(113) === "" && handleReportInputChange(113, "Present");
+
+      //BREAST DENSITY & IMAGE QUALITY (Left)
+      getReportAnswer(110) === "" && handleReportInputChange(110, "Present");
+
+      //NIPPLE, AREOLA & SKIN (Right)
+      getReportAnswer(111) === "" && handleReportInputChange(111, "Present");
+
+      //NIPPLE, AREOLA & SKIN (Left)
+      getReportAnswer(114) === "" && handleReportInputChange(114, "Present");
+
+      //GLANDULAR AND DUCTAL TISSUE (RIGHT)
+      getReportAnswer(112) === "" && handleReportInputChange(112, "Present");
+
+      //GLANDULAR AND DUCTAL TISSUE (LEFT)
+      getReportAnswer(115) === "" && handleReportInputChange(115, "Present");
     }
   }, [responsePatientInTake, technicianForm]);
 
@@ -1712,7 +1843,9 @@ const isTabAccessible = (value: number) => {
       optionalImpressionRecommendation,
       setOptionalImpressionRecommendation,
       commonImpressRecomm,
-      setCommonImpressRecomm
+      setCommonImpressRecomm,
+      reportFormData,
+      assignData
     );
   }, [assignData]);
 
@@ -1975,10 +2108,9 @@ const isTabAccessible = (value: number) => {
       reportTextContentData: TextEditorContent[];
       status: boolean;
       easeQTReportAccess: boolean;
+      naSystemReportAccess: boolean;
     } = await reportService.autosaveReport(payload);
-    console.log("#########", payload.changedOne.reportQuestion); 
-
-    
+    console.log("#########", payload, response);
 
     if (response.status) {
       if (
@@ -2000,31 +2132,87 @@ const isTabAccessible = (value: number) => {
         appointmentStatus: response.appointmentStatus,
         reportHistoryData: assignData?.reportHistoryData || [],
         easeQTReportAccess: response.easeQTReportAccess || false,
+        naSystemReportAccess: response.naSystemReportAccess || false,
       });
 
       setMainImpressionRecommendation((prev) => ({
         ...prev,
         selectedImpressionId:
           response.appointmentStatus[0].refAppointmentImpression,
+        // impressionText:
+        //   MainOptions.flatMap((cat) => cat.data).find(
+        //     (item) =>
+        //       item.id ===
+        //       response.appointmentStatus[0].refAppointmentImpression
+        //   )?.impressionText || "",
         selectedRecommendationId:
           response.appointmentStatus[0].refAppointmentRecommendation,
+        // recommendationText:
+        //   MainOptions.flatMap((cat) => cat.data).find(
+        //     (item) =>
+        //       item.id ===
+        //       response.appointmentStatus[0].refAppointmentImpression
+        //   )?.recommendationText || "",
         selectedImpressionIdRight:
           response.appointmentStatus[0].refAppointmentImpressionRight,
+        // impressionTextRight:
+        //   MainOptions.flatMap((cat) => cat.data).find(
+        //     (item) =>
+        //       item.id ===
+        //       response.appointmentStatus[0].refAppointmentImpression
+        //   )?.impressionText || "",
         selectedRecommendationIdRight:
           response.appointmentStatus[0].refAppointmentRecommendationRight,
+        // recommendationTextRight:
+        //   MainOptions.flatMap((cat) => cat.data).find(
+        //     (item) =>
+        //       item.id ===
+        //       response.appointmentStatus[0].refAppointmentImpression
+        //   )?.recommendationText || "",
       }));
 
       setOptionalImpressionRecommendation((prev) => ({
         ...prev,
         selectedImpressionId:
           response.appointmentStatus[0].refAppointmentImpressionAdditional,
+        //   impressionText:
+        // MainOptions.map((item) => item.data)
+        //   .flat()
+        //   .find(
+        //     (item) =>
+        //       item.id === optionalImpressionRecommendation.selectedImpressionId
+        //   )?.impressionText || "",
         selectedRecommendationId:
           response.appointmentStatus[0].refAppointmentRecommendationAdditional,
+        //   recommendationText:
+        // MainOptions.map((item) => item.data)
+        //   .flat()
+        //   .find(
+        //     (item) =>
+        //       item.id ===
+        //       optionalImpressionRecommendation.selectedRecommendationId
+        //   )?.recommendationText || "",
         selectedImpressionIdRight:
           response.appointmentStatus[0].refAppointmentImpressionAdditionalRight,
+        //    impressionTextRight:
+        // MainOptions.map((item) => item.data)
+        //   .flat()
+        //   .find(
+        //     (item) =>
+        //       item.id ===
+        //       optionalImpressionRecommendation.selectedImpressionIdRight
+        //   )?.impressionText || "",
         selectedRecommendationIdRight:
           response.appointmentStatus[0]
             .refAppointmentRecommendationAdditionalRight,
+        //     recommendationTextRight:
+        // MainOptions.map((item) => item.data)
+        //   .flat()
+        //   .find(
+        //     (item) =>
+        //       item.id ===
+        //       optionalImpressionRecommendation.selectedRecommendationIdRight
+        //   )?.recommendationText || "",
       }));
 
       setShowOptional(() => ({
@@ -2042,13 +2230,32 @@ const isTabAccessible = (value: number) => {
             .refAppointmentRecommendationAdditionalRight != "",
       }));
 
+      let Commonoptions = additionalOptions;
+      if (assignData?.naSystemReportAccess && getReportAnswer(81) === "true") {
+        Commonoptions = NAadditionalOptions;
+      }
+
       setCommonImpressRecomm((prev) => ({
         ...prev,
         id: response.appointmentStatus[0]
           .refAppointmentCommonImpressionRecommendation,
+        text:
+          Commonoptions.find(
+            (opt) =>
+              opt.id ===
+              response.appointmentStatus[0]
+                .refAppointmentCommonImpressionRecommendation
+          )?.text || "",
         idRight:
           response.appointmentStatus[0]
             .refAppointmentCommonImpressionRecommendationRight,
+        textRight:
+          Commonoptions.find(
+            (opt) =>
+              opt.id ===
+              response.appointmentStatus[0]
+                .refAppointmentCommonImpressionRecommendationRight
+          )?.text || "",
       }));
 
       if (
@@ -2430,6 +2637,17 @@ const isTabAccessible = (value: number) => {
         grandularAndDuctalTissueLeftReportText: false,
         LymphNodesLeftReportText: false,
       });
+
+      AutoPopulateReportImpressRecomm(
+        mainImpressionRecommendation,
+        setMainImpressionRecommendation,
+        optionalImpressionRecommendation,
+        setOptionalImpressionRecommendation,
+        commonImpressRecomm,
+        setCommonImpressRecomm,
+        reportFormData,
+        assignData
+      );
     }
   };
 
@@ -3920,6 +4138,7 @@ const isTabAccessible = (value: number) => {
                     setOptionalImpressionRecommendation={
                       setOptionalImpressionRecommendation
                     }
+                    assignData={assignData}
                     showOptional={showOptional}
                     setShowOptional={setShowOptional}
                     commonImpressRecomm={commonImpressRecomm}

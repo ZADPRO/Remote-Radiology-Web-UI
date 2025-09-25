@@ -631,6 +631,26 @@ const NotesReport: React.FC<Props> = ({
                 .join("")
             : ""
         }${
+          lesionsVal["solid mass / nodule"] &&
+          lesionsVal["solid mass / nodule"].length > 0
+            ? lesionsVal["solid mass / nodule"]
+                .map((data, index) => {
+                  let dataArray: any[] = [];
+                  const raw = getAnswer(
+                    lesionsRightQuestions.solidmassDatar
+                  );
+                  dataArray = raw ? JSON.parse(raw) : [];
+
+                  return (
+                    data +
+                    (dataArray[index]?.ImageText
+                      ? dataArray[index].ImageText
+                      : "")
+                  );
+                })
+                .join("")
+            : ""
+        }${
           lesionsVal["others"] && lesionsVal["others"].length > 0
             ? lesionsVal["others"]
                 .map((data, index) => {
@@ -834,6 +854,26 @@ const NotesReport: React.FC<Props> = ({
                   .join("")
               : ""
           }${
+            lesionsValLeft["solid mass / nodule"] &&
+            lesionsValLeft["solid mass / nodule"].length > 0
+              ? lesionsValLeft["solid mass / nodule"]
+                  .map((data, index) => {
+                    let dataArray: any[] = [];
+                    const raw = getAnswer(
+                      lesionsLeftQuestions.solidmassDatar
+                    );
+                    dataArray = raw ? JSON.parse(raw) : [];
+
+                    return (
+                      data +
+                      (dataArray[index]?.ImageText
+                        ? dataArray[index].ImageText
+                        : "")
+                    );
+                  })
+                  .join("")
+              : ""
+          }${
             lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
               ? lesionsValLeft["others"]
                   .map((data, index) => {
@@ -912,8 +952,8 @@ const NotesReport: React.FC<Props> = ({
    textEditor.CommonImpresRecommTextRightVal.value === "Q" ||
    textEditor.CommonImpresRecommTextRightVal.value === "U" ||
    textEditor.CommonImpresRecommTextRightVal.value === "Y" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "2NA" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "3NA"
+   textEditor.CommonImpresRecommTextRightVal.value === "2" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "3"
      ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
      : ``
  }
@@ -939,8 +979,8 @@ ${
      textEditor.CommonImpresRecommTextRightVal.value !== "Q" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "U" &&
      textEditor.CommonImpresRecommTextRightVal.value !== "Y" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "2NA" &&
-     textEditor.CommonImpresRecommTextRightVal.value !== "3NA"
+     textEditor.CommonImpresRecommTextRightVal.value !== "2" &&
+     textEditor.CommonImpresRecommTextRightVal.value !== "3"
        ? `<p>${textEditor.CommonImpresRecommTextRight.value}</p>`
        : ``
    }

@@ -377,16 +377,9 @@ const PatientQueue: React.FC = () => {
 
               // Always filter out 'fillform'
               if (
-                refAppointmentComplete === "fillform" &&
-                role?.type !== "admin" &&
-                role?.type !== "scribe" &&
-                role?.type !== "radiologist" &&
-                role?.type !== "wgdoctor" &&
-                role?.type !== "doctor" &&
-                role?.type !== "manager" &&
-                role?.type !== "technician"
+                refAppointmentComplete === "fillform" 
               )
-                return false;
+                return true;
 
               // Filter out 'technologistformfill' if role is not technician
               if (
