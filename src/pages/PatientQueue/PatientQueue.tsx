@@ -355,6 +355,8 @@ const PatientQueue: React.FC = () => {
     }
   };
 
+  const [SCconsultantStatus, setSCConsultantStatus] = useState(false);
+
   const fetchPatientQueue = async () => {
     setLoading(true);
     try {
@@ -362,6 +364,7 @@ const PatientQueue: React.FC = () => {
         const res = await appointmentService.listPatientMedicalHistory();
         if (res.status) {
           setPatientQueue(res.data);
+          setSCConsultantStatus(res.consultantStatus);
         } else {
           // Handle error or empty data scenario from API response
           console.warn("API response status is false, or no data:", res);
@@ -1271,7 +1274,11 @@ const PatientQueue: React.FC = () => {
             return (
               <span>
                 <button
-                  className={`hover:underline cursor-pointer font-bold ${row.original.patientPrivatePublicStatus === "private" ? `text-[#3c78d8]` : ``}`}
+                  className={`hover:underline cursor-pointer font-bold ${
+                    row.original.patientPrivatePublicStatus === "private"
+                      ? `text-[#3c78d8]`
+                      : ``
+                  }`}
                   onClick={() =>
                     navigate("/technicianpatientintakeform", {
                       state: {
@@ -2925,7 +2932,7 @@ const PatientQueue: React.FC = () => {
         {/* Table Container */}
         <div
           className={`rounded-lg grid w-full ${
-            role?.type == "patient" ? "h-[68%]" : "h-[76%]"
+            (role?.type === "patient" && SCconsultantStatus) ? "h-[68%]" : "h-[76%]"
           } border `}
           style={{
             background:
@@ -2996,7 +3003,7 @@ const PatientQueue: React.FC = () => {
           </Table>
         </div>
 
-        {role?.type === "patient" && (
+        {(role?.type === "patient" && SCconsultantStatus) && (
           <div className="p-1 text-center">
             <h1 className="text-sm lg:text-lg text-[#50b33b] font-bold">
               If you would like to discuss your report, you may schedule an

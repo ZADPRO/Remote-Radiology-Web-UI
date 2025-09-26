@@ -1,6 +1,8 @@
 import React from "react";
 import women_img from "../../assets/Patient/Women_Doctor.png";
 import { useAuth } from "../Routes/AuthContext";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 // interface AppointmentDetails {
 //   appointmentId: number,
 //   scId: number,
@@ -36,6 +38,8 @@ const MyCare: React.FC = () => {
     if (hour < 17) return { emoji: "🌤️", text: "Good Afternoon" };
     return { emoji: "🌙", text: "Good Evening" };
   };
+
+  const navigate = useNavigate();
 
   const greeting = getGreetingWithEmoji();
 
@@ -191,6 +195,15 @@ const MyCare: React.FC = () => {
               {isLoading ? "Processing..." : "Proceed"}
             </Button>
           </div> */}
+          <Button
+              className="bg-[#A3B1A1] hover:bg-[#81927f] w-full sm:w-full lg:w-2/5"
+              type="button"
+              onClick={()=>{
+                navigate("/patient/medicalHistory")
+              }}
+            >
+              Proceed to my files
+            </Button>
         </div>
 
         {/* Image Section */}

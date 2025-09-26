@@ -647,7 +647,7 @@ const TechnicianPatientIntakeForm: React.FC<
             <div className="capitalize flex">
               <div className="flex w-[4rem]">Filled By</div>
               <div>
-                : {technicianData.name} ({technicianData.custId})
+                :{technicianData.name} ({technicianData.custId})
               </div>
             </div>
           </div>

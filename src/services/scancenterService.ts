@@ -44,6 +44,7 @@ export interface ListSpecificScanCenter {
   refSCProfile: string; // This appears to be a filename or UUID for an image.
   refSCWebsite: string;
   refSCStatus: boolean;
+  refSCConsultantStatus: boolean;
 }
 
 export const scancenterService = {

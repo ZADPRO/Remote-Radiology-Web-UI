@@ -94,17 +94,23 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
   });
 
   function isDateValid(dateStr: string): boolean {
-    // Input format: YYYY-MM-DD
-    const inputDate = new Date(dateStr);
+    // Expecting input format: YYYY-MM-DD
+    const [yearStr, monthStr, dayStr] = dateStr.split("-");
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const day = parseInt(dayStr, 10);
+
+    if (!year || !month || !day) return false;
+
+    // Input date at midnight
+    const inputDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+
+    // Today at midnight
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // Get tomorrow’s date (set to 00:00:00 for comparison)
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate());
-    tomorrow.setHours(0, 0, 0, 0);
-
-    // If the date is greater than tomorrow => false
-    return inputDate <= tomorrow;
+    // ✅ true if today or future
+    return inputDate >= today;
   }
 
   const [files, setFiles] = useState<TempFilesState>({
@@ -674,14 +680,15 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                             </a>
 
                             <p className="pt-4">
-                              If you did not request it, please
-                              ignore this email.
+                              If you did not request it, please ignore this
+                              email.
                             </p>
                           </div>
 
                           {/* Footer */}
                           <div className="text-center text-xs text-gray-600 border-t border-gray-300 pt-4 mt-6">
-                            &copy; {new Date().getFullYear()} Wellthgreen. All rights reserved.
+                            &copy; {new Date().getFullYear()} Wellthgreen. All
+                            rights reserved.
                           </div>
                         </div>
                       </div>
@@ -744,9 +751,9 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                   {formData.appointments.map((row, i) => (
                     <TableRow key={i}>
                       <TableCell>{row.refSCCustId}</TableCell>
-                      <TableCell>{row.refAppointmentDate}</TableCell>
+                      <TableCell>{formatReadableDate(row.refAppointmentDate)}</TableCell>
                       <TableCell>
-                        {!isDateValid(row.refAppointmentDate) ? (
+                        {isDateValid(row.refAppointmentDate) ? (
                           <Mail
                             onClick={() => {
                               setScanCenter({
