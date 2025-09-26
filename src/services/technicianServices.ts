@@ -113,6 +113,7 @@ export interface TechnicianPatientQueue {
   reportStatus: string;
   refOverrideStatus: string;
   OldReportCount: string;
+  patientPrivatePublicStatus: string;
 }
 
 export interface ResponseTechnicianForm {

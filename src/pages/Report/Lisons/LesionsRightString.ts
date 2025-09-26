@@ -87,7 +87,7 @@ export function LesionsRightString(
           ) {
             locationText =
               data.locationclockposition === "0"
-                ? "Nipple"
+                ? "retroareolar region"
                 : `${data.locationclockposition} O'clock`;
           }
 
@@ -98,7 +98,7 @@ export function LesionsRightString(
           ) {
             locationTextto =
               data.locationclockpositionto === "0"
-                ? "Nipple"
+                ? "retroareolar region"
                 : `${data.locationclockpositionto} O'clock`;
           }
 
@@ -130,7 +130,11 @@ export function LesionsRightString(
             namePart === "hypertrophic tissue with microcysts"
               ? "n area of"
               : ""
-          } ${namePart ?? "lesion"}${
+          } ${
+            namePart === "solid mass / nodule"
+              ? `solid mass`
+              : namePart ?? "lesion"
+          }${
             namePart === "multiple simple cysts" && data.atleast
               ? ` atleast ${data.atleast}`
               : ""
@@ -312,7 +316,7 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "nipple"
+                    ? "retroareolar region"
                     : data.locationclockposition + "'o clock"
                 }`
               : ``
@@ -320,7 +324,7 @@ export function LesionsRightString(
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "nipple"
+                    ? "retroareolar region"
                     : data.locationclockpositionto + "'o clock"
                 }`
               : ``
@@ -478,7 +482,7 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "nipple"
+                    ? "retroareolar region"
                     : data.locationclockposition + "'o clock"
                 }`
               : ``
@@ -486,7 +490,7 @@ export function LesionsRightString(
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "nipple"
+                    ? "retroareolar region"
                     : data.locationclockpositionto + "'o clock"
                 }`
               : ``
@@ -679,7 +683,6 @@ export function LesionsRightString(
       true
     );
   }
-
 
   return JSON.stringify(lesionsVal);
 }

@@ -190,6 +190,7 @@ const LymphNodesRight: React.FC<Props> = ({
                                 );
                               }}
                               singleSelect={true}
+                              nippleStatus={false}
                             />
                             {data.position.length > 0 && (
                                   <X

@@ -157,11 +157,14 @@ const MainInTakeForm: React.FC<Props> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState("");
 
-  const [suggestedOption, setSuggestedOption] = useState("");
+  const [suggestedOption, _] = useState("");
 
   const patientDetails = useContext(PatientContext);
 
   useEffect(() => {
+
+    console.log('MainInTakeForm.tsx / controlData.apiUpdate / 167 -------------------  ', readOnly);
+    
     if (controlData.apiUpdate || readOnly) {
       controlData.categoryId
         ? setSelectedOption(controlData.categoryId.toString())
@@ -170,7 +173,7 @@ const MainInTakeForm: React.FC<Props> = ({
           );
     } else {
       // Suggestion logic
-      let suggestion = "";
+      // let suggestion = "";
 
       // if (
       //   formData.find((item) => item.questionId === 87)?.answer.toString() ===
@@ -213,8 +216,8 @@ const MainInTakeForm: React.FC<Props> = ({
       // ) {
       //   suggestion = "3";
       // }
-      setSuggestedOption(suggestion);
-      setSelectedOption(suggestion);
+      // setSuggestedOption(suggestion);
+      // setSelectedOption(suggestion);
     }
   }, []);
 

@@ -355,6 +355,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                                         )
                                       }
                                       singleSelect
+                                      nippleStatus={false}
                                     />
                                     {data.locationcclock && (
                                       <X
@@ -405,6 +406,7 @@ const ComparisonPriorRight: React.FC<Props> = ({
                                         )
                                       }
                                       singleSelect
+                                      nippleStatus={false}
                                     />
                                     {data.locationpclock && (
                                       <X

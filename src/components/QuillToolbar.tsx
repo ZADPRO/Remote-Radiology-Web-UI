@@ -88,6 +88,7 @@ export const formats = [
   "align",
   "strike",
   "script",
+  "script",
   "blockquote",
   "background",
   "list",
@@ -143,6 +144,10 @@ export const QuillToolbar = ({ id }: { id: string }) => (
       <button className="ql-blockquote" />
       <button className="ql-direction" />
     </span> */}
+    <span className="ql-formats">
+      <button className="ql-script" value="super" /> {/* Superscript */}
+      <button className="ql-script" value="sub" />   {/* Subscript */}
+    </span>
     <span className="ql-formats">
       <select className="ql-align" />
       <select className="ql-color" />

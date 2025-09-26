@@ -43,7 +43,9 @@ import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression, {
   additionalOptions,
+  impressionRecommendation,
   NAadditionalOptions,
+  NAimpressionRecommendation,
 } from "./ImpressionRecommendation";
 import {
   Select,
@@ -855,6 +857,42 @@ const Report: React.FC = () => {
     },
   ];
 
+  const [patientpublicprivate, setPatientpublicprivate] = useState("");
+
+  const HandleEmailRecepitent = () => {
+    if (
+      role?.type === "admin" ||
+      role?.type === "technician" ||
+      role?.type === "scadmin" ||
+      role?.type === "doctor" ||
+      role?.type === "codoctor"
+    ) {
+      return (
+        <SelectContent>
+          <SelectItem value="none">None</SelectItem>
+          <SelectItem value="patient">Patient</SelectItem>
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          <SelectItem value="both">Patient and Scan Center Manager</SelectItem>
+        </SelectContent>
+      );
+    } else {
+      return (
+        <SelectContent>
+          <SelectItem value="none">None</SelectItem>
+          {patientpublicprivate !== "private" && (
+            <SelectItem value="patient">Patient</SelectItem>
+          )}
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          {patientpublicprivate !== "private" && (
+            <SelectItem value="both">
+              Patient and Scan Center Manager
+            </SelectItem>
+          )}
+        </SelectContent>
+      );
+    }
+  };
+
   const handleAssignUser = async () => {
     setLoading(true);
     try {
@@ -875,6 +913,7 @@ const Report: React.FC = () => {
         ScanCenterImg: FileData;
         ScancenterAddress: string;
         oldReport: GetOldReport[];
+        patientpublicprivate: string;
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -884,6 +923,7 @@ const Report: React.FC = () => {
       console.log("---------->", response);
 
       if (response.status) {
+        setPatientpublicprivate(response.patientpublicprivate);
         setAutoReportAccess(true);
         setScanCenterImg(response.ScanCenterImg);
         setScanCenterAddress(response.ScancenterAddress);
@@ -913,102 +953,102 @@ const Report: React.FC = () => {
           naSystemReportAccess: response.naSystemReportAccess || false,
         });
 
-        // let MainOptions = impressionRecommendation;
-        // if (
-        //   (response.naSystemReportAccess || false) &&
-        //   getReportAnswer(81) === "true"
-        // ) {
-        //   MainOptions = NAimpressionRecommendation;
-        // }
+        let MainOptions = impressionRecommendation;
+        if (
+          (response.naSystemReportAccess || false) &&
+          getReportAnswer(81) === "true"
+        ) {
+          MainOptions = NAimpressionRecommendation;
+        }
 
         setMainImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpression,
-          // impressionText:
-          //   MainOptions.flatMap((cat) => cat.data).find(
-          //     (item) =>
-          //       item.id ===
-          //       response.appointmentStatus[0].refAppointmentImpression
-          //   )?.impressionText || "",
+          impressionText:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpression
+            )?.impressionText || "",
           selectedRecommendationId:
             response.appointmentStatus[0].refAppointmentRecommendation,
-          // recommendationText:
-          //   MainOptions.flatMap((cat) => cat.data).find(
-          //     (item) =>
-          //       item.id ===
-          //       response.appointmentStatus[0].refAppointmentImpression
-          //   )?.recommendationText || "",
+          recommendationText:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpression
+            )?.recommendationText || "",
           selectedImpressionIdRight:
             response.appointmentStatus[0].refAppointmentImpressionRight,
-          // impressionTextRight:
-          //   MainOptions.flatMap((cat) => cat.data).find(
-          //     (item) =>
-          //       item.id ===
-          //       response.appointmentStatus[0].refAppointmentImpressionRight
-          //   )?.impressionText || "",
+          impressionTextRight:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpressionRight
+            )?.impressionText || "",
           selectedRecommendationIdRight:
             response.appointmentStatus[0].refAppointmentRecommendationRight,
-          // recommendationTextRight:
-          //   MainOptions.flatMap((cat) => cat.data).find(
-          //     (item) =>
-          //       item.id ===
-          //       response.appointmentStatus[0].refAppointmentImpressionRight
-          //   )?.recommendationText || "",
+          recommendationTextRight:
+            MainOptions.flatMap((cat) => cat.data).find(
+              (item) =>
+                item.id ===
+                response.appointmentStatus[0].refAppointmentImpressionRight
+            )?.recommendationText || "",
         }));
 
         setOptionalImpressionRecommendation((prev) => ({
           ...prev,
           selectedImpressionId:
             response.appointmentStatus[0].refAppointmentImpressionAdditional,
-          // impressionText: (response.appointmentStatus[0]
-          //   .refAppointmentImpressionAdditional.length > 0
-          //   ? JSON.parse(
-          //       response.appointmentStatus[0].refAppointmentImpressionAdditional
-          //     )
-          //   : []
-          // )
-          //   .map((item: any) => item.text)
-          //   .join("<br/>"),
+          impressionText: (response.appointmentStatus[0]
+            .refAppointmentImpressionAdditional.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0].refAppointmentImpressionAdditional
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedRecommendationId:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditional,
-          // recommendationText: (response.appointmentStatus[0]
-          //   .refAppointmentRecommendationAdditional.length > 0
-          //   ? JSON.parse(
-          //       response.appointmentStatus[0]
-          //         .refAppointmentRecommendationAdditional
-          //     )
-          //   : []
-          // )
-          //   .map((item: any) => item.text)
-          //   .join("<br/>"),
+          recommendationText: (response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditional.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentRecommendationAdditional
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedImpressionIdRight:
             response.appointmentStatus[0]
               .refAppointmentImpressionAdditionalRight,
-          // impressionTextRight: (response.appointmentStatus[0]
-          //   .refAppointmentImpressionAdditionalRight.length > 0
-          //   ? JSON.parse(
-          //       response.appointmentStatus[0]
-          //         .refAppointmentImpressionAdditionalRight
-          //     )
-          //   : []
-          // )
-          //   .map((item: any) => item.text)
-          //   .join("<br/>"),
+          impressionTextRight: (response.appointmentStatus[0]
+            .refAppointmentImpressionAdditionalRight.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentImpressionAdditionalRight
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
           selectedRecommendationIdRight:
             response.appointmentStatus[0]
               .refAppointmentRecommendationAdditionalRight,
-          // recommendationTextRight: (response.appointmentStatus[0]
-          //   .refAppointmentRecommendationAdditionalRight.length > 0
-          //   ? JSON.parse(
-          //       response.appointmentStatus[0]
-          //         .refAppointmentRecommendationAdditionalRight
-          //     )
-          //   : []
-          // )
-          //   .map((item: any) => item.text)
-          //   .join("<br/>"),
+          recommendationTextRight: (response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight.length > 0
+            ? JSON.parse(
+                response.appointmentStatus[0]
+                  .refAppointmentRecommendationAdditionalRight
+              )
+            : []
+          )
+            .map((item: any) => item.text)
+            .join("<br/>"),
         }));
 
         setShowOptional(() => ({
@@ -1372,7 +1412,7 @@ const Report: React.FC = () => {
 
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
-        fecthautosave();
+        // fecthautosave();
 
         response.Addendum &&
           setAddendumText(
@@ -1382,22 +1422,21 @@ const Report: React.FC = () => {
             ).join("<br/><br/>") // extra line break between entries
           );
 
-        // if (!response.easeQTReportAccess) {
-        //   setsyncStatus({
-        //     ...syncStatus,
-        //     Notes: false,
-        //     patientHistory: false,
-        //   });
-        // }
-        // else {
-        //   setsyncStatus({
-        //     ...syncStatus,
-        //     Notes:
-        //       response.reportTextContentData[0]?.refRTSyncStatus === null
-        //         ? true
-        //         : response.reportTextContentData[0]?.refRTSyncStatus,
-        //   });
-        // }
+        if (!response.easeQTReportAccess) {
+          setsyncStatus({
+            ...syncStatus,
+            Notes: false,
+            patientHistory: false,
+          });
+        } else {
+          setsyncStatus({
+            ...syncStatus,
+            Notes:
+              response.reportTextContentData[0]?.refRTSyncStatus === null
+                ? true
+                : response.reportTextContentData[0]?.refRTSyncStatus,
+          });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -1793,9 +1832,10 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("###############", responsePatientInTake.length);
+    console.log("###############", responsePatientInTake.length > 0 && technicianForm.length > 0);
 
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
+console.log('Report.tsx -------------------------- >  1836 Success  ');
       AutoPopulateReport(
         getPatientAnswer,
         getReportAnswer,
@@ -1803,6 +1843,7 @@ const Report: React.FC = () => {
         handleReportInputChange
       );
     } else {
+      console.log('Report.tsx -------------------------- >  1836 Reject  ',getReportAnswer(130) === "");
       //Right Breast Access Check
       getReportAnswer(130) === "" && handleReportInputChange(130, "Present");
 
@@ -1833,6 +1874,7 @@ const Report: React.FC = () => {
       //GLANDULAR AND DUCTAL TISSUE (LEFT)
       getReportAnswer(115) === "" && handleReportInputChange(115, "Present");
     }
+    
   }, [responsePatientInTake, technicianForm]);
 
   useEffect(() => {
@@ -2127,12 +2169,11 @@ const Report: React.FC = () => {
         setAdditionalChangesChangeStatus(!additionalChangesChangeStatus);
       }
 
-      setAssignData({
-        appointmentStatus: response.appointmentStatus,
-        reportHistoryData: assignData?.reportHistoryData || [],
+      setAssignData((prev) => ({
+        ...prev!,
         easeQTReportAccess: response.easeQTReportAccess || false,
         naSystemReportAccess: response.naSystemReportAccess || false,
-      });
+      }));
 
       setMainImpressionRecommendation((prev) => ({
         ...prev,
@@ -2564,21 +2605,20 @@ const Report: React.FC = () => {
         setReportFormData(response.reportIntakeFormData);
       }
 
-      // if (!response.easeQTReportAccess) {
-      //   setsyncStatus({
-      //     ...syncStatus,
-      //     Notes: false,
-      //   });
-      // }
-      // else {
-      //   setsyncStatus({
-      //     ...syncStatus,
-      //     Notes:
-      //       response.reportTextContentData[0]?.refRTSyncStatus === null
-      //         ? true
-      //         : response.reportTextContentData[0]?.refRTSyncStatus,
-      //   });
-      // }
+      if (!response.easeQTReportAccess) {
+        setsyncStatus({
+          ...syncStatus,
+          Notes: false,
+        });
+      } else {
+        setsyncStatus({
+          ...syncStatus,
+          Notes:
+            response.reportTextContentData[0]?.refRTSyncStatus === null
+              ? true
+              : response.reportTextContentData[0]?.refRTSyncStatus,
+        });
+      }
 
       setChangedOne({
         reportQuestion: [],
@@ -3601,7 +3641,7 @@ const Report: React.FC = () => {
                     } else if (status == "" && label == "Insert Signature") {
                       const date = new Date().toLocaleDateString();
                       console.log(userDetails);
-                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName} MD, on <em>${date}</em></strong></p></strong>`;
+                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
 
                       const notesData = Notes + signatureRow;
                       setNotes(notesData);
@@ -3649,16 +3689,7 @@ const Report: React.FC = () => {
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Choose recipient" />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          <SelectItem value="patient">Patient</SelectItem>
-                          <SelectItem value="scancenter">
-                            Scan Center Manager
-                          </SelectItem>
-                          <SelectItem value="both">
-                            Patient and Scan Center Manager
-                          </SelectItem>
-                        </SelectContent>
+                       <HandleEmailRecepitent/>
                       </Select>
                     </div>
 
@@ -3685,6 +3716,7 @@ const Report: React.FC = () => {
             <PatientInTakeForm
               fetchFormData={true}
               appointmentId={stateData.appointmentId}
+              categoryId={location.categoryId}
               userId={stateData.userId}
               readOnly={true}
               reportview={true}

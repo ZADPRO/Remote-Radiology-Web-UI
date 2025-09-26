@@ -40,7 +40,7 @@ export function ComparisonPriorRightString(
   }
 
   // const formatLocation = (clock: string, pos: string, _ = "") =>
-  //   `${clock === "0" ? "Nipple" : `${clock} O'clock`}, P${pos}`;
+  //   `${clock === "0" ? "retroareolar region" : `${clock} O'clock`}, P${pos}`;
 
   const comparisonVal: string[] = dataArray.map((data, index) => {
     if (data.syncStatus) {
@@ -101,7 +101,7 @@ export function ComparisonPriorRightString(
                   data.locationcclock
                     ? `${
                         data.locationcclock === "0"
-                          ? "Nipple"
+                          ? "retroareolar region"
                           : `${data.locationcclock} O'clock`
                       }`
                     : ``
@@ -119,7 +119,7 @@ export function ComparisonPriorRightString(
                         data.locationpclock
                           ? `${
                               data.locationpclock === "0"
-                                ? "Nipple"
+                                ? "retroareolar region"
                                 : `${data.locationpclock} O'clock`
                             }`
                           : ""

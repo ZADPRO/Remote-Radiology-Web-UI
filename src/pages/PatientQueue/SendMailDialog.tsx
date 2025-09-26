@@ -18,6 +18,7 @@ import {
 import { reportService } from "@/services/reportService";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "../Routes/AuthContext";
 
 interface Props {
   appointmentId: number;
@@ -25,6 +26,7 @@ interface Props {
   showMailDialog: boolean;
   setShowMailDialog: React.Dispatch<React.SetStateAction<boolean>>;
   handleRefreshData?: () => void;
+  patientPrivatePublicStatus: string;
 }
 
 const SendMailDialog: React.FC<Props> = ({
@@ -32,9 +34,12 @@ const SendMailDialog: React.FC<Props> = ({
   patientId,
   showMailDialog,
   setShowMailDialog,
-  handleRefreshData
+  handleRefreshData,
+  patientPrivatePublicStatus,
 }) => {
   const [mailOption, setMailOption] = useState("");
+
+  const { role } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -61,8 +66,43 @@ const SendMailDialog: React.FC<Props> = ({
     }
   };
 
+  const HandleEmailRecepitent = () => {
+    if (
+      role?.type === "admin" ||
+      role?.type === "technician" ||
+      role?.type === "scadmin" ||
+      role?.type === "doctor" ||
+      role?.type === "codoctor"
+    ) {
+      return (
+        <SelectContent>
+          <SelectItem value="patient">Patient</SelectItem>
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          <SelectItem value="both">Patient and Scan Center Manager</SelectItem>
+        </SelectContent>
+      );
+    } else {
+      return (
+        <SelectContent>
+          {patientPrivatePublicStatus !== "private" && (
+            <SelectItem value="patient">Patient</SelectItem>
+          )}
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          {patientPrivatePublicStatus !== "private" && (
+            <SelectItem value="both">
+              Patient and Scan Center Manager
+            </SelectItem>
+          )}
+        </SelectContent>
+      );
+    }
+  };
+
   return (
-    <Dialog open={showMailDialog} onOpenChange={() => !loading && setShowMailDialog(false)}>
+    <Dialog
+      open={showMailDialog}
+      onOpenChange={() => !loading && setShowMailDialog(false)}
+    >
       <DialogContent className="sm:max-w-[400px]">
         {loading && <LoadingOverlay />}
         <DialogHeader>
@@ -77,14 +117,7 @@ const SendMailDialog: React.FC<Props> = ({
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Choose recipient" />
             </SelectTrigger>
-            <SelectContent>
-              {/* <SelectItem value="none">None</SelectItem> */}
-              <SelectItem value="patient">Patient</SelectItem>
-              <SelectItem value="scancenter">Scan Center Manager</SelectItem>
-              <SelectItem value="both">
-                Patient and Scan Center Manager
-              </SelectItem>
-            </SelectContent>
+            <HandleEmailRecepitent />
           </Select>
         </div>
 
@@ -93,7 +126,7 @@ const SendMailDialog: React.FC<Props> = ({
             variant="greenTheme"
             disabled={!mailOption}
             onClick={() => {
-              handleSendMail()
+              handleSendMail();
             }}
           >
             Send

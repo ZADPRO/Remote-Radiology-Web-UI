@@ -6,9 +6,10 @@ type Props = {
     value: string; // comma-separated string of numbers
     onChange: (value: string) => void;
     singleSelect?: boolean; // 👈 new prop
+    nippleStatus?: boolean;
 };
  
-const formatLabel = (input: string): string => {
+const formatLabel = (input: string, nippleStatus: boolean): string => {
     const cleaned = input
         .split(',')
         .map((item) => item.trim())
@@ -16,15 +17,23 @@ const formatLabel = (input: string): string => {
         .map(Number);
  
     if (cleaned.length === 0) return '';
+
+    if(nippleStatus){
+        return cleaned
+            .map((num) => (num === 0 ? 'Nipple' : `${num}'o Clock`))
+            .join(', ');
+    }else{
+         return cleaned
+            .map((num) => (num === 0 ? 'Retroareolar region' : `${num}'o Clock`))
+            .join(', ');
+    }
  
-    return cleaned
-        .map((num) => (num === 0 ? 'Nipple' : `${num}'o Clock`))
-        .join(', ');
 };
 const SingleBreastPositionPicker: React.FC<Props> = ({
     value,
     onChange,
     singleSelect = false,
+    nippleStatus = true,
 }) => {
     const [open, setOpen] = useState(false);
     const parsedValues: number[] = value
@@ -106,10 +115,10 @@ const SingleBreastPositionPicker: React.FC<Props> = ({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="text-sm w-18 px-3 py-1"
+                        className={`text-sm ${nippleStatus ? `w-18` : `w-38`} px-3 py-1`}
                         onClick={() => setOpen(true)}
                     >
-                        {value ? formatLabel(value) : 'Select'}
+                        {value ? formatLabel(value, nippleStatus) : 'Select'}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
