@@ -52,6 +52,7 @@ const ViewScanCenter: React.FC = () => {
     refSCProfile: "",
     refSCWebsite: "",
     refSCStatus: false,
+    refSCConsultantStatus: false,
   });
 
   const [files, setFiles] = useState<files>({
@@ -116,7 +117,9 @@ const ViewScanCenter: React.FC = () => {
         appointments: formData.refSCAppointments,
         logo: formData.refSCProfile,
         status: formData.refSCStatus,
+        refSCConsultantStatus: formData.refSCConsultantStatus,
       };
+      console.log('ViewScanCenter.tsx / payload / 108 -------------------  ', payload);
       const res = await scancenterService.updateScanCenter(payload);
       console.log(res);
       if (res.status) {
@@ -305,6 +308,31 @@ const ViewScanCenter: React.FC = () => {
                   </div>
                 </div>
               )}
+              <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
+                <label className="font-semibold text-sm w-1/5">
+                  Consultant Link :
+                </label>
+                <div className="flex flex-col gap-1.5 w-full relative">
+                  <Select
+                    value={formData.refSCConsultantStatus ? "true" : "false"}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        refSCConsultantStatus: Boolean(value === "true"),
+                      }))
+                    }
+                    required
+                  >
+                    <SelectTrigger id="gender" className="bg-white w-full">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Allow</SelectItem>
+                      <SelectItem value="false">Not allow</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
             {/* Action Buttons */}

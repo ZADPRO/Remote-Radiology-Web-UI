@@ -11,6 +11,69 @@ pdfMake.vfs = pdfFonts.vfs;
  * @param htmlContent - The HTML content string.
  * @returns The styled HTML content string.
  */
+
+function processSup(content: any): any {
+  if (Array.isArray(content)) {
+    return content.map(processSup);
+  }
+
+  if (content && typeof content === "object") {
+    // If content is a text node that contains our placeholder
+    if (content.text && typeof content.text === "string") {
+      const supRegex = /<span data-sup="(.*?)"><\/span>/g;
+      if (supRegex.test(content.text)) {
+        const parts: any[] = [];
+        let lastIndex = 0;
+        content.text.replace(supRegex, (match:any, supText:any, offset:any) => {
+          // Text before sup
+          if (offset > lastIndex) {
+            parts.push({ text: content.text.substring(lastIndex, offset) });
+          }
+          // Superscript text
+          parts.push({
+            text: supText,
+            fontSize: (content.fontSize || 10) * 0.7,
+            baseline: 6, // lift it above normal text
+          });
+          lastIndex = offset + match.length;
+        });
+        // Remaining text
+        if (lastIndex < content.text.length) {
+          parts.push({ text: content.text.substring(lastIndex) });
+        }
+        content.text = parts;
+      }
+    }
+
+    if (content.content) content.content = processSup(content.content);
+    if (content.stack) content.stack = processSup(content.stack);
+    if (content.table && content.table.body)
+      content.table.body = processSup(content.table.body);
+  }
+
+  return content;
+}
+
+
+function applyRightAlignment(content: any): any {
+  if (Array.isArray(content)) return content.map(applyRightAlignment);
+
+  if (content && typeof content === "object") {
+    if (content.text && content.alignment === undefined) {
+      if (content.style && content.style.includes("ql-align-right")) {
+        content.alignment = "right";
+      }
+    }
+
+    if (content.content) content.content = applyRightAlignment(content.content);
+    if (content.stack) content.stack = applyRightAlignment(content.stack);
+    if (content.table && content.table.body)
+      content.table.body = applyRightAlignment(content.table.body);
+  }
+
+  return content;
+}
+
 function addControlledSpacingStyles(htmlContent: string): string {
   const controlledStyles = `
     <style>
@@ -160,6 +223,8 @@ export function downloadReportsPdf(
   baseFileName = "Medical_Report"
 ): void {
   try {
+    // const htmlWithSup = replaceSup(htmlString);
+
     // Step 1: Add controlled spacing styles (preserving br tags)
     const styledHtml: string = addControlledSpacingStyles(htmlString);
 
@@ -177,7 +242,10 @@ export function downloadReportsPdf(
     });
 
     // Step 3: Process content for proper spacing and force full-width tables
-    const processedContent: any = processContentSpacing(converted);
+    let processedContent: any = processContentSpacing(converted);
+
+    processedContent = applyRightAlignment(processedContent);
+    processedContent = processSup(processedContent);
 
     // Step 4: Create document definition with proper TypeScript types
     const documentDefinition: TDocumentDefinitions = {

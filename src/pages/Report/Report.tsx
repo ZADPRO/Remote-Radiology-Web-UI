@@ -3641,7 +3641,7 @@ console.log('Report.tsx -------------------------- >  1836 Success  ');
                     } else if (status == "" && label == "Insert Signature") {
                       const date = new Date().toLocaleDateString();
                       console.log(userDetails);
-                      const signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                      const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
 
                       const notesData = Notes + signatureRow;
                       setNotes(notesData);

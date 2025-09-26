@@ -75,7 +75,8 @@ const PersonalInformation: React.FC<Props> = ({
         "-------------->"
     );
 
-    getAnswer(questionIds.fullName) == "" &&
+    if(!readOnly){
+      getAnswer(questionIds.fullName) == "" &&
       handleInputChange(questionIds.fullName, user?.refUserFirstName);
     getAnswer(questionIds.email) == "" &&
       handleInputChange(questionIds.email, user?.refCODOEmail);
@@ -94,6 +95,7 @@ const PersonalInformation: React.FC<Props> = ({
     user?.refUserGender &&
       getAnswer(questionIds.gender) == "" &&
       handleInputChange(questionIds.gender, user?.refUserGender);
+    }
   }, []);
 
   useEffect(() => {
