@@ -294,6 +294,7 @@ const LesionsOptions: React.FC<Props> = ({
                                   );
                                 }}
                                 singleSelect={true}
+                                nippleStatus={false}
                               />
                               {data.locationclockposition.length > 0 && (
                                 <X
@@ -332,6 +333,7 @@ const LesionsOptions: React.FC<Props> = ({
                                       );
                                     }}
                                     singleSelect={true}
+                                    nippleStatus={false}
                                   />
                                   {data.locationclockpositionto.length > 0 && (
                                     <X

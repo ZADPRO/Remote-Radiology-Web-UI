@@ -51,8 +51,8 @@ export function LymphNodesGenerateString(
             entry.position
               ? `${
                   entry.position === "0"
-                    ? " at the nipple"
-                    : " at the " + entry.position + "'o Clock"
+                    ? " at the retroareolar region"
+                    : " at the " + entry.position + " O'clock"
                 }`
               : ""
           }${
@@ -100,8 +100,8 @@ export function LymphNodesGenerateString(
             clip.position
               ? `${
                   clip.position === "0"
-                    ? " nipple"
-                    : " " + clip.position + "'o clock"
+                    ? " retroareolar region"
+                    : " " + clip.position + " O'clock"
                 }`
               : ``
           }${

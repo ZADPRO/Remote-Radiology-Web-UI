@@ -74,7 +74,7 @@ const TechnicianPatientIntakeForm: React.FC<
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
   const [technicianFormData, setTechnicianFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 56 }, (_, index) => ({
+    Array.from({ length: 57 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -277,7 +277,7 @@ const TechnicianPatientIntakeForm: React.FC<
         setTechnicianFormData(res.TechIntakeData);
       } else {
         setTechnicianFormData(
-          Array.from({ length: 56 }, (_, index) => ({
+          Array.from({ length: 57 }, (_, index) => ({
             questionId: 1 + index,
             answer: "",
           }))
@@ -434,6 +434,7 @@ const TechnicianPatientIntakeForm: React.FC<
               Aromatase: 15,
               MedicationOthers: 16,
               MedicationOtherSpecify: 17,
+              patientPrivatePublic: 57,
             }}
             readOnly={controlData.readOnly ? true : false}
           />

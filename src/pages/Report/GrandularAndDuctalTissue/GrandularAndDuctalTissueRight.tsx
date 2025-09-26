@@ -172,6 +172,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                       updateList(updated);
                     }}
                     singleSelect={true}
+                    nippleStatus={false}
                   />
                   {item.clock.length > 0 && (
                     <X

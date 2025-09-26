@@ -115,8 +115,14 @@ export function generateGrandularAndDuctalTissueReport(
   ductalList.map((data) => {
     ductalText +=
       ductalProminence === "Present" && ductalList.length > 0
-        ? `There is ductal prominence ${data.type.toLowerCase()}${
-            data.clock ? ` noted at ${data.clock} O'clock` : ""
+        ? `There is ductal prominence ${data.type.toLowerCase()} ${
+            data.clock
+              ? ` noted at ${
+                  data.clock === "0"
+                    ? `retroareolar region`
+                    : `${data.clock} O'clock`
+                }`
+              : ""
           }${
             data.position !== "Unknown" && data.position
               ? ` in ${data.position.toLowerCase()}${
@@ -207,7 +213,7 @@ function generateCalcificationText(
           ? ` with ${distribution.toLowerCase()} distribution`
           : "";
       let location = clock
-        ? ` at ${clock === "0" ? "nipple" : clock + ` O'clock`}`
+        ? ` at ${clock === "0" ? "retroareolar region" : clock + ` O'clock`}`
         : "";
       location += level
         ? ` ${

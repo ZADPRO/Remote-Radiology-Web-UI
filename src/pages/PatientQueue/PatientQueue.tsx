@@ -376,10 +376,7 @@ const PatientQueue: React.FC = () => {
               const { refAppointmentComplete, dicomFiles } = item;
 
               // Always filter out 'fillform'
-              if (
-                refAppointmentComplete === "fillform" 
-              )
-                return true;
+              if (refAppointmentComplete === "fillform") return true;
 
               // Filter out 'technologistformfill' if role is not technician
               if (
@@ -1071,6 +1068,7 @@ const PatientQueue: React.FC = () => {
                       custId: row.original.refUserCustId ?? user?.refUserCustId,
                       scancenterCustId: row.original.refSCCustId,
                       OverrideStatus: row.original.refOverrideStatus,
+                      categoryId: row.original.refCategoryId,
                     },
                   })
                 }
@@ -1273,7 +1271,7 @@ const PatientQueue: React.FC = () => {
             return (
               <span>
                 <button
-                  className="hover:underline cursor-pointer font-bold"
+                  className={`hover:underline cursor-pointer font-bold ${row.original.patientPrivatePublicStatus === "private" ? `text-[#3c78d8]` : ``}`}
                   onClick={() =>
                     navigate("/technicianpatientintakeform", {
                       state: {
@@ -1870,6 +1868,7 @@ const PatientQueue: React.FC = () => {
                     appointmentId: row.original.refAppointmentId,
                     userId: row.original.refUserId,
                     readOnly: false,
+                    categoryId: row.original.refCategoryId,
                   },
                 });
               } else if (status && accessId == 0) {
@@ -1887,6 +1886,7 @@ const PatientQueue: React.FC = () => {
                   appointmentId: row.original.refAppointmentId,
                   userId: row.original.refUserId,
                   readOnly: true,
+                  categoryId: row.original.refCategoryId,
                 },
               });
               // }
@@ -1902,6 +1902,7 @@ const PatientQueue: React.FC = () => {
                     appointmentId: row.original.refAppointmentId,
                     userId: row.original.refUserId,
                     readOnly: false,
+                    categoryId: row.original.refCategoryId,
                   },
                 });
               } else if (status && accessId == 0) {
@@ -1968,6 +1969,7 @@ const PatientQueue: React.FC = () => {
                               appointmentId: selectedRow.refAppointmentId,
                               userId: selectedRow.refUserId,
                               readOnly: true,
+                              categoryId: row.original.refCategoryId,
                             },
                           });
                           setDialogOpen(false);
@@ -2003,6 +2005,7 @@ const PatientQueue: React.FC = () => {
                               appointmentId: selectedRow.refAppointmentId,
                               userId: selectedRow.refUserId,
                               readOnly: true,
+                              categoryId: row.original.refCategoryId,
                             },
                           });
                           setAccessModeDialog(false);
@@ -2020,6 +2023,7 @@ const PatientQueue: React.FC = () => {
                               appointmentId: selectedRow.refAppointmentId,
                               userId: selectedRow.refUserId,
                               readOnly: false,
+                              categoryId: row.original.refCategoryId,
                             },
                           });
                           setAccessModeDialog(false);
@@ -2318,6 +2322,9 @@ const PatientQueue: React.FC = () => {
                   showMailDialog={showMailDialog}
                   setShowMailDialog={setShowMailDialog}
                   handleRefreshData={fetchPatientQueue}
+                  patientPrivatePublicStatus={
+                    row.original.patientPrivatePublicStatus
+                  }
                 />
               )}
             </>
@@ -2655,6 +2662,7 @@ const PatientQueue: React.FC = () => {
       "reportStatus",
       "assigned",
       "refAppointmentComplete",
+      "patientReportMail",
       "pendingRemarks",
       "totalRemarks",
     ],
@@ -2672,6 +2680,7 @@ const PatientQueue: React.FC = () => {
       "oldreport",
       "reportStatus",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",
@@ -2716,6 +2725,7 @@ const PatientQueue: React.FC = () => {
       "oldreport",
       "reportStatus",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",
@@ -2772,6 +2782,7 @@ const PatientQueue: React.FC = () => {
       "oldreport",
       "reportStatus",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",
@@ -2791,6 +2802,7 @@ const PatientQueue: React.FC = () => {
       "oldreport",
       "reportStatus",
       "refAppointmentComplete",
+      "patientReportMail",
       "assigned",
       "changes",
       "pendingRemarks",

@@ -225,6 +225,19 @@ const RadiologyTrainingMaterial: React.FC = () => {
           <h3 className="text-sm font-semibold text-gray-700">
             Available Training Materials
           </h3>
+          <li onClick={()=>{
+            window.open("https://bfkaa.courses.store/631509?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp", "_blank")
+          }} className="flex items-center justify-between border cursor-pointer p-2 rounded-md bg-white shadow-sm">
+            <div className="flex flex-col w-full">
+              https://bfkaa.courses.store/631509?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp
+            </div>
+
+            <div className="flex gap-4">
+              <span className="text-sm text-blue-600 underline cursor-pointer">
+                <EyeIcon className="w-5 h-5" />
+              </span>
+            </div>
+          </li>
           <ul className="space-y-1">
             {trainingMaterial.map((material) => (
               <li className="flex items-center justify-between border p-2 rounded-md bg-white shadow-sm">

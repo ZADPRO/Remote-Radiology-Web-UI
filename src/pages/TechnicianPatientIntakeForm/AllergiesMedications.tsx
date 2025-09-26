@@ -2,7 +2,7 @@ import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 
 interface IntakeOption {
   questionId: number;
@@ -27,6 +27,7 @@ interface QuestionIds {
   Aromatase: number;
   MedicationOthers: number;
   MedicationOtherSpecify: number;
+  patientPrivatePublic: number;
 }
 
 interface Props {
@@ -43,7 +44,7 @@ const AllergiesMedications: React.FC<Props> = ({
   readOnly,
 }) => {
   useEffect(() => {
-    handleInputChange(1, "Routine")
+    handleInputChange(1, "Routine");
   }, []);
 
   const getAnswer = (id: number) =>
@@ -67,7 +68,9 @@ const AllergiesMedications: React.FC<Props> = ({
             className="custom-radio"
           />
           <Label
-            className={`text-4xl ${value === "Urgent" ? "text-red-500": "text-green-800"} font-semibold`}
+            className={`text-4xl ${
+              value === "Urgent" ? "text-red-500" : "text-green-800"
+            } font-semibold`}
             htmlFor={`${name}-${value.toLowerCase()}`}
           >
             {value}
@@ -112,6 +115,63 @@ const AllergiesMedications: React.FC<Props> = ({
               "Routine",
               "Urgent",
             ])}
+          </div>
+        </div>
+
+        {/* Private & Public */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <Label className="w-full sm:w-1/3 text-base font-semibold">
+            Patient
+          </Label>
+          <div className="w-full flex gap-3 sm:w-2/3">
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`patientprivate`}
+                name={`patientprivatepublic`}
+                value="private"
+                checked={
+                  getAnswer(questionIds.patientPrivatePublic) === "private"
+                }
+                onChange={(e) =>
+                  handleInputChange(
+                    questionIds.patientPrivatePublic,
+                    e.target.value
+                  )
+                }
+                className="custom-radio"
+              />
+              <Label
+                className={`text-lg font-semibold`}
+                htmlFor={`patientprivatepublic`}
+              >
+                Private
+              </Label>
+            </div>{" "}
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`patientprivate`}
+                name={`patientprivatepublic`}
+                value="public"
+                checked={
+                  getAnswer(questionIds.patientPrivatePublic) === "public"
+                }
+                onChange={(e) =>
+                  handleInputChange(
+                    questionIds.patientPrivatePublic,
+                    e.target.value
+                  )
+                }
+                className="custom-radio"
+              />
+              <Label
+                className={`text-lg font-semibold`}
+                htmlFor={`patientprivatepublic`}
+              >
+                Public
+              </Label>
+            </div>
           </div>
         </div>
 

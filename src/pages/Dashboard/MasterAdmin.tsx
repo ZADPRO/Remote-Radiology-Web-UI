@@ -190,11 +190,11 @@ const MasterAdmin: React.FC = () => {
       },
     ],
     patient: [
-      // {
-      //   label: "Home",
-      //   path: "/patient/myCare",
-      //   icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
-      // },
+      {
+        label: "Home",
+        path: "/patient/myCare",
+        icon: <img src={dashboard} className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
       {
         label: "My Files",
         path: "/patient/medicalHistory",

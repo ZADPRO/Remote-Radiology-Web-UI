@@ -79,6 +79,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const locationState =
     location.state as PatientInTakeFormNavigationState | null;
 
+    console.log(locationState,"-------------------->")
+
   const controlData: PatientInTakeFormNavigationState = {
     fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,
     fetchTechnicianForm:
@@ -110,13 +112,13 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       handleFetchPatientForm(controlData.userId, controlData.appointmentId);
     }
 
-    if (controlData.categoryId) {
-      if (controlData.categoryId == 1) {
-        setActiveForm(controlData.categoryId);
-      } else {
-        setActiveForm(5);
-      }
-    }
+    // if (controlData.categoryId) {
+    //   if (controlData.categoryId == 1) {
+    //     setActiveForm(controlData.categoryId);
+    //   } else {
+    //     setActiveForm(5);
+    //   }
+    // }
   }, [useLocation().state]);
 
   const handleFetchPatientForm = async (

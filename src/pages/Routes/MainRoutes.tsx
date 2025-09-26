@@ -54,6 +54,7 @@ import ManageWGPerformingProvider from "../ManageWGPerformingProvider/ManageWGPe
 import AuditLogs from "../AuditLogs/AuditLogs";
 import ManagePatient from "../ManagePatient/ManagePatient";
 import AddPatient from "../AddPatient/AddPatient";
+import MyCare from "../PatientFlow/MyCare";
 
 // Define a type for route configurations to improve readability and type safety
 interface AppRoute {
@@ -187,9 +188,9 @@ const MainRoutes: React.FC = () => {
   ];
 
   const patientRoutes: AppRoute[] = [
-    { index: true, element: <Navigate to="medicalHistory" replace /> },
+    { index: true, element: <Navigate to="myCare" replace /> },
     // { path: "dashboard", element: <Dashboard /> },
-    // { path: "myCare", element: <MyCare /> },
+    { path: "myCare", element: <MyCare /> },
     { path: "medicalHistory", element: <PatientQueue /> },
   ];
 
