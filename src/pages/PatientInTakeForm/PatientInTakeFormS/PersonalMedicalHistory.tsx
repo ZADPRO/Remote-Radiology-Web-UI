@@ -7,8 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
 import { IntakeOption } from "../PatientInTakeForm";
 import MultiRadioOptionalInputInline from "@/components/ui/CustomComponents/MultiRadioOptionalInputInline";
-import DatePicker from "@/components/date-picker";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 
 interface QuestionIds {
   previousSurgiries: number;
@@ -329,21 +327,15 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                         {getAnswer(
                           questionIds.breastSurgeryOthersSpecifyDirection
                         ) === "Both" && <Label>R-</Label>}
-                        <DatePicker
-                          value={
-                            getAnswer(questionIds.breastSurgeryOthersDate)
-                              ? parseLocalDate(
-                                  getAnswer(questionIds.breastSurgeryOthersDate)
-                                )
-                              : undefined
-                          }
+                        <Input
+                          value={getAnswer(questionIds.breastSurgeryOthersDate)}
                           onChange={(e) =>
                             handleInputChange(
                               questionIds.breastSurgeryOthersDate,
-                              e?.toLocaleDateString("en-CA") || ""
+                              e.target.value
                             )
                           }
-                          disabledDates={dateDisablers.noFuture}
+                          placeholder="Date / Duration"
                           required
                         />
                       </div>
@@ -352,25 +344,17 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                       ) === "Both" && (
                         <div className="flex-1 flex gap-2 min-w-[230px] max-w-[230px]">
                           <Label>L-</Label>
-                          <DatePicker
-                            value={
-                              getAnswer(
-                                questionIds.breastSurgeryOthersDateAnother
-                              )
-                                ? parseLocalDate(
-                                    getAnswer(
-                                      questionIds.breastSurgeryOthersDateAnother
-                                    )
-                                  )
-                                : undefined
-                            }
+                          <Input
+                            value={getAnswer(
+                              questionIds.breastSurgeryOthersDateAnother
+                            )}
                             onChange={(e) =>
                               handleInputChange(
                                 questionIds.breastSurgeryOthersDateAnother,
-                                e?.toLocaleDateString("en-CA") || ""
+                                e.target.value
                               )
                             }
-                            disabledDates={dateDisablers.noFuture}
+                            placeholder="Date / Duration"
                             required
                           />
                         </div>

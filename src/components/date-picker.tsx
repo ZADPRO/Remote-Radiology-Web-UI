@@ -1,5 +1,3 @@
-// Do not overide this datepicker from shadcn since there are some customizations done here
-
 "use client"
 
 import { useState } from "react"
@@ -18,7 +16,7 @@ interface DatePickerProps {
   required?: boolean
   name?: string
   disabled?: boolean
-  disabledDates?: (date: Date) => boolean 
+  disabledDates?: (date: Date) => boolean
 }
 
 export default function DatePicker({
@@ -29,7 +27,6 @@ export default function DatePicker({
   required = false,
   disabled = false,
   disabledDates = () => false,
-  // name = "date",
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
 
@@ -55,19 +52,27 @@ export default function DatePicker({
                 className
               )}
               disabled={disabled}
+              readOnly
             />
             <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
         </PopoverTrigger>
-        {!disabled && <PopoverContent className={cn("w-auto p-0", className)} align="start">
-          <Calendar
-            mode="single"
-            selected={value}
-            onSelect={handleSelect}
-            disabled={disabledDates} // ✅ Use the prop here
-            autoFocus
-          />
-        </PopoverContent>}
+
+        {!disabled && (
+          <PopoverContent
+            className={cn("w-auto p-0", className)}
+            align="start"
+          >
+            <Calendar
+              mode="single"
+              selected={value}
+              onSelect={handleSelect}
+              disabled={disabledDates}
+              fixedWeeks // 👈 ensures calendar always renders 6 weeks
+              autoFocus
+            />
+          </PopoverContent>
+        )}
       </Popover>
     </div>
   )

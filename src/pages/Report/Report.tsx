@@ -361,7 +361,8 @@ const Report: React.FC = () => {
     // if (hasProcessedRef.current.hash === currentHash) return; // nothing new
     // hasProcessedRef.current.hash = currentHash; // memoise
 
-    if (syncStatus.patientHistory) {
+    if (syncStatus.patientHistory && patientHistory.length === 0 && responsePatientInTake.length > 0) {
+
       let reason = ``;
       // reason += `<p><strong>HISTORY : </strong></p>`;
       // reason += SFormGeneration(responsePatientInTake);
@@ -1097,10 +1098,19 @@ const Report: React.FC = () => {
             )?.text || "",
         }));
 
+        console.log(
+          "--------->@@@",
+          response.reportTextContentData[0].refRTPatientHistorySyncStatus
+        );
+
         if (
           response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
           false
         ) {
+          console.log(
+            "--------->@@@",
+            response.appointmentStatus[0].refAppointmentPatietHistory
+          );
           setPatientHistory(
             response.appointmentStatus[0].refAppointmentPatietHistory
           );
@@ -1337,7 +1347,7 @@ const Report: React.FC = () => {
           setReportFormData(response.reportIntakeFormData);
         } else {
           setReportFormData(
-            Array.from({ length: 133 }, (_, index) => ({
+            Array.from({ length: 137 }, (_, index) => ({
               questionId: 1 + index,
               answer: "",
             }))
@@ -1451,7 +1461,7 @@ const Report: React.FC = () => {
   const ReportResetAll = () => {
     const previousAnswer1 = getReportAnswer(1); // ❗Grab before reset
 
-    let newFormData = Array.from({ length: 200 }, (_, index) => ({
+    let newFormData = Array.from({ length: 137 }, (_, index) => ({
       questionId: index + 1,
       answer: "",
     }));
@@ -1832,10 +1842,13 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("###############", responsePatientInTake.length > 0 && technicianForm.length > 0);
+    console.log(
+      "###############",
+      responsePatientInTake.length > 0 && technicianForm.length > 0
+    );
 
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
-console.log('Report.tsx -------------------------- >  1836 Success  ');
+      console.log("Report.tsx -------------------------- >  1836 Success  ");
       AutoPopulateReport(
         getPatientAnswer,
         getReportAnswer,
@@ -1843,7 +1856,10 @@ console.log('Report.tsx -------------------------- >  1836 Success  ');
         handleReportInputChange
       );
     } else {
-      console.log('Report.tsx -------------------------- >  1836 Reject  ',getReportAnswer(130) === "");
+      console.log(
+        "Report.tsx -------------------------- >  1836 Reject  ",
+        getReportAnswer(130) === ""
+      );
       //Right Breast Access Check
       getReportAnswer(130) === "" && handleReportInputChange(130, "Present");
 
@@ -1874,7 +1890,6 @@ console.log('Report.tsx -------------------------- >  1836 Success  ');
       //GLANDULAR AND DUCTAL TISSUE (LEFT)
       getReportAnswer(115) === "" && handleReportInputChange(115, "Present");
     }
-    
   }, [responsePatientInTake, technicianForm]);
 
   useEffect(() => {
@@ -3689,7 +3704,7 @@ console.log('Report.tsx -------------------------- >  1836 Success  ');
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Choose recipient" />
                         </SelectTrigger>
-                       <HandleEmailRecepitent/>
+                        <HandleEmailRecepitent />
                       </Select>
                     </div>
 

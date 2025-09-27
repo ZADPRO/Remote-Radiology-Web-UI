@@ -16,6 +16,14 @@ interface QuestionIds {
   ruptureSignsOther: number;
   ruptureType: number;
   bilateraldissimilar: number;
+  superior: number;
+  inferior: number;
+  lateral: number;
+  medial: number;
+  superiorRight: number;
+  inferiorRight: number;
+  lateralRight: number;
+  medialRight: number;
 }
 
 export function generateBreastImplantDetailsHTML(
@@ -46,6 +54,62 @@ export function generateBreastImplantDetailsHTML(
   // const ruptureSignsOther = getAnswer(questionIds.ruptureSignsOther);
   const ruptureType = getAnswer(questionIds.ruptureType);
 
+  function buildDisplacementSentence(
+    displacement: string,
+    questionIds: QuestionIds
+  ): string {
+    const formatDirections = (dirs: string[]) => {
+      if (dirs.length === 0) return "";
+      if (dirs.length === 1) return dirs[0];
+      return dirs.slice(0, -1).join(", ") + " and " + dirs.slice(-1);
+    };
+
+    const getSideDirections = (side: "Left" | "Right") => {
+      const directions: string[] = [];
+
+      if (side === "Left") {
+        if (getAnswer(questionIds.superior) === "true")
+          directions.push("superior");
+        if (getAnswer(questionIds.inferior) === "true")
+          directions.push("inferior");
+        if (getAnswer(questionIds.lateral) === "true")
+          directions.push("lateral");
+        if (getAnswer(questionIds.medial) === "true") directions.push("medial");
+      }
+
+      if (side === "Right") {
+        if (getAnswer(questionIds.superiorRight) === "true")
+          directions.push("superior");
+        if (getAnswer(questionIds.inferiorRight) === "true")
+          directions.push("inferior");
+        if (getAnswer(questionIds.lateralRight) === "true")
+          directions.push("lateral");
+        if (getAnswer(questionIds.medialRight) === "true")
+          directions.push("medial");
+      }
+
+      return directions;
+    };
+
+    if (!displacement || displacement === "None") return "";
+
+    if (displacement === "Both") {
+      const leftDirs = getSideDirections("Left");
+      const rightDirs = getSideDirections("Right");
+
+      return `Displacement is noted on the left side${
+        leftDirs.length ? ", " + formatDirections(leftDirs) : ""
+      }, and on the right side${
+        rightDirs.length ? ", " + formatDirections(rightDirs) : ""
+      }.`;
+    }
+
+    const sideDirs = getSideDirections(displacement as "Left" | "Right");
+    return `Displacement is noted on the ${displacement.toLowerCase()} side${
+      sideDirs.length ? ", " + formatDirections(sideDirs) : ""
+    }.`;
+  }
+
   let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
@@ -62,11 +126,12 @@ export function generateBreastImplantDetailsHTML(
 
   if (displacement.length > 0) {
     if (displacement !== "None") {
-      html += `The displacement is noted in ${
-        displacement === "Both"
-          ? "both sides"
-          : `${displacement.toLowerCase()} side`
-      }. `;
+      // html += `The displacement is noted in ${
+      //   displacement === "Both"
+      //     ? "both sides"
+      //     : `${displacement.toLowerCase()} side`
+      // }. `;
+      html += buildDisplacementSentence(displacement, questionIds);
     }
   }
 

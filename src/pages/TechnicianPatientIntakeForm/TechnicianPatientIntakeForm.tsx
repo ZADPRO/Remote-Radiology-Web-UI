@@ -645,9 +645,9 @@ const TechnicianPatientIntakeForm: React.FC<
         {controlData.readOnly && (
           <div className="h-auto bg-[#fff] flex flex-col items-center justify-center w-auto rounded px-3 mt-1 text-xs sm:text-xs mr-3">
             <div className="capitalize flex">
-              <div className="flex w-[4rem]">Filled By</div>
+              <div className="flex w-[4rem]">Filled By: </div>
               <div>
-                :{technicianData.name} ({technicianData.custId})
+                {technicianData.name} ({technicianData.custId})
               </div>
             </div>
           </div>
