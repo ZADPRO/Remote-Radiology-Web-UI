@@ -97,17 +97,17 @@ export function generateBreastImplantDetailsHTML(
       const leftDirs = getSideDirections("Left");
       const rightDirs = getSideDirections("Right");
 
-      return `Displacement is noted on the left side${
+      return `There is displacement noted in the left side${
         leftDirs.length ? ", " + formatDirections(leftDirs) : ""
-      }, and on the right side${
+      }, and in the right side${
         rightDirs.length ? ", " + formatDirections(rightDirs) : ""
-      }.`;
+      }. `;
     }
 
     const sideDirs = getSideDirections(displacement as "Left" | "Right");
-    return `Displacement is noted on the ${displacement.toLowerCase()} side${
+    return `There is displacement noted in the ${displacement.toLowerCase()} side${
       sideDirs.length ? ", " + formatDirections(sideDirs) : ""
-    }.`;
+    }. `;
   }
 
   let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
