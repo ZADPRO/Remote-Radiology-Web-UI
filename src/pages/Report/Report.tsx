@@ -66,6 +66,7 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
   nippleAreolaSkinRightQuestions,
+  symmetryQuestions,
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
@@ -361,8 +362,11 @@ const Report: React.FC = () => {
     // if (hasProcessedRef.current.hash === currentHash) return; // nothing new
     // hasProcessedRef.current.hash = currentHash; // memoise
 
-    if (syncStatus.patientHistory && patientHistory.length === 0 && responsePatientInTake.length > 0) {
-
+    if (
+      syncStatus.patientHistory &&
+      patientHistory.length === 0 &&
+      responsePatientInTake.length > 0
+    ) {
       let reason = ``;
       // reason += `<p><strong>HISTORY : </strong></p>`;
       // reason += SFormGeneration(responsePatientInTake);
@@ -1432,21 +1436,21 @@ const Report: React.FC = () => {
             ).join("<br/><br/>") // extra line break between entries
           );
 
-        if (!response.easeQTReportAccess) {
-          setsyncStatus({
-            ...syncStatus,
-            Notes: false,
-            patientHistory: false,
-          });
-        } else {
-          setsyncStatus({
-            ...syncStatus,
-            Notes:
-              response.reportTextContentData[0]?.refRTSyncStatus === null
-                ? true
-                : response.reportTextContentData[0]?.refRTSyncStatus,
-          });
-        }
+        // if (!response.easeQTReportAccess) {
+        //   setsyncStatus({
+        //     ...syncStatus,
+        //     Notes: false,
+        //     patientHistory: false,
+        //   });
+        // } else {
+        setsyncStatus({
+          ...syncStatus,
+          Notes:
+            response.reportTextContentData[0]?.refRTSyncStatus === null
+              ? true
+              : response.reportTextContentData[0]?.refRTSyncStatus,
+        });
+        // }
       }
     } catch (error) {
       console.log(error);
@@ -1848,7 +1852,6 @@ const Report: React.FC = () => {
     );
 
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
-      console.log("Report.tsx -------------------------- >  1836 Success  ");
       AutoPopulateReport(
         getPatientAnswer,
         getReportAnswer,
@@ -1856,10 +1859,6 @@ const Report: React.FC = () => {
         handleReportInputChange
       );
     } else {
-      console.log(
-        "Report.tsx -------------------------- >  1836 Reject  ",
-        getReportAnswer(130) === ""
-      );
       //Right Breast Access Check
       getReportAnswer(130) === "" && handleReportInputChange(130, "Present");
 
@@ -1889,6 +1888,275 @@ const Report: React.FC = () => {
 
       //GLANDULAR AND DUCTAL TISSUE (LEFT)
       getReportAnswer(115) === "" && handleReportInputChange(115, "Present");
+
+      //Breast Implant
+      getReportAnswer(breastImpantQuestions.breastImplants) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.breastImplants,
+          "Present"
+        );
+
+      //Implant Configuration
+      getReportAnswer(breastImpantQuestions.implantConfiguration) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantConfiguration,
+          "Bilateral Similar"
+        );
+
+      // Implant Position
+      getReportAnswer(breastImpantQuestions.implantPositon) === "" &&
+        handleReportInputChange(
+          breastImpantQuestions.implantPositon,
+          "Subpectoral (Retro-pectoral)"
+        );
+
+      //Displacement
+      getReportAnswer(breastImpantQuestions.displacement) === "" &&
+        handleReportInputChange(breastImpantQuestions.displacement, "None");
+
+      // Contracture
+      getReportAnswer(breastImpantQuestions.contracture) === "" &&
+        handleReportInputChange(breastImpantQuestions.contracture, "None");
+
+      //Rupture
+      getReportAnswer(breastImpantQuestions.rupture) === "" &&
+        handleReportInputChange(breastImpantQuestions.rupture, "Absent");
+
+      // SYMMETRY
+      getReportAnswer(symmetryQuestions.symmetry) === "" &&
+        handleReportInputChange(
+          symmetryQuestions.symmetry,
+          "Symmetrical size and shape"
+        );
+
+      //Right
+      // Breast Density
+      getReportAnswer(breastDensityandImageRightQuestions.breastDensity) ===
+        "" &&
+        handleReportInputChange(
+          breastDensityandImageRightQuestions.breastDensity,
+          "Heterogeneously Dense"
+        );
+
+      // Symmetry
+      getReportAnswer(breastDensityandImageRightQuestions.symmetry) === "" &&
+        handleReportInputChange(
+          breastDensityandImageRightQuestions.symmetry,
+          "Symmetry"
+        );
+
+      // Image Quality
+      getReportAnswer(breastDensityandImageRightQuestions.imageQuality) ===
+        "" &&
+        handleReportInputChange(
+          breastDensityandImageRightQuestions.imageQuality,
+          "Acceptable"
+        );
+
+      //Left
+      // Breast Density
+      getReportAnswer(breastDensityandImageLeftQuestions.breastDensity) ===
+        "" &&
+        handleReportInputChange(
+          breastDensityandImageLeftQuestions.breastDensity,
+          "Heterogeneously Dense"
+        );
+
+      // Symmetry
+      getReportAnswer(breastDensityandImageLeftQuestions.symmetry) === "" &&
+        handleReportInputChange(
+          breastDensityandImageLeftQuestions.symmetry,
+          "Symmetry"
+        );
+
+      // Image Quality
+      getReportAnswer(breastDensityandImageLeftQuestions.imageQuality) === "" &&
+        handleReportInputChange(
+          breastDensityandImageLeftQuestions.imageQuality,
+          "Acceptable"
+        );
+
+      //Right
+      //NIPPLE, AREOLA & SKIN (Right)
+      //Skin Changes
+      getReportAnswer(nippleAreolaSkinRightQuestions.skinChanges) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinRightQuestions.skinChanges,
+          "Normal"
+        );
+
+      // Nipple Deformity
+      getReportAnswer(nippleAreolaSkinRightQuestions.nippleDeformity) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinRightQuestions.nippleDeformity,
+          "Absent"
+        );
+
+      // Nipple Retraction
+      getReportAnswer(nippleAreolaSkinRightQuestions.nippleRetraction) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinRightQuestions.nippleRetraction,
+          "Absent"
+        );
+
+      // Architecture of Vascular and connective tissues
+      getReportAnswer(nippleAreolaSkinRightQuestions.architecture) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinRightQuestions.architecture,
+          "Normal"
+        );
+
+      //Left
+      //NIPPLE, AREOLA & SKIN (left)
+      //Skin Changes
+      getReportAnswer(nippleAreolaSkinLeftQuestions.skinChanges) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinLeftQuestions.skinChanges,
+          "Normal"
+        );
+
+      // Nipple Deformity
+      getReportAnswer(nippleAreolaSkinLeftQuestions.nippleDeformity) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinLeftQuestions.nippleDeformity,
+          "Absent"
+        );
+
+      // Nipple Retraction
+      getReportAnswer(nippleAreolaSkinLeftQuestions.nippleRetraction) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinLeftQuestions.nippleRetraction,
+          "Absent"
+        );
+
+      // Architecture of Vascular and connective tissues
+      getReportAnswer(nippleAreolaSkinLeftQuestions.architecture) === "" &&
+        handleReportInputChange(
+          nippleAreolaSkinLeftQuestions.architecture,
+          "Normal"
+        );
+
+      // Glandular And Ductal tissue (Right)
+      getReportAnswer(
+        grandularAndDuctalTissueRightQuestions.grandularSelect
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.grandularSelect,
+          "Present"
+        );
+
+      // Benign Microcysts
+      getReportAnswer(
+        grandularAndDuctalTissueRightQuestions.benignMicroCysts
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.benignMicroCysts,
+          "Absent"
+        );
+
+      // Benign Capsular Microcalcification
+      getReportAnswer(grandularAndDuctalTissueRightQuestions.benignCapsular) ===
+        "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.benignCapsular,
+          "Absent"
+        );
+
+      //Benign Fibronodular Density
+      getReportAnswer(
+        grandularAndDuctalTissueRightQuestions.benignFibronodular
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.benignFibronodular,
+          "Absent"
+        );
+
+      //Ductal Prominence
+      getReportAnswer(
+        grandularAndDuctalTissueRightQuestions.ductalProminence
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.ductalProminence,
+          "Absent"
+        );
+
+      //Calcifications Present
+      getReportAnswer(
+        grandularAndDuctalTissueRightQuestions.calcificationsPresent
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.calcificationsPresent,
+          "Absent"
+        );
+
+      //Calcified Scar
+      getReportAnswer(grandularAndDuctalTissueRightQuestions.calcifiedScar) ===
+        "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueRightQuestions.calcifiedScar,
+          "Absent"
+        );
+
+        // Glandular And Ductal tissue (Left)
+      getReportAnswer(
+        grandularAndDuctalTissueLeftQuestions.grandularSelect
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.grandularSelect,
+          "Present"
+        );
+
+      // Benign Microcysts
+      getReportAnswer(
+        grandularAndDuctalTissueLeftQuestions.benignMicroCysts
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.benignMicroCysts,
+          "Absent"
+        );
+
+      // Benign Capsular Microcalcification
+      getReportAnswer(grandularAndDuctalTissueLeftQuestions.benignCapsular) ===
+        "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.benignCapsular,
+          "Absent"
+        );
+
+      //Benign Fibronodular Density
+      getReportAnswer(
+        grandularAndDuctalTissueLeftQuestions.benignFibronodular
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.benignFibronodular,
+          "Absent"
+        );
+
+      //Ductal Prominence
+      getReportAnswer(
+        grandularAndDuctalTissueLeftQuestions.ductalProminence
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.ductalProminence,
+          "Absent"
+        );
+
+      //Calcifications Present
+      getReportAnswer(
+        grandularAndDuctalTissueLeftQuestions.calcificationsPresent
+      ) === "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.calcificationsPresent,
+          "Absent"
+        );
+
+      //Calcified Scar
+      getReportAnswer(grandularAndDuctalTissueLeftQuestions.calcifiedScar) ===
+        "" &&
+        handleReportInputChange(
+          grandularAndDuctalTissueLeftQuestions.calcifiedScar,
+          "Absent"
+        );
     }
   }, [responsePatientInTake, technicianForm]);
 
@@ -2620,20 +2888,20 @@ const Report: React.FC = () => {
         setReportFormData(response.reportIntakeFormData);
       }
 
-      if (!response.easeQTReportAccess) {
-        setsyncStatus({
-          ...syncStatus,
-          Notes: false,
-        });
-      } else {
-        setsyncStatus({
-          ...syncStatus,
-          Notes:
-            response.reportTextContentData[0]?.refRTSyncStatus === null
-              ? true
-              : response.reportTextContentData[0]?.refRTSyncStatus,
-        });
-      }
+      // if (!response.easeQTReportAccess) {
+      //   setsyncStatus({
+      //     ...syncStatus,
+      //     Notes: false,
+      //   });
+      // } else {
+      setsyncStatus({
+        ...syncStatus,
+        Notes:
+          response.reportTextContentData[0]?.refRTSyncStatus === null
+            ? true
+            : response.reportTextContentData[0]?.refRTSyncStatus,
+      });
+      // }
 
       setChangedOne({
         reportQuestion: [],

@@ -85,6 +85,7 @@ export const formats = [
   "bold",
   "italic",
   "underline",
+  "strike",
   "align",
   "strike",
   "script",
@@ -130,7 +131,7 @@ export const QuillToolbar = ({ id }: { id: string }) => (
       <button className="ql-bold" />
       <button className="ql-italic" />
       <button className="ql-underline" />
-      {/* <button className="ql-strike" /> */}
+      <button className="ql-strike" />
     </span>
     <span className="ql-formats">
       <button className="ql-list" value="ordered" />
