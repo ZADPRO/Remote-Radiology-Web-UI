@@ -26,7 +26,7 @@ export function AutoPopulateReport(
   handleReportInputChange: (questionId: number, value: string) => void
 ) {
   //Right Breast Access Check
-  getreportAnswer(130) === "" && handleReportInputChange(130, "Present"); 
+  getreportAnswer(130) === "" && handleReportInputChange(130, "Present");
 
   //Left Breast Access Check
   getreportAnswer(131) === "" && handleReportInputChange(131, "Present");
@@ -191,6 +191,22 @@ export function AutoPopulateReport(
         "Absent"
       );
     }
+  } else {
+    if (
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleDeformity) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleDeformity,
+        "Absent"
+      );
+    }
+
+    if (getreportAnswer(nippleAreolaSkinLeftQuestions.nippleDeformity) === "") {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleDeformity,
+        "Absent"
+      );
+    }
   }
 
   if (getPatientAnswer(111) === "true") {
@@ -220,6 +236,24 @@ export function AutoPopulateReport(
         "Present"
       );
     } else if (
+      getreportAnswer(nippleAreolaSkinLeftQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinLeftQuestions.nippleRetraction,
+        "Absent"
+      );
+    }
+  } else {
+    if (
+      getreportAnswer(nippleAreolaSkinRightQuestions.nippleRetraction) === ""
+    ) {
+      handleReportInputChange(
+        nippleAreolaSkinRightQuestions.nippleRetraction,
+        "Absent"
+      );
+    }
+
+    if (
       getreportAnswer(nippleAreolaSkinLeftQuestions.nippleRetraction) === ""
     ) {
       handleReportInputChange(
