@@ -2697,6 +2697,7 @@ const PatientQueue: React.FC = () => {
     scadmin: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2724,6 +2725,7 @@ const PatientQueue: React.FC = () => {
     doctor: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
@@ -2761,6 +2763,7 @@ const PatientQueue: React.FC = () => {
     codoctor: [
       "select",
       "dateOfAppointment",
+      "refUserCustId",
       "refUserFirstName",
       "patientId",
       "refSCCustId",
