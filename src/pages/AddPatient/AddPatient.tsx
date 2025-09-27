@@ -282,7 +282,9 @@ const AddPatient: React.FC = () => {
                       <br />
                       Thank you for choosing {SCName} Scan Centre for your
                       Breast QT (Quantitative Transmission) Imaging, also known
-                      as Breast Acoustic CT. We are delighted to assist you and ensure a smooth, comfortable experience on your appointment date:
+                      as Breast Acoustic CT. We are delighted to assist you and
+                      ensure a smooth, comfortable experience on your
+                      appointment date:
                       {formatReadableDate(formData.dateofAppointment)}
                       <br />
                       <br />
@@ -298,13 +300,14 @@ const AddPatient: React.FC = () => {
                       <br />
                       <br />
                       <b>Access your account: </b>
-                      Use your email ID <b>
-                        {formData.email}
-                      </b>{" "}
-                      and password <b>{formData.dob}</b> to log in and complete your details.
+                      Use your email ID <b>{formData.email}</b> and password{" "}
+                      <b>{formData.dob}</b> to log in and complete your details.
                       <br />
                       <br />
-                      If you have any questions or need any assistance, our team is here to help. Please don’t hesitate to contact us—we’re committed to making this process as easy and hassle-free as possible.
+                      If you have any questions or need any assistance, our team
+                      is here to help. Please don’t hesitate to contact us—we’re
+                      committed to making this process as easy and hassle-free
+                      as possible.
                       <br />
                       <br />
                       Warm regards,
@@ -337,8 +340,7 @@ const AddPatient: React.FC = () => {
                         <div className="text-center text-gray-700 text-base space-y-4">
                           <p>
                             You have successfully been onboarded as a{" "}
-                            <strong>Patient</strong> on{" "}
-                            <strong>easeQT</strong>.
+                            <strong>Patient</strong> on <strong>easeQT</strong>.
                           </p>
                           <p>Your login credentials are as follows:</p>
 
@@ -364,14 +366,14 @@ const AddPatient: React.FC = () => {
                           </a>
 
                           <p className="pt-4">
-                            If you did not request it, please
-                            ignore this email.
+                            If you did not request it, please ignore this email.
                           </p>
                         </div>
 
                         {/* Footer */}
                         <div className="text-center text-xs text-gray-600 border-t border-gray-300 pt-4 mt-6">
-                          &copy; {new Date().getFullYear()} Wellthgreen. All rights reserved.
+                          &copy; {new Date().getFullYear()} Wellthgreen. All
+                          rights reserved.
                         </div>
                       </div>
                     </div>
@@ -661,9 +663,12 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             placeholder="Enter Patient ID"
             className="bg-white"
             value={formData.custId}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, custId: e.target.value }))
-            }
+            onChange={(e) => {
+              const value = e.target.value;
+              // Allow only letters, numbers, and hyphen
+              const sanitized = value.replace(/[^a-zA-Z0-9-]/g, "");
+              setFormData((prev) => ({ ...prev, custId: sanitized }));
+            }}
             required
           />
         </div>

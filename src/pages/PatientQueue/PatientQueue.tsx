@@ -2659,6 +2659,7 @@ const PatientQueue: React.FC = () => {
       "select",
       "dateOfAppointment",
       "refUserFirstName",
+      "refUserCustId",
       "patientId",
       "refSCCustId",
       "patientFormAndStatus",

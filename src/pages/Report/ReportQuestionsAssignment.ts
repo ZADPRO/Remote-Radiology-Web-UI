@@ -13,14 +13,22 @@ export const breastImpantQuestions = {
   ruptureSignsOther: 12,
   ruptureType: 13,
   implantMaterialOther: 116,
-  bilateraldissimilar:62,
+  bilateraldissimilar: 62,
+  superior: 86,
+  inferior: 87,
+  lateral: 88,
+  medial: 89,
+  superiorRight: 134,
+  inferiorRight: 135,
+  lateralRight: 136,
+  medialRight: 137,
 };
 
 export const symmetryQuestions = {
   symmetry: 117,
   symmetryLeft: 118,
   symmetryRight: 119,
-}
+};
 
 export const breastDensityandImageRightQuestions = {
   breastSelect: 110,
