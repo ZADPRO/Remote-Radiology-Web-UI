@@ -585,6 +585,9 @@ const Report: React.FC = () => {
 
   const [userDetails, setUserDetails]: any = useState([]);
 
+  const [performingProviderName, setPerformingProviderName] = useState("");
+  const [verifyingProviderName, setVerifyingProviderName] = useState("");
+
   // const [dicomFiles, setDicomFiles] = useState<DicomFileList[]>([]);
   const [patientDetails, setPatintDetails]: any = useState([]);
   const [technicianForm, setTechnicianForm] = useState<
@@ -919,6 +922,8 @@ const Report: React.FC = () => {
         ScancenterAddress: string;
         oldReport: GetOldReport[];
         patientpublicprivate: string;
+        PerformingProviderName: string;
+        VerifyingProviderName: string;
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -928,6 +933,8 @@ const Report: React.FC = () => {
       console.log("---------->", response);
 
       if (response.status) {
+        setPerformingProviderName(response.PerformingProviderName);
+        setVerifyingProviderName(response.VerifyingProviderName);
         setPatientpublicprivate(response.patientpublicprivate);
         setAutoReportAccess(true);
         setScanCenterImg(response.ScanCenterImg);
@@ -1760,7 +1767,7 @@ const Report: React.FC = () => {
                     }, ${ScanCenterAddress}</td>
                 </tr>
                 <tr>
-                <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
+                <td style="border: 1px solid #000; padding: 4px;"><strong>USER ID</strong></td>
                     <td style="border: 1px solid #000; padding: 4px;">${
                       patientDetails.refUserCustId
                     }</td>
@@ -1891,36 +1898,33 @@ const Report: React.FC = () => {
 
       //Breast Implant
       getReportAnswer(breastImpantQuestions.breastImplants) === "" &&
-        handleReportInputChange(
-          breastImpantQuestions.breastImplants,
-          "Present"
-        );
+        handleReportInputChange(breastImpantQuestions.breastImplants, "Absent");
 
-      //Implant Configuration
-      getReportAnswer(breastImpantQuestions.implantConfiguration) === "" &&
-        handleReportInputChange(
-          breastImpantQuestions.implantConfiguration,
-          "Bilateral Similar"
-        );
+      // //Implant Configuration
+      // getReportAnswer(breastImpantQuestions.implantConfiguration) === "" &&
+      //   handleReportInputChange(
+      //     breastImpantQuestions.implantConfiguration,
+      //     "Bilateral Similar"
+      //   );
 
-      // Implant Position
-      getReportAnswer(breastImpantQuestions.implantPositon) === "" &&
-        handleReportInputChange(
-          breastImpantQuestions.implantPositon,
-          "Subpectoral (Retro-pectoral)"
-        );
+      // // Implant Position
+      // getReportAnswer(breastImpantQuestions.implantPositon) === "" &&
+      //   handleReportInputChange(
+      //     breastImpantQuestions.implantPositon,
+      //     "Subpectoral (Retro-pectoral)"
+      //   );
 
-      //Displacement
-      getReportAnswer(breastImpantQuestions.displacement) === "" &&
-        handleReportInputChange(breastImpantQuestions.displacement, "None");
+      // //Displacement
+      // getReportAnswer(breastImpantQuestions.displacement) === "" &&
+      //   handleReportInputChange(breastImpantQuestions.displacement, "None");
 
-      // Contracture
-      getReportAnswer(breastImpantQuestions.contracture) === "" &&
-        handleReportInputChange(breastImpantQuestions.contracture, "None");
+      // // Contracture
+      // getReportAnswer(breastImpantQuestions.contracture) === "" &&
+      //   handleReportInputChange(breastImpantQuestions.contracture, "None");
 
-      //Rupture
-      getReportAnswer(breastImpantQuestions.rupture) === "" &&
-        handleReportInputChange(breastImpantQuestions.rupture, "Absent");
+      // //Rupture
+      // getReportAnswer(breastImpantQuestions.rupture) === "" &&
+      //   handleReportInputChange(breastImpantQuestions.rupture, "Absent");
 
       // SYMMETRY
       getReportAnswer(symmetryQuestions.symmetry) === "" &&
@@ -2097,10 +2101,9 @@ const Report: React.FC = () => {
           "Absent"
         );
 
-        // Glandular And Ductal tissue (Left)
-      getReportAnswer(
-        grandularAndDuctalTissueLeftQuestions.grandularSelect
-      ) === "" &&
+      // Glandular And Ductal tissue (Left)
+      getReportAnswer(grandularAndDuctalTissueLeftQuestions.grandularSelect) ===
+        "" &&
         handleReportInputChange(
           grandularAndDuctalTissueLeftQuestions.grandularSelect,
           "Present"
@@ -2433,10 +2436,13 @@ const Report: React.FC = () => {
       status: boolean;
       easeQTReportAccess: boolean;
       naSystemReportAccess: boolean;
+      PerformingProviderName: string;
+      VerifyingProviderName: string;
     } = await reportService.autosaveReport(payload);
-    console.log("#########", payload, response);
 
     if (response.status) {
+      setPerformingProviderName(response.PerformingProviderName);
+      setVerifyingProviderName(response.VerifyingProviderName);
       if (
         response.appointmentStatus[0]
           .refAppointmentImpressionAdditionalRight !==
@@ -2975,7 +2981,9 @@ const Report: React.FC = () => {
 
   useEffect(() => {
     if (AutoReportAccess) {
-      fecthautosave();
+      if (!loading) {
+        fecthautosave();
+      }
     }
   }, [timeOut]);
 
@@ -4172,6 +4180,12 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
+                    performingProviderName={performingProviderName}
+                    verifyingProviderName={verifyingProviderName}
+                    loading={loading}
+                    setLoading={setLoading}
+                    patientId={stateData.userId}
+                    patientpublicprivate={patientpublicprivate}
                     setChangedOne={setChangedOne}
                     reportFormData={reportFormData}
                     responsePatientInTake={responsePatientInTake}

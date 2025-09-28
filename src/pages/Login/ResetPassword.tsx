@@ -130,7 +130,7 @@ const ResetPassword: React.FC = () => {
       <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:py-8 lg:px-8 lg:justify-center lg:shadow-2xl relative">
         <img
           src={logoNew}
-          className="hidden w-[40%] h-[20%] mx-auto lg:inline"
+           className="hidden w-auto h-[15%] mx-auto lg:inline"
         />
         <div className="w-[90%] mx-auto p-5 lg:w-[70%]">
           <form className="flex flex-col gap-6">

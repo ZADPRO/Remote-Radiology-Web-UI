@@ -45,6 +45,7 @@ const AllergiesMedications: React.FC<Props> = ({
 }) => {
   useEffect(() => {
     handleInputChange(1, "Routine");
+    handleInputChange(57, "public");
   }, []);
 
   const getAnswer = (id: number) =>

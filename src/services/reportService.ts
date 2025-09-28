@@ -46,7 +46,6 @@ export interface GetOldReport {
   files: string;
 }
 
-
 export interface ReportHistoryData {
   HandleUserName: string;
   refRHHandleEndTime: string;
@@ -429,12 +428,21 @@ export const reportService = {
     return decryptedData;
   },
 
-  AddAddedum: async (addedumtext: string, appointmentId: number) => {
+  AddAddedum: async (
+    addedumtext: string,
+    appointmentId: number,
+    patientMailStatus: boolean,
+    managerMailStatus: boolean,
+    patientId: number
+  ) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(
       {
         addAddendumText: addedumtext,
         appointmentId: appointmentId,
+        patientMailStatus: patientMailStatus,
+        managerMailStatus: managerMailStatus,
+        patientId: patientId,
       },
       token
     );
