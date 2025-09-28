@@ -20,6 +20,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -29,6 +30,16 @@ import { Plus, Save } from "lucide-react";
 import { FinalAddendumText, reportService } from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
 import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "../Routes/AuthContext";
+import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import { useNavigate } from "react-router-dom";
 
 interface TextEditorProps {
   patientHistory: {
@@ -203,6 +214,12 @@ interface ReportQuestion {
 }
 
 type Props = {
+  performingProviderName: string;
+  verifyingProviderName: string;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: number;
+  patientpublicprivate: string;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   responsePatientInTake: ResponsePatientForm[];
@@ -230,6 +247,12 @@ type Props = {
 };
 
 const NotesReport: React.FC<Props> = ({
+  performingProviderName,
+  verifyingProviderName,
+  loading,
+  setLoading,
+  patientId,
+  patientpublicprivate,
   setChangedOne,
   textEditor,
   reportFormData,
@@ -248,8 +271,7 @@ const NotesReport: React.FC<Props> = ({
   reportStatus,
   AppointmentId,
 }) => {
-
-  console.log(reportAccess)
+  console.log(reportAccess);
 
   const [dialog, setDialog] = useState(false);
 
@@ -343,7 +365,8 @@ const NotesReport: React.FC<Props> = ({
     const A3 = ["5a", "7b", "7c", "A3"];
     const A4 = ["6", "6b", "6c", "6d", "6e", "6f", "6h", "7e", "10a", "A4"];
 
-    if (O1.includes(val)) return "0 : Prior breast imaging is needed for interpretation";
+    if (O1.includes(val))
+      return "0 : Prior breast imaging is needed for interpretation";
     if (N1.includes(val)) return "N1 (Nomral 1)";
     if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
     if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
@@ -430,7 +453,7 @@ const NotesReport: React.FC<Props> = ({
           <td style="border: 1px solid #000; padding: 4px;">${ScancenterCode}, ${ScancenterAddress}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 4px;"><strong>USERID</strong></td>
+          <td style="border: 1px solid #000; padding: 4px;"><strong>USER ID</strong></td>
           <td style="border: 1px solid #000; padding: 4px;">${
             patientDetails.refUserCustId
           }</td>
@@ -441,6 +464,23 @@ const NotesReport: React.FC<Props> = ({
         </tr>
       </tbody>
     </table>
+
+    ${
+      performingProviderName.length > 0 || verifyingProviderName.length > 0
+        ? `
+      <br/>
+  ${
+    performingProviderName.length > 0
+      ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+      : ``
+  }${
+            verifyingProviderName.length > 0
+              ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+              : ``
+          }
+      `
+        : ``
+    }
 
   <br/>
   
@@ -638,9 +678,7 @@ const NotesReport: React.FC<Props> = ({
             ? lesionsVal["solid mass / nodule"]
                 .map((data, index) => {
                   let dataArray: any[] = [];
-                  const raw = getAnswer(
-                    lesionsRightQuestions.solidmassDatar
-                  );
+                  const raw = getAnswer(lesionsRightQuestions.solidmassDatar);
                   dataArray = raw ? JSON.parse(raw) : [];
 
                   return (
@@ -861,9 +899,7 @@ const NotesReport: React.FC<Props> = ({
               ? lesionsValLeft["solid mass / nodule"]
                   .map((data, index) => {
                     let dataArray: any[] = [];
-                    const raw = getAnswer(
-                      lesionsLeftQuestions.solidmassDatar
-                    );
+                    const raw = getAnswer(lesionsLeftQuestions.solidmassDatar);
                     dataArray = raw ? JSON.parse(raw) : [];
 
                     return (
@@ -927,7 +963,7 @@ const NotesReport: React.FC<Props> = ({
       ? `
   <p><strong>RIGHT BREAST:</strong></p>
   ${
-    textEditor.ImpressionTextRight.value && (getAnswer(81) === "true")
+    textEditor.ImpressionTextRight.value && getAnswer(81) === "true"
       ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
           textEditor.selectedImpressionIdRight.value
         )}</p>`
@@ -995,7 +1031,7 @@ ${
       ? `
         <br/><p><strong>LEFT BREAST:</strong></p>
         ${
-          textEditor.ImpressionTextRight.value && (getAnswer(81) === "true")
+          textEditor.ImpressionTextRight.value && getAnswer(81) === "true"
             ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
                 textEditor.selectedImpressionId.value
               )}</p>`
@@ -1084,26 +1120,59 @@ ${
   const [addButton, setAddButton] = useState<boolean>(false);
 
   const [addendumText, setAddendumText] = useState("");
+  const [addendumMacro, setAddendumMacro] = useState("");
+  const [addendumMacroChoose, setAddendumMacroChoose] = useState("");
+  const addendumMacroOptions = [
+    {
+      label: "Results were discussed with ……………… on ………(date)",
+      value: "Results were discussed with ……………… on ………(date)",
+    },
+    {
+      label: "The written report was provided / email to ....... on …….(date)",
+      value: "The written report was provided / email to ....... on …….(date)",
+    },
+    {
+      label: "Both",
+      value:
+        "Results were discussed with ……………… on ………(date). The written report was provided / email to ....... on …….(date)",
+    },
+  ];
+
+  const navigate = useNavigate();
+
+  const [addendumDialog, setAddendumDialog] = useState(false);
+
+  const [mailrecepient, setMailRecepient] = useState("none");
 
   const handleAddAddendum = async () => {
     try {
+      setLoading(true);
       const response = await reportService.AddAddedum(
-        addendumText,
-        AppointmentId
+        "<p>" + addendumText + "</p><p>" + addendumMacro + "</p>",
+        AppointmentId,
+        mailrecepient === "patient" || mailrecepient === "both",
+        mailrecepient === "scancenter" || mailrecepient === "both",
+        patientId
       );
 
-      setAddButton(false);
-      setAddendumText("");
-
       if (response.status) {
-        textEditor.addendumText.onChange(
-          response.data
-            .map(
-              (data: FinalAddendumText) =>
-                `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
-            )
-            .join("<br/><br/>")
-        );
+        if (response.data && response.data.length > 0) {
+          textEditor.addendumText.onChange(
+            response.data
+              .map(
+                (data: FinalAddendumText) =>
+                  `${data.refADCreatedAt} - ${data.refUserCustId}<br/>${data.refADText}`
+              )
+              .join("<br/><br/>")
+          );
+        }
+        setAddButton(false);
+        setAddendumText("");
+        setAddendumMacro("");
+        setAddendumMacroChoose("");
+        setMailRecepient("none");
+        navigate(-1);
+        setLoading(false);
       }
       // textEditor.addendumText.onChange("");
     } catch (error) {
@@ -1111,8 +1180,45 @@ ${
     }
   };
 
+  const { role } = useAuth();
+
+  const HandleEmailRecepitent = () => {
+    if (
+      role?.type === "admin" ||
+      role?.type === "technician" ||
+      role?.type === "scadmin" ||
+      role?.type === "doctor" ||
+      role?.type === "codoctor"
+    ) {
+      return (
+        <SelectContent>
+          <SelectItem value="none">None</SelectItem>
+          <SelectItem value="patient">Patient</SelectItem>
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          <SelectItem value="both">Patient and Scan Center Manager</SelectItem>
+        </SelectContent>
+      );
+    } else {
+      return (
+        <SelectContent>
+          <SelectItem value="none">None</SelectItem>
+          {patientpublicprivate !== "private" && (
+            <SelectItem value="patient">Patient</SelectItem>
+          )}
+          <SelectItem value="scancenter">Scan Center Manager</SelectItem>
+          {patientpublicprivate !== "private" && (
+            <SelectItem value="both">
+              Patient and Scan Center Manager
+            </SelectItem>
+          )}
+        </SelectContent>
+      );
+    }
+  };
+
   return (
     <>
+      {loading && <LoadingOverlay />}
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -1150,14 +1256,45 @@ ${
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="w-full lg:px-15 mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll">
-        <div className="space-y-4">
+      <Dialog open={addendumDialog} onOpenChange={setAddendumDialog}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Select Email Recipients</DialogTitle>
+            <DialogDescription>
+              Select recipients to proceed with sending the email.
+            </DialogDescription>
+          </DialogHeader>
 
-            <>
-              <div className="flex items-center justify-between mb-2">
-                {" "}
-                <span className="text-2xl">Final Report Preview</span>
-                {/* {syncStatus.Notes ? (
+          <div>
+            <Select value={mailrecepient} onValueChange={setMailRecepient}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose recipient" />
+              </SelectTrigger>
+              <HandleEmailRecepitent />
+            </Select>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="greenTheme"
+              disabled={!addendumDialog}
+              onClick={() => {
+                setAddendumDialog(false);
+                handleAddAddendum();
+              }}
+            >
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div className="w-full lg:px-15 mx-auto rounded-2xl text-lg p-4 leading-7 h-[90vh] space-y-10 overflow-y-scroll relative">
+        <div className="space-y-4">
+          <>
+            <div className="flex items-center justify-between mb-2">
+              {" "}
+              <span className="text-2xl">Final Report Preview</span>
+              {/* {syncStatus.Notes ? (
             <Button
               className="bg-[#a4b2a1] hover:bg-[#a4b2a1] h-[20px] w-[60px] text-sm"
               onClick={() => {
@@ -1176,36 +1313,36 @@ ${
               Sync
             </Button>
           )} */}
-                <div className="self-start mt-2">
-                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
-                    <div>
-                      <Label className="font-semibold text-[#e06666] text-base">
-                        Ease QT 10.10 Auto Report
-                      </Label>
-                    </div>
-                    <Switch
-                      id="qtAccess"
-                      className="cursor-pointer"
-                      checked={syncStatus.Notes}
-                      onCheckedChange={(checked: boolean) => {
-                        if (!readOnly) {
-                          setChangedOne((prev) => ({
-                            ...prev,
-                            syncStatus: true,
-                            reportTextContent: true,
-                          }));
-                          if (!checked) {
-                            setsyncStatus({ ...syncStatus, Notes: checked });
-                          } else {
-                            setDialog(true);
-                          }
-                        }
-                      }}
-                    />
+              <div className="self-start mt-2">
+                <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                  <div>
+                    <Label className="font-semibold text-[#e06666] text-base">
+                      Ease QT 10.10 Auto Report
+                    </Label>
                   </div>
+                  <Switch
+                    id="qtAccess"
+                    className="cursor-pointer"
+                    checked={syncStatus.Notes}
+                    onCheckedChange={(checked: boolean) => {
+                      if (!readOnly) {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          syncStatus: true,
+                          reportTextContent: true,
+                        }));
+                        if (!checked) {
+                          setsyncStatus({ ...syncStatus, Notes: checked });
+                        } else {
+                          setDialog(true);
+                        }
+                      }
+                    }}
+                  />
                 </div>
               </div>
-            </>
+            </div>
+          </>
           <TextEditor
             value={Notes}
             onChange={setNotes}
@@ -1221,41 +1358,80 @@ ${
 
           {(reportStatus === "Signed Off" ||
             reportStatus === "Signed Off (A)") && (
-            <div className="flex flex-col mb-4">
-              <div className="flex items-center justify-between">
-                <p className="text-2xl">Addendum</p>
-                <Button
-                  variant="default"
-                  className="mt-3 mb-2"
-                  onClick={() => {
-                    if (addButton) {
-                      handleAddAddendum();
-                    } else {
-                      setAddButton(true);
-                    }
-                  }}
-                >
-                  {addButton ? (
-                    <>
-                      <Save />
-                      <span>Save</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus />
-                      <span>Add</span>
-                    </>
-                  )}
-                </Button>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+
+                if (addButton) {
+                  setAddendumDialog(true);
+                } else {
+                  setAddButton(true);
+                }
+              }}
+            >
+              <div className="flex flex-col mb-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-2xl">Addendum</p>
+                  <Button variant="default" className="mt-3 mb-2" type="submit">
+                    {addButton ? (
+                      <>
+                        <Save />
+                        <span>Save</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus />
+                        <span>Add</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {addButton && (
+                  <>
+                    <Textarea
+                      placeholder="Add Addendum"
+                      value={addendumText}
+                      onChange={(e) => setAddendumText(e.target.value)}
+                      required
+                    />
+                    <Label className="mt-2">Macro</Label>
+                    <div className="my-2">
+                      <Select
+                        value={addendumMacroChoose}
+                        onValueChange={(val) => {
+                          setAddendumMacro(val);
+                          setAddendumMacroChoose(val);
+                        }}
+                        required
+                      >
+                        <SelectTrigger className="bg-[#fff] m-0 text-xs w-full relative">
+                          <SelectValue placeholder="Select Impression" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {addendumMacroOptions.map((option, index) => (
+                            <>
+                              <SelectItem
+                                key={`addendumMacro-${index}`}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            </>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Textarea
+                      placeholder="Add Macro Addendum"
+                      value={addendumMacro}
+                      onChange={(e) => setAddendumMacro(e.target.value)}
+                      required
+                    />
+                  </>
+                )}
               </div>
-              {addButton && (
-                <Textarea
-                  placeholder="Add Addendum"
-                  value={addendumText}
-                  onChange={(e) => setAddendumText(e.target.value)}
-                />
-              )}
-            </div>
+            </form>
           )}
         </div>
       </div>

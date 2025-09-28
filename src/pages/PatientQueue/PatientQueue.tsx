@@ -1275,7 +1275,7 @@ const PatientQueue: React.FC = () => {
               <span>
                 <button
                   className={`hover:underline cursor-pointer font-bold ${
-                    row.original.patientPrivatePublicStatus === "private"
+                    row.original.patientPrivatePublicStatus !== "private"
                       ? `text-[#3c78d8]`
                       : ``
                   }`}
