@@ -1867,6 +1867,8 @@ const Report: React.FC = () => {
       responsePatientInTake.length > 0 && technicianForm.length > 0
     );
 
+    
+    setMailOption(patientpublicprivate === "private" ? "none" : "both")
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
       AutoPopulateReport(
         getPatientAnswer,
@@ -1923,17 +1925,17 @@ const Report: React.FC = () => {
       //     "Subpectoral (Retro-pectoral)"
       //   );
 
-      // //Displacement
-      // getReportAnswer(breastImpantQuestions.displacement) === "" &&
-      //   handleReportInputChange(breastImpantQuestions.displacement, "None");
+      //Displacement
+      getReportAnswer(breastImpantQuestions.displacement) === "" &&
+        handleReportInputChange(breastImpantQuestions.displacement, "None");
 
-      // // Contracture
-      // getReportAnswer(breastImpantQuestions.contracture) === "" &&
-      //   handleReportInputChange(breastImpantQuestions.contracture, "None");
+      // Contracture
+      getReportAnswer(breastImpantQuestions.contracture) === "" &&
+        handleReportInputChange(breastImpantQuestions.contracture, "None");
 
-      // //Rupture
-      // getReportAnswer(breastImpantQuestions.rupture) === "" &&
-      //   handleReportInputChange(breastImpantQuestions.rupture, "Absent");
+      //Rupture
+      getReportAnswer(breastImpantQuestions.rupture) === "" &&
+        handleReportInputChange(breastImpantQuestions.rupture, "Absent");
 
       // SYMMETRY
       getReportAnswer(symmetryQuestions.symmetry) === "" &&
@@ -2186,8 +2188,9 @@ const Report: React.FC = () => {
   }, [assignData]);
 
   const [showMailDialog, setShowMailDialog] = useState(false);
-  const [mailOption, setMailOption] = useState("none");
 
+  const [mailOption, setMailOption] = useState("");
+  
   const handleReportSubmit = async (
     movedStatus: string,
     editStatus: boolean,
