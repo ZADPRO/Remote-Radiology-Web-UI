@@ -546,9 +546,6 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           refDDEaseQTReportAccess: checked,
-                          ...(checked
-                            ? {}
-                            : { refDDNAsystemReportAccess: false }),
                         }));
                       }}
                     />
@@ -575,7 +572,6 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                           refDDNAsystemReportAccess: checked,
                         }))
                       }
-                      disabled={!formData.refDDEaseQTReportAccess}
                     />
                   </div>
                 </div>
