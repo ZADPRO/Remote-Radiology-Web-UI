@@ -97,7 +97,7 @@ const LesionsOptions: React.FC<Props> = ({
         "hypertrophic tissue with microcysts": [],
         "fibronodular density": [],
         "multiple simple cysts": [],
-        "solid mass / nodule": [],        
+        "solid mass / nodule": [],
         others: [],
       });
     }
@@ -392,6 +392,15 @@ const LesionsOptions: React.FC<Props> = ({
                                       }}
                                       required
                                       className="custom-radio"
+                                      onDoubleClick={() => {
+                                        const updated = [...dataArray];
+                                        updated[index].locationLevel = "";
+                                        updated[index].syncStatus = true;
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
                                     />
                                     <Label
                                       htmlFor={`Level-${mainQId}-${index}-${i}`}
@@ -601,6 +610,15 @@ const LesionsOptions: React.FC<Props> = ({
                                           JSON.stringify(updated)
                                         );
                                       }}
+                                      onDoubleClick={() => {
+                                        const updated = [...dataArray];
+                                        updated[index].Shape = "";
+                                        updated[index].syncStatus = true;
+                                        handleReportInputChange(
+                                          DataQId,
+                                          JSON.stringify(updated)
+                                        );
+                                      }}
                                       required
                                       className="custom-radio"
                                     />
@@ -642,6 +660,15 @@ const LesionsOptions: React.FC<Props> = ({
                                     onChange={() => {
                                       const updated = [...dataArray];
                                       updated[index].Appearance = item.value;
+                                      updated[index].syncStatus = true;
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    onDoubleClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].Appearance = "";
                                       updated[index].syncStatus = true;
                                       handleReportInputChange(
                                         DataQId,
@@ -696,6 +723,15 @@ const LesionsOptions: React.FC<Props> = ({
                                         JSON.stringify(updated)
                                       );
                                     }}
+                                    onDoubleClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].Margins = "";
+                                      updated[index].syncStatus = true;
+                                      handleReportInputChange(
+                                        DataQId,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
                                     required
                                     className="custom-radio"
                                   />
@@ -742,6 +778,15 @@ const LesionsOptions: React.FC<Props> = ({
                                           const updated = [...dataArray];
                                           updated[index].density =
                                             d.toLowerCase();
+                                          updated[index].syncStatus = true;
+                                          handleReportInputChange(
+                                            DataQId,
+                                            JSON.stringify(updated)
+                                          );
+                                        }}
+                                        onDoubleClick={() => {
+                                          const updated = [...dataArray];
+                                          updated[index].density = "";
                                           updated[index].syncStatus = true;
                                           handleReportInputChange(
                                             DataQId,
@@ -817,6 +862,15 @@ const LesionsOptions: React.FC<Props> = ({
                                         onChange={() => {
                                           const updated = [...dataArray];
                                           updated[index].debris = item.value;
+                                          updated[index].syncStatus = true;
+                                          handleReportInputChange(
+                                            DataQId,
+                                            JSON.stringify(updated)
+                                          );
+                                        }}
+                                        onDoubleClick={() => {
+                                          const updated = [...dataArray];
+                                          updated[index].debris = "";
                                           updated[index].syncStatus = true;
                                           handleReportInputChange(
                                             DataQId,

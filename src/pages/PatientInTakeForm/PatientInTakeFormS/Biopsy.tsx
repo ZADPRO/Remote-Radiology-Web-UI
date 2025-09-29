@@ -113,6 +113,9 @@ const Biopsy: React.FC<Props> = ({
                       e.target.value
                     )
                   }
+                  onDoubleClick={() =>
+                    handleInputChange(questionIds.previousBiopsy, "")
+                  }
                   required
                 />
                 <Label htmlFor="biopsy-no">No</Label>
@@ -130,6 +133,12 @@ const Biopsy: React.FC<Props> = ({
                     handleInputChange(
                       questionIds.previousBiopsy,
                       e.target.value
+                    )
+                  }
+                  onDoubleClick={() =>
+                    handleInputChange(
+                      questionIds.previousBiopsy,
+                      ""
                     )
                   }
                   required
@@ -186,6 +195,12 @@ const Biopsy: React.FC<Props> = ({
                     handleInputChange(
                       questionIds.previousBiopsy,
                       e.target.value
+                    )
+                  }
+                  onDoubleClick={() =>
+                    handleInputChange(
+                      questionIds.previousBiopsy,
+                      ""
                     )
                   }
                   required
@@ -256,6 +271,12 @@ const Biopsy: React.FC<Props> = ({
                                   e.target.value
                                 )
                               }
+                              onDoubleClick={() =>
+                                handleInputChange(
+                                  questionIds.biopsyLeftType,
+                                  ""
+                                )
+                              }
                               required
                             />
                             <Label htmlFor={id}>{value}</Label>
@@ -303,6 +324,12 @@ const Biopsy: React.FC<Props> = ({
                                 handleInputChange(
                                   questionIds.biopsyRightType,
                                   e.target.value
+                                )
+                              }
+                              onDoubleClick={() =>
+                                handleInputChange(
+                                  questionIds.biopsyRightType,
+                                  ""
                                 )
                               }
                               required

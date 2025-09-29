@@ -142,6 +142,7 @@ const AbnormalFindings: React.FC<Props> = ({
                 name={`clock-${prefix}`}
                 checked={getAnswer(statusId) === val}
                 onChange={() => handleInputChange(statusId, val)}
+                onDoubleClick={() => handleInputChange(statusId, "")}
                 className="custom-radio"
               />
               <Label className="text-sm font-semibold">{val}</Label>
@@ -194,6 +195,7 @@ const AbnormalFindings: React.FC<Props> = ({
                 name={`distance-${prefix}`}
                 checked={getAnswer(statusId) === val}
                 onChange={() => handleInputChange(statusId, val)}
+                onDoubleClick={() => handleInputChange(statusId, "")}
                 className="custom-radio"
               />
               <Label className="text-sm font-semibold">{val}</Label>
@@ -238,6 +240,7 @@ const AbnormalFindings: React.FC<Props> = ({
                   name={`sizeofab-${prefix}`}
                   checked={getAnswer(statusId) === val}
                   onChange={() => handleInputChange(statusId, val)}
+                  onDoubleClick={() => handleInputChange(statusId, "")}
                   className="custom-radio"
                 />
                 <Label className="font-semibold text-sm">{val}</Label>
@@ -296,6 +299,7 @@ const AbnormalFindings: React.FC<Props> = ({
                   value={option}
                   checked={selected === option}
                   onChange={() => handleInputChange(categoryId, option)}
+                  onDoubleClick={() => handleInputChange(categoryId, "")}
                   className="custom-radio"
                   id={`${prefix}-${option}`}
                 />

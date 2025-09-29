@@ -485,9 +485,11 @@ const BreastImplantDetails: React.FC<Props> = ({
               ]}
             />
 
-            {reportFormData.find(
+            {(reportFormData.find(
               (q) => q.questionId === questionIds.contracture
-            )?.answer !== "None" && (
+            )?.answer !== "None" && reportFormData.find(
+              (q) => q.questionId === questionIds.contracture
+            )?.answer !== "") && (
               <div className="pl-2 lg:pl-[13rem] space-y-2">
                 <MultiRadioOptionalInputInline
                   label="Severity"

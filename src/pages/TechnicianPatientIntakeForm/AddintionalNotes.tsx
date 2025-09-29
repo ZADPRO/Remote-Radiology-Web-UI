@@ -72,6 +72,7 @@ const AddintionalNotes: React.FC<Props> = ({
             value={value}
             checked={getAnswer(questionId) === value}
             onChange={(e) => handleInputChange(questionId, e.target.value)}
+            onDoubleClick={() => handleInputChange(questionId, "")}
             className="custom-radio"
           />
           <Label htmlFor={`${name}-${value.toLowerCase()}`}>{value}</Label>

@@ -137,6 +137,10 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Right")
                             }
+                            onDoubleClick={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "")
+                            }
                             disabled={
                               getAnswerByQuestionId(Props.RQID) != "true"
                             }
@@ -235,6 +239,10 @@ const BreastInputWithout: React.FC<Props> = (Props) => {
                             onChange={() =>
                               Props.biggerSide &&
                               updateAnswer(Props.biggerSide, "Left")
+                            }
+                            onDoubleClick={() =>
+                              Props.biggerSide &&
+                              updateAnswer(Props.biggerSide, "")
                             }
                             disabled={
                               getAnswerByQuestionId(Props.LQID) != "true"

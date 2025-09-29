@@ -71,6 +71,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Estrogen, "Unknown")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Estrogen, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Unknown</Label>
@@ -83,6 +86,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Estrogen, "Negative")
                     }
+                     onDoubleClick={() =>
+                      handleInputChange(questionIds.Estrogen, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Negative</Label>
@@ -94,6 +100,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     checked={getAnswer(questionIds.Estrogen) === "Positive"}
                     onChange={() =>
                       handleInputChange(questionIds.Estrogen, "Positive")
+                    }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Estrogen, "")
                     }
                     className="custom-radio"
                   />
@@ -138,6 +147,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Progesterone, "Unknown")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Progesterone, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Unknown</Label>
@@ -150,6 +162,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Progesterone, "Negative")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Progesterone, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Negative</Label>
@@ -161,6 +176,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     checked={getAnswer(questionIds.Progesterone) === "Positive"}
                     onChange={() =>
                       handleInputChange(questionIds.Progesterone, "Positive")
+                    }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Progesterone, "")
                     }
                     className="custom-radio"
                   />
@@ -203,6 +221,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.HER2, "Unknown")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.HER2, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Unknown</Label>
@@ -215,6 +236,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.HER2, "Negative")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.HER2, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Negative</Label>
@@ -226,6 +250,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     checked={getAnswer(questionIds.HER2) === "Positive"}
                     onChange={() =>
                       handleInputChange(questionIds.HER2, "Positive")
+                    }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.HER2, "")
                     }
                     className="custom-radio"
                   />
@@ -265,6 +292,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Ki, "Unknown")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Ki, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Unknown</Label>
@@ -275,6 +305,7 @@ const ReceptorStatus: React.FC<Props> = ({
                     name="Ki"
                     checked={getAnswer(questionIds.Ki) === "Known"}
                     onChange={() => handleInputChange(questionIds.Ki, "Known")}
+                    onDoubleClick={() => handleInputChange(questionIds.Ki, "")}
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Known</Label>
@@ -315,6 +346,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Oncotype, "No")
                     }
+                     onDoubleClick={() =>
+                      handleInputChange(questionIds.Oncotype, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">No</Label>
@@ -327,6 +361,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.Oncotype, "Yes")
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Oncotype, "")
+                    }
                     className="custom-radio"
                   />
                   <Label className="font-semibold text-sm">Yes</Label>
@@ -338,6 +375,9 @@ const ReceptorStatus: React.FC<Props> = ({
                     checked={getAnswer(questionIds.Oncotype) === "Pending"}
                     onChange={() =>
                       handleInputChange(questionIds.Oncotype, "Pending")
+                    }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.Oncotype, "")
                     }
                     className="custom-radio"
                   />

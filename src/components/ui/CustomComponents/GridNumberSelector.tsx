@@ -26,8 +26,8 @@ const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSelect = (num: number) => {
-    handleInputChange(questionId, String(num))
+  const handleSelect = (num?: number) => {
+    handleInputChange(questionId, num ? String(num) : "")
     setIsOpen(false)
   }
 
@@ -36,7 +36,7 @@ const GridNumberSelectorPopover: React.FC<GridNumberSelectorPopoverProps> = ({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className={cn("w-28", className)}>
+        <Button onDoubleClick={() => handleSelect()} variant="outline" size="sm" className={cn("w-28", className)}>
           {value ? `${value}%` : "Select %"}
         </Button>
       </PopoverTrigger>

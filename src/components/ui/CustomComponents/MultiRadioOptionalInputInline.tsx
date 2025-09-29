@@ -86,6 +86,7 @@ const MultiRadioOptionalInputInline: React.FC<Props> = ({
                 onChange={(e) => handleInputChange(questionId, e.target.value)}
                 required={required}
                 className="custom-radio"
+                onDoubleClick={() => handleInputChange(questionId, "")}
               />
               <Label
                 className={`${

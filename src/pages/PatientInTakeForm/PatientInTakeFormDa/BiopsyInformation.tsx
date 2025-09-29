@@ -171,6 +171,9 @@ const BiopsyInformation: React.FC<Props> = ({
                           onChange={() =>
                             handleInputChange(questionIds.Biopsyresult, option)
                           }
+                          onDoubleClick={() =>
+                            handleInputChange(questionIds.Biopsyresult, "")
+                          }
                           className="custom-radio"
                           id={option === "Other" ? "SupportOther" : option}
                           required

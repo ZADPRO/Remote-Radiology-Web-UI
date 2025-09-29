@@ -108,6 +108,7 @@ const LabeledRadioWithOptionalInput: React.FC<Props> = ({
                 value={value}
                 checked={selectedValue === value}
                 onChange={(e) => handleInputChange(questionId, e.target.value)}
+                onDoubleClick={() => handleInputChange(questionId, "")}
                 className="custom-radio"
                 disabled={disabled}
                 required={required}

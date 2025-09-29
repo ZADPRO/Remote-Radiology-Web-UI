@@ -61,6 +61,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
             value={value}
             checked={getAnswer(questionId) === value}
             onChange={(e) => handleInputChange(questionId, e.target.value)}
+            onDoubleClick={() => handleInputChange(questionId, "")}
             className="custom-radio"
           />
           <Label htmlFor={`${name}-${value.toLowerCase()}`}>{value}</Label>
@@ -112,14 +113,13 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                   type="number"
                   value={getAnswer(questionIds.ageLiveBirth)}
                   onChange={(e) =>
-                    handleInputChange(
-                      questionIds.ageLiveBirth,
-                      e.target.value
-                    )
+                    handleInputChange(questionIds.ageLiveBirth, e.target.value)
                   }
                   className="w-24 text-sm"
                   placeholder="Age"
-                  disabled={getAnswer(questionIds.liveBirthApplicable) === "YES"}
+                  disabled={
+                    getAnswer(questionIds.liveBirthApplicable) === "YES"
+                  }
                 />
                 <Label className="text-sm sm:text-base">Age</Label>
               </div>
@@ -268,10 +268,7 @@ const MenstrualAndReproductive: React.FC<Props> = ({
                   type="number"
                   value={getAnswer(questionIds.ageMenopause)}
                   onChange={(e) =>
-                    handleInputChange(
-                      questionIds.ageMenopause,
-                      e.target.value
-                    )
+                    handleInputChange(questionIds.ageMenopause, e.target.value)
                   }
                   className="w-24 text-sm"
                   placeholder="Age"

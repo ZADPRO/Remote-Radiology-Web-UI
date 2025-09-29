@@ -230,6 +230,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(({
                 value={val}
                 checked={answers.yesNo === val}
                 onChange={() => handleYesNoChange(val)}
+                onDoubleClick={() => handleYesNoChange("")}
                 className="custom-radio"
                 required
               />
@@ -250,6 +251,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(({
                   value={val}
                   checked={answers.result === val}
                   onChange={() => handleResultChange(val)}
+                  onDoubleClick={() => handleResultChange("")}
                   className="custom-radio"
                   required={showDetails}
                 />
@@ -273,6 +275,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(({
                 value={val}
                 checked={answers.dateKnown === val}
                 onChange={() => handleDateKnownChange(val)}
+                onDoubleClick={() => handleDateKnownChange("")}
                 className="custom-radio"
                 required={showDetails}
               />
@@ -309,6 +312,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(({
                   value={val}
                   checked={answers.reportAvailable === val}
                   onChange={() => handleReportAvailableChange(val)}
+                  onDoubleClick={() => handleReportAvailableChange("")}
                   className="custom-radio"
                   required={showDetails}
                 />

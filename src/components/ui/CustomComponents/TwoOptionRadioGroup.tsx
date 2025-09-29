@@ -56,9 +56,8 @@ const TwoOptionRadioGroup: React.FC<Props> = ({
                 name={name}
                 value={value}
                 checked={getAnswer(questionId) === value}
-                onChange={(e) =>
-                  handleInputChange(questionId, e.target.value)
-                }
+                onChange={(e) => handleInputChange(questionId, e.target.value)}
+                onDoubleClick={() => handleInputChange(questionId, "")}
                 required={required}
                 className="custom-radio"
               />

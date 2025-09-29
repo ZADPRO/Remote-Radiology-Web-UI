@@ -24,7 +24,7 @@ const MonitoringFollow: React.FC<Props> = ({
   formData,
   handleInputChange,
   questionIds,
-  readOnly
+  readOnly,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -63,6 +63,9 @@ const MonitoringFollow: React.FC<Props> = ({
                       checked={getAnswer(questionIds.currentRec) === option}
                       onChange={() =>
                         handleInputChange(questionIds.currentRec, option)
+                      }
+                      onDoubleClick={() =>
+                        handleInputChange(questionIds.currentRec, "")
                       }
                       className="custom-radio"
                       id={option === "Other" ? "SupportOther" : option}
@@ -172,6 +175,9 @@ const MonitoringFollow: React.FC<Props> = ({
                       checked={getAnswer(questionIds.additionalrec) === option}
                       onChange={() =>
                         handleInputChange(questionIds.additionalrec, option)
+                      }
+                      onDoubleClick={() =>
+                        handleInputChange(questionIds.additionalrec, "")
                       }
                       className="custom-radio"
                       id={option === "Other" ? "SupportOther" : option}
