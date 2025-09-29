@@ -1109,6 +1109,8 @@ ${
             : "")
       );
     }
+
+    setMailRecepient(patientpublicprivate !== "private" ? "both" : "none")
   }, [
     reportFormData,
     syncStatus,
@@ -1146,9 +1148,18 @@ ${
 
   const handleAddAddendum = async () => {
     try {
+      let FinalText = "";
+      if (addendumText) {
+        FinalText += "<p>" + addendumText + "</p>";
+      }
+
+      if (addendumMacro) {
+        FinalText += "<p>" + addendumMacro + "</p>";
+      }
+
       setLoading(true);
       const response = await reportService.AddAddedum(
-        "<p>" + addendumText + "</p><p>" + addendumMacro + "</p>",
+        FinalText,
         AppointmentId,
         mailrecepient === "patient" || mailrecepient === "both",
         mailrecepient === "scancenter" || mailrecepient === "both",
@@ -1317,7 +1328,7 @@ ${
                 <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                   <div>
                     <Label className="font-semibold text-[#e06666] text-base">
-                      Ease QT Find Select
+                      easeQT Find Select / Load Template
                     </Label>
                   </div>
                   <Switch
@@ -1392,7 +1403,6 @@ ${
                       placeholder="Add Addendum"
                       value={addendumText}
                       onChange={(e) => setAddendumText(e.target.value)}
-                      required
                     />
                     <Label className="mt-2">Macro</Label>
                     <div className="my-2">
