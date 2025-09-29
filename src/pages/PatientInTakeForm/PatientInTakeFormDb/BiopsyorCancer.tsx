@@ -121,6 +121,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                 name={`clock-${prefix}`}
                 checked={getAnswer(statusId) === val}
                 onChange={() => handleInputChange(statusId, val)}
+                onDoubleClick={() => handleInputChange(statusId, "")}
                 className="custom-radio"
               />
               <Label className="text-sm font-semibold">{val}</Label>
@@ -171,6 +172,7 @@ const BiopsyorCancer: React.FC<Props> = ({
                 name={`distance-${prefix}`}
                 checked={getAnswer(statusId) === val}
                 onChange={() => handleInputChange(statusId, val)}
+                onDoubleClick={() => handleInputChange(statusId, "")}
                 className="custom-radio"
               />
               <Label className="text-sm font-semibold">{val}</Label>
@@ -253,6 +255,9 @@ const BiopsyorCancer: React.FC<Props> = ({
                       onChange={() =>
                         handleInputChange(questionIds.typediagnosis, option)
                       }
+                      onDoubleClick={() =>
+                        handleInputChange(questionIds.typediagnosis, "")
+                      }
                       className="custom-radio"
                       id={option === "Other" ? "SupportOther" : option}
                       required
@@ -302,6 +307,9 @@ const BiopsyorCancer: React.FC<Props> = ({
                     onChange={() =>
                       handleInputChange(questionIds.grade, option)
                     }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.grade, "")
+                    }
                     className="custom-radio"
                     id={option === "Other" ? "SupportOther" : option}
                   />
@@ -332,6 +340,9 @@ const BiopsyorCancer: React.FC<Props> = ({
                     checked={getAnswer(questionIds.stage) === option}
                     onChange={() =>
                       handleInputChange(questionIds.stage, option)
+                    }
+                    onDoubleClick={() =>
+                      handleInputChange(questionIds.stage, "")
                     }
                     className="custom-radio"
                     id={option === "Other" ? "SupportOther" : option}

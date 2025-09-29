@@ -133,7 +133,11 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
         </div>
         {parsedList.map((item, index) => (
           <>
-            <div className={`flex gap-6 justify-center ${index !== 0 && `border-t-2`} pt-3`}>
+            <div
+              className={`flex gap-6 justify-center ${
+                index !== 0 && `border-t-2`
+              } pt-3`}
+            >
               <div
                 key={index}
                 className="flex flex-wrap items-center gap-2 pl-4"
@@ -221,8 +225,18 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                             }}
                             required
                             className="custom-radio"
+                            onDoubleClick={() => {
+                              const updated = [...parsedList];
+                              updated[index] = {
+                                ...updated[index],
+                                position: "", // make sure to replace the object
+                              };
+                              updateList(updated);
+                            }}
                           />
-                          <Label htmlFor={`grandularLevel-${label}-${index}-${i}`}>
+                          <Label
+                            htmlFor={`grandularLevel-${label}-${index}-${i}`}
+                          >
                             {level}
                           </Label>
                         </div>
@@ -231,7 +245,7 @@ const GrandularAndDuctalTissueRight: React.FC<Props> = ({
                   </div>
 
                   <>
-                    {item.position !== "Unknown" && (
+                    {(item.position !== "Unknown" && item.position !== "") && (
                       <>
                         {item.position === "Coronal Level"
                           ? "P - "

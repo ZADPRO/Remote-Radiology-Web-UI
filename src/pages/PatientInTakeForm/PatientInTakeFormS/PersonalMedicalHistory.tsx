@@ -188,6 +188,14 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                     e.target.value
                                   )
                                 }
+                                onDoubleClick={() =>
+                                  handleInputChange(
+                                    questionIds[
+                                      item.posId as keyof QuestionIds
+                                    ],
+                                    ""
+                                  )
+                                }
                                 className="custom-radio"
                                 required
                               />
@@ -309,6 +317,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                               handleInputChange(
                                 questionIds.breastSurgeryOthersSpecifyDirection,
                                 e.target.value
+                              )
+                            }
+                            onDoubleClick={() =>
+                              handleInputChange(
+                                questionIds.breastSurgeryOthersSpecifyDirection,
+                                ""
                               )
                             }
                             className="custom-radio"
@@ -433,6 +447,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                         e.target.value
                                       );
                                     }}
+                                    onDoubleClick={() => {
+                                      handleInputChange(
+                                        questionIds.implantsSpecify,
+                                        ""
+                                      );
+                                    }}
                                     required
                                   />
                                   <Label htmlFor={id}>{value}</Label>
@@ -553,6 +573,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       handleInputChange(
                                         questionIds.implantsRightSpecify,
                                         e.target.value
+                                      )
+                                    }
+                                    onDoubleClick={() =>
+                                      handleInputChange(
+                                        questionIds.implantsRightSpecify,
+                                        ""
                                       )
                                     }
                                     required
@@ -708,6 +734,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       e.target.value
                                     );
                                   }}
+                                  onDoubleClick={() => {
+                                    handleInputChange(
+                                      questionIds.implantsSpecify,
+                                      ""
+                                    );
+                                  }}
                                   required
                                 />
                                 <Label htmlFor={id}>{value}</Label>
@@ -858,6 +890,12 @@ const PersonalMedicalHistory: React.FC<Props> = ({
                                       e.target.value
                                     )
                                   }
+                                  onDoubleClick={() => {
+                                    handleInputChange(
+                                      questionIds.implantsRightSpecify,
+                                      ""
+                                    );
+                                  }}
                                   required
                                 />
                                 <Label htmlFor={id}>{value}</Label>

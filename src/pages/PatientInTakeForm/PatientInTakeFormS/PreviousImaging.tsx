@@ -156,6 +156,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                 value={val}
                 checked={getAnswer(yesNoId) === val}
                 onChange={() => handleInputChange(yesNoId, val)}
+                onDoubleClick={() => handleInputChange(yesNoId, "")}
                 className="custom-radio"
                 required
               />
@@ -176,6 +177,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                   value={val}
                   checked={getAnswer(resultId) === val}
                   onChange={() => handleInputChange(resultId, val)}
+                  onDoubleClick={() => handleInputChange(resultId, "")}
                   className="custom-radio"
                   required={showDetails}
                 />
@@ -199,6 +201,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                 value={val}
                 checked={getAnswer(dateKnownId) === val}
                 onChange={() => handleInputChange(dateKnownId, val)}
+                onDoubleClick={() => handleInputChange(dateKnownId, "")}
                 className="custom-radio"
                 required={showDetails}
               />
@@ -239,6 +242,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = ({
                   value={val}
                   checked={getAnswer(reportAvailableId) === val}
                   onChange={() => handleInputChange(reportAvailableId, val)}
+                  onDoubleClick={() => handleInputChange(reportAvailableId, "")}
                   className="custom-radio"
                   required={showDetails}
                 />

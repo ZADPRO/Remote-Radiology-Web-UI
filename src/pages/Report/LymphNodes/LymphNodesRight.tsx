@@ -161,6 +161,14 @@ const LymphNodesRight: React.FC<Props> = ({
                                     JSON.stringify(updated)
                                   );
                                 }}
+                                onDoubleClick={() => {
+                                  const updated = [...dataArray];
+                                  updated[index].locationLevel = "";
+                                  handleReportInputChange(
+                                    questionIds.IntramammaryDatar,
+                                    JSON.stringify(updated)
+                                  );
+                                }}
                                 required
                                 className="custom-radio"
                               />
@@ -242,6 +250,14 @@ const LymphNodesRight: React.FC<Props> = ({
                                     onChange={() => {
                                       const updated = [...dataArray];
                                       updated[index].level = item.value;
+                                      handleReportInputChange(
+                                        questionIds.IntramammaryDatar,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    onDoubleClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].level = "";
                                       handleReportInputChange(
                                         questionIds.IntramammaryDatar,
                                         JSON.stringify(updated)
@@ -375,6 +391,12 @@ const LymphNodesRight: React.FC<Props> = ({
                           handleReportInputChange(
                             questionIds.axillarynodes,
                             e.target.value
+                          )
+                        }
+                        onDoubleClick={() =>
+                          handleReportInputChange(
+                            questionIds.axillarynodes,
+                            ""
                           )
                         }
                         required
@@ -536,6 +558,14 @@ const LymphNodesRight: React.FC<Props> = ({
                                     onChange={() => {
                                       const updated = [...dataArray];
                                       updated[index].level = item.value;
+                                      handleReportInputChange(
+                                        questionIds.ClipsPresentdata,
+                                        JSON.stringify(updated)
+                                      );
+                                    }}
+                                    onDoubleClick={() => {
+                                      const updated = [...dataArray];
+                                      updated[index].level = "";
                                       handleReportInputChange(
                                         questionIds.ClipsPresentdata,
                                         JSON.stringify(updated)

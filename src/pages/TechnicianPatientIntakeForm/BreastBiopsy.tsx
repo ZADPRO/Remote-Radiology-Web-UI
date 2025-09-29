@@ -129,6 +129,9 @@ const BreastBiopsy: React.FC<Props> = ({
             onChange={(e) =>
               isEditable && handlePatientInputChange(questionId, e.target.value)
             }
+            onDoubleClick={() =>
+              isEditable && handlePatientInputChange(questionId, "")
+            }
             className="custom-radio"
             disabled={!isEditable}
             required

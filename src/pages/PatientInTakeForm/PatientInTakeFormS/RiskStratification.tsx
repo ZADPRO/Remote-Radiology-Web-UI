@@ -141,6 +141,12 @@ const RiskStratification: React.FC<Props> = ({
                               e.target.value
                             )
                           }
+                          onDoubleClick={() =>
+                            handleInputChange(
+                              questionIds.auriaResult,
+                              ""
+                            )
+                          }
                           required
                           className="custom-radio"
                         />

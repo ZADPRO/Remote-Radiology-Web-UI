@@ -37,21 +37,22 @@ const ValidatedSelect: React.FC<Props> = ({
   return (
     <div className="flex flex-col space-y-1">
       {label && (
-      <Label className="font-semibold text-base flex flex-wrap gap-1">
-        {label}
-        {required && label && <span className="text-red-500">*</span>}
-        {description && (
-          <span className="text-xs text-muted-foreground font-normal">
-            ({description})
-          </span>
-        )}
-      </Label>
+        <Label className="font-semibold text-base flex flex-wrap gap-1">
+          {label}
+          {required && label && <span className="text-red-500">*</span>}
+          {description && (
+            <span className="text-xs text-muted-foreground font-normal">
+              ({description})
+            </span>
+          )}
+        </Label>
       )}
 
       <select
         name={`question-${questionId}`}
         value={value}
         onChange={(e) => handleInputChange(questionId, e.target.value)}
+        onDoubleClick={() => handleInputChange(questionId, "")}
         required={required}
         disabled={disabled}
         className={cn(

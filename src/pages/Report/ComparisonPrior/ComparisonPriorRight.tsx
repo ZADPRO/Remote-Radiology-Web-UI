@@ -274,6 +274,9 @@ const ComparisonPriorRight: React.FC<Props> = ({
                             onChange={() =>
                               updateLesionField(i, "previous", opt)
                             }
+                            onDoubleClick={() =>
+                              updateLesionField(i, "previous", "")
+                            }
                           />
                           {opt}
                         </label>
@@ -506,6 +509,9 @@ const ComparisonPriorRight: React.FC<Props> = ({
                             value={opt}
                             onChange={() =>
                               updateLesionField(i, "lesionStatus", opt)
+                            }
+                            onDoubleClick={() =>
+                              updateLesionField(i, "lesionStatus", "")
                             }
                           />
                           {opt}

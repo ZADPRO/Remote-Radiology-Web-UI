@@ -28,7 +28,7 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
   className,
   required = false,
   description,
-  disabled = false
+  disabled = false,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -70,9 +70,12 @@ const MultiOptionRadioGroup: React.FC<Props> = ({
                 value={value}
                 checked={getAnswer(questionId) === value}
                 onChange={(e) => handleInputChange(questionId, e.target.value)}
+                onDoubleClick={() => handleInputChange(questionId, "")}
                 required={required}
                 disabled={disabled}
-                className={`custom-radio ${disabled ? "pointer-events-none" : ""}`}
+                className={`custom-radio ${
+                  disabled ? "pointer-events-none" : ""
+                }`}
               />
               <Label htmlFor={id}>{optLabel}</Label>
             </div>

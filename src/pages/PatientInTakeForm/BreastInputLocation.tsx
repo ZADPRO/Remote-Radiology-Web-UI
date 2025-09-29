@@ -303,6 +303,8 @@ const BreastInputLocation: React.FC<Props> = (Props) => {
                         {
                           label: "Axillary (Armpit)",
                           checkedQId: Props.LocationAxillary,
+                          durationQIdRight: Props.LocationAxillaryDurationRight,
+                          sizeQIdRight: Props.LocationAxillarySizeRight,
                           durationQId: Props.LocationAxillaryDuration,
                           sizeQId: Props.LocationAxillarySize,
                           isOther: false,
