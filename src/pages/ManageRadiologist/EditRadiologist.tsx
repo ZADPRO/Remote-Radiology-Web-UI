@@ -556,7 +556,22 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 Aadhar <span className="text-red-500">*</span>
               </Label>
 
-              <FileUploadButton
+              <Input
+                id="aadhar"
+                type="text"
+                placeholder="Enter Aadhar Number"
+                className="bg-white"
+                value={formData.refRAAadhar || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refRAAadhar: e.target.value,
+                  }))
+                }
+                required
+              />
+
+              {/* <FileUploadButton
                 id="aadhar-upload"
                 label="Upload Aadhar"
                 required={true}
@@ -575,10 +590,10 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     });
                   }
                 }}
-              />
+              /> */}
 
               {/* Show uploaded or existing Aadhar file */}
-              {files.aadhar ? (
+              {/* {files.aadhar ? (
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -608,7 +623,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     </span>
                   </div>
                 )
-              )}
+              )} */}
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label
@@ -788,7 +803,22 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 PAN <span className="text-red-500">*</span>
               </Label>
 
-              <FileUploadButton
+              <Input
+                id="pan"
+                type="text"
+                placeholder="Enter Pan"
+                className="bg-white"
+                value={formData.refRAPan || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refRAPan: e.target.value,
+                  }))
+                }
+                required
+              />
+
+              {/* <FileUploadButton
                               id="pan-upload"
                               label="Upload PAN"
                               required={false}
@@ -807,10 +837,10 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                                   });
                                 }
                               }}
-                            />
+                            /> */}
 
               {/* Show uploaded or existing PAN file */}
-              {files.pan ? (
+              {/* {files.pan ? (
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -840,7 +870,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     </span>
                   </div>
                 )
-              )}
+              )} */}
             </div>
           </div>
         </div>

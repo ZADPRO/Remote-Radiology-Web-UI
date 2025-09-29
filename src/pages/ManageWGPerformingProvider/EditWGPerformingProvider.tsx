@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import DatePicker from "@/components/date-picker";import { Camera, FileText, Pencil, X } from "lucide-react";
+import DatePicker from "@/components/date-picker";
+import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -57,72 +58,72 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-      if (error && errorRef.current) {
-        errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, [error]);
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [error]);
 
   const [formData, setFormData] = useState<ListSpecificWGPerformingProvider>({
-  aadharFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  panFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  profileImgFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  digitalSignatureFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  drivingLicenseFile: {
-    base64Data: "",
-    contentType: "",
-  },
+    aadharFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    panFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    digitalSignatureFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    drivingLicenseFile: {
+      base64Data: "",
+      contentType: "",
+    },
 
-  cvFiles: [],
-  licenseFiles: [],
-  malpracticeinsureance_files: [],
-  medicalLicenseSecurity: [],
+    cvFiles: [],
+    licenseFiles: [],
+    malpracticeinsureance_files: [],
+    medicalLicenseSecurity: [],
 
-  refCODOEmail: "",
-  refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "+91",
-  refCODOPhoneNo2: "",
-  refCODOPhoneNo2CountryCode: "+91",
+    refCODOEmail: "",
+    refCODOPhoneNo1: "",
+    refCODOPhoneNo1CountryCode: "+91",
+    refCODOPhoneNo2: "",
+    refCODOPhoneNo2CountryCode: "+91",
 
-  refWGPPAadhar: "",
-  refWGPPDrivingLicense: "",
-  refWGPPDigitalSignature: "",
-  refWGPPMBBSRegNo: "",
-  refWGPPMDRegNo: "",
-  refWGPPPan: "",
-  refWGPPSpecialization: "",
+    refWGPPAadhar: "",
+    refWGPPDrivingLicense: "",
+    refWGPPDigitalSignature: "",
+    refWGPPMBBSRegNo: "",
+    refWGPPMDRegNo: "",
+    refWGPPPan: "",
+    refWGPPSpecialization: "",
 
-  refRTId: 0,
-  refUserCustId: "",
-  refUserDOB: "",
-  refUserFirstName: "",
-  refUserLastName: "",
-  refUserId: 0,
-  refUserProfileImg: "",
-  refUserStatus: true,
-});
+    refRTId: 0,
+    refUserCustId: "",
+    refUserDOB: "",
+    refUserFirstName: "",
+    refUserLastName: "",
+    refUserId: 0,
+    refUserProfileImg: "",
+    refUserStatus: true,
+  });
 
   const [files, setFiles] = useState<TempFilesState>({
-      profile_img: null,
-      cv_files: [],
-      license_files: [],
-      pan: null,
-      aadhar: null,
-      drivers_license: null,
-      malpracticeinsureance_files: [],
-      digital_signature: null,
-    });
+    profile_img: null,
+    cv_files: [],
+    license_files: [],
+    pan: null,
+    aadhar: null,
+    drivers_license: null,
+    malpracticeinsureance_files: [],
+    digital_signature: null,
+  });
 
   const [tempLicenses, setTempLicenses] = useState<TempLicense[]>([]);
   const [tempCVFiles, setTempCVs] = useState<TempLicense[]>([]);
@@ -137,7 +138,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
       );
       console.log("Fetching radiologist...", res);
 
-      const radiologistData = res.data[0]; 
+      const radiologistData = res.data[0];
 
       setFormData(radiologistData);
     } catch (error: any) {
@@ -180,9 +181,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  const handleDigitalSignatureUpload = async (
-    file: File,
-  ) => {
+  const handleDigitalSignatureUpload = async (file: File) => {
     setError(null);
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
@@ -191,14 +190,14 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
       const response = await uploadService.uploadImage({
         formImg: formDataImg,
       });
-  
+
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
           refWGPPDigitalSignature: response.fileName,
           digitalSignatureFile: null,
         }));
-  
+
         setFiles((prev) => ({
           ...prev,
           digital_signature: file,
@@ -292,7 +291,9 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  const handleRemoveSingleFile = (key: "profile_img" | "pan" | "aadhar" | "digital_signature") => {
+  const handleRemoveSingleFile = (
+    key: "profile_img" | "pan" | "aadhar" | "digital_signature"
+  ) => {
     setFiles((prev) => ({
       ...prev,
       [key]: null,
@@ -347,8 +348,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
-      }
-      else {
+      } else {
         setError(res.message);
       }
     } catch (error) {
@@ -360,7 +360,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  if(loading) return (<LoadingOverlay />);
+  if (loading) return <LoadingOverlay />;
 
   if (!formData) return <div className="p-4">No radiologist data found.</div>;
 
@@ -395,7 +395,6 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
   console.log(tempLicenses);
   console.log(tempCVFiles);
   console.log(tempMalpractice);
-
 
   return (
     <>
@@ -558,7 +557,22 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 Aadhar <span className="text-red-500">*</span>
               </Label>
 
-              <FileUploadButton
+              <Input
+                id="aadhar"
+                type="text"
+                placeholder="Enter Aadhar Number"
+                className="bg-white"
+                value={formData.refWGPPAadhar || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refWGPPAadhar: e.target.value,
+                  }))
+                }
+                required
+              />
+
+              {/* <FileUploadButton
                 id="aadhar-upload"
                 label="Upload Aadhar"
                 required={true}
@@ -577,10 +591,10 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                     });
                   }
                 }}
-              />
+              /> */}
 
               {/* Show uploaded or existing Aadhar file */}
-              {files.aadhar ? (
+              {/* {files.aadhar ? (
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -610,7 +624,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                     </span>
                   </div>
                 )
-              )}
+              )} */}
             </div>
             <div className="flex flex-col gap-1.5 w-full">
               <Label
@@ -789,7 +803,22 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 PAN <span className="text-red-500">*</span>
               </Label>
 
-              <FileUploadButton
+              <Input
+                id="pan"
+                type="text"
+                placeholder="Enter Pan"
+                className="bg-white"
+                value={formData.refWGPPPan || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refWGPPPan: e.target.value,
+                  }))
+                }
+                required
+              />
+
+              {/* <FileUploadButton
                 id="pan-upload"
                 label="Upload PAN"
                 required={false}
@@ -808,10 +837,10 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                     });
                   }
                 }}
-              />
+              /> */}
 
               {/* Show uploaded or existing PAN file */}
-              {files.pan ? (
+              {/* {files.pan ? (
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -841,7 +870,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                     </span>
                   </div>
                 )
-              )}
+              )} */}
             </div>
           </div>
         </div>

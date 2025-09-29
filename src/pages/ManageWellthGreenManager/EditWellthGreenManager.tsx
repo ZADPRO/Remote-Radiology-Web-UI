@@ -77,7 +77,9 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const res = await managerService.listSpecificWellthGreenManager(managerId);
+      const res = await managerService.listSpecificWellthGreenManager(
+        managerId
+      );
       if (res.data && res.data.length > 0) {
         setFormData(res.data[0]);
       } else {
@@ -105,9 +107,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({ formImg: formDataImg });
+      const response = await uploadService.uploadImage({
+        formImg: formDataImg,
+      });
       if (response.status && response.fileName) {
-        setFormData((prev) => (prev ? { ...prev, refUserProfileImg: response.fileName } : null));
+        setFormData((prev) =>
+          prev ? { ...prev, refUserProfileImg: response.fileName } : null
+        );
         setFiles((prev) => ({ ...prev, profile_img: file }));
       } else {
         setError(response.message || "Profile image upload failed.");
@@ -132,9 +138,13 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({ formFile: formDataObj });
+      const response = await uploadService.uploadFile({
+        formFile: formDataObj,
+      });
       if (response.status && response.fileName) {
-        setFormData((prev) => (prev ? { ...prev, [fieldName]: response.fileName } : null));
+        setFormData((prev) =>
+          prev ? { ...prev, [fieldName]: response.fileName } : null
+        );
         setFiles((prev) => ({ ...prev, [tempFileKey]: file }));
       } else {
         setError(response.message || `Upload failed for ${file.name}.`);
@@ -151,7 +161,9 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({ formFile: formDataObj });
+      const response = await uploadService.uploadFile({
+        formFile: formDataObj,
+      });
       if (response.status && response.fileName) {
         const newEduFileEntry: TempUpdateEduFile = {
           file_name: response.fileName,
@@ -164,7 +176,10 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           education_certificate: [...prev.education_certificate, file],
         }));
       } else {
-        setError(response.message || `Upload failed for education certificate: ${file.name}.`);
+        setError(
+          response.message ||
+            `Upload failed for education certificate: ${file.name}.`
+        );
       }
     } catch (err) {
       console.error(err);
@@ -172,10 +187,16 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     }
   };
 
-  const downloadFile = (base64Data: string, contentType: string, filename: string) => {
+  const downloadFile = (
+    base64Data: string,
+    contentType: string,
+    filename: string
+  ) => {
     try {
       const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+      const byteNumbers = new Array(byteCharacters.length)
+        .fill(0)
+        .map((_, i) => byteCharacters.charCodeAt(i));
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: contentType });
       const url = URL.createObjectURL(blob);
@@ -234,7 +255,12 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
   };
 
   if (loading) return <LoadingOverlay />;
-  if (!formData) return <div className="p-4 text-center">{error || "Manager data could not be loaded."}</div>;
+  if (!formData)
+    return (
+      <div className="p-4 text-center">
+        {error || "Manager data could not be loaded."}
+      </div>
+    );
 
   return (
     <form
@@ -366,9 +392,24 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* Aadhar Card */}
           <div className="flex flex-col gap-1.5 w-full">
             <Label className="text-sm" htmlFor="aadhar-upload">
-              Aadhar Card <span className="text-red-500">*</span>
+              Aadhar <span className="text-red-500">*</span>
             </Label>
-            <FileUploadButton
+            <Input
+              id="aadhar"
+              type="text"
+              placeholder="Enter Aadhar Number"
+              value={formData.refMDAadhar || ""}
+              onChange={(e) => {
+                if (e.target.value.length <= 10) {
+                  setFormData((prev) =>
+                    prev ? { ...prev, refMDAadhar: e.target.value } : null
+                  );
+                }
+              }}
+              required
+              className="bg-white"
+            />
+            {/* <FileUploadButton
               id="aadhar-upload"
               label="Upload Aadhar"
               required={true}
@@ -419,7 +460,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
               <div className="mt-1 text-xs text-gray-500 italic">
                 Aadhar uploaded (preview unavailable)
               </div>
-            ) : null}
+            ) : null} */}
           </div>
 
           {/* Driver's License */}
@@ -530,7 +571,9 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
+                formData.refUserDOB
+                  ? parseLocalDate(formData.refUserDOB)
+                  : undefined
               }
               className="pointer-events-auto"
               onChange={(date) =>
@@ -552,9 +595,24 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
           {/* PAN Card */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm" htmlFor="pan-upload">
-              PAN Card <span className="text-red-500">*</span>
+              PAN <span className="text-red-500">*</span>
             </Label>
-            <FileUploadButton
+            <Input
+              id="pan"
+              type="text"
+              placeholder="Enter Pan"
+              value={formData.refMDPan || ""}
+              onChange={(e) => {
+                if (e.target.value.length <= 10) {
+                  setFormData((prev) =>
+                    prev ? { ...prev, refMDPan: e.target.value } : null
+                  );
+                }
+              }}
+              required
+              className="bg-white"
+            />
+            {/* <FileUploadButton
               id="pan-upload"
               label="Upload PAN"
               required={false}
@@ -573,8 +631,8 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                   });
                 }
               }}
-            />
-
+            /> */}
+            {/* 
             {files.pan ? (
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
@@ -606,7 +664,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
               <div className="mt-1 text-xs text-gray-500 italic">
                 PAN uploaded (preview unavailable)
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
       </div>
@@ -618,7 +676,6 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
         <div className="flex flex-col gap-4 2xl:gap-6 w-full">
           <Label htmlFor="edu-certs-upload">
             Educational Certificates (multiple, max 10MB each){" "}
-            
           </Label>
           <FileUploadButton
             id="edu-certs-upload"
@@ -661,8 +718,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                         downloadFile(
                           cert.educationCertificateFile.base64Data,
                           cert.educationCertificateFile.contentType,
-                          cert.refECOldFileName ||
-                            `Certificate-${index + 1}`
+                          cert.refECOldFileName || `Certificate-${index + 1}`
                         )
                       }
                     >
