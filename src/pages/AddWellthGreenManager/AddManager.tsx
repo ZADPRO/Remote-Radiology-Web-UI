@@ -363,7 +363,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     }));
   };
 
-  console.log(new Date())
+  console.log(new Date());
 
   return (
     <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-15">
@@ -407,7 +407,25 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             Aadhar <span className="text-red-500">*</span>
           </Label>
 
-          <FileUploadButton
+          <Input
+            id="aadhar"
+            type="text"
+            placeholder="Enter Aadhar Number"
+            className="bg-white" // Takes remaining space
+            value={formData.aadhar}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 10) {
+                setFormData((prev) => ({
+                  ...prev,
+                  aadhar: value,
+                }));
+              }
+            }}
+            required
+          />
+
+          {/* <FileUploadButton
             id="aadhar-upload"
             label="Upload Aadhar"
             required={true}
@@ -428,10 +446,10 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "aadhar",
               });
             }}
-          />
+          /> */}
 
           {/* Uploaded Aadhar File */}
-          {tempFiles.aadhar && (
+          {/* {tempFiles.aadhar && (
             <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
               <span className="break-words">{tempFiles.aadhar.name}</span>
 
@@ -443,7 +461,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 <X className="w-4 h-4" />
               </button>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col gap-1.5 w-full">
@@ -587,7 +605,25 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             PAN <span className="text-red-500">*</span>
           </Label>
 
-          <FileUploadButton
+          <Input
+            id="pannumber"
+            type="text"
+            placeholder="Enter Pan"
+            className="bg-white" // Takes remaining space
+            value={formData.pan}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 10) {
+                setFormData((prev) => ({
+                  ...prev,
+                  pan: value,
+                }));
+              }
+            }}
+            required
+          />
+
+          {/* <FileUploadButton
             id="pan-upload"
             label="Upload PAN"
             required={true}
@@ -608,7 +644,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 tempFileKey: "pan",
               });
             }}
-          />
+          /> */}
 
           {/* <Input
             id="pan-upload"
@@ -636,7 +672,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           /> */}
 
           {/* Uploaded PAN File */}
-          {tempFiles.pan && (
+          {/* {tempFiles.pan && (
             <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
               <span className="break-words">{tempFiles.pan.name}</span>
 
@@ -648,7 +684,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                 <X className="w-4 h-4" />
               </button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

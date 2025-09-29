@@ -360,8 +360,18 @@ const AddWGPerformingProvider: React.FC = () => {
                 <Label className="text-sm" htmlFor="aadhar-upload">
                   Aadhar <span className="text-red-500">*</span>
                 </Label>
-
-                <FileUploadButton
+                <Input
+                  id="aadhar"
+                  type="text"
+                  placeholder="Enter Aadhar Number"
+                  className="bg-white"
+                  value={formData.aadhar}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, aadhar: e.target.value }))
+                  }
+                  required
+                />
+                {/* <FileUploadButton
                   id="aadhar-upload"
                   label="Upload Aadhar"
                   required={true}
@@ -382,10 +392,10 @@ const AddWGPerformingProvider: React.FC = () => {
                       tempFileKey: "aadhar",
                     });
                   }}
-                />
+                /> */}
 
                 {/* Uploaded Aadhar */}
-                {files.aadhar && (
+                {/* {files.aadhar && (
                   <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.aadhar.name}</span>
 
@@ -397,7 +407,7 @@ const AddWGPerformingProvider: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
@@ -498,7 +508,9 @@ const AddWGPerformingProvider: React.FC = () => {
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
                 <DatePicker
-                  value={formData.dob ? parseLocalDate(formData.dob) : undefined}
+                  value={
+                    formData.dob ? parseLocalDate(formData.dob) : undefined
+                  }
                   onChange={(val) => {
                     setFormData((prev) => ({
                       ...prev,
@@ -514,7 +526,19 @@ const AddWGPerformingProvider: React.FC = () => {
                   PAN <span className="text-red-500">*</span>
                 </Label>
 
-                <FileUploadButton
+                <Input
+                  id="pan"
+                  type="text"
+                  placeholder="Enter Pan"
+                  className="bg-white"
+                  value={formData.pan}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, pan: e.target.value }))
+                  }
+                  required
+                />
+
+                {/* <FileUploadButton
                   id="pan-upload"
                   label="Upload PAN"
                   required={true}
@@ -535,10 +559,10 @@ const AddWGPerformingProvider: React.FC = () => {
                       tempFileKey: "pan",
                     });
                   }}
-                />
+                /> */}
 
                 {/* Uploaded PAN */}
-                {files.pan && (
+                {/* {files.pan && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.pan.name}</span>
                     <button
@@ -549,7 +573,7 @@ const AddWGPerformingProvider: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>

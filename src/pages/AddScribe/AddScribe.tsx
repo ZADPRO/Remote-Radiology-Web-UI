@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";import { toast } from "sonner";
+import DatePicker from "@/components/date-picker";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -35,7 +36,6 @@ interface TempFilesState {
 }
 
 const AddScribe: React.FC = () => {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<NewScribe>({
@@ -49,7 +49,7 @@ const AddScribe: React.FC = () => {
     drivers_license: "",
     pan: "",
     aadhar: "",
-    education_certificate: []
+    education_certificate: [],
   });
 
   console.log(formData);
@@ -65,111 +65,124 @@ const AddScribe: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-    const errorRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (error && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [error]);
 
   // Functions moved from subcomponents
-  const handleSingleFileUpload = useCallback(async ({
-    file,
-    fieldName, // e.g., "aadhar" or "pan"
-    tempFileKey, // e.g., "aadhar" or "pan"
-  }: {
-    file: File;
-    fieldName: keyof NewScribe;
-    tempFileKey: keyof TempFilesState;
-  }) => {
-    const formDataObj = new FormData();
-    formDataObj.append("file", file);
+  const handleSingleFileUpload = useCallback(
+    async ({
+      file,
+      fieldName, // e.g., "aadhar" or "pan"
+      tempFileKey, // e.g., "aadhar" or "pan"
+    }: {
+      file: File;
+      fieldName: keyof NewScribe;
+      tempFileKey: keyof TempFilesState;
+    }) => {
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
 
-    try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      try {
+        const response = await uploadService.uploadFile({
+          formFile: formDataObj,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          [fieldName]: response.fileName, // just path to backend
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            [fieldName]: response.fileName, // just path to backend
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          [tempFileKey]: file, // store full File object for UI
-        }));
-
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          setFiles((prev) => ({
+            ...prev,
+            [tempFileKey]: file, // store full File object for UI
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const uploadAndStoreFile = useCallback(async (
-    file: File,
-    field: keyof NewScribe,
-    tempField: keyof TempFilesState,
-    uploadFn = uploadService.uploadFile // optional, default upload function
-  ): Promise<void> => {
-    const formData = new FormData();
-    formData.append("file", file);
+  const uploadAndStoreFile = useCallback(
+    async (
+      file: File,
+      field: keyof NewScribe,
+      tempField: keyof TempFilesState,
+      uploadFn = uploadService.uploadFile // optional, default upload function
+    ): Promise<void> => {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    try {
-      const response = await uploadFn({ formFile: formData });
+      try {
+        const response = await uploadFn({ formFile: formData });
 
-      if (response.status) {
-        const result: UploadFile = {
-          file_name: response.fileName,
-          old_file_name: file.name,
-        };
-        console.log(result);
-        setFormData((prev) => ({
-          ...prev,
-          [field]: [...((prev[field] as UploadFile[]) || []), result],
-        }));
+        if (response.status) {
+          const result: UploadFile = {
+            file_name: response.fileName,
+            old_file_name: file.name,
+          };
+          console.log(result);
+          setFormData((prev) => ({
+            ...prev,
+            [field]: [...((prev[field] as UploadFile[]) || []), result],
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          [tempField]: [...((prev[tempField] as File[]) || []), file],
-        }));
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          setFiles((prev) => ({
+            ...prev,
+            [tempField]: [...((prev[tempField] as File[]) || []), file],
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const handleRemoveSingleFile = useCallback((key: "profile_img" | "pan" | "aadhar" | "drivers_license") => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: null,
-    }));
+  const handleRemoveSingleFile = useCallback(
+    (key: "profile_img" | "pan" | "aadhar" | "drivers_license") => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
 
-    setFormData((prev) => ({
-      ...prev,
-      [key]: "", // Set to empty string for file paths
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [key]: "", // Set to empty string for file paths
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
-  const handleRemoveMultiFile = useCallback((key: "education_certificate", index: number) => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: (prev[key] as File[]).filter((_, i) => i !== index),
-    }));
+  const handleRemoveMultiFile = useCallback(
+    (key: "education_certificate", index: number) => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: (prev[key] as File[]).filter((_, i) => i !== index),
+      }));
 
-    const formKey = key;
+      const formKey = key;
 
-    setFormData((prev) => ({
-      ...prev,
-      [formKey]: (prev[formKey] as UploadFile[]).filter((_, i) => i !== index),
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [formKey]: (prev[formKey] as UploadFile[]).filter(
+          (_, i) => i !== index
+        ),
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
   const renderStepForm = () => {
     return (
@@ -189,8 +202,13 @@ const AddScribe: React.FC = () => {
                   placeholder="Enter Full Name"
                   className="bg-white"
                   value={formData.firstname}
-                  onChange={(e) => // Keep firstname as the field for full name
-                    setFormData((prev) => ({ ...prev, firstname: e.target.value }))
+                  onChange={(
+                    e // Keep firstname as the field for full name
+                  ) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      firstname: e.target.value,
+                    }))
                   }
                   required
                 />
@@ -218,7 +236,18 @@ const AddScribe: React.FC = () => {
                   Aadhar <span className="text-red-500">*</span>
                 </Label>
 
-                <FileUploadButton
+                <Input
+                  id="aadhar"
+                  type="text"
+                  placeholder="Enter Aadhar Number"
+                  className="bg-white"
+                  value={formData.aadhar}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, aadhar: e.target.value }))
+                  }
+                  required
+                />
+                {/* <FileUploadButton
                   id="aadhar-upload"
                   label="Upload Aadhar"
                   required={true}
@@ -239,10 +268,10 @@ const AddScribe: React.FC = () => {
                       tempFileKey: "aadhar",
                     });
                   }}
-                />
+                /> */}
 
                 {/* Uploaded Aadhar */}
-                {files.aadhar && (
+                {/* {files.aadhar && (
                   <div className="mt-2 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.aadhar.name}</span>
 
@@ -254,7 +283,7 @@ const AddScribe: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className="flex flex-col gap-1.5 w-full">
@@ -355,7 +384,9 @@ const AddScribe: React.FC = () => {
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
                 <DatePicker
-                  value={formData.dob ? parseLocalDate(formData.dob) : undefined}
+                  value={
+                    formData.dob ? parseLocalDate(formData.dob) : undefined
+                  }
                   onChange={(val) => {
                     setFormData((prev) => ({
                       ...prev,
@@ -372,7 +403,19 @@ const AddScribe: React.FC = () => {
                   PAN <span className="text-red-500">*</span>
                 </Label>
 
-                <FileUploadButton
+                <Input
+                  id="pan"
+                  type="text"
+                  placeholder="Enter Pan"
+                  className="bg-white"
+                  value={formData.pan}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, pan: e.target.value }))
+                  }
+                  required
+                />
+
+                {/* <FileUploadButton
                   id="pan-upload"
                   label="Upload PAN"
                   required={true}
@@ -393,10 +436,10 @@ const AddScribe: React.FC = () => {
                       tempFileKey: "pan",
                     });
                   }}
-                />
+                /> */}
 
                 {/* Uploaded PAN */}
-                {files.pan && (
+                {/* {files.pan && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                     <span className="break-words">{files.pan.name}</span>
                     <button
@@ -407,7 +450,7 @@ const AddScribe: React.FC = () => {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -419,72 +462,74 @@ const AddScribe: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-15">
             <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
               <div className="flex flex-col gap-1.5 w-full">
-          <Label className="text-sm" htmlFor="edu-upload">
-            Upload Educational Certificates
-          </Label>
+                <Label className="text-sm" htmlFor="edu-upload">
+                  Upload Educational Certificates
+                </Label>
 
-          <FileUploadButton
-            id="education-certificate-upload"
-            label="Upload Certificates"
-            multiple
-            // required
-            isFilePresent={formData.education_certificate?.length > 0}
-            onChange={async (e) => {
-              const filesSelected = e.target.files;
-              if (!filesSelected) return;
+                <FileUploadButton
+                  id="education-certificate-upload"
+                  label="Upload Certificates"
+                  multiple
+                  // required
+                  isFilePresent={formData.education_certificate?.length > 0}
+                  onChange={async (e) => {
+                    const filesSelected = e.target.files;
+                    if (!filesSelected) return;
 
-              const selectedFiles = Array.from(filesSelected);
-              const maxSize = 10 * 1024 * 1024;
+                    const selectedFiles = Array.from(filesSelected);
+                    const maxSize = 10 * 1024 * 1024;
 
-              const filteredFiles = selectedFiles.filter(
-                (file) =>
-                  file.size <= maxSize &&
-                  !files.education_certificate.some(
-                    (existingFile) => existingFile.name === file.name
-                  )
-              );
+                    const filteredFiles = selectedFiles.filter(
+                      (file) =>
+                        file.size <= maxSize &&
+                        !files.education_certificate.some(
+                          (existingFile) => existingFile.name === file.name
+                        )
+                    );
 
-              if (filteredFiles.length < selectedFiles.length) {
-                setError(
-                  "Some files were larger than 10MB or were duplicates and were not added."
-                );
-              }
-
-              for (const file of filteredFiles) {
-                await uploadAndStoreFile(
-                  file,
-                  "education_certificate",
-                  "education_certificate",
-                  
-                );
-              }
-            }}
-          />
-
-          {/* Show uploaded file names */}
-          {files.education_certificate.length > 0 && (
-            <div className="mt-2 flex flex-col gap-2">
-              {files.education_certificate.map((file, index) => (
-                <div
-                  key={index}
-                  className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2"
-                >
-                  <span className="break-words">{file.name}</span>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleRemoveMultiFile("education_certificate", index)
+                    if (filteredFiles.length < selectedFiles.length) {
+                      setError(
+                        "Some files were larger than 10MB or were duplicates and were not added."
+                      );
                     }
-                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+                    for (const file of filteredFiles) {
+                      await uploadAndStoreFile(
+                        file,
+                        "education_certificate",
+                        "education_certificate"
+                      );
+                    }
+                  }}
+                />
+
+                {/* Show uploaded file names */}
+                {files.education_certificate.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    {files.education_certificate.map((file, index) => (
+                      <div
+                        key={index}
+                        className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2"
+                      >
+                        <span className="break-words">{file.name}</span>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleRemoveMultiFile(
+                              "education_certificate",
+                              index
+                            )
+                          }
+                          className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -497,8 +542,17 @@ const AddScribe: React.FC = () => {
     setLoading(true);
     try {
       // Basic validation before submission (removed lastname check)
-      if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.aadhar || !formData.pan) {
-        setError("Please fill in all required fields and upload all necessary documents.");
+      if (
+        !formData.firstname ||
+        !formData.email ||
+        !formData.phone ||
+        !formData.dob ||
+        !formData.aadhar ||
+        !formData.pan
+      ) {
+        setError(
+          "Please fill in all required fields and upload all necessary documents."
+        );
         setLoading(false);
         return;
       }
@@ -521,48 +575,51 @@ const AddScribe: React.FC = () => {
       console.log("finalForm", formData);
       const res = await scribeService.addScribe(formData);
       console.log(res);
-      if(res.status) {
+      if (res.status) {
         toast.success(res.message);
         setTimeout(() => {
-          navigate("../manageScribe", { replace: true});
+          navigate("../manageScribe", { replace: true });
         }, 1500);
       } else {
         setError(res.message);
       }
-      
     } catch (error) {
       console.log(error);
       setError("Error submitting form. Please try again.");
-    } finally{
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleProfileImageUpload = useCallback(async (file: File) => {
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
+  const handleProfileImageUpload = useCallback(
+    async (file: File) => {
+      const formDataImg = new FormData();
+      formDataImg.append("profileImage", file);
 
-    try {
-      const response = await uploadService.uploadImage({ formImg: formDataImg });
+      try {
+        const response = await uploadService.uploadImage({
+          formImg: formDataImg,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          profile_img: response.fileName,
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            profile_img: response.fileName,
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          profile_img: file,
-        }));
-
-      } else {
-        setError("Profile image upload failed");
+          setFiles((prev) => ({
+            ...prev,
+            profile_img: file,
+          }));
+        } else {
+          setError("Profile image upload failed");
+        }
+      } catch (err) {
+        setError("Error uploading profile image");
       }
-    } catch (err) {
-      setError("Error uploading profile image");
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
   console.log(files);
 

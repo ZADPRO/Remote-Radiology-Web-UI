@@ -279,8 +279,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
-      }
-      else {
+      } else {
         setError(res.message);
       }
     } catch (error) {
@@ -298,7 +297,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-          handleSubmit();
+        handleSubmit();
       }}
       className="w-full"
     >
@@ -455,8 +454,22 @@ const EditScribe: React.FC<EditScribeProps> = ({
             <Label className="text-sm font-medium" htmlFor="aadhar-upload">
               Aadhar <span className="text-red-500">*</span>
             </Label>
+            <Input
+              id="aadhar"
+              type="text"
+              placeholder="Enter Aadhar Number"
+              className="bg-white"
+              value={formData.refSDAadhar || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  refSDAadhar: e.target.value,
+                }))
+              }
+              required
+            />
 
-            <FileUploadButton
+            {/* <FileUploadButton
               id="aadhar-upload"
               label="Upload Aadhar"
               required={true}
@@ -475,10 +488,10 @@ const EditScribe: React.FC<EditScribeProps> = ({
                   });
                 }
               }}
-            />
+            /> */}
 
             {/* Show uploaded or existing Aadhar file */}
-            {files.aadhar ? (
+            {/* {files.aadhar ? (
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
                   <FileText className="w-5 h-5 text-blue-600" />
@@ -508,7 +521,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
                   </span>
                 </div>
               )
-            )}
+            )} */}
           </div>
           <div className="flex flex-col gap-1.5 w-full">
             <Label
@@ -590,10 +603,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
                 }
                 disabled
               >
-                <SelectTrigger
-                  disabled
-                  className="bg-white"
-                >
+                <SelectTrigger disabled className="bg-white">
                   <SelectValue placeholder="Country Code" />
                 </SelectTrigger>
                 <SelectContent>
@@ -629,7 +639,9 @@ const EditScribe: React.FC<EditScribeProps> = ({
             </Label>
             <DatePicker
               value={
-                formData.refUserDOB ? parseLocalDate(formData.refUserDOB) : undefined
+                formData.refUserDOB
+                  ? parseLocalDate(formData.refUserDOB)
+                  : undefined
               }
               className="pointer-events-auto"
               onChange={(val) => {
@@ -645,9 +657,25 @@ const EditScribe: React.FC<EditScribeProps> = ({
 
           <div className="flex flex-col gap-1.5">
             <Label className="text-sm" htmlFor="pan-upload">
-              PAN Card <span className="text-red-500">*</span>
+              PAN <span className="text-red-500">*</span>
             </Label>
-            <FileUploadButton
+
+            <Input
+              id="pan"
+              type="text"
+              placeholder="Enter Pan"
+              className="bg-white"
+              value={formData.refSDPan || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  refSDPan: e.target.value,
+                }))
+              }
+              required
+            />
+
+            {/* <FileUploadButton
               id="pan-upload"
               label="Upload PAN"
               required={false}
@@ -666,10 +694,10 @@ const EditScribe: React.FC<EditScribeProps> = ({
                   });
                 }
               }}
-            />
+            /> */}
 
             {/* Show uploaded or existing PAN file */}
-            {files.pan ? (
+            {/* {files.pan ? (
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
                   <FileText className="w-5 h-5 text-blue-600" />
@@ -699,7 +727,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
                   </span>
                 </div>
               )
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -714,30 +742,30 @@ const EditScribe: React.FC<EditScribeProps> = ({
             </Label>
 
             <FileUploadButton
-            id="edu-certs-upload"
-            label="Upload Education Certificates"
-            multiple
-            // required={false}
-            isFilePresent={files.education_certificate.length > 0}
-            onChange={async (e) => {
-              const selectedFiles = e.target.files;
-              if (selectedFiles) {
-                for (const file of Array.from(selectedFiles)) {
-                  if (file.size > 10 * 1024 * 1024) {
-                    setError(`File ${file.name} exceeds 10MB limit.`);
-                    continue;
-                  }
-                  if (
-                    !files.education_certificate.find(
-                      (f) => f.name === file.name
-                    )
-                  ) {
-                    await uploadAndStoreFile(file, "education_certificate");
+              id="edu-certs-upload"
+              label="Upload Education Certificates"
+              multiple
+              // required={false}
+              isFilePresent={files.education_certificate.length > 0}
+              onChange={async (e) => {
+                const selectedFiles = e.target.files;
+                if (selectedFiles) {
+                  for (const file of Array.from(selectedFiles)) {
+                    if (file.size > 10 * 1024 * 1024) {
+                      setError(`File ${file.name} exceeds 10MB limit.`);
+                      continue;
+                    }
+                    if (
+                      !files.education_certificate.find(
+                        (f) => f.name === file.name
+                      )
+                    ) {
+                      await uploadAndStoreFile(file, "education_certificate");
+                    }
                   }
                 }
-              }
-            }}
-          />
+              }}
+            />
 
             {/* Uploaded License Files */}
             {files.education_certificate?.length > 0 && (
@@ -824,7 +852,8 @@ const EditScribe: React.FC<EditScribeProps> = ({
                             );
                           return {
                             ...prev,
-                            educationCertificateFiles: updatedLicenseFiles || [],
+                            educationCertificateFiles:
+                              updatedLicenseFiles || [],
                           };
                         });
 
