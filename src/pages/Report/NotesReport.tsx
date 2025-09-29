@@ -1403,6 +1403,7 @@ ${
                       placeholder="Add Addendum"
                       value={addendumText}
                       onChange={(e) => setAddendumText(e.target.value)}
+                      required
                     />
                     <Label className="mt-2">Macro</Label>
                     <div className="my-2">
@@ -1412,7 +1413,6 @@ ${
                           setAddendumMacro(val);
                           setAddendumMacroChoose(val);
                         }}
-                        required
                       >
                         <SelectTrigger className="bg-[#fff] m-0 text-xs w-full relative">
                           <SelectValue placeholder="Select Impression" />
@@ -1436,7 +1436,6 @@ ${
                       placeholder="Add Macro Addendum"
                       value={addendumMacro}
                       onChange={(e) => setAddendumMacro(e.target.value)}
-                      required
                     />
                   </>
                 )}
