@@ -43,13 +43,12 @@ const AllergiesMedications: React.FC<Props> = ({
   questionIds,
   readOnly,
 }) => {
-  useEffect(() => {
-    handleInputChange(1, "Routine");
-    handleInputChange(57, "public");
-  }, []);
-
   const getAnswer = (id: number) =>
     technicianFormData.find((q) => q.questionId === id)?.answer || "";
+  useEffect(() => {
+    getAnswer(1).length === 0 && handleInputChange(1, "Routine");
+    getAnswer(57).length === 0 && handleInputChange(57, "public");
+  }, []);
 
   const renderRadioGroup = (
     name: string,
