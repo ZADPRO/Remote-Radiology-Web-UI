@@ -1317,7 +1317,7 @@ ${
                 <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                   <div>
                     <Label className="font-semibold text-[#e06666] text-base">
-                      Ease QT 10.10 Auto Report
+                      Ease QT Find Select
                     </Label>
                   </div>
                   <Switch

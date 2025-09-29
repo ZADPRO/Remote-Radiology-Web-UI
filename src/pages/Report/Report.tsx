@@ -750,7 +750,8 @@ const Report: React.FC = () => {
   const isTabAccessible = (value: number) => {
     return (
       finalTab.includes(value) ||
-      (accessibleTabs.includes(value) && assignData?.easeQTReportAccess)
+      (accessibleTabs.includes(value) &&
+        (assignData?.easeQTReportAccess || assignData?.naSystemReportAccess))
     );
   };
 
@@ -1458,6 +1459,14 @@ const Report: React.FC = () => {
               : response.reportTextContentData[0]?.refRTSyncStatus,
         });
         // }
+
+        if (!(response.easeQTReportAccess && response.naSystemReportAccess)) {
+          if (response.easeQTReportAccess) {
+            handleReportInputChange(81, "false");
+          } else if (response.naSystemReportAccess) {
+            handleReportInputChange(81, "true");
+          }
+        }
       }
     } catch (error) {
       console.log(error);
@@ -2965,6 +2974,14 @@ const Report: React.FC = () => {
         grandularAndDuctalTissueLeftReportText: false,
         LymphNodesLeftReportText: false,
       });
+
+      if (!(response.easeQTReportAccess && response.naSystemReportAccess)) {
+        if (response.easeQTReportAccess) {
+          handleReportInputChange(81, "false");
+        } else if (response.naSystemReportAccess) {
+          handleReportInputChange(81, "true");
+        }
+      }
 
       AutoPopulateReportImpressRecomm(
         mainImpressionRecommendation,

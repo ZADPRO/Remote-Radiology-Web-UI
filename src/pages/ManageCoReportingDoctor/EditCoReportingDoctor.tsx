@@ -497,9 +497,6 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           refCDEaseQTReportAccess: checked,
-                          ...(checked
-                            ? {}
-                            : { refCDNAsystemReportAccess: false }),
                         }));
                       }}
                     />
@@ -525,7 +522,6 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                           refCDNAsystemReportAccess: checked,
                         }))
                       }
-                      disabled={!formData.refCDEaseQTReportAccess}
                     />
                   </div>
                 </div>

@@ -1276,7 +1276,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
           readOnly ? "pointer-events-none" : ""
         }`}
       >
-        {assignData?.naSystemReportAccess && (
+        {(assignData?.naSystemReportAccess && assignData.easeQTReportAccess) && (
           <div
             className={`flex flex-col w-full items-start justify-between gap-4 ${
               readOnly ? "pointer-events-none" : ""
