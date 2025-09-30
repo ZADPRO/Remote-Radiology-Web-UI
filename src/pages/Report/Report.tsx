@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   AppointmentStatus,
   FinalAddendumText,
+  SignatureText,
   ReportHistoryData,
   reportService,
   GetOldReport,
@@ -406,7 +407,7 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
 
-      reason += PatientHistoryReportGenerator(responsePatientInTake) + "<br/>";
+      reason += PatientHistoryReportGenerator(responsePatientInTake, technicianForm) + "<br/>";
 
       setPatientHistory(reason);
     }
@@ -689,6 +690,7 @@ const Report: React.FC = () => {
   const [patientHistory, setPatientHistory] = useState("");
 
   const [addendumText, setAddendumText] = useState("");
+  const [signatureText, setSignatureText] = useState("");
 
   const [assignData, setAssignData] = useState<AssignReportResponse | null>(
     null
@@ -925,6 +927,7 @@ const Report: React.FC = () => {
         patientpublicprivate: string;
         PerformingProviderName: string;
         VerifyingProviderName: string;
+        ListAllSignature: SignatureText[];
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -942,6 +945,14 @@ const Report: React.FC = () => {
         setScanCenterAddress(response.ScancenterAddress);
         setScanCenterImg(response.ScanCenterImg);
         setOldReport(response.oldReport || []);
+
+         if (response.ListAllSignature) {
+                        setSignatureText(
+                          response.ListAllSignature
+                            .map((data: SignatureText) => `${data.refSText}`)
+                            .join("")
+                        );
+                      }
 
         if (
           response.appointmentStatus[0]
@@ -1867,8 +1878,7 @@ const Report: React.FC = () => {
       responsePatientInTake.length > 0 && technicianForm.length > 0
     );
 
-    
-    setMailOption(patientpublicprivate === "private" ? "none" : "both")
+    setMailOption(patientpublicprivate === "private" ? "none" : "both");
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
       AutoPopulateReport(
         getPatientAnswer,
@@ -2190,7 +2200,7 @@ const Report: React.FC = () => {
   const [showMailDialog, setShowMailDialog] = useState(false);
 
   const [mailOption, setMailOption] = useState("");
-  
+
   const handleReportSubmit = async (
     movedStatus: string,
     editStatus: boolean,
@@ -2224,8 +2234,8 @@ const Report: React.FC = () => {
           optionalImpressionRecommendation.selectedRecommendationIdRight,
         commonImpressionRecommendationRight: commonImpressRecomm.idRight,
         editStatus: editStatus,
-        patientMailStatus: mailOption === "patient" || mailOption === "both",
-        managerMailStatus: mailOption === "scancenter" || mailOption === "both",
+        patientMailStatus: showMailDialog ? mailOption === "patient" || mailOption === "both" : false,
+        managerMailStatus: showMailDialog ? mailOption === "scancenter" || mailOption === "both" : false,
         leaveStatus: leaveStatus,
         artificatsLeft:
           getReportAnswer(
@@ -2450,9 +2460,17 @@ const Report: React.FC = () => {
       naSystemReportAccess: boolean;
       PerformingProviderName: string;
       VerifyingProviderName: string;
+      ListAllSignature: SignatureText[];
     } = await reportService.autosaveReport(payload);
 
     if (response.status) {
+       if (response.ListAllSignature) {
+                        setSignatureText(
+                          response.ListAllSignature
+                            .map((data: SignatureText) => `${data.refSText}`)
+                            .join("")
+                        );
+                      }
       setPerformingProviderName(response.PerformingProviderName);
       setVerifyingProviderName(response.VerifyingProviderName);
       if (
@@ -3944,27 +3962,56 @@ const Report: React.FC = () => {
                 {reportStages.map(({ label, editStatus, status }, index) => {
                   const isAllowed = stageRoleMap[label]?.includes(role?.type);
 
-                  const handleClick = () => {
+                  const handleClick = async () => {
                     if (!isAllowed) return;
 
                     if (label === "Sign Off") {
                       setShowMailDialog(true); // open dialog
                     } else if (status == "" && label == "Insert Signature") {
-                      const date = new Date().toLocaleDateString();
-                      console.log(userDetails);
-                      const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                      setLoading(true);
+                      if (!syncStatus.Notes) {
+                        const date = new Date().toLocaleDateString();
+                        const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        const notesData = Notes + signatureRow;
+                        setNotes(notesData);
+                        setsyncStatus({
+                          ...syncStatus,
+                          Notes: false,
+                        });
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          syncStatus: true,
+                          reportTextContent: true,
+                        }));
+                        await reportService.AddSignature(
+                          signatureRow,
+                          stateData.appointmentId,
+                          stateData.userId,
+                        );
+                      }else{
+                        const date = new Date().toLocaleDateString();
+                        const signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        const response: {
+                          status: boolean;
+                          message: string;
+                          data: SignatureText[];
+                        } = await reportService.AddSignature(
+                          signatureRow,
+                          stateData.appointmentId,
+                          stateData.userId,
+                        );
+                        if (response.status && response.data) {
+                          setSignatureText(
+                            response.data
+                              .map((data: SignatureText) => `${data.refSText}`)
+                              .join("<br/>")
+                          );
+                        }
+                        fecthautosave();
+                      }
 
-                      const notesData = Notes + signatureRow;
-                      setNotes(notesData);
-                      setsyncStatus({
-                        ...syncStatus,
-                        Notes: false,
-                      });
-                      setChangedOne((prev) => ({
-                        ...prev,
-                        syncStatus: true,
-                        reportTextContent: true,
-                      }));
+
+                      setLoading(false);
                     } else {
                       handleReportSubmit(status, editStatus); // directly call
                     }
@@ -4200,6 +4247,7 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
+                    signatureText={signatureText}
                     performingProviderName={performingProviderName}
                     verifyingProviderName={verifyingProviderName}
                     loading={loading}

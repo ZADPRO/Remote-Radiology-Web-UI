@@ -312,7 +312,7 @@ const AddintionalNotes: React.FC<Props> = ({
             Patient History Preview
           </Label>
           <div className="flex flex-col w-full sm:flex-row gap-5">
-           <TextEditor className="w-full" value={PatientHistoryReportGenerator(patientFormData)} readOnly />
+           <TextEditor className="w-full" value={PatientHistoryReportGenerator(patientFormData, technicianFormData)} readOnly />
           </div>
         </div>
       </div>

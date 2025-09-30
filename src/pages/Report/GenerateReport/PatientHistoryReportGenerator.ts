@@ -3,10 +3,12 @@ import { SFormGeneration } from "./SFormReportGenerator";
 import { DbFormReportGenerator } from "./DbFormReportGenerator";
 import { DcFormGeneration } from "./DcFormReportGenerator";
 import { DaFormReportGenerator } from "./DaFormReportGenerator";
+import { TechNotes } from "./TechNotes";
 
 export function PatientHistoryReportGenerator(
   // patientInTakeForm: ResponsePatientForm[]
-  patientInTakeForm: any[]
+  patientInTakeForm: any[],
+  technicianFormData: any[]
 ): string {
   let report = [];
 
@@ -30,6 +32,11 @@ export function PatientHistoryReportGenerator(
   let DcForm = DcFormGeneration(patientInTakeForm);
   if (DcForm.length > 0) {
     report.push(DcForm);
+  }
+
+  let TechNotesData = TechNotes(technicianFormData);
+  if(TechNotes.length > 0){
+    report.push(TechNotesData);
   }
 
   if (report.length > 0) {
