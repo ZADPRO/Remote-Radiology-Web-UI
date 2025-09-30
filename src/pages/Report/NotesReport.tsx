@@ -27,7 +27,10 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
-import { FinalAddendumText, reportService } from "@/services/reportService";
+import {
+  FinalAddendumText,
+  reportService,
+} from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
 import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import {
@@ -214,6 +217,7 @@ interface ReportQuestion {
 }
 
 type Props = {
+  signatureText: string;
   performingProviderName: string;
   verifyingProviderName: string;
   loading: boolean;
@@ -247,6 +251,7 @@ type Props = {
 };
 
 const NotesReport: React.FC<Props> = ({
+  signatureText,
   performingProviderName,
   verifyingProviderName,
   loading,
@@ -1095,22 +1100,38 @@ ${
   <br/><strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
   <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
 ` +
+          (signatureText.length > 0 ? "<br/>" + signatureText : "") +
           (textEditor.addendumText.value.length > 0
             ? "<br/><p><strong>ADDENDUM:</strong></p>" +
               textEditor.addendumText.value
             : "")
       );
     } else {
-      setNotes(
-        Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
-          (textEditor.addendumText.value.length > 0
-            ? "<p><strong>ADDENDUM:</strong></p>" +
-              textEditor.addendumText.value
-            : "")
-      );
+      if(
+        Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]
+      ) {
+        setNotes(
+          Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
+            (textEditor.addendumText.value.length > 0
+              ? "<p><strong>ADDENDUM:</strong></p>" +
+                textEditor.addendumText.value
+              : "")
+        );
+      }
+      
+      // if(Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0]){
+      //   setNotes(
+      //     Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0] +
+      //       (signatureText.length > 0 ? "<br/>" + signatureText : "")
+      //   );
+      // }else{
+      //   setNotes(
+      //     Notes + (signatureText.length > 0 ? "<br/><p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>" + signatureText : "")
+      //   );
+      // }
     }
 
-    setMailRecepient(patientpublicprivate !== "private" ? "both" : "none")
+    setMailRecepient(patientpublicprivate !== "private" ? "both" : "none");
   }, [
     reportFormData,
     syncStatus,

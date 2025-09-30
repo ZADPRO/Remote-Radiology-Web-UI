@@ -1,7 +1,7 @@
 import { ResponsePatientForm } from "@/pages/TechnicianPatientIntakeForm/TechnicianPatientIntakeForm";
 
 export function SFormGeneration(
-  patientInTakeForm: ResponsePatientForm[]
+  patientInTakeForm: ResponsePatientForm[],
 ): string {
   const getPatientAnswer = (id: number) =>
     patientInTakeForm.find((q) => q.questionId === id)?.answer || "";
@@ -160,6 +160,14 @@ export function SFormGeneration(
     lymphNodesStatus: getPatientAnswer(351),
     othersStatusCheck: getPatientAnswer(354),
     othersStatus: getPatientAnswer(355),
+
+    // deformity: getTechnicianAnswer(19),
+    // deformityBig: getTechnicianAnswer(20),
+    // deformityRight: getTechnicianAnswer(21),
+    // deformityLeft: getTechnicianAnswer(22),
+    // deformityDuration: getTechnicianAnswer(23),
+    // deformityDurationRight: getTechnicianAnswer(47),
+    // deformityComments: getTechnicianAnswer(48),
   };
 
   const previousImaging = {
@@ -414,37 +422,37 @@ export function SFormGeneration(
     if (breastimplants.implantBothDirection === "true") {
       text += `Breast implant present on the`;
 
-       text += ` left, ${
-          breastimplants.implantsSpecify.toLocaleLowerCase() !== "other"
-            ? breastimplants.implantsSpecify.toLocaleLowerCase()
-            : breastimplants.implantsOthersSpecify.toLocaleLowerCase()
-        } type, since ${breastimplants.implantDateLeft}${
-          breastimplants.explants === "Yes"
-            ? `,  explant done${
-                breastimplants.explantsDateKnown === "Yes"
-                  ? ` ${breastimplants.explantsDate}`
-                  : ""
-              }`
-            : ""
-        }`;
+      text += ` left, ${
+        breastimplants.implantsSpecify.toLocaleLowerCase() !== "other"
+          ? breastimplants.implantsSpecify.toLocaleLowerCase()
+          : breastimplants.implantsOthersSpecify.toLocaleLowerCase()
+      } type, since ${breastimplants.implantDateLeft}${
+        breastimplants.explants === "Yes"
+          ? `,  explant done${
+              breastimplants.explantsDateKnown === "Yes"
+                ? ` ${breastimplants.explantsDate}`
+                : ""
+            }`
+          : ""
+      }`;
 
-        text += `${breastimplants.implantsRightSpecify.length > 0  ? `,` : ""} right, ${
-          breastimplants.implantsRightSpecify.toLocaleLowerCase() !== "other"
-            ? breastimplants.implantsRightSpecify.toLocaleLowerCase()
-            : breastimplants.implantsRightOthersSpecify.toLocaleLowerCase()
-        } type, since ${breastimplants.implantDateRight}${
-          breastimplants.explantsRight === "Yes"
-            ? `,  explant done${
-                breastimplants.explantsDateKnownRight === "Yes"
-                  ? ` ${breastimplants.explantsDateRight}`
-                  : ""
-              }`
-            : ""
-        }`;
+      text += `${
+        breastimplants.implantsRightSpecify.length > 0 ? `,` : ""
+      } right, ${
+        breastimplants.implantsRightSpecify.toLocaleLowerCase() !== "other"
+          ? breastimplants.implantsRightSpecify.toLocaleLowerCase()
+          : breastimplants.implantsRightOthersSpecify.toLocaleLowerCase()
+      } type, since ${breastimplants.implantDateRight}${
+        breastimplants.explantsRight === "Yes"
+          ? `,  explant done${
+              breastimplants.explantsDateKnownRight === "Yes"
+                ? ` ${breastimplants.explantsDateRight}`
+                : ""
+            }`
+          : ""
+      }`;
 
-        text += `.`;
-
-
+      text += `.`;
     } else if (
       breastimplants.implantLeft === "true" ||
       breastimplants.implantRight === "true" ||
@@ -520,6 +528,13 @@ export function SFormGeneration(
   //Current Breast Symptoms
   if (breastSymptoms.breastCancerSymptoms === "Yes") {
     let text = [];
+
+    //Deformity / Asymmetry
+    // if (breastSymptoms.deformity === "true") {
+    //   if(breastSymptoms.deformityRight === "true" || breastSymptoms.deformityLeft === "true"){
+    //     text.push(`Deformity / Asymmetry in the ${breastSymptoms.deformityLeft === "true" ? `in the left breast since `:``}`)
+    //   }
+    // }
 
     //Lump or thickening
     if (breastSymptoms.lumpOrThick === "true") {

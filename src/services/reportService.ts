@@ -71,6 +71,14 @@ export interface FinalAddendumText {
   refUserCustId: string;
 }
 
+export interface SignatureText {
+  refSId: string;
+  refAppointmentId: string;
+  refUserId: number;
+  refSText: string;
+  refSCreatedAt: string;
+}
+
 export interface ViewFileRes {
   status: boolean;
   data: FileData;
@@ -451,6 +459,39 @@ export const reportService = {
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/reportintakeform/addAddendum`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+
+  AddSignature: async (
+    addSignatureText: string,
+    appointmentId: number,
+    patientId: number
+  ) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        addSignatureText: addSignatureText,
+        appointmentId: appointmentId,
+        patientId: patientId,
+      },
+      token
+    );
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/reportintakeform/insertSignature`,
       { encryptedData: payload },
       {
         headers: {
