@@ -1260,9 +1260,9 @@ ${
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the EaseQT 10.10 template? Any changes made
+              Do you wish to enable the easeQT Find Select? Any changes made
               or templates uploaded will be lost, and the report will contain
-              only the EaseQT 10.10 template.
+              only the easeQT Find Select.
             </p>
           </div>
           <DialogFooter>
