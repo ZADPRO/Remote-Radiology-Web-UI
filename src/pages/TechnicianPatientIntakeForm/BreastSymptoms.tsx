@@ -27,8 +27,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import TextEditor from "@/components/TextEditor";
-import { PatientHistoryReportGenerator } from "../Report/GenerateReport/PatientHistoryReportGenerator";
 
 interface IntakeOption {
   questionId: number;
@@ -220,9 +218,6 @@ const BreastSymptoms: React.FC<Props> = ({
     return (
       <>
         <div className="flex flex-col lg:flex-row w-full items-center">
-          <div className="flex flex-col w-full sm:flex-row gap-5">
-           <TextEditor className="w-full" value={PatientHistoryReportGenerator(patientFormData, technicianFormData)} readOnly />
-          </div>
           <div className="w-full relative">
             {children}
             {!isEditing && (
