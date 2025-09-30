@@ -115,7 +115,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
         : ``
     }${
       breastSymptoms.scarLeft.length > 0
-        ? ` right at ${formatBreastSymptoms(breastSymptoms.scarLeft)}${
+        ? ` left at ${formatBreastSymptoms(breastSymptoms.scarLeft)}${
             breastSymptoms.scarDuration.length > 0
               ? `, ${breastSymptoms.scarDuration}`
               : ``
@@ -155,7 +155,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
         : ``
     }${
       breastSymptoms.soreLeft.length > 0
-        ? ` right at ${formatBreastSymptoms(breastSymptoms.soreLeft)}${
+        ? ` left at ${formatBreastSymptoms(breastSymptoms.soreLeft)}${
             breastSymptoms.soreDuration.length > 0
               ? `, ${breastSymptoms.soreDuration}`
               : ``
