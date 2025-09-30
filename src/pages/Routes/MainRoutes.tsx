@@ -128,6 +128,7 @@ const MainRoutes: React.FC = () => {
     { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   const radiologistRoutes: AppRoute[] = [
@@ -152,6 +153,7 @@ const MainRoutes: React.FC = () => {
     { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   const managerRoutes: AppRoute[] = [
@@ -199,6 +201,7 @@ const MainRoutes: React.FC = () => {
     { path: "dashboard", element: <Dashboard /> },
     { path: "patientQueue", element: <PatientQueue /> },
     { path: "analytics", element: <Analytics /> },
+    { path: "uploadDicoms", element: <UploadDicomFiles /> },
   ];
 
   // Helper function to render routes, applying RoleProtectedRoute when needed
