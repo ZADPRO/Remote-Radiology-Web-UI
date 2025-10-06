@@ -376,27 +376,28 @@ const PatientQueue: React.FC = () => {
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
-              const { refAppointmentComplete, dicomFiles } = item;
+              // const { refAppointmentComplete, dicomFiles } = item;
+              const { refAppointmentComplete } = item;
 
               // Always filter out 'fillform'
               if (refAppointmentComplete === "fillform") return true;
 
               // Filter out 'technologistformfill' if role is not technician
-              if (
-                refAppointmentComplete === "technologistformfill" &&
-                role?.type !== "technician" &&
-                role?.type !== "admin"
-              )
-                return false;
+              // if (
+              //   refAppointmentComplete === "technologistformfill" &&
+              //   role?.type !== "technician" &&
+              //   role?.type !== "admin"
+              // )
+              //   return false;
 
               // Filter out 'reportformfill' with no DICOMs if not technician
-              if (
-                refAppointmentComplete === "reportformfill" &&
-                !dicomFiles &&
-                role?.type !== "technician" &&
-                role?.type !== "admin"
-              )
-                return false;
+              // if (
+              //   refAppointmentComplete === "reportformfill" &&
+              //   !dicomFiles &&
+              //   role?.type !== "technician" &&
+              //   role?.type !== "admin"
+              // )
+              //   return false;
 
               // Always filter out 'Predraft'
               // if (
@@ -2939,7 +2940,9 @@ const PatientQueue: React.FC = () => {
         {/* Table Container */}
         <div
           className={`rounded-lg grid w-full ${
-            (role?.type === "patient" && SCconsultantStatus) ? "h-[68%]" : "h-[76%]"
+            role?.type === "patient" && SCconsultantStatus
+              ? "h-[68%]"
+              : "h-[76%]"
           } border `}
           style={{
             background:
@@ -3010,7 +3013,7 @@ const PatientQueue: React.FC = () => {
           </Table>
         </div>
 
-        {(role?.type === "patient" && SCconsultantStatus) && (
+        {role?.type === "patient" && SCconsultantStatus && (
           <div className="p-1 text-center">
             <h1 className="text-sm lg:text-lg text-[#50b33b] font-bold">
               If you would like to discuss your report, you may schedule an
