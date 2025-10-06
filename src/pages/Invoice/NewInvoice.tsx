@@ -2,7 +2,7 @@ import DatePicker from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input";
-import logoNew from "../../assets/LogoNew2.png";
+import logoNew from "../../assets/LogoNew.png";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
 import {
   Select,

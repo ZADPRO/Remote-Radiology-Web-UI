@@ -4,7 +4,6 @@ import React, { JSX, useEffect, useState } from "react";
 import {
   BellIcon,
   ChartPie,
-  HelpCircleIcon,
   PersonStanding,
   Settings2,
   Shield,
@@ -524,7 +523,7 @@ const MasterAdmin: React.FC = () => {
           </div>
 
           <div className="flex items-center">
-            {role?.type !== "patient" && (
+            {/* {role?.type !== "patient" && (
               <Button
                 variant="outline"
                 className="rounded-3xl bg-[#f8f3eb] mr-2 w-10 h-10"
@@ -533,7 +532,7 @@ const MasterAdmin: React.FC = () => {
               >
                 <HelpCircleIcon />
               </Button>
-            )}
+            )} */}
 
             <div
               className="relative"

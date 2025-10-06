@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/LogoNew2.png";
+import logo from "../../assets/LogoNew.png";
 import navbar_bg from "../../assets/navbar_bg.png";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import AllergiesMedications from "./AllergiesMedications";

@@ -1,6 +1,6 @@
 import { DialogContent, DialogHeader } from "@/components/ui/dialog";
 import React, { useEffect, useState } from "react";
-import logoNew from "../../../assets/LogoNew2.png";
+import logoNew from "../../../assets/LogoNew.png";
 import { useAuth } from "@/pages/Routes/AuthContext";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -116,7 +116,7 @@ const TechGuidelineForm: React.FC<Props> = ({ onSubmit, scId }) => {
         <div className="flex-1 text-center">
           <h2 className="text-2xl font-semibold">QT Technologist Guidelines</h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            EaseQT Platform
+            Wellthgreen Report Portal Platform
           </p>
         </div>
 

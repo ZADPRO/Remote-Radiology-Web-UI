@@ -262,7 +262,7 @@ const AddPatient: React.FC = () => {
                       ref={textRef}
                       className="w-full bg-[#fff] shadow-2xl rounded-lg p-2"
                     >
-                      Welcome – Your Breast QT Scan Appointment at {SCName} Scan
+                      Welcome – Your Appointment at {SCName} Scan
                       Centre
                     </div>
                     <Button variant="greenTheme" onClick={handleCopy}>
@@ -293,8 +293,8 @@ const AddPatient: React.FC = () => {
                       <br />
                       <b>
                         Log in:{" "}
-                        <a href="https://easeqt.wellthgreen.com">
-                          https://easeqt.wellthgreen.com
+                        <a href="https://reportportal.wellthgreen.com">
+                          https://reportportal.wellthgreen.com
                         </a>
                       </b>
                       <br />
@@ -340,7 +340,7 @@ const AddPatient: React.FC = () => {
                         <div className="text-center text-gray-700 text-base space-y-4">
                           <p>
                             You have successfully been onboarded as a{" "}
-                            <strong>Patient</strong> on <strong>easeQT</strong>.
+                            <strong>Patient</strong> on <strong>Wellthgreen Report Portal</strong>.
                           </p>
                           <p>Your login credentials are as follows:</p>
 
@@ -359,7 +359,7 @@ const AddPatient: React.FC = () => {
 
                           {/* Login button */}
                           <a
-                            href="https://easeqt.wellthgreen.com/"
+                            href="https://reportportal.wellthgreen.com/"
                             className="inline-block mt-4 px-6 py-3 bg-[#c6d4c0] text-white font-semibold rounded-md shadow hover:bg-[#b2c2ac] transition"
                           >
                             Login Now

@@ -1,6 +1,6 @@
 import React from "react";
 import { DialogContent, DialogHeader } from "@/components/ui/dialog";
-import logoNew from "../../assets/LogoNew2.png";
+import logoNew from "../../assets/LogoNew.png";
 import { CircleSmall } from "lucide-react";
 
 const TechGuidelines: React.FC = () => {
@@ -26,7 +26,7 @@ const TechGuidelines: React.FC = () => {
         <div className="flex-1 text-center">
           <h2 className="text-2xl font-semibold">QT Technologist Guidelines</h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            EaseQT Platform
+            Wellthgreen Report Portal Platform
           </p>
         </div>
 

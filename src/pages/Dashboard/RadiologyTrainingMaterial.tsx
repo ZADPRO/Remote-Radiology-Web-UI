@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { EyeIcon, Trash2 } from "lucide-react";
-import logoNew from "../../assets/LogoNew2.png";
+import logoNew from "../../assets/LogoNew.png";
 import { uploadService } from "@/services/commonServices";
 import { Button } from "@/components/ui/button";
 import {
@@ -162,7 +162,7 @@ const RadiologyTrainingMaterial: React.FC = () => {
             Radiology Training Materials
           </h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            EaseQT Platform
+            Wellthgreen Report Portal Platform
           </p>
         </div>
 

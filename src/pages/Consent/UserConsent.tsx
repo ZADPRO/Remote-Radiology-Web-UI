@@ -43,7 +43,7 @@ const universalConsentPoints: { title: string; content: string }[] = [
   {
     title: "Consent to Platform Use",
     content:
-      "I hereby acknowledge that I am voluntarily registering to use the EaseQT platform for purposes directly related to clinical imaging, workflow management, or reporting.",
+      "I hereby acknowledge that I am voluntarily registering to use the Wellthgreen Report Portal platform for purposes directly related to clinical imaging, workflow management, or reporting.",
   },
   {
     title: "Data Privacy & Security",
@@ -68,7 +68,7 @@ const universalConsentPoints: { title: string; content: string }[] = [
   {
     title: "Communication & Updates",
     content:
-      "I consent to receiving essential updates, notifications, and communications related to the EaseQT platform via email or in-app alerts.",
+      "I consent to receiving essential updates, notifications, and communications related to the Wellthgreen Report Portal platform via email or in-app alerts.",
   },
 ];
 
@@ -129,7 +129,7 @@ const consentByRole: Record<RoleType, RoleConsent> = {
       "I will enter clinical histories and transcribe radiologist observations with full accuracy.",
       "I understand that I am not permitted to interpret images or make clinical judgments.",
       "I will work only within assigned shifts and under the supervision of my reporting doctor.",
-      "I will not retain or reuse patient information outside the EaseQT platform.",
+      "I will not retain or reuse patient information outside the Wellthgreen Report Portal platform.",
     ],
     agreeText: "I agree to the Scribe role-specific terms.",
   },
