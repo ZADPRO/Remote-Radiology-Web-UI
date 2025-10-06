@@ -86,7 +86,7 @@ const PatientInformation: React.FC<Props> = ({ onNext, scId }) => {
         <div className="flex-1 text-center">
           <h2 className="text-2xl font-semibold">Brochure</h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            EaseQT Platform
+            Wellthgreen Report Portal Platform
           </p>
         </div>
 

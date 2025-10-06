@@ -275,7 +275,7 @@ const TechnicianProfile: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
         <div>
-          <Label htmlFor="trainedEaseQT">Trained EASE QT Status</Label>
+          <Label htmlFor="trainedEaseQT">Trained Wellthgreen Report Portal Status</Label>
           <Input
             id="trainedEaseQT"
             value={formData.refTDTrainedEaseQTStatus ? "Yes" : "No"}

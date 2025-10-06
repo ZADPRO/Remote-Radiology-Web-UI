@@ -532,7 +532,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                   <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                     <div>
                       <Label className="font-semibold text-base">
-                        Ease QT 10.10 Report Access
+                        Wellthgreen Report Portal 10.10 Report Access
                       </Label>
                       <p className="text-sm text-muted-foreground">
                         Toggle to enable access

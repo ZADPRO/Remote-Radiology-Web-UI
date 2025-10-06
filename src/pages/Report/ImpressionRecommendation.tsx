@@ -1285,7 +1285,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
             <div className="self-end mt-2">
               <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                 <div>
-                  <Label className="font-semibold text-base">easeQT 10.10 / NA system</Label>
+                  <Label className="font-semibold text-base">Wellthgreen Report Portal 10.10 / NA system</Label>
                 </div>
                 <Switch
                   id="qtAccess"

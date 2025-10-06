@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
                     Radiologist Consent Form
                   </h2>
                   <p className="text-sm text-gray-600 max-w-md mx-auto">
-                    EaseQT Platform
+                    Wellthgreen Report Portal Platform
                   </p>
                 </div>
                 <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
