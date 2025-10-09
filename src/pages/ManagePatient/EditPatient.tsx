@@ -705,12 +705,16 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          setScanCenter({
+         if(newAppointment){
+ setScanCenter({
             id: formData.refSCId,
             name: formData.refSCCustId,
           });
           setModelAppointment(true);
           setMailPurpose("registerandsendMail");
+         }else{
+          toast.error("Choose the Appintment Date");
+         }
         }}
       >
         <div className="flex gap-3 items-end relative">
@@ -726,7 +730,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               onChange={(val) => {
                 setNewAppointment(val ? formatLocalDate(val) : "");
               }}
-              required
+              required={true}
               disabledDates={dateDisablers.noPast}
             />
           </div>

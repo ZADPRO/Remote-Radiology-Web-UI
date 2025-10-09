@@ -11,7 +11,7 @@ import {
 import { pdf } from "@react-pdf/renderer";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { InvoiceHistory } from "@/services/invoiceService";
+import { InvoiceHistoryInvoice } from "@/services/invoiceService";
 import { formatReadableDateWithoutDate } from "@/utlis/calculateAge";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,11 @@ import {
   PopoverDialog,
   PopoverTriggerDialog,
 } from "@/components/ui/CustomComponents/popoverdialog";
+import InvoicePDFScribe from "../Invoice/InvoicePDFScribe";
+import InvoicePDFPPR from "../Invoice/InvoicePDFPPR";
 
 type Props = {
-  overallInvoiceHistory: InvoiceHistory[];
+  overallInvoiceHistory: InvoiceHistoryInvoice[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -52,14 +54,26 @@ const InvoiceOverAllTable: React.FC<Props> = ({
 
       if (selectedInvoices.length === 1) {
         const invoice = selectedInvoices[0];
-        console.log("------>", invoice);
 
         // Add validation before PDF generation
         if (invoice && validateInvoiceData(invoice)) {
-          const pdfBlob = await pdf(
-            <InvoicePDF invoiceHistory={invoice} />
-          ).toBlob();
-          saveAs(pdfBlob, `Invoice_QT${invoice.refIHId + 1000}.pdf`);
+          if (invoice.refRTId === 0) {
+            const pdfBlob = await pdf(
+              <InvoicePDF invoiceHistory={invoice} />
+            ).toBlob();
+            saveAs(pdfBlob, `Invoice # ${invoice.refIHId + 1000}.pdf`);
+          } else if (invoice.refRTId === 7) {
+            const pdfBlob = await pdf(
+              <InvoicePDFScribe invoiceHistory={invoice} />
+            ).toBlob();
+            saveAs(pdfBlob, `Invoice # ${invoice.refIHId + 1000}.pdf`);
+          } else {
+            const pdfBlob = await pdf(
+              <InvoicePDFPPR invoiceHistory={invoice} />
+            ).toBlob();
+            saveAs(pdfBlob, `Invoice # ${invoice.refIHId + 1000}.pdf`);
+          }
+          return;
         } else {
           alert("Invoice data is incomplete. Cannot generate PDF.");
           return;
@@ -71,11 +85,25 @@ const InvoiceOverAllTable: React.FC<Props> = ({
 
       // Generate PDFs for each selected invoice
       const pdfPromises = selectedInvoices.map(async (invoice) => {
-        const pdfBlob = await pdf(
-          <InvoicePDF invoiceHistory={invoice} />
-        ).toBlob();
-        const fileName = `Invoice_QT${invoice.refIHId + 1000}.pdf`;
-        zip.file(fileName, pdfBlob);
+        if (invoice.refRTId === 0) {
+          const pdfBlob = await pdf(
+            <InvoicePDF invoiceHistory={invoice} />
+          ).toBlob();
+          const fileName = `Invoice # ${invoice.refIHId + 1000}.pdf`;
+          zip.file(fileName, pdfBlob);
+        } else if (invoice.refRTId === 7) {
+          const pdfBlob = await pdf(
+            <InvoicePDFScribe invoiceHistory={invoice} />
+          ).toBlob();
+          const fileName = `Invoice # ${invoice.refIHId + 1000}.pdf`;
+          zip.file(fileName, pdfBlob);
+        } else {
+          const pdfBlob = await pdf(
+            <InvoicePDFPPR invoiceHistory={invoice} />
+          ).toBlob();
+          const fileName = `Invoice # ${invoice.refIHId + 1000}.pdf`;
+          zip.file(fileName, pdfBlob);
+        }
         return true;
       });
 
@@ -97,7 +125,7 @@ const InvoiceOverAllTable: React.FC<Props> = ({
   };
 
   // Add a validation function
-  const validateInvoiceData = (invoice: InvoiceHistory): boolean => {
+  const validateInvoiceData = (invoice: InvoiceHistoryInvoice): boolean => {
     // Check for required properties that your InvoicePDF component needs
     return (
       invoice &&
@@ -134,7 +162,7 @@ const InvoiceOverAllTable: React.FC<Props> = ({
   }, [overallInvoiceHistory]);
 
   // Define your columns with filters
-  const columns: ColumnDef<InvoiceHistory>[] = [
+  const columns: ColumnDef<InvoiceHistoryInvoice>[] = [
     {
       accessorKey: "select",
       id: "select",

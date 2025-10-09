@@ -3214,7 +3214,40 @@ const Report: React.FC = () => {
 
         {/* Report Sub-Tabs */}
         <div className="flex w-2/5 h-full items-center justify-around px-2">
-          {tab === 4 &&
+        {
+          stateData.readOnly && (role?.id === 2 || role?.id === 3) ? (
+            <>
+            {tab === 4 &&
+            [
+              { label: "Final Report", value: 4 },
+            ].map(({ label, value }) => {
+              const accessible = isTabAccessible(value);
+              return (
+                accessible && (
+                  <div
+                    key={label}
+                    onClick={() => accessible && setSubTab(value)}
+                    className={`flex-1 max-w-xl text-xs ${
+                      label !== "Final Report"
+                        ? "text-[#e06666]"
+                        : "text-[#3f3f3d]"
+                    }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                      accessible
+                        ? subTab === value
+                          ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                          : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                        : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
+                    }`}
+                  >
+                    {label}
+                  </div>
+                )
+              );
+            })}
+            </>
+          ) : (
+            <>
+            {tab === 4 &&
             [
               { label: "General", value: 1 },
               { label: "Right", value: 2 },
@@ -3245,6 +3278,10 @@ const Report: React.FC = () => {
                 )
               );
             })}
+            </>
+          )
+        }
+          
         </div>
       </div>
 

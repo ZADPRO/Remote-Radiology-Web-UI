@@ -1359,8 +1359,8 @@ const PatientQueue: React.FC = () => {
               DICOM
             </div>
             <div className="flex items-center justify-center text-xs font-medium w-full">
-              <span className="px-4 border-r border-gray-500">L</span>
-              <span className="px-4">R</span>
+              <span className="px-4 border-r border-gray-500">R</span>
+              <span className="px-4">L</span>
             </div>
           </div>
         ),
@@ -1388,34 +1388,6 @@ const PatientQueue: React.FC = () => {
             }
             return (
               <div className="flex justify-center gap-2 items-center text-sm text-center">
-                {/* Left DICOM */}
-                {leftDicom ? (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="Download Left DICOM"
-                    onClick={() =>
-                      downloadAllDicom(
-                        userId,
-                        appointmentId,
-                        "Left",
-                        leftDicom.refDFFilename
-                          .split("_")
-                          .slice(0, -2)
-                          .join("_") + "_L.zip"
-                      )
-                    }
-                    className="hover:bg-[#d4d5ca]"
-                  >
-                    ({leftCount})<Download />
-                    <span className="sr-only">Left DICOM</span>
-                  </Button>
-                ) : (
-                  <span className="w-10 text-muted-foreground">-</span>
-                )}
-
-                <div className="h-5 w-px bg-gray-400" />
-
                 {/* Right DICOM */}
                 {rightDicom ? (
                   <Button
@@ -1437,6 +1409,34 @@ const PatientQueue: React.FC = () => {
                   >
                     ({rightCount})<Download />
                     <span className="sr-only">Right DICOM</span>
+                  </Button>
+                ) : (
+                  <span className="w-10 text-muted-foreground">-</span>
+                )}
+
+                <div className="h-5 w-px bg-gray-400" />
+
+                {/* Left DICOM */}
+                {leftDicom ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Download Left DICOM"
+                    onClick={() =>
+                      downloadAllDicom(
+                        userId,
+                        appointmentId,
+                        "Left",
+                        leftDicom.refDFFilename
+                          .split("_")
+                          .slice(0, -2)
+                          .join("_") + "_L.zip"
+                      )
+                    }
+                    className="hover:bg-[#d4d5ca]"
+                  >
+                    ({leftCount})<Download />
+                    <span className="sr-only">Left DICOM</span>
                   </Button>
                 ) : (
                   <span className="w-10 text-muted-foreground">-</span>

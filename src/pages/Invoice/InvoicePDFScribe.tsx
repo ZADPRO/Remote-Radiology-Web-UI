@@ -85,53 +85,72 @@ const styles = StyleSheet.create({
   },
 });
 
-const InvoicePDF = ({ invoiceHistory }: Props) => (
+const InvoicePDFScribe = ({ invoiceHistory }: Props) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.heading}>Invoice</Text>
 
-      {/* Top Section */}
       <View style={styles.row}>
         <View>
-          {/* <Text>No: {`Invoice_QT${invoiceHistory.refIHId + 1000}`}</Text>
-          <Text>Date: {invoiceHistory.refIHCreatedAt.split(" ")[0]}</Text>
-          <Text>
-            Billing Period: {invoiceHistory.refIHFromDate} to{" "}
-            {invoiceHistory.refIHToDate}
-          </Text>
-          <Text>Mode of Payment: {invoiceHistory.refIHModePayment}</Text>
-          {invoiceHistory.refIHModePayment === "UPI" ? (
-            <Text>UPI ID: {invoiceHistory.refIHUPIId}</Text>
-          ) : (
-            invoiceHistory.refIHModePayment === "BANK TRANSFER" && (
-              <>
-                <Text>
-                  Holder Name: {invoiceHistory.refIHAccountHolderName}
-                </Text>
-                <Text>Number: {invoiceHistory.refIHAccountNo}</Text>
-                <Text>Bank: {invoiceHistory.refIHAccountBank}</Text>
-                <Text>Branch: {invoiceHistory.refIHAccountBranch}</Text>
-                <Text>IFSC: {invoiceHistory.refIHAccountIFSC}</Text>
-              </>
-            )
-          )} */}
-          <Text>{invoiceHistory.refIHFromName}</Text>
-          <Text>{invoiceHistory.refIHFromEmail}</Text>
-          <Text>{invoiceHistory.refIHFromPhoneNo}</Text>
-          <Text>{invoiceHistory.refIHFromAddress}</Text>
-        </View>
+          <View>
+            <Text style={{ fontWeight: "bold", marginTop: 10 }}>To:</Text>
+            <Text>{invoiceHistory.refIHToName}</Text>
+            <Text>{invoiceHistory.refIHToAddress}</Text>
+          </View>
 
+          <View>
+            <Text style={{ fontWeight: "bold", marginTop: 20 }}>From:</Text>
+            <Text>Name: {invoiceHistory.refIHFromName}</Text>
+            <Text>Address: {invoiceHistory.refIHFromAddress}</Text>
+            <Text>Phone: {invoiceHistory.refIHFromPhoneNo}</Text>
+            <Text>Email: {invoiceHistory.refIHFromEmail}</Text>
+            <Text>PAN: {invoiceHistory.refIHFromPan}</Text>
+            {invoiceHistory.refIHFromGST && (
+              <Text>GSTIN: {invoiceHistory.refIHFromGST}</Text>
+            )}
+            <Text>
+              Invoice Date:{" "}
+              {formatReadableDate(invoiceHistory.refIHCreatedAt.split(" ")[0])}
+            </Text>
+            <Text>
+              Billing Period: {formatReadableDate(invoiceHistory.refIHFromDate)}{" "}
+              to {formatReadableDate(invoiceHistory.refIHToDate)}
+            </Text>
+            <Text>Mode of Payment: {invoiceHistory.refIHModePayment}</Text>
+            {invoiceHistory.refIHModePayment === "UPI" ? (
+              <>
+                <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                  UPI Details:
+                </Text>
+                <Text style={{ marginLeft: 20 }}>
+                  UPI ID: {invoiceHistory.refIHUPIId}
+                </Text>
+              </>
+            ) : (
+              invoiceHistory.refIHModePayment === "BANK TRANSFER" && (
+                <>
+                  <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                    Bank Details:
+                  </Text>
+                  <Text style={{ marginLeft: 20 }}>
+                    Account Name: {invoiceHistory.refIHAccountHolderName}
+                  </Text>
+                  <Text style={{ marginLeft: 20 }}>
+                    Account Number: {invoiceHistory.refIHAccountNo}
+                  </Text>
+                  <Text style={{ marginLeft: 20 }}>
+                    Bank & Branch: {invoiceHistory.refIHAccountBank} &{" "}
+                    {invoiceHistory.refIHAccountBranch}
+                  </Text>
+                  <Text style={{ marginLeft: 20 }}>
+                    IFSC: {invoiceHistory.refIHAccountIFSC}
+                  </Text>
+                </>
+              )
+            )}
+          </View>
+        </View>
         <View>
-          {/* <Text style={{ fontWeight: "bold" }}>From:</Text>
-          <Text>Name: {invoiceHistory.refIHFromName}</Text>
-          <Text>Phone: {invoiceHistory.refIHFromPhoneNo}</Text>
-          <Text>Email: {invoiceHistory.refIHFromEmail}</Text>
-          <Text>PAN: {invoiceHistory.refIHFromPan}</Text>
-          <Text>GSTIN: {invoiceHistory.refIHFromGST}</Text>
-          <Text>Address: {invoiceHistory.refIHFromAddress}</Text>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>To:</Text>
-          <Text>Name: {invoiceHistory.refIHToName}</Text>
-          <Text>Address: {invoiceHistory.refIHToAddress}</Text> */}
           <Text>{`Invoice # ${invoiceHistory.refIHId + 1000}`}</Text>
           <Text>
             Date:{" "}
@@ -140,33 +159,27 @@ const InvoicePDF = ({ invoiceHistory }: Props) => (
         </View>
       </View>
 
-      <View>
-        <Text style={{ fontWeight: "bold", marginTop: 20 }}>To:</Text>
-        <Text>{invoiceHistory.refIHToName}</Text>
-        <Text>{invoiceHistory.refIHToAddress}</Text>
-      </View>
-
       {/* Table Section */}
       <View style={styles.table}>
         <View style={[styles.tableRow, styles.tableHeader]}>
           <Text style={styles.cellSmall}>S.No.</Text>
           <Text style={styles.cell}>Description</Text>
           <Text style={styles.cell}>Quantity</Text>
-          <Text style={styles.cell}>Amount (USD)</Text>
-          <Text style={styles.cell}>Total (USD)</Text>
+          <Text style={styles.cell}>Amount (INR)</Text>
+          <Text style={styles.cell}>Total (INR)</Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>1.</Text>
           <Text style={styles.cell}>Total Case</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHScanCenterTotalCase}
+            {invoiceHistory.refIHScribeTotalcasequantity}
           </Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHScancentercaseAmount}
+            {invoiceHistory.refIHScribeTotalcaseamount}
           </Text>
           <Text style={styles.cell}>
-            {(invoiceHistory.refIHScanCenterTotalCase || 0) *
-              (invoiceHistory.refIHScancentercaseAmount || 0)}
+            {(invoiceHistory.refIHScribeTotalcasequantity || 0) *
+              (invoiceHistory.refIHScribeTotalcaseamount || 0)}
           </Text>
         </View>
         {invoiceHistory.otherExpenses && invoiceHistory.otherExpenses.length > 0 && (
@@ -187,20 +200,30 @@ const InvoicePDF = ({ invoiceHistory }: Props) => (
           <Text style={styles.cellbold}>Total Amount</Text>
           <Text style={styles.cellbold}>-</Text>
           <Text style={styles.cellbold}>-</Text>
-          <Text style={styles.cellbold}>USD {invoiceHistory.refIHTotal}</Text>
+          <Text style={styles.cellbold}>INR {invoiceHistory.refIHTotal}</Text>
         </View>
       </View>
 
       {/* <View style={{ alignItems: "flex-end", marginTop: 10 }}>
         <Text style={{ fontWeight: "bold" }}>
-          Total: USD {invoiceHistory.refIHTotal}
+          Total: INR {invoiceHistory.refIHTotal}
         </Text>
       </View> */}
 
       {/* Declaration */}
-      <Text style={styles.declaration}>
-        Late payments are subject to a [1.5% per month] finance charge and may
-        result in suspension of report delivery until payment is received.
+      <Text
+        style={{
+          fontSize: 11,
+          fontFamily: "Poppins",
+          marginTop: 20,
+          fontWeight: "bold",
+        }}
+      >
+        Declaration
+      </Text>
+      <Text style={{ fontSize: 11, fontFamily: "Poppins" }}>
+        I hereby declare that the information provided above is accurate, and
+        the services listed have been duly completed during the billing period.
       </Text>
 
       <View style={styles.signature}>
@@ -213,29 +236,8 @@ const InvoicePDF = ({ invoiceHistory }: Props) => (
         )}
         <Text>Signature</Text>
       </View>
-
-      {/* Declaration */}
-      <Text style={{ fontSize: 11, fontFamily: "Poppins", marginTop: 20 }}>
-        Below are the details of the new bank in the name of the company
-        (Wellthgreen Theranostics).
-      </Text>
-
-      <View style={{ marginTop: 10 }}>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ fontWeight: "bold" }}>Bank Name: </Text>
-          <Text>{invoiceHistory.refIHAccountBank}</Text>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ fontWeight: "bold" }}>Account Number: </Text>
-          <Text>{invoiceHistory.refIHAccountNo}</Text>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ fontWeight: "bold" }}>ABA Routing Number: </Text>
-          <Text>{invoiceHistory.refIHAccountIFSC}</Text>
-        </View>
-      </View>
     </Page>
   </Document>
 );
 
-export default InvoicePDF;
+export default InvoicePDFScribe;

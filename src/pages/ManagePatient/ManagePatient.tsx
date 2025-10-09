@@ -474,7 +474,7 @@ const ManagePatient: React.FC = () => {
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 5,
+        pageSize: 50,
       },
     },
   });
@@ -494,7 +494,7 @@ const ManagePatient: React.FC = () => {
           Manage patients
         </h1>
       </div>
-      <div className="w-11/12 mx-auto my-0 space-y-3 py-4">
+      <div className="w-11/12 h-[70vh]  mx-auto my-0 space-y-3 py-4">
         {/* Top Controls: Global Search, Column Visibility, Add Center Admin */}
         <div
           className="flex flex-col lg:flex-row items-center justify-between gap-4 rounded-lg p-3"
@@ -577,7 +577,7 @@ const ManagePatient: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className="grid w-full border rounded-lg overflow-auto"
+          className="grid w-full border rounded-lg h-[76%]"
           style={{
             background:
               "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",

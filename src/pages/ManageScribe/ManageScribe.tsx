@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,10 +8,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import addRadiologist_Bg from "../../assets/Add Admins/Add Radiologist BG.png";
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 // Import ArrowUp and ArrowDown
-import { Plus, ChevronsLeft, ChevronsRight, Filter, ArrowUp, ArrowDown } from 'lucide-react';
+import {
+  Plus,
+  ChevronsLeft,
+  ChevronsRight,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 // Import ShadCN UI Popover, Input, and Dialog components
 import {
@@ -20,11 +27,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 // ShadCN Pagination Imports
 import {
@@ -56,15 +59,15 @@ import {
   ColumnFiltersState,
   VisibilityState,
   getPaginationRowModel,
-} from '@tanstack/react-table';
-import LoadingOverlay from '@/components/ui/CustomComponents/loadingOverlay';
-import { useNavigate } from 'react-router-dom';
-import { ListAllScribe, scribeService } from '@/services/scribeService';
-import EditScribe from './EditScribe';
+} from "@tanstack/react-table";
+import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import { useNavigate } from "react-router-dom";
+import { ListAllScribe, scribeService } from "@/services/scribeService";
+import EditScribe from "./EditScribe";
 
 const ManageScribe: React.FC = () => {
   const [scribes, setScribes] = useState<ListAllScribe[]>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>('');
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -86,8 +89,7 @@ const ManageScribe: React.FC = () => {
     } catch (error) {
       console.error("Failed to fetch scribe:", error);
       setScribes([]);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -99,10 +101,13 @@ const ManageScribe: React.FC = () => {
   const columns = useMemo<ColumnDef<ListAllScribe>[]>(
     () => [
       {
-        accessorFn: (row: ListAllScribe) => `${row.refUserFirstName} ${row.refUserLastName}`,
-        id: 'name',
+        accessorFn: (row: ListAllScribe) =>
+          `${row.refUserFirstName} ${row.refUserLastName}`,
+        id: "name",
         header: ({ column }) => (
-          <div className="flex items-center"> {/* Removed justify-between */}
+          <div className="flex items-center">
+            {" "}
+            {/* Removed justify-between */}
             <span
               className="cursor-pointer font-semibold text-white"
               onClick={column.getToggleSortingHandler()}
@@ -114,16 +119,16 @@ const ManageScribe: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" /> // Subtle arrow for unsorted
@@ -132,14 +137,18 @@ const ManageScribe: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Name...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -162,8 +171,8 @@ const ManageScribe: React.FC = () => {
         maxSize: 250,
       },
       {
-        accessorKey: 'refUserCustId',
-        id: 'radiologistId',
+        accessorKey: "refUserCustId",
+        id: "radiologistId",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -177,16 +186,16 @@ const ManageScribe: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -195,14 +204,18 @@ const ManageScribe: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Radiologist ID...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -219,8 +232,8 @@ const ManageScribe: React.FC = () => {
         maxSize: 200,
       },
       {
-        accessorKey: 'refCODOEmail',
-        id: 'mailId',
+        accessorKey: "refCODOEmail",
+        id: "mailId",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -234,16 +247,16 @@ const ManageScribe: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -252,14 +265,18 @@ const ManageScribe: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Mail ID...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -276,8 +293,8 @@ const ManageScribe: React.FC = () => {
         maxSize: 350,
       },
       {
-        accessorKey: 'refCODOPhoneNo1',
-        id: 'mobileNumber',
+        accessorKey: "refCODOPhoneNo1",
+        id: "mobileNumber",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -291,16 +308,16 @@ const ManageScribe: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -309,14 +326,18 @@ const ManageScribe: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
                     placeholder={`Filter Mobile Number...`}
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
                     }
@@ -333,8 +354,9 @@ const ManageScribe: React.FC = () => {
         maxSize: 200,
       },
       {
-        accessorFn: (row: ListAllScribe) => (row.refUserStatus === "true" ? 'Active' : 'Inactive'),
-        id: 'status',
+        accessorFn: (row: ListAllScribe) =>
+          row.refUserStatus === "true" ? "Active" : "Inactive",
+        id: "status",
         header: ({ column }) => (
           <div className="flex items-center">
             <span
@@ -348,16 +370,16 @@ const ManageScribe: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="p-0 h-auto ml-1 text-white hover:bg-transparent hover:text-gray-200"
               aria-label={
-                column.getIsSorted() === 'asc'
-                  ? 'Sorted ascending'
-                  : column.getIsSorted() === 'desc'
-                  ? 'Sorted descending'
-                  : 'Not sorted'
+                column.getIsSorted() === "asc"
+                  ? "Sorted ascending"
+                  : column.getIsSorted() === "desc"
+                  ? "Sorted descending"
+                  : "Not sorted"
               }
             >
-              {column.getIsSorted() === 'asc' ? (
+              {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="h-4 w-4" />
-              ) : column.getIsSorted() === 'desc' ? (
+              ) : column.getIsSorted() === "desc" ? (
                 <ArrowDown className="h-4 w-4" />
               ) : (
                 <ArrowUp className="h-4 w-4 opacity-50" />
@@ -366,13 +388,17 @@ const ManageScribe: React.FC = () => {
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 ml-2 text-white hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <select
-                    value={(column.getFilterValue() ?? '') as string}
+                    value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
                       column.setFilterValue(event.target.value || undefined)
                     }
@@ -388,32 +414,37 @@ const ManageScribe: React.FC = () => {
           </div>
         ),
         cell: ({ row }) => {
-          const status = row.original.refUserStatus === "true" ? 'Active' : 'Inactive';
+          const status =
+            row.original.refUserStatus === "true" ? "Active" : "Inactive";
           return (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`}>
-              <span className={`w-2 h-2 mr-1 rounded-full ${
-                status === 'Active' ? 'bg-green-500' : 'bg-red-500'
-              }`}></span>
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                status === "Active"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              <span
+                className={`w-2 h-2 mr-1 rounded-full ${
+                  status === "Active" ? "bg-green-500" : "bg-red-500"
+                }`}
+              ></span>
               {status}
             </span>
           );
         },
         enableColumnFilter: true,
-        filterFn: 'equals',
+        filterFn: "equals",
         size: 100,
         minSize: 80,
         maxSize: 120,
       },
       {
-        id: 'actions',
-        header: () => (
-          <div className='text-white'>Manage Profile</div>
-        ),
+        id: "actions",
+        header: () => <div className="text-white">Manage Profile</div>,
         cell: ({ row }) => (
           <Button
-            className='bg-[#A3B1A1] hover:bg-[#81927f] py-1 px-3 rounded text-xs'
+            className="bg-[#A3B1A1] hover:bg-[#81927f] py-1 px-3 rounded text-xs"
             onClick={() => {
               setSelectedScribeId(row.original.refUserId);
               setIsEditDialogOpen(true);
@@ -452,9 +483,9 @@ const ManageScribe: React.FC = () => {
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 5,
-      }
-    }
+        pageSize: 50,
+      },
+    },
   });
 
   return (
@@ -473,7 +504,7 @@ const ManageScribe: React.FC = () => {
           Manage Scribe
         </h1>
       </div>
-      <div className="w-11/12 mx-auto my-0 space-y-3 py-4">
+      <div className="w-11/12 mx-auto my-0 space-y-3 py-4 h-[70vh]">
         {/* Top Controls: Global Search, Column Visibility, Add Radiologist */}
         <div
           className="flex flex-col lg:flex-row items-center justify-between gap-4 rounded-lg p-3"
@@ -549,7 +580,7 @@ const ManageScribe: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className="grid w-full border rounded-lg overflow-auto"
+          className="grid w-full border rounded-lg h-[76%]"
           style={{
             background:
               "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
@@ -761,6 +792,6 @@ const ManageScribe: React.FC = () => {
       </Dialog>
     </div>
   );
-}
+};
 
 export default ManageScribe;

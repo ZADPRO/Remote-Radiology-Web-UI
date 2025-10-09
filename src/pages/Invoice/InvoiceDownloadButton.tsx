@@ -1,26 +1,77 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
-import { InvoiceHistory } from "@/services/invoiceService";
+import { InvoiceHistoryInvoice } from "@/services/invoiceService";
 import { Download, Loader } from "lucide-react";
+import InvoicePDFScribe from "./InvoicePDFScribe";
+import InvoicePDFPPR from "./InvoicePDFPPR";
 
 type Props = {
-  invoiceHistory: InvoiceHistory;
+  type: string;
+  invoiceHistory: InvoiceHistoryInvoice;
 };
 
-const InvoiceDownloadButton = ({ invoiceHistory }: Props) => {
-
-  console.log(invoiceHistory.refIHSignatureFile)
+const InvoiceDownloadButton = ({ type, invoiceHistory }: Props) => {
+  console.log(invoiceHistory);
 
   return (
-    <div >
-      <PDFDownloadLink
+    <div>
+      {/* <PDFDownloadLink
         document={<InvoicePDF invoiceHistory={invoiceHistory} />}
         fileName={`Invoice_QT${invoiceHistory.refIHId + 1000}.pdf`}
       >
         {({ loading }) =>
           loading ? <Loader className="animate-spin h-5 w-5" /> : <Download />
         }
-      </PDFDownloadLink>
+      </PDFDownloadLink> */}
+      {type === "1" ? (
+        <>
+          <PDFDownloadLink
+            document={<InvoicePDF invoiceHistory={invoiceHistory} />}
+            fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Loader className="animate-spin h-5 w-5" />
+              ) : (
+                <Download />
+              )
+            }
+          </PDFDownloadLink>
+        </>
+      ) : type === "2" && invoiceHistory.refRTId === 7 ? (
+        <>
+          {" "}
+          <PDFDownloadLink
+            document={<InvoicePDFScribe invoiceHistory={invoiceHistory} />}
+            fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Loader className="animate-spin h-5 w-5" />
+              ) : (
+                <Download />
+              )
+            }
+          </PDFDownloadLink>
+        </>
+      ) : (
+        type === "2" && (
+          <>
+            <PDFDownloadLink
+              document={<InvoicePDFPPR invoiceHistory={invoiceHistory} />}
+              fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+            >
+              {({ loading }) =>
+                loading ? (
+                  <Loader className="animate-spin h-5 w-5" />
+                ) : (
+                  <Download />
+                )
+              }
+            </PDFDownloadLink>
+          </>
+        )
+      )}
     </div>
   );
 };
