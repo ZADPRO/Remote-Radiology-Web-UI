@@ -18,6 +18,7 @@ import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/Labe
 import { useAuth } from "@/pages/Routes/AuthContext";
 import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import { calculateAge } from "@/utlis/calculateAge";
+import { patientInTakeService } from "@/services/patientInTakeFormService";
 
 interface QuestionIds {
   fullName: number;
@@ -41,6 +42,7 @@ interface Props {
   questionIds: QuestionIds;
   readOnly: boolean;
   OverrideStatus: string;
+  userId: number;
 }
 
 const PersonalInformation: React.FC<Props> = ({
@@ -49,6 +51,7 @@ const PersonalInformation: React.FC<Props> = ({
   questionIds,
   readOnly,
   OverrideStatus,
+  userId,
 }) => {
   const getAnswer = (id: number) =>
     formData.find((q) => q.questionId === id)?.answer || "";
@@ -68,34 +71,44 @@ const PersonalInformation: React.FC<Props> = ({
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!formData || formData.length === 0 || !user) return;
+    const fetchData = async () => {
+      if (!formData || formData.length === 0 || !user) return;
 
-    console.log(
-      parseLocalDate(user?.refUserDOB ? user?.refUserDOB : "") +
-        "-------------->"
-    );
+      console.log(userId);
 
-    if(!readOnly){
-      getAnswer(questionIds.fullName) == "" &&
-      handleInputChange(questionIds.fullName, user?.refUserFirstName);
-    getAnswer(questionIds.email) == "" &&
-      handleInputChange(questionIds.email, user?.refCODOEmail);
-    user?.refCODOPhoneNo1 &&
-      getAnswer(questionIds.phone) == "" &&
-      handleInputChange(questionIds.phone, user?.refCODOPhoneNo1);
+      if (!readOnly) {
+        const res = await patientInTakeService.fetchPatientData(userId);
+        console.log(res);
 
-    if (user?.refUserDOB && getAnswer(questionIds.dob) === "") {
-      handleInputChange(questionIds.dob, user.refUserDOB);
-      handleInputChange(
-        questionIds.age,
-        user?.refUserDOB ? String(calculateAge(formatLocalDate(new Date(user?.refUserDOB))) || 0) : ""
-      );
-    }
+        if (getAnswer(questionIds.fullName) === "")
+          handleInputChange(questionIds.fullName, res.data?.refUserFirstName);
 
-    user?.refUserGender &&
-      getAnswer(questionIds.gender) == "" &&
-      handleInputChange(questionIds.gender, user?.refUserGender);
-    }
+        if (getAnswer(questionIds.email) === "")
+          handleInputChange(questionIds.email, res.data?.refCODOEmail);
+
+        if (res.data?.refCODOPhoneNo1 && getAnswer(questionIds.phone) === "")
+          handleInputChange(questionIds.phone, res.data?.refCODOPhoneNo1);
+
+        if (res.data?.refUserDOB && getAnswer(questionIds.dob) === "") {
+          handleInputChange(questionIds.dob, res.data.refUserDOB);
+          handleInputChange(
+            questionIds.age,
+            res.data?.refUserDOB
+              ? String(
+                  calculateAge(
+                    formatLocalDate(new Date(res.data?.refUserDOB))
+                  ) || 0
+                )
+              : ""
+          );
+        }
+
+        if (res.data?.refUserGender && getAnswer(questionIds.gender) === "")
+          handleInputChange(questionIds.gender, res.data?.refUserGender);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -162,8 +175,7 @@ const PersonalInformation: React.FC<Props> = ({
   return (
     <div className="flex flex-col h-full relative">
       <FormHeader FormTitle="Personal Information" className="uppercase" />
-      <div className="bg-[#fff]">
-      </div>
+      <div className="bg-[#fff]"></div>
       <div className={readOnly ? "pointer-events-none" : ""}>
         <div className="flex-grow overflow-y-auto px-5 py-10 lg:pt-0 lg:px-20 space-y-6 pb-10">
           {/* Row 1 */}

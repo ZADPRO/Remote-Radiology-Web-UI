@@ -19,6 +19,13 @@ import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { TechnicianFormSubmitDialog } from "./TechnicianFormSubmitDialog";
 import { formatReadableDate } from "@/utlis/calculateAge";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export interface ResponsePatientForm {
   refITFId: number;
@@ -81,7 +88,7 @@ const TechnicianPatientIntakeForm: React.FC<
   );
 
   const [patientFormData, setPatientFormData] = useState<ResponsePatientForm[]>(
-    Array.from({ length: 500 }, (_, index) => ({
+    Array.from({ length: 555 }, (_, index) => ({
       refITFId: 0,
       questionId: 1 + index,
       answer: "",
@@ -111,47 +118,43 @@ const TechnicianPatientIntakeForm: React.FC<
     readOnly: props.readOnly ?? locationState?.readOnly ?? false,
   };
 
-  console.log(controlData);
+  // useEffect(() => {
+  // const stored = localStorage.getItem("formSession");
+  // if (stored) {
+  //   setLoading(true);
 
-  console.log(patientFormData);
+  //   try {
+  //     const parsed = JSON.parse(stored);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("formSession");
-    if (stored) {
-      setLoading(true);
+  //     console.log(parsed);
 
-      try {
-        const parsed = JSON.parse(stored);
-
-        console.log(parsed);
-
-        // Check appointment match
-        if (parsed.appointmentId == controlData.appointmentId) {
-          // Load the saved session data
-          if (parsed.technicianFormData) {
-            // setPatientFormData(parsed.patientFormData);
-            setTechnicianFormData(parsed.technicianFormData);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to parse stored session", e);
-      } finally {
-        setLoading(false);
-      }
-    }
-  }, []); // Runs only once on mount
+  //     // Check appointment match
+  //     if (parsed.appointmentId == controlData.appointmentId) {
+  //       // Load the saved session data
+  //       if (parsed.technicianFormData) {
+  //         // setPatientFormData(parsed.patientFormData);
+  //         setTechnicianFormData(parsed.technicianFormData);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.error("Failed to parse stored session", e);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+  // }, []); // Runs only once on mount
 
   // This effect will store changes to localStorage
   useEffect(() => {
     if (!controlData?.appointmentId || controlData?.readOnly) return;
 
-    const dataToStore = {
-      appointmentId: controlData.appointmentId,
-      // patientFormData,
-      technicianFormData,
-    };
+    // const dataToStore = {
+    //   appointmentId: controlData.appointmentId,
+    //   // patientFormData,
+    //   technicianFormData,
+    // };
 
-    localStorage.setItem("formSession", JSON.stringify(dataToStore));
+    // localStorage.setItem("formSession", JSON.stringify(dataToStore));
   }, [technicianFormData]);
 
   useEffect(() => {
@@ -185,7 +188,7 @@ const TechnicianPatientIntakeForm: React.FC<
     };
 
     fetchData();
-  }, [location.state]);
+  }, []);
 
   useEffect(() => {
     if (controlData?.readOnly === false) {
@@ -211,7 +214,7 @@ const TechnicianPatientIntakeForm: React.FC<
           setPatientFormData(res.data);
         } else {
           setPatientFormData(
-            Array.from({ length: 500 }, (_, index) => ({
+            Array.from({ length: 555 }, (_, index) => ({
               refITFId: 0,
               questionId: 1 + index,
               answer: "",
@@ -266,7 +269,6 @@ const TechnicianPatientIntakeForm: React.FC<
         userID,
         appointmentId
       );
-      console.log("res", res);
 
       setTechnicianData({
         name: res.technicianName,
@@ -276,11 +278,25 @@ const TechnicianPatientIntakeForm: React.FC<
       if (res.TechIntakeData) {
         setTechnicianFormData(res.TechIntakeData);
       } else {
+        // setTechnicianFormData(
+        //   Array.from({ length: 57 }, (_, index) => ({
+        //     questionId: 1 + index,
+        //     answer: "",
+        //   }))
+        // );
         setTechnicianFormData(
-          Array.from({ length: 57 }, (_, index) => ({
-            questionId: 1 + index,
-            answer: "",
-          }))
+          Array.from({ length: 57 }, (_, index) => {
+            const questionId = index + 1;
+            return {
+              questionId,
+              answer:
+                questionId === 1
+                  ? "Routine"
+                  : questionId === 57
+                  ? "private"
+                  : "",
+            };
+          })
         );
       }
     } catch (error) {
@@ -322,7 +338,7 @@ const TechnicianPatientIntakeForm: React.FC<
     });
   };
 
-  const handleAddTechnicianForm = async () => {
+  const handleAddTechnicianForm = async (saveStatus: boolean) => {
     setLoading(true);
     setIsSubmitting(true);
     setSubmitError(null);
@@ -346,6 +362,7 @@ const TechnicianPatientIntakeForm: React.FC<
             getTechnicianFormAnswer(41) == "Both"
               ? true
               : false,
+          saveStatus: saveStatus,
         };
         console.log("payload", payload);
         const res = await appointmentService.addTechnicianInTakeForm(payload);
@@ -353,7 +370,8 @@ const TechnicianPatientIntakeForm: React.FC<
         console.log(res);
 
         if (res.status) {
-          localStorage.removeItem("formSession");
+          allowNavigationRef.current = true;
+          // localStorage.removeItem("formSession");
           navigate(-1);
         }
       }
@@ -363,6 +381,62 @@ const TechnicianPatientIntakeForm: React.FC<
       setLoading(false);
     }
   };
+
+  const [showDialog, setShowDialog] = useState(false);
+  const allowNavigationRef = useRef(false);
+
+  const handleLeave = async (saveStatus: boolean) => {
+    allowNavigationRef.current = true;
+    setShowDialog(false);
+
+    if (saveStatus) {
+      handleAddTechnicianForm(true);
+    } else navigate(-1);
+  };
+
+  useEffect(() => {
+    if (locationState?.readOnly === false) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        if (!allowNavigationRef.current) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      };
+
+      const handlePopState = () => {
+        if (!allowNavigationRef.current) {
+          setShowDialog(true);
+
+          // 🛠 Preserve React Router state when modifying history
+          const preservedState = {
+            ...window.history.state,
+            usr: location.state,
+          };
+          history.replaceState(preservedState, "", window.location.href);
+          history.pushState(preservedState, "", window.location.href);
+        }
+      };
+
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("popstate", handlePopState);
+
+      // 🛠 Do the same when setting up initially
+      const preservedState = { ...window.history.state, usr: location.state };
+      history.replaceState(preservedState, "", window.location.href);
+      history.pushState(preservedState, "", window.location.href);
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (allowNavigationRef.current) {
+      navigate(-1);
+    }
+  }, [allowNavigationRef.current]);
 
   // const getAnswer = (id: number) =>
   //   technicianFormData.find((q) => q.questionId === id)?.answer || "";
@@ -606,6 +680,28 @@ const TechnicianPatientIntakeForm: React.FC<
       }}
       className="flex flex-col realtive h-dvh bg-gradient-to-b from-[#EED2CF] to-[#FEEEED]"
     >
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Navigation</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to leave this page? Changes you made may not
+            be saved.
+          </p>
+          <DialogFooter className="mt-4">
+            <Button variant="secondary" onClick={() => setShowDialog(false)}>
+              Stay
+            </Button>
+            <Button variant="destructive" onClick={() => handleLeave(false)}>
+              Leave anyway
+            </Button>
+            <Button variant="greenTheme" onClick={() => handleLeave(true)}>
+              Save and Leave
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* Sidebar */}
       {loading && <LoadingOverlay />}
       {!props.reportview && (
@@ -764,7 +860,9 @@ const TechnicianPatientIntakeForm: React.FC<
         <TechnicianFormSubmitDialog
           open={isDialogOpen}
           onClose={handleCloseDialog}
-          onSubmit={handleAddTechnicianForm}
+          onSubmit={() => {
+            handleAddTechnicianForm(false);
+          }}
           isSubmitting={isSubmitting}
           error={submitError}
         />

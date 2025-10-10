@@ -372,7 +372,6 @@ const PatientQueue: React.FC = () => {
         }
       } else {
         const res = await technicianService.listPatientQueue();
-        console.log("PatientQueue.tsx / res / 371 -------------------  ", res);
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
@@ -754,7 +753,7 @@ const PatientQueue: React.FC = () => {
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
                 <div>Scan</div>
-                <div>Centre</div>
+                <div>Center</div>
               </div>
             </span>
             {column.getCanFilter() && (
@@ -769,7 +768,7 @@ const PatientQueue: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Scan Centre ID...`}
+                    placeholder={`Filter Scan Center ID...`}
                     value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
@@ -1081,7 +1080,7 @@ const PatientQueue: React.FC = () => {
               </button>
             );
           } else if (
-            currentUserRole === "patient" &&
+            // currentUserRole === "patient" &&
             appointmentComplete === "fillform"
           ) {
             statusContent = (
@@ -1095,6 +1094,21 @@ const PatientQueue: React.FC = () => {
               </button>
             );
           }
+          // else if (
+          //   // currentUserRole === "patient" &&
+          //   appointmentComplete === "fillform"
+          // ) {
+          //   statusContent = (
+          //     <button
+          //       className="hover:underline cursor-pointer font-bold"
+          //       onClick={() => {
+          //         setIsEditDialogBroucherOpen(true);
+          //       }}
+          //     >
+          //       Start
+          //     </button>
+          //   );
+          // }
 
           return (
             <div className="text-center">
@@ -1121,6 +1135,7 @@ const PatientQueue: React.FC = () => {
                       setIsEditDialogBroucherOpen(false);
                       setIsEditDialogOpen(true);
                     }}
+                    viewStatus={true}
                     scId={row.original.refSCId}
                   />
                 </Dialog>
@@ -1153,6 +1168,7 @@ const PatientQueue: React.FC = () => {
                           fetchFormData: false,
                           appointmentId: row.original.refAppointmentId,
                           userId,
+                          readOnly: false,
                           name:
                             row.original.refUserFirstName ??
                             user?.refUserFirstName,
@@ -1165,6 +1181,7 @@ const PatientQueue: React.FC = () => {
                       });
                     }}
                     scId={row.original.refSCId}
+                    viewStatus={true}
                   />
                   {/* <UserConsentWrapper
                   setEditingDialogOpen={setIsEditDialogOpen}
@@ -1324,12 +1341,14 @@ const PatientQueue: React.FC = () => {
                   onClick={() =>
                     navigate("/technicianpatientintakeform", {
                       state: {
+                        fetchTechnicianForm: true,
                         fetchFormData: true,
                         appointmentId: row.original.refAppointmentId,
                         userId: row.original.refUserId,
                         name: row.original.refUserFirstName,
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
+                        readOnly: false,
                       },
                     })
                   }
@@ -1802,7 +1821,6 @@ const PatientQueue: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
             >
-              <div>QT</div>
               <div>Report</div>
             </div>
             <Popover>
@@ -3021,7 +3039,7 @@ const PatientQueue: React.FC = () => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://my.practicebetter.io/#/65e5aa632c1aab1598f642fc/bookings?s=65fd9719891980592a43767c"
+                href="https://calendly.com/dr-mythrishankar/report-discussion"
                 className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
               >
                 here
