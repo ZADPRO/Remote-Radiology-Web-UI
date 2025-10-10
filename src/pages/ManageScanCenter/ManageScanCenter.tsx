@@ -73,6 +73,7 @@ const ManageScanCenter: React.FC = () => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+  console.log("paginatedCenters", paginatedCenters);
 
   const { role } = useAuth();
 
@@ -147,17 +148,35 @@ const ManageScanCenter: React.FC = () => {
                 key={center.refSCId}
                 className="w-50 px-1 py-2 m-0 gap-2 shadow-md rounded-md"
               >
-                {center.profileImgFile?.base64Data ? (
-                  <img
-                    src={`data:${center.profileImgFile.contentType};base64,${center.profileImgFile.base64Data}`}
-                    alt={center.refSCName}
-                    className="w-full h-32 object-cover rounded-md"
-                  />
-                ) : (
-                  <div className="w-full h-32 flex items-center justify-center bg-gray-200 text-gray-500 text-xs rounded-md">
-                    No Image Available
-                  </div>
-                )}
+                {(() => {
+                  const isUrl =
+                    center.refSCProfile &&
+                    /^https?:\/\/[^\s]+$/i.test(center.refSCProfile);
+
+                  if (isUrl) {
+                    return (
+                      <img
+                        src={center.refSCProfile}
+                        alt={center.refSCName}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                    );
+                  } else if (center.profileImgFile?.base64Data) {
+                    return (
+                      <img
+                        src={`data:${center.profileImgFile.contentType};base64,${center.profileImgFile.base64Data}`}
+                        alt={center.refSCName}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                    );
+                  } else {
+                    return (
+                      <div className="w-full h-32 flex items-center justify-center bg-gray-200 text-gray-500 text-xs rounded-md">
+                        No Image Available
+                      </div>
+                    );
+                  }
+                })()}
 
                 <CardContent className="text-start px-2 py-2">
                   <p className="font-bold text-sm mt-1 uppercase">

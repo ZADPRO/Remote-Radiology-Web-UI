@@ -164,9 +164,7 @@ const AddPatient: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({

@@ -152,9 +152,7 @@ const AddPerformingProvider: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -348,9 +346,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -568,7 +564,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({ formFile: formData });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
         const result: UploadFile = {
@@ -660,9 +656,7 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({

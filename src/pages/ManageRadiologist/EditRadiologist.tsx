@@ -223,9 +223,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -255,7 +253,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
         const result: TempLicense = {

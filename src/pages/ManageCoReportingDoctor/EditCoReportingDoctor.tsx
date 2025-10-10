@@ -145,15 +145,13 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: response.viewURL,
         }));
 
         setFiles((prev) => ({
@@ -181,9 +179,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -345,9 +341,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({

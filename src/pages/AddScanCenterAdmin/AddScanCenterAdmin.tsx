@@ -119,21 +119,42 @@ const AddScanCenterAdmin: React.FC = () => {
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold">Center Details</h1>
           <div className="flex flex-col items-start justify-start">
-            {scanCenterData?.profileImgFile === null ? (
-              <div className="relative w-32 h-32 lg:w-38 lg:h-38 flex flex-col items-center justify-center bg-gray-200 rounded-full text-gray-500 shadow-md">
-                <span className="text-sm font-medium text-center">
-                  No Image Available
-                </span>
-              </div>
-            ) : (
-              <div className="relative w-32 h-32 lg:w-38 lg:h-38">
-                <img
-                  src={`data:${scanCenterData?.profileImgFile.contentType};base64,${scanCenterData?.profileImgFile.base64Data}`}
-                  alt="Preview"
-                  className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
-                />
-              </div>
-            )}
+            {(() => {
+              const imgUrl = scanCenterData?.refSCProfile;
+              const imgFile = scanCenterData?.profileImgFile;
+
+              if (imgUrl && /^https?:\/\/[^\s]+$/i.test(imgUrl)) {
+                return (
+                  <div className="relative w-32 h-32 lg:w-38 lg:h-38">
+                    <img
+                      src={imgUrl}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
+                    />
+                  </div>
+                );
+              }
+
+              if (imgFile && imgFile.base64Data) {
+                return (
+                  <div className="relative w-32 h-32 lg:w-38 lg:h-38">
+                    <img
+                      src={`data:${imgFile.contentType};base64,${imgFile.base64Data}`}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <div className="relative w-32 h-32 lg:w-38 lg:h-38 flex flex-col items-center justify-center bg-gray-200 rounded-full text-gray-500 shadow-md">
+                  <span className="text-sm font-medium text-center">
+                    No Image Available
+                  </span>
+                </div>
+              );
+            })()}
           </div>
 
           {scanCenterData && (
@@ -187,14 +208,12 @@ const AddScanCenterAdmin: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: response.viewURL,
         }));
 
         setFiles((prev) => ({
@@ -411,19 +430,22 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
+      console.log("\n\n\nresponse => file uplaod driver's license", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
+
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // store clean S3 path only
         }));
 
         setTempFiles((prev) => ({
           ...prev,
-          [tempFileKey]: file, // store full File object for UI
+          [tempFileKey]: file, // keep File object for UI
         }));
       } else {
         setError(`Upload failed for file: ${file.name}`);

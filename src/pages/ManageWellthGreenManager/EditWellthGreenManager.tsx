@@ -107,9 +107,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       if (response.status && response.fileName) {
         setFormData((prev) =>
           prev ? { ...prev, refUserProfileImg: response.fileName } : null
@@ -138,9 +136,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
       if (response.status && response.fileName) {
         setFormData((prev) =>
           prev ? { ...prev, [fieldName]: response.fileName } : null
@@ -161,9 +157,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
       if (response.status && response.fileName) {
         const newEduFileEntry: TempUpdateEduFile = {
           file_name: response.fileName,

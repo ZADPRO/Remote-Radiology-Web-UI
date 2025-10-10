@@ -132,9 +132,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
@@ -168,9 +166,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -200,7 +196,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
         const result: TempUpdateFiles = {
@@ -264,9 +260,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({

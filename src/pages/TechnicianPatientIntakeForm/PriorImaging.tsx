@@ -172,9 +172,7 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(({
         const formDataObj = new FormData();
         formDataObj.append("file", file);
         try {
-          const response = await uploadService.uploadFile({
-            formFile: formDataObj,
-          });
+          const response = await uploadService.uploadFile(file);
           if (response.status) {
             values.push(response.fileName);
           }

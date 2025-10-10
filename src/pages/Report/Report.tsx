@@ -82,6 +82,8 @@ import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
+import axios from "axios";
+import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -407,7 +409,9 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
 
-      reason += PatientHistoryReportGenerator(responsePatientInTake, technicianForm) + "<br/>";
+      reason +=
+        PatientHistoryReportGenerator(responsePatientInTake, technicianForm) +
+        "<br/>";
 
       setPatientHistory(reason);
     }
@@ -946,13 +950,13 @@ const Report: React.FC = () => {
         setScanCenterImg(response.ScanCenterImg);
         setOldReport(response.oldReport || []);
 
-         if (response.ListAllSignature) {
-                        setSignatureText(
-                          response.ListAllSignature
-                            .map((data: SignatureText) => `${data.refSText}`)
-                            .join("")
-                        );
-                      }
+        if (response.ListAllSignature) {
+          setSignatureText(
+            response.ListAllSignature.map(
+              (data: SignatureText) => `${data.refSText}`
+            ).join("")
+          );
+        }
 
         if (
           response.appointmentStatus[0]
@@ -2234,8 +2238,12 @@ const Report: React.FC = () => {
           optionalImpressionRecommendation.selectedRecommendationIdRight,
         commonImpressionRecommendationRight: commonImpressRecomm.idRight,
         editStatus: editStatus,
-        patientMailStatus: showMailDialog ? mailOption === "patient" || mailOption === "both" : false,
-        managerMailStatus: showMailDialog ? mailOption === "scancenter" || mailOption === "both" : false,
+        patientMailStatus: showMailDialog
+          ? mailOption === "patient" || mailOption === "both"
+          : false,
+        managerMailStatus: showMailDialog
+          ? mailOption === "scancenter" || mailOption === "both"
+          : false,
         leaveStatus: leaveStatus,
         artificatsLeft:
           getReportAnswer(
@@ -2262,6 +2270,68 @@ const Report: React.FC = () => {
         lymphnodesImageTextLeft: LymphNodesLeftImage,
       };
       console.log("payload", payload);
+
+      if (movedStatus) {
+        if (movedStatus === "Signed Off") {
+          console.log("\n\nmovedStatus ===>", movedStatus);
+          console.log(
+            "\n\nPatient dataa -> ",
+            patientDetails,
+            "\n\n\n",
+            assignData
+          );
+
+          try {
+            const date = new Date();
+            const formattedTimestamp = `${date.getFullYear()}-${(
+              date.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}-${date
+              .getDate()
+              .toString()
+              .padStart(2, "0")}_${date
+              .getHours()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getSeconds()
+              .toString()
+              .padStart(2, "0")}`;
+
+            const filename = `${patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+
+            // 1️⃣ Step 1: Request presigned PUT URL from backend
+            const uploadRes = await axios.get(
+              `${
+                import.meta.env.VITE_API_URL_AUTH
+              }/storage/s3/final-report-upload`,
+              { params: { filename } }
+            );
+
+            const uploadUrl = uploadRes.data.url;
+            console.log("Generated Upload URL:", uploadUrl);
+
+            // 2️⃣ Step 2: Generate PDF blob (instead of downloading)
+            const pdfBlob = await generateReportsPdfBlob(
+              payload.reportTextContent
+            );
+
+            // 3️⃣ Step 3: Upload PDF to presigned S3 URL
+            await axios.put(uploadUrl, pdfBlob, {
+              headers: {
+                "Content-Type": "application/pdf",
+              },
+            });
+
+            console.log("✅ PDF successfully uploaded to S3");
+          } catch (err) {
+            console.error("❌ Error generating or uploading report:", err);
+          }
+        }
+      }
 
       const res = await reportService.submitReport(payload);
       console.log(res);
@@ -2464,13 +2534,13 @@ const Report: React.FC = () => {
     } = await reportService.autosaveReport(payload);
 
     if (response.status) {
-       if (response.ListAllSignature) {
-                        setSignatureText(
-                          response.ListAllSignature
-                            .map((data: SignatureText) => `${data.refSText}`)
-                            .join("")
-                        );
-                      }
+      if (response.ListAllSignature) {
+        setSignatureText(
+          response.ListAllSignature.map(
+            (data: SignatureText) => `${data.refSText}`
+          ).join("")
+        );
+      }
       setPerformingProviderName(response.PerformingProviderName);
       setVerifyingProviderName(response.VerifyingProviderName);
       if (
@@ -3986,9 +4056,9 @@ const Report: React.FC = () => {
                         await reportService.AddSignature(
                           signatureRow,
                           stateData.appointmentId,
-                          stateData.userId,
+                          stateData.userId
                         );
-                      }else{
+                      } else {
                         const date = new Date().toLocaleDateString();
                         const signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
                         const response: {
@@ -3998,7 +4068,7 @@ const Report: React.FC = () => {
                         } = await reportService.AddSignature(
                           signatureRow,
                           stateData.appointmentId,
-                          stateData.userId,
+                          stateData.userId
                         );
                         if (response.status && response.data) {
                           setSignatureText(
@@ -4009,7 +4079,6 @@ const Report: React.FC = () => {
                         }
                         fecthautosave();
                       }
-
 
                       setLoading(false);
                     } else {

@@ -362,6 +362,7 @@ const PatientQueue: React.FC = () => {
     try {
       if (role?.type == "patient") {
         const res = await appointmentService.listPatientMedicalHistory();
+        console.log("res", res);
         if (res.status) {
           setPatientQueue(res.data);
           setSCConsultantStatus(res.consultantStatus);
@@ -372,6 +373,7 @@ const PatientQueue: React.FC = () => {
         }
       } else {
         const res = await technicianService.listPatientQueue();
+        console.log("res", res);
         console.log("PatientQueue.tsx / res / 371 -------------------  ", res);
         if (res.status) {
           const filteredData = res.data.filter(

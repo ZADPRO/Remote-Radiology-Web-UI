@@ -14,13 +14,16 @@ import DatePicker from "@/components/date-picker";
 import { Camera, FileText, Pencil } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
-import { ListSpecificScanCenterAdmin, scanCenterAdminService } from "@/services/scancenterService";
+import {
+  ListSpecificScanCenterAdmin,
+  scanCenterAdminService,
+} from "@/services/scancenterService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import { parseLocalDate } from "@/lib/dateUtils";
 
 // Define the props interface for EditScanCenterAdmin
 interface EditScanCenterAdminProps {
-    scanCenterId: number;
+  scanCenterId: number;
   scanCenterAdminId: number;
   setIsEditDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onUpdate: () => void;
@@ -32,7 +35,7 @@ interface files {
 }
 
 const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
-    scanCenterId,
+  scanCenterId,
   scanCenterAdminId,
   setIsEditDialogOpen,
   onUpdate,
@@ -42,29 +45,29 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
   const [error, setError] = useState<string | null>(null); // State for error messages
 
   const [formData, setFormData] = useState<ListSpecificScanCenterAdmin>({
-  profileImgFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  drivingLicenseFile: {
-    base64Data: "",
-    contentType: "",
-  },
-  refCODOEmail: "",
-  refCODOPhoneNo1: "",
-  refCODOPhoneNo1CountryCode: "",
-  refRDDrivingLicense: "",
-  refRDSSId: "",
-  refRTId: 0,
-  refUserAgreementStatus: false,
-  refUserCustId: "",
-  refUserDOB: "",
-  refUserFirstName: "",
-  refUserId: 0,
-  refUserLastName: "",
-  refUserProfileImg: "",
-  refUserStatus: "",
-});
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    drivingLicenseFile: {
+      base64Data: "",
+      contentType: "",
+    },
+    refCODOEmail: "",
+    refCODOPhoneNo1: "",
+    refCODOPhoneNo1CountryCode: "",
+    refRDDrivingLicense: "",
+    refRDSSId: "",
+    refRTId: 0,
+    refUserAgreementStatus: false,
+    refUserCustId: "",
+    refUserDOB: "",
+    refUserFirstName: "",
+    refUserId: 0,
+    refUserLastName: "",
+    refUserProfileImg: "",
+    refUserStatus: "",
+  });
 
   const [files, setFiles] = useState<files>({
     profile_img: null,
@@ -76,7 +79,8 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     setError(null); // Clear previous errors
     try {
       const res = await scanCenterAdminService.getSpecificScanCenterAdmin(
-        scanCenterId, scanCenterAdminId
+        scanCenterId,
+        scanCenterAdminId
       );
       console.log("Fetching Center Admin...", res);
 
@@ -97,15 +101,13 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: response.viewURL,
         }));
 
         setFiles((prev) => ({
@@ -133,14 +135,16 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
+
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -155,45 +159,45 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     }
   };
 
-//   const uploadAndStoreFile = async (
-//     file: File,
-//     tempField: keyof files,
-//     uploadFn = uploadService.uploadFile // optional, default upload function
-//   ): Promise<void> => {
-//     const formData = new FormData();
-//     formData.append("file", file);
+  //   const uploadAndStoreFile = async (
+  //     file: File,
+  //     tempField: keyof files,
+  //     uploadFn = uploadService.uploadFile // optional, default upload function
+  //   ): Promise<void> => {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
 
-//     try {
-//       const response = await uploadFn({ formFile: formData });
+  //     try {
+  //       const response = await uploadFn({ formFile: formData });
 
-//       if (response.status) {
-//         const result: TempLicense = {
-//           file_name: response.fileName,
-//           old_file_name: file.name,
-//           status: "new" as const,
-//         };
+  //       if (response.status) {
+  //         const result: TempLicense = {
+  //           file_name: response.fileName,
+  //           old_file_name: file.name,
+  //           status: "new" as const,
+  //         };
 
-//         console.log(result);
+  //         console.log(result);
 
-//         if (tempField == "license_files") {
-//           setTempLicenses((prev) => [...prev, result]);
-//         }
+  //         if (tempField == "license_files") {
+  //           setTempLicenses((prev) => [...prev, result]);
+  //         }
 
-//         if (tempField == "cv_files") {
-//           setTempCVs((prev) => [...prev, result]);
-//         }
+  //         if (tempField == "cv_files") {
+  //           setTempCVs((prev) => [...prev, result]);
+  //         }
 
-//         setFiles((prev) => ({
-//           ...prev,
-//           [tempField]: [...((prev[tempField] as File[]) || []), file],
-//         }));
-//       } else {
-//         setError(`Upload failed for file: ${file.name}`);
-//       }
-//     } catch (err) {
-//       setError(`Error uploading file: ${file.name}`);
-//     }
-//   };
+  //         setFiles((prev) => ({
+  //           ...prev,
+  //           [tempField]: [...((prev[tempField] as File[]) || []), file],
+  //         }));
+  //       } else {
+  //         setError(`Upload failed for file: ${file.name}`);
+  //       }
+  //     } catch (err) {
+  //       setError(`Error uploading file: ${file.name}`);
+  //     }
+  //   };
 
   useEffect(() => {
     getSpecificCenterAdmin();
@@ -217,7 +221,7 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
         profile_img: formData.refUserProfileImg,
         status: formData.refUserStatus === "true",
       };
-      console.log("payload",payload);
+      console.log("payload", payload);
       const res = await scanCenterAdminService.updateScanCenterAdmin(payload);
       console.log(res);
       if (res.status) {
@@ -234,9 +238,10 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
   };
 
   if (error) return <div className="text-red-500 mb-4 p-4">{error}</div>;
-  if(loading) return (<LoadingOverlay />);
+  if (loading) return <LoadingOverlay />;
 
-  if (!formData) return <div className="p-4">No Scan Center Admin data found.</div>;
+  if (!formData)
+    return <div className="p-4">No Scan Center Admin data found.</div>;
 
   function downloadFile(
     base64Data: string,
@@ -311,12 +316,19 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // 🟢 New upload (preview)
+                    : formData.refUserProfileImg &&
+                      /^https?:\/\/[^\s]+$/i.test(formData.refUserProfileImg)
+                    ? formData.refUserProfileImg // 🟢 S3 URL (from backend)
+                    : formData.profileImgFile?.base64Data
+                    ? `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // 🟢 Base64 (old flow)
+                    : "" // 🔴 Fallback (no image)
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
+              {/* 📸 Upload button */}
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -479,8 +491,7 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                   }
                   disabled
                 >
-                  <SelectTrigger disabled
-                className="bg-white">
+                  <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
@@ -529,64 +540,83 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
               />
             </div>
             <div className="flex flex-col gap-1.5 w-full">
-              <Label className="text-sm font-medium" htmlFor="drivers-license-upload">
+              <Label
+                className="text-sm font-medium"
+                htmlFor="drivers-license-upload"
+              >
                 Drivers License <span className="text-red-500">*</span>
               </Label>
 
-               <FileUploadButton
-              id="license-upload"
-              label="Upload License"
-              isFilePresent={!!formData.refRDDrivingLicense}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  if (file.size > 5 * 1024 * 1024) {
-                    setError("File must be less than 5MB.");
-                    return;
-                  }
+              <FileUploadButton
+                id="license-upload"
+                label="Upload License"
+                isFilePresent={!!formData.refRDDrivingLicense}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("File must be less than 5MB.");
+                      return;
+                    }
 
-                  handleSingleFileUpload({
-                    file,
-                    fieldName: "refRDDrivingLicense",
-                    tempFileKey: "drivers_license",
-                  });
-                }
-              }}
-              required
-            />
+                    handleSingleFileUpload({
+                      file,
+                      fieldName: "refRDDrivingLicense",
+                      tempFileKey: "drivers_license",
+                    });
+                  }
+                }}
+                required
+              />
 
               {/* Show uploaded or existing Driving License file */}
-            {files.drivers_license ? (
-              <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
-                <div className="bg-blue-100 p-2 rounded-md">
-                  <FileText className="w-5 h-5 text-blue-600" />
-                </div>
-                <span className="truncate text-sm font-medium text-blue-800">
-                  {files.drivers_license.name}
-                </span>
-              </div>
-            ) : (
-              formData.refRDDrivingLicense &&
-              formData.drivingLicenseFile && (
-                <div
-                  className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  onClick={() =>
-                    downloadFile(
-                      formData.drivingLicenseFile.base64Data,
-                      formData.drivingLicenseFile.contentType,
-                      "drivers_license"
-                    )
-                  }
-                >
-                  <div className="bg-green-100 p-2 rounded-md">
-                    <FileText className="w-5 h-5 text-green-600" />
+              {files.drivers_license ? (
+                // 🟢 Show when a new file is uploaded
+                <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
+                  <div className="bg-blue-100 p-2 rounded-md">
+                    <FileText className="w-5 h-5 text-blue-600" />
                   </div>
-                  <span className="truncate text-sm font-medium text-green-800">
-                    Driving License Document
+                  <span className="truncate text-sm font-medium text-blue-800">
+                    {files.drivers_license.name}
                   </span>
                 </div>
-              )
-            )}
+              ) : (
+                // 🟢 Handle existing files from backend (S3 or base64)
+                (formData.refRDDrivingLicense ||
+                  formData.drivingLicenseFile) && (
+                  <div
+                    className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    onClick={() => {
+                      const licenseUrl = formData.refRDDrivingLicense;
+                      if (
+                        licenseUrl &&
+                        /^https?:\/\/.*s3.*amazonaws\.com/i.test(licenseUrl)
+                      ) {
+                        const link = document.createElement("a");
+                        link.href = licenseUrl;
+                        link.download = "";
+                        link.target = "_blank";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      } else if (formData.drivingLicenseFile) {
+                        downloadFile(
+                          formData.drivingLicenseFile.base64Data,
+                          formData.drivingLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      }
+                    }}
+                  >
+                    <div className="bg-green-100 p-2 rounded-md">
+                      <FileText className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="truncate text-sm font-medium text-green-800">
+                      Driving License Document
+                    </span>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </div>

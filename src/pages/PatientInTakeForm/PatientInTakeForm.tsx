@@ -9,6 +9,8 @@ import PatientInTakeForm03 from "./PatientInTakeFormDb/PatientInTakeForm03";
 import PatientInTakeForm04 from "./PatientInTakeFormDC/PatientInTakeForm04";
 import { SubmitDialog } from "./SubmitDialog";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import axios from "axios";
+import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 export interface IntakeOption {
   questionId: number;
   answer: string;
@@ -79,7 +81,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const locationState =
     location.state as PatientInTakeFormNavigationState | null;
 
-    console.log(locationState,"-------------------->")
+  console.log(locationState, "-------------------->");
 
   const controlData: PatientInTakeFormNavigationState = {
     fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,
@@ -173,19 +175,18 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
             console.log("Hello --------------->", newData);
             setFormData(newData);
           } else {
+            let updatedData = res.data.map((item: any) =>
+              item.questionId === 170
+                ? { ...item, answer: String(controlData.categoryId) }
+                : item
+            );
 
-             let updatedData = res.data.map((item: any) =>
-            item.questionId === 170
-              ? { ...item, answer: String(controlData.categoryId) }
-              : item
-          );
-
-          if (res.data === null) {
-            updatedData = Array.from({ length: 555 }, (_, index) => ({
-              questionId: 1 + index,
-              answer: "",
-            }));
-          }
+            if (res.data === null) {
+              updatedData = Array.from({ length: 555 }, (_, index) => ({
+                questionId: 1 + index,
+                answer: "",
+              }));
+            }
             setFormData(updatedData);
           }
         }
@@ -223,7 +224,36 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
         localStorage.getItem("patientIntakeStartTime") || "",
     };
 
+    const date = new Date();
+
+    const formattedTimestamp = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}_${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}-${date.getMinutes().toString().padStart(2, "0")}-${date
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`;
+
     console.log("payload", payload);
+    const filename = `${payload.patientId}_${payload.appointmentId}_ConsentForm_${formattedTimestamp}.pdf`;
+
+    const uploadRes = await axios.get(
+      `${import.meta.env.VITE_API_URL_AUTH}/storage/s3/final-report-upload`,
+      { params: { filename } }
+    );
+
+    const uploadUrl = uploadRes.data.url;
+    console.log("Generated Upload URL:", uploadUrl);
+
+    const pdfBlob = await generateReportsPdfBlob(controlData.consent);
+
+    await axios.put(uploadUrl, pdfBlob, {
+      headers: {
+        "Content-Type": "application/pdf",
+      },
+    });
 
     try {
       let res;

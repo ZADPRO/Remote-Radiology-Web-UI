@@ -44,55 +44,112 @@ export interface EducationalFileDetails extends FileData {
   refECOldFileName: string;
 }
 
-interface UploadImagePayload {
-  formImg: FormData;
-}
+// interface UploadImagePayload {
+//   formImg: FormData;
+// }
 
 export interface UploadFilePayload {
   formFile: FormData;
 }
 
-
 export const uploadService = {
-  uploadImage: async ({ formImg }: UploadImagePayload) => {
+  // uploadImage: async ({ formImg }: UploadImagePayload) => {
+  //   const token = localStorage.getItem("token");
+
+  //   const res = await axios.post(
+  //     `${import.meta.env.VITE_API_URL_USERSERVICE}/upload-profile-image`,
+  //     formImg,
+  //     {
+  //       headers: {
+  //         Authorization: token,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     }
+  //   );
+  //   console.log("\n\nres  file upload", res);
+  //   const decryptData = decrypt(res.data.data, res.data.token);
+  //   tokenService.setToken(res.data.token);
+  //   console.log("\n\n\ndecryptData\n\n", decryptData);
+
+  //   const { uploadURL, fileName, s3Key } = decryptData;
+
+  //   const file = formImg.get("profileImage") as File;
+
+  //   await axios.put(uploadURL, file, {
+  //     headers: {
+  //       "Content-Type": file.type,
+  //     },
+  //   });
+
+  //   return {
+  //     fileName,
+  //     s3Key,
+  //     message: "File uploaded successfully to S3",
+  //     status: true,
+  //   };
+
+  //   // return decryptData;
+  // },
+
+  uploadImage: async (file: File) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_USERSERVICE
-      }/upload-profile-image`,
-      formImg,
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/upload-public-profile-image`,
+      { extension: file.name.slice(file.name.lastIndexOf(".")) },
+      { headers: { Authorization: token } }
     );
-    console.log(res);
+
     const decryptData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    return decryptData;
+
+    const { uploadURL, fileName, viewURL } = decryptData;
+    console.log("\n\nuploadURL", uploadURL);
+
+    // ✅ Upload file directly to S3
+    console.log("\n\nfile", file);
+    await axios.put(uploadURL, file, {
+      headers: { "Content-Type": file.type },
+    });
+
+    return {
+      fileName,
+      viewURL,
+      message: "Profile image uploaded successfully",
+      status: true,
+    };
   },
 
-  uploadFile: async ({ formFile }: UploadFilePayload) => {
+  uploadFile: async ( formFile: File) => {
     const token = localStorage.getItem("token");
 
+    // 1️⃣ Ask backend to generate presigned URLs (PUT + GET)
     const res = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_USERSERVICE
-      }/upload-file`,
-      formFile,
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/upload-private-document`,
+      { extension: formFile.name.slice(formFile.name.lastIndexOf(".")) },
+      { headers: { Authorization: token } }
     );
-    console.log(res);
+
+    // 2️⃣ Decrypt and extract URLs
     const decryptData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    return decryptData;
-  }
+
+    const { uploadURL, fileName, viewURL } = decryptData;
+    console.log("Presigned upload URL:", uploadURL);
+    console.log("Temporary view/download URL (10 min):", viewURL);
+
+    // 3️⃣ Upload the file to S3 using the presigned PUT URL
+    await axios.put(uploadURL, formFile, {
+      headers: { "Content-Type": formFile.type },
+    });
+
+    // 4️⃣ Return the details to the caller
+    return {
+      fileName,
+      viewURL, // can be shown to the user as a download link
+      uploaded: true,
+      message: "Document uploaded successfully",
+      status: true,
+    };
+  },
 };

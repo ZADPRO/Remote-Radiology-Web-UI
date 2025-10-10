@@ -13,7 +13,10 @@ import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { uploadService } from "@/services/commonServices";
 import { useNavigate } from "react-router-dom";
-import { scancenterService, type NewScanCenter } from "@/services/scancenterService";
+import {
+  scancenterService,
+  type NewScanCenter,
+} from "@/services/scancenterService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 
 interface TempFilesState {
@@ -21,7 +24,6 @@ interface TempFilesState {
 }
 
 const AddScanCenter: React.FC = () => {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<NewScanCenter>({
@@ -44,9 +46,9 @@ const AddScanCenter: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-    const errorRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (error && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -78,10 +80,10 @@ const AddScanCenter: React.FC = () => {
     setError("");
     setLoading(true);
     try {
-      console.log("finalForm",formData);
+      console.log("finalForm", formData);
       const res = await scancenterService.addScanCenter(formData);
       console.log(res);
-      if(res.status) {
+      if (res.status) {
         toast.success("Scan Center Added Successfully");
         setTimeout(() => {
           navigate(-1);
@@ -89,45 +91,42 @@ const AddScanCenter: React.FC = () => {
       } else {
         setError(res.message);
       }
-      
     } catch (error) {
       console.log(error);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
 
   const handleProfileImageUpload = async (file: File) => {
-  const formDataImg = new FormData();
-  formDataImg.append("profileImage", file);
+    const formDataImg = new FormData();
+    formDataImg.append("profileImage", file);
 
-  try {
-    const response = await uploadService.uploadImage({ formImg: formDataImg });
+    try {
+      const response = await uploadService.uploadImage(file);
+      console.log("response", response);
 
-    if (response.status) {
-      setFormData((prev) => ({
-        ...prev,
-        logo: response.fileName,
-      }));
+      if (response.status) {
+        setFormData((prev) => ({
+          ...prev,
+          logo: response.viewURL,
+        }));
 
-      setFiles((prev) => ({
-        ...prev,
-        logo: file,
-      }));
-
-    } else {
-      setError("Profile image upload failed");
+        setFiles((prev) => ({
+          ...prev,
+          logo: file,
+        }));
+      } else {
+        setError("Profile image upload failed");
+      }
+    } catch (err) {
+      setError("Error uploading profile image");
     }
-  } catch (err) {
-    setError("Error uploading profile image");
-  }
-};
+  };
 
   console.log(files);
 
   console.log(formData);
-
 
   return (
     <form
@@ -264,8 +263,8 @@ const AddScanCenter: React.FC = () => {
             </span>
           </div> */}
             {error && (
-               <Alert ref={errorRef} variant="destructive" className="mt-2">
-                <CircleAlert/>
+              <Alert ref={errorRef} variant="destructive" className="mt-2">
+                <CircleAlert />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
@@ -306,7 +305,6 @@ interface CenterDetailsFormProps {
   formData: NewScanCenter;
   setFormData: React.Dispatch<React.SetStateAction<NewScanCenter>>;
 }
-
 
 const CenterDetailsForm: React.FC<CenterDetailsFormProps> = ({
   formData,
@@ -402,7 +400,7 @@ const CenterDetailsForm: React.FC<CenterDetailsFormProps> = ({
       </div>
 
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
-      <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="centercode">
             Scan Center Code <span className="text-red-500">*</span>
           </Label>
