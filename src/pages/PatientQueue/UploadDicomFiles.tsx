@@ -410,13 +410,13 @@ const UploadDicomFiles: React.FC = () => {
       <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">
         Dicom
       </h1>
-      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Please stay on this page and submit until upload process says completed</p>
+      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Please remain on this page and wait until the upload process shows as completed before submitting.</p>
 
       {/* This wrapper scrolls */}
       <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2">
         <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 p-5 lg:p-0">
-          {renderUploadSection("Left", "Left")}
           {renderUploadSection("Right", "Right")}
+          {renderUploadSection("Left", "Left")}
         </div>
       </div>
 

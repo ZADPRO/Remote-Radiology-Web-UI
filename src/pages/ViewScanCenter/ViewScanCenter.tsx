@@ -53,6 +53,7 @@ const ViewScanCenter: React.FC = () => {
     refSCWebsite: "",
     refSCStatus: false,
     refSCConsultantStatus: false,
+    refSCConsultantLink: "",
   });
 
   const [files, setFiles] = useState<files>({
@@ -118,8 +119,12 @@ const ViewScanCenter: React.FC = () => {
         logo: formData.refSCProfile,
         status: formData.refSCStatus,
         refSCConsultantStatus: formData.refSCConsultantStatus,
+        refSCConsultantLink: formData.refSCConsultantLink,
       };
-
+      console.log(
+        "ViewScanCenter.tsx / payload / 108 -------------------  ",
+        payload
+      );
       const res = await scancenterService.updateScanCenter(payload);
       console.log("res", res);
       if (res.status) {
@@ -149,7 +154,7 @@ const ViewScanCenter: React.FC = () => {
       <div className="h-[10vh] flex items-center justify-start text-xl font-bold">
         <div className="flex items-center gap-2">
           <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
-          <h1>SCAN CENTRE</h1>
+          <h1>SCAN CENTER</h1>
         </div>
       </div>
 
@@ -316,8 +321,8 @@ const ViewScanCenter: React.FC = () => {
                 </div>
               )}
               <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
-                <label className="font-semibold text-sm w-1/5">
-                  Consultant Link :
+                <label className="font-semibold text-sm w-full  lg:w-1/5">
+                  View Consultant Link :
                 </label>
                 <div className="flex flex-col gap-1.5 w-full relative">
                   <Select
@@ -335,11 +340,29 @@ const ViewScanCenter: React.FC = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Allow</SelectItem>
-                      <SelectItem value="false">Not allow</SelectItem>
+                      <SelectItem value="false">Do not allow</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
+              {role?.type === "admin" && (
+                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
+                  <label className="font-semibold text-sm w-1/5">
+                    Consultant Link :
+                  </label>
+                  <Input
+                    value={formData.refSCConsultantLink}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        refSCConsultantLink: e.target.value,
+                      }))
+                    }
+                    required
+                    className="w-full bg-white"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}

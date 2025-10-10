@@ -261,7 +261,7 @@ const AddPatient: React.FC = () => {
                       className="w-full bg-[#fff] shadow-2xl rounded-lg p-2"
                     >
                       Welcome – Your Appointment at {SCName} Scan
-                      Centre
+                      Center
                     </div>
                     <Button variant="greenTheme" onClick={handleCopy}>
                       Copy
@@ -278,7 +278,7 @@ const AddPatient: React.FC = () => {
                       Hi {formData.firstname},
                       <br />
                       <br />
-                      Thank you for choosing {SCName} Scan Centre for your
+                      Thank you for choosing {SCName} Scan Center for your
                       Breast QT (Quantitative Transmission) Imaging, also known
                       as Breast Acoustic CT. We are delighted to assist you and
                       ensure a smooth, comfortable experience on your

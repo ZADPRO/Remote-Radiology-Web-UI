@@ -91,7 +91,7 @@ const ManageScanCenter: React.FC = () => {
       >
         <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
         <h1 className="text-[#3F3F3D] uppercase font-[900] text-xl lg:text-2xl text-center lg:text-left tracking-widest">
-          Manage Scan Centre
+          Manage Scan Center
         </h1>
       </div>
 

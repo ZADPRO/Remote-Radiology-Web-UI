@@ -161,13 +161,13 @@ const VerifyOTP: React.FC = () => {
       {/* Left image section */}
       <div
         style={{ backgroundImage: `url(${loginTexture})` }}
-        className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#F9F5EF] lg:bg-cover lg:bg-center lg:bg-no-repeat"
+        className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#a4b2a1] lg:bg-cover lg:bg-center lg:bg-no-repeat"
       >
-        <img src={loginImg} alt="Login" className="w-[90%] lg:w-[80%]" />
+        <img src={loginImg} alt="Login" className="w-[300px] md:w-[500px]" />
       </div>
 
       {/* Right section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:justify-center lg:shadow-2xl relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-center lg:px-8 lg:justify-center lg:shadow-2xl relative">
         <img
           src={logoNew}
           className="hidden w-auto h-[15%] mx-auto lg:inline"
@@ -286,7 +286,7 @@ const VerifyOTP: React.FC = () => {
 
             <Button
               disabled={isVerifying}
-              className="w-[80%] lg:w-full mx-auto my-0 p-4 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
+              className="w-[80%] lg:w-full mx-auto my-0 p-4 mb-5 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
             >
               {isVerifying ? "Verifying..." : "Verify"}
             </Button>

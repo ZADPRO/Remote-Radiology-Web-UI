@@ -356,6 +356,7 @@ const PatientQueue: React.FC = () => {
   };
 
   const [SCconsultantStatus, setSCConsultantStatus] = useState(false);
+  const [SCconsultantLink, setSCConsultantLink] = useState("");
 
   const fetchPatientQueue = async () => {
     setLoading(true);
@@ -366,6 +367,7 @@ const PatientQueue: React.FC = () => {
         if (res.status) {
           setPatientQueue(res.data);
           setSCConsultantStatus(res.consultantStatus);
+          setSCConsultantLink(res.consultantLink);
         } else {
           // Handle error or empty data scenario from API response
           console.warn("API response status is false, or no data:", res);
@@ -756,7 +758,7 @@ const PatientQueue: React.FC = () => {
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
                 <div>Scan</div>
-                <div>Centre</div>
+                <div>Center</div>
               </div>
             </span>
             {column.getCanFilter() && (
@@ -771,7 +773,7 @@ const PatientQueue: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Scan Centre ID...`}
+                    placeholder={`Filter Scan Center ID...`}
                     value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)
@@ -854,7 +856,7 @@ const PatientQueue: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
-                <div>Patient</div>
+                {/* <div>Patient</div> */}
                 <div>Name</div>
               </div>
             </span>
@@ -1083,7 +1085,7 @@ const PatientQueue: React.FC = () => {
               </button>
             );
           } else if (
-            currentUserRole === "patient" &&
+            // currentUserRole === "patient" &&
             appointmentComplete === "fillform"
           ) {
             statusContent = (
@@ -1097,6 +1099,21 @@ const PatientQueue: React.FC = () => {
               </button>
             );
           }
+          // else if (
+          //   // currentUserRole === "patient" &&
+          //   appointmentComplete === "fillform"
+          // ) {
+          //   statusContent = (
+          //     <button
+          //       className="hover:underline cursor-pointer font-bold"
+          //       onClick={() => {
+          //         setIsEditDialogBroucherOpen(true);
+          //       }}
+          //     >
+          //       Start
+          //     </button>
+          //   );
+          // }
 
           return (
             <div className="text-center">
@@ -1123,6 +1140,7 @@ const PatientQueue: React.FC = () => {
                       setIsEditDialogBroucherOpen(false);
                       setIsEditDialogOpen(true);
                     }}
+                    viewStatus={true}
                     scId={row.original.refSCId}
                   />
                 </Dialog>
@@ -1155,6 +1173,7 @@ const PatientQueue: React.FC = () => {
                           fetchFormData: false,
                           appointmentId: row.original.refAppointmentId,
                           userId,
+                          readOnly: false,
                           name:
                             row.original.refUserFirstName ??
                             user?.refUserFirstName,
@@ -1167,6 +1186,7 @@ const PatientQueue: React.FC = () => {
                       });
                     }}
                     scId={row.original.refSCId}
+                    viewStatus={true}
                   />
                   {/* <UserConsentWrapper
                   setEditingDialogOpen={setIsEditDialogOpen}
@@ -1293,6 +1313,7 @@ const PatientQueue: React.FC = () => {
                         name: row.original.refUserFirstName,
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
+                        overrideStatus: row.original.refOverrideStatus,
                       },
                     })
                   }
@@ -1302,9 +1323,9 @@ const PatientQueue: React.FC = () => {
               </span>
             );
           } else if (
-            (currentUserRole === "technician" || currentUserRole === "admin") &&
-            (appointmentComplete === "fillform" ||
-              appointmentComplete === "noteligible")
+            // (currentUserRole === "technician" || currentUserRole === "admin") &&
+            appointmentComplete === "fillform" ||
+            appointmentComplete === "noteligible"
           ) {
             // Form not started but technician has access and status is 'fillform'
             return (
@@ -1314,10 +1335,7 @@ const PatientQueue: React.FC = () => {
                 <div>Started</div>
               </div>
             );
-          } else if (
-            currentUserRole === "technician" ||
-            currentUserRole === "admin"
-          ) {
+          } else {
             // Not filled yet and technician has access
             return (
               <span>
@@ -1326,12 +1344,15 @@ const PatientQueue: React.FC = () => {
                   onClick={() =>
                     navigate("/technicianpatientintakeform", {
                       state: {
+                        fetchTechnicianForm: true,
                         fetchFormData: true,
                         appointmentId: row.original.refAppointmentId,
                         userId: row.original.refUserId,
                         name: row.original.refUserFirstName,
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
+                        readOnly: false,
+                        overrideStatus: row.original.refOverrideStatus,
                       },
                     })
                   }
@@ -1340,10 +1361,11 @@ const PatientQueue: React.FC = () => {
                 </button>
               </span>
             );
-          } else {
-            // Not filled and no write access
-            return <div className="text-muted-foreground">Not Filled</div>;
           }
+          // else {
+          //   // Not filled and no write access
+          //   return <div className="text-muted-foreground">Not Filled</div>;
+          // }
         },
         enableColumnFilter: true,
         filterFn: (row, _columnId, value) => {
@@ -1361,8 +1383,8 @@ const PatientQueue: React.FC = () => {
               DICOM
             </div>
             <div className="flex items-center justify-center text-xs font-medium w-full">
-              <span className="px-4 border-r border-gray-500">L</span>
-              <span className="px-4">R</span>
+              <span className="px-4 border-r border-gray-500">R</span>
+              <span className="px-4">L</span>
             </div>
           </div>
         ),
@@ -1390,34 +1412,6 @@ const PatientQueue: React.FC = () => {
             }
             return (
               <div className="flex justify-center gap-2 items-center text-sm text-center">
-                {/* Left DICOM */}
-                {leftDicom ? (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="Download Left DICOM"
-                    onClick={() =>
-                      downloadAllDicom(
-                        userId,
-                        appointmentId,
-                        "Left",
-                        leftDicom.refDFFilename
-                          .split("_")
-                          .slice(0, -2)
-                          .join("_") + "_L.zip"
-                      )
-                    }
-                    className="hover:bg-[#d4d5ca]"
-                  >
-                    ({leftCount})<Download />
-                    <span className="sr-only">Left DICOM</span>
-                  </Button>
-                ) : (
-                  <span className="w-10 text-muted-foreground">-</span>
-                )}
-
-                <div className="h-5 w-px bg-gray-400" />
-
                 {/* Right DICOM */}
                 {rightDicom ? (
                   <Button
@@ -1439,6 +1433,34 @@ const PatientQueue: React.FC = () => {
                   >
                     ({rightCount})<Download />
                     <span className="sr-only">Right DICOM</span>
+                  </Button>
+                ) : (
+                  <span className="w-10 text-muted-foreground">-</span>
+                )}
+
+                <div className="h-5 w-px bg-gray-400" />
+
+                {/* Left DICOM */}
+                {leftDicom ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Download Left DICOM"
+                    onClick={() =>
+                      downloadAllDicom(
+                        userId,
+                        appointmentId,
+                        "Left",
+                        leftDicom.refDFFilename
+                          .split("_")
+                          .slice(0, -2)
+                          .join("_") + "_L.zip"
+                      )
+                    }
+                    className="hover:bg-[#d4d5ca]"
+                  >
+                    ({leftCount})<Download />
+                    <span className="sr-only">Left DICOM</span>
                   </Button>
                 ) : (
                   <span className="w-10 text-muted-foreground">-</span>
@@ -1804,7 +1826,6 @@ const PatientQueue: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
               className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
             >
-              <div>QT</div>
               <div>Report</div>
             </div>
             <Popover>
@@ -3023,7 +3044,7 @@ const PatientQueue: React.FC = () => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://my.practicebetter.io/#/65e5aa632c1aab1598f642fc/bookings?s=65fd9719891980592a43767c"
+                href={SCconsultantLink}
                 className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
               >
                 here

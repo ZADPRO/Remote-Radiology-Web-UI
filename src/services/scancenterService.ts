@@ -45,6 +45,7 @@ export interface ListSpecificScanCenter {
   refSCWebsite: string;
   refSCStatus: boolean;
   refSCConsultantStatus: boolean;
+  refSCConsultantLink: string;
 }
 
 export const scancenterService = {

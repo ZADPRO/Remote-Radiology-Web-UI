@@ -12,8 +12,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { invoiceServie } from "@/services/invoiceService";
-import { ArrowLeft, Loader } from "lucide-react";
+import {
+  InvoiceInput,
+  invoiceServie,
+  OtherExpensesModel,
+} from "@/services/invoiceService";
+import { ArrowLeft, Loader, Trash } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -32,7 +36,9 @@ const NewInvoice: React.FC<Props> = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [input, setInput] = useState({
+  const [userAccess, setUserAccess] = useState(0);
+
+  const [input, setInput] = useState<InvoiceInput>({
     refSCId: 0,
     refUserId: 0,
     fromId: 0,
@@ -54,11 +60,33 @@ const NewInvoice: React.FC<Props> = () => {
     bank: "",
     branch: "",
     ifsc: "",
-    quantity: 0,
-    amount: 0,
+    refTASformEditquantity: null,
+    refTASformEditamount: null,
+    refTASformCorrectquantity: null,
+    refTASformCorrectamount: null,
+    refTADaformEditquantity: null,
+    refTADaformEditamount: null,
+    refTADaformCorrectquantity: null,
+    refTADaformCorrectamount: null,
+    refTADbformEditquantity: null,
+    refTADbformEditamount: null,
+    refTADbformCorrectquantity: null,
+    refTADbformCorrectamount: null,
+    refTADcformEditquantity: null,
+    refTADcformEditamount: null,
+    refTADcformCorrectquantity: null,
+    refTADcformCorrectamount: null,
+    refTADScribeTotalcasequantity: null,
+    refTADScribeTotalcaseamount: null,
+    otherExpensiveName: "",
+    otherAmount: null,
+    refScanCenterTotalCase: null,
+    refScancentercaseAmount: null,
     total: 0,
     signature: "",
   });
+
+  const [otherExpenses, setOtherExpenses] = useState<OtherExpensesModel[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -91,6 +119,19 @@ const NewInvoice: React.FC<Props> = () => {
       .then((res) => {
         console.log(res);
         if (res.status) {
+          if (type === "1") {
+            setUserAccess(3);
+          } else {
+            setUserAccess(
+              res.UserData[0].refRTId === 10
+                ? 1
+                : res.UserData[0].refRTId === 6
+                ? 1
+                : res.UserData[0].refRTId === 7
+                ? 2
+                : 0
+            );
+          }
           const { startDate, endDate } = getMonthStartEnd(
             `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
               2,
@@ -104,15 +145,28 @@ const NewInvoice: React.FC<Props> = () => {
               refSCId: parseInt(id),
               refUserId: 0,
               fromId: 0,
-              fromName: "Wellth Green Health Care Pvt. Ltd.",
+              fromName: "Wellthgreen Theranostics",
+              fromAddress: "6240/304, Randi Avenue, Woodland hills, CA 91367.",
+              modeofpayment: "BANK TRANSFER",
               toId: res.ScancenterData[0].refSCId,
               toName: res.ScancenterData[0].refSCName,
               toAddress: res.ScancenterData[0].refSCAddress,
               billingfrom: startDate,
               billingto: endDate,
-              quantity: res.ScanCenterCount[0].total_appointments,
-              amount: res.amount,
-              total: res.ScanCenterCount[0].total_appointments * res.amount,
+              refTASformEditamount: parseInt(res.refTASformEdit || "0"),
+              refTASformCorrectamount: parseInt(res.refTASformCorrect || "0"),
+              refTADaformEditamount: parseInt(res.refTADaformEdit || "0"),
+              refTADaformCorrectamount: parseInt(res.refTADaformCorrect || "0"),
+              refTADbformEditamount: parseInt(res.refTADbformEdit || "0"),
+              refTADbformCorrectamount: parseInt(res.refTADbformCorrect || "0"),
+              refTADcformEditamount: parseInt(res.refTADcformEdit || "0"),
+              refTADcformCorrectamount: parseInt(res.refTADcformCorrect || "0"),
+              refTADScribeTotalcasequantity: 0,
+              refTADScribeTotalcaseamount: parseInt(
+                res.refTADScribeTotalcase || "0"
+              ),
+              refScanCenterTotalCase:
+                res.ScanCenterCount[0].total_appointments || 0,
             }));
           } else if (type === "2") {
             setInput((prev) => ({
@@ -123,13 +177,34 @@ const NewInvoice: React.FC<Props> = () => {
               fromName: res.UserData[0].refUserFirstName,
               fromPhone: res.UserData[0].refCODOPhoneNo1,
               fromEmail: res.UserData[0].refCODOEmail,
+              fromPan: res.UserData[0].refPan,
               toId: 0,
-              toName: "Wellth Green Health Care Pvt. Ltd.",
+              toName: "Wellthgreen Theranostics",
+              fromAddress: "6240/304, Randi Avenue, Woodland hills, CA 91367.",
               billingfrom: startDate,
               billingto: endDate,
-              quantity: res.UserCount[0].total_appointments,
-              amount: res.amount,
-              total: res.UserCount[0].total_appointments * res.amount,
+              refTASformEditquantity: res.UserCount[0].SFormEdit,
+              refTASformEditamount: parseInt(res.refTASformEdit || "0"),
+              refTASformCorrectquantity: res.UserCount[0].SFormCorrect,
+              refTASformCorrectamount: parseInt(res.refTASformCorrect || "0"),
+              refTADaformEditquantity: res.UserCount[0].DaFormEdit,
+              refTADaformEditamount: parseInt(res.refTADaformEdit || "0"),
+              refTADaformCorrectquantity: res.UserCount[0].DaFormCorrect,
+              refTADaformCorrectamount: parseInt(res.refTADaformCorrect || "0"),
+              refTADbformEditquantity: res.UserCount[0].DbFormEdit,
+              refTADbformEditamount: parseInt(res.refTADbformEdit || "0"),
+              refTADbformCorrectquantity: res.UserCount[0].DbFormCorrect,
+              refTADbformCorrectamount: parseInt(res.refTADbformCorrect || "0"),
+              refTADcformEditquantity: res.UserCount[0].DcFormEdit,
+              refTADcformEditamount: parseInt(res.refTADcformEdit || "0"),
+              refTADcformCorrectquantity: res.UserCount[0].DcFormCorrect,
+              refTADcformCorrectamount: parseInt(res.refTADcformCorrect || "0"),
+              refTADScribeTotalcasequantity:
+                res.UserCount[0].total_appointments || 0,
+              refTADScribeTotalcaseamount: parseInt(
+                res.refTADScribeTotalcase || "0"
+              ),
+              refScanCenterTotalCase: 0,
             }));
           }
         }
@@ -141,6 +216,67 @@ const NewInvoice: React.FC<Props> = () => {
     setLoading(false);
   }, []);
 
+  useEffect(() => {
+    const n = (x: number | null | undefined) => Number(x || 0);
+    let total = 0;
+
+    if (userAccess === 1) {
+      total += n(input.refTASformEditquantity) * n(input.refTASformEditamount);
+      total +=
+        n(input.refTASformCorrectquantity) * n(input.refTASformCorrectamount);
+      total +=
+        n(input.refTADaformEditquantity) * n(input.refTADaformEditamount);
+      total +=
+        n(input.refTADaformCorrectquantity) * n(input.refTADaformCorrectamount);
+      total +=
+        n(input.refTADbformEditquantity) * n(input.refTADbformEditamount);
+      total +=
+        n(input.refTADbformCorrectquantity) * n(input.refTADbformCorrectamount);
+      total +=
+        n(input.refTADcformEditquantity) * n(input.refTADcformEditamount);
+      total +=
+        n(input.refTADcformCorrectquantity) * n(input.refTADcformCorrectamount);
+    } else if (userAccess === 2) {
+      total +=
+        n(input.refTADScribeTotalcasequantity) *
+        n(input.refTADScribeTotalcaseamount);
+    } else if (userAccess === 3) {
+      total +=
+        n(input.refScanCenterTotalCase) * n(input.refScancentercaseAmount);
+    }
+
+    const otherTotal = otherExpenses.reduce(
+      (sum, exp) => sum + n(exp.amount),
+      0
+    );
+    total += otherTotal;
+    setInput((prev) => ({ ...prev, total }));
+  }, [
+    userAccess,
+    input.refTASformEditquantity,
+    input.refTASformEditamount,
+    input.refTASformCorrectquantity,
+    input.refTASformCorrectamount,
+    input.refTADaformEditquantity,
+    input.refTADaformEditamount,
+    input.refTADaformCorrectquantity,
+    input.refTADaformCorrectamount,
+    input.refTADbformEditquantity,
+    input.refTADbformEditamount,
+    input.refTADbformCorrectquantity,
+    input.refTADbformCorrectamount,
+    input.refTADcformEditquantity,
+    input.refTADcformEditamount,
+    input.refTADcformCorrectquantity,
+    input.refTADcformCorrectamount,
+    input.refTADScribeTotalcasequantity,
+    input.refTADScribeTotalcaseamount,
+    input.refScanCenterTotalCase,
+    input.refScancentercaseAmount,
+    input.otherAmount,
+    otherExpenses,
+  ]);
+
   const handleInputChanges = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -151,12 +287,15 @@ const NewInvoice: React.FC<Props> = () => {
     }));
   };
 
-  console.log(input);
-
   const handleSubmitInvoice = () => {
     setLoading(true);
+    if (input.signature.length === 0) {
+      toast.error("Required Signature");
+      setLoading(false);
+      return;
+    }
     invoiceServie
-      .generateInvoice(input)
+      .generateInvoice(input, otherExpenses)
       .then((res) => {
         console.log(res);
         if (res.status) {
@@ -233,7 +372,28 @@ const NewInvoice: React.FC<Props> = () => {
     sigCanvas.current?.clear();
   };
 
-  console.log(trimmedDataURL);
+  // ✅ Add new expense
+  const handleAddExpense = () => {
+    setOtherExpenses([...otherExpenses, { name: "", amount: 0 }]);
+  };
+
+  // ✅ Delete expense by index
+  const handleDeleteExpense = (index: number) => {
+    const updated = [...otherExpenses];
+    updated.splice(index, 1);
+    setOtherExpenses(updated);
+  };
+
+  // ✅ Handle change for both fields
+  const handleChange = (
+    index: number,
+    field: keyof OtherExpensesModel,
+    value: string | number
+  ) => {
+    const updated = [...otherExpenses];
+    updated[index][field] = value as never;
+    setOtherExpenses(updated);
+  };
 
   return (
     <div className="flex w-full flex-col bg-[#edd1ce] min-h-screen">
@@ -344,22 +504,26 @@ const NewInvoice: React.FC<Props> = () => {
                 placeholder="Email"
                 className="w-full text-xs sm:text-sm h-9 sm:h-10"
               />
-              <Input
-                type="text"
-                value={input.fromPan}
-                name="fromPan"
-                onChange={handleInputChanges}
-                placeholder="PAN"
-                className="w-full text-xs sm:text-sm h-9 sm:h-10"
-              />
-              <Input
-                type="text"
-                value={input.fromGst}
-                name="fromGst"
-                onChange={handleInputChanges}
-                placeholder="GST"
-                className="w-full text-xs sm:text-sm h-9 sm:h-10"
-              />
+              {userAccess !== 3 && (
+                <>
+                  <Input
+                    type="text"
+                    value={input.fromPan}
+                    name="fromPan"
+                    onChange={handleInputChanges}
+                    placeholder="PAN"
+                    className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                  />
+                  <Input
+                    type="text"
+                    value={input.fromGst}
+                    name="fromGst"
+                    onChange={handleInputChanges}
+                    placeholder="GST"
+                    className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                  />
+                </>
+              )}
               <Textarea
                 value={input.fromAddress}
                 name="fromAddress"
@@ -450,13 +614,17 @@ const NewInvoice: React.FC<Props> = () => {
                   <SelectValue placeholder="Mode of Payment" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem
-                    key={1}
-                    value="UPI"
-                    className="text-xs sm:text-sm"
-                  >
-                    UPI
-                  </SelectItem>
+                  {userAccess !== 3 && (
+                    <>
+                      <SelectItem
+                        key={1}
+                        value="UPI"
+                        className="text-xs sm:text-sm"
+                      >
+                        UPI
+                      </SelectItem>
+                    </>
+                  )}
                   <SelectItem
                     key={2}
                     value="BANK TRANSFER"
@@ -480,51 +648,85 @@ const NewInvoice: React.FC<Props> = () => {
               ) : (
                 input.modeofpayment === "BANK TRANSFER" && (
                   <div className="space-y-3 sm:space-y-4">
-                    <Input
-                      type="text"
-                      value={input.accountHolderName}
-                      name="accountHolderName"
-                      onChange={handleInputChanges}
-                      required
-                      placeholder="Account Holder Name"
-                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
-                    />
-                    <Input
-                      type="text"
-                      value={input.accountNumber}
-                      name="accountNumber"
-                      onChange={handleInputChanges}
-                      required
-                      placeholder="Account Number"
-                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
-                    />
-                    <Input
-                      type="text"
-                      value={input.bank}
-                      name="bank"
-                      onChange={handleInputChanges}
-                      required
-                      placeholder="Bank"
-                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
-                    />
-                    <Input
-                      type="text"
-                      value={input.branch}
-                      name="branch"
-                      onChange={handleInputChanges}
-                      required
-                      placeholder="Branch"
-                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
-                    />
-                    <Input
-                      type="text"
-                      value={input.ifsc}
-                      name="ifsc"
-                      onChange={handleInputChanges}
-                      required
-                      placeholder="IFSC"
-                      className="w-full text-xs sm:text-sm h-9 sm:h-10"
-                    />
+                    {userAccess !== 3 ? (
+                      <>
+                        <Input
+                          type="text"
+                          value={input.accountHolderName}
+                          name="accountHolderName"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Account Holder Name"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.accountNumber}
+                          name="accountNumber"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Account Number"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.bank}
+                          name="bank"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Bank"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.branch}
+                          name="branch"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Branch"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.ifsc}
+                          name="ifsc"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="IFSC"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Input
+                          type="text"
+                          value={input.bank}
+                          name="bank"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Bank Name"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.accountNumber}
+                          name="accountNumber"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="Account Number"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                        <Input
+                          type="text"
+                          value={input.ifsc}
+                          name="ifsc"
+                          onChange={handleInputChanges}
+                          required
+                          placeholder="ABA Routing Number"
+                          className="w-full text-xs sm:text-sm h-9 sm:h-10"
+                        />
+                      </>
+                    )}
                   </div>
                 )
               )}
@@ -536,51 +738,685 @@ const NewInvoice: React.FC<Props> = () => {
             <div className="space-y-3 sm:space-y-4">
               <p className="text-sm sm:text-base font-bold">Invoice Details</p>
               <div className="bg-[#a4b2a1] rounded-sm">
-                <div className="bg-[#f8f2ea] rounded-sm gap-3 sm:gap-4 flex flex-col sm:flex-row w-full py-3 sm:py-4 px-2 sm:px-3">
-                  <div className="w-full flex flex-col gap-1 sm:gap-2">
-                    <p className="text-xs sm:text-sm font-bold">Quantity</p>
-                    <Input
-                      type="number"
-                      value={input.quantity}
-                      name="quantity"
-                      onChange={(e) => {
-                        setInput({
-                          ...input,
-                          quantity: parseInt(e.target.value),
-                        });
-                      }}
-                      required
-                      placeholder="Quantity"
-                      className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      // readOnly={!(role?.type == "admin")}
-                    />
-                  </div>
-                  <div className="w-full flex flex-col gap-1 sm:gap-2">
-                    <p className="text-xs sm:text-sm font-bold">Amount (INR)</p>
-                    <Input
-                      type="number"
-                      value={input.amount}
-                      name="amount"
-                      onChange={(e) => {
-                        setInput({
-                          ...input,
-                          amount: parseInt(e.target.value),
-                        });
-                      }}
-                      required
-                      placeholder="Amount"
-                      className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                      // readOnly={!(role?.type == "admin")}
-                    />
+                <div className="bg-[#f8f2ea] rounded-sm gap-3 sm:gap-4 flex flex-col w-full py-3 sm:py-4 px-2 sm:px-3">
+                  {userAccess === 1 && (
+                    <>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            S Form Edit
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTASformEditquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTASformEditquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTASformEditamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTASformEditamount: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTASformEditquantity || 0) *
+                              (input.refTASformEditamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            S Form Correct
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTASformCorrectquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTASformCorrectquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTASformCorrectamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTASformCorrectamount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTASformCorrectquantity || 0) *
+                              (input.refTASformCorrectamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Da Form Edit
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADaformEditquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADaformEditquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADaformEditamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADaformEditamount: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADaformEditquantity || 0) *
+                              (input.refTADaformEditamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Da Form Correct
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADaformCorrectquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADaformCorrectquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADaformCorrectamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADaformCorrectamount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADaformCorrectquantity || 0) *
+                              (input.refTADaformCorrectamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Db Form Edit
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADbformEditquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADbformEditquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADbformEditamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADbformEditamount: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADbformEditquantity || 0) *
+                              (input.refTADbformEditamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Db Form Correct
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADbformCorrectquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADbformCorrectquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADbformCorrectamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADbformCorrectamount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADbformCorrectquantity || 0) *
+                              (input.refTADbformCorrectamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Dc Form Edit
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADcformEditquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADcformEditquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADcformEditamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADcformEditamount: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADcformEditquantity || 0) *
+                              (input.refTADcformEditamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Dc Form Correct
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADcformCorrectquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADcformCorrectquantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADcformCorrectamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADcformCorrectamount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADcformCorrectquantity || 0) *
+                              (input.refTADcformCorrectamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {userAccess === 2 && (
+                    <>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Case
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refTADScribeTotalcasequantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADScribeTotalcasequantity: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refTADScribeTotalcaseamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refTADScribeTotalcaseamount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refTADScribeTotalcasequantity || 0) *
+                              (input.refTADScribeTotalcaseamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {userAccess === 3 && (
+                    <>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Case
+                          </p>
+                          <Input
+                            type="number"
+                            value={input.refScanCenterTotalCase || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refScanCenterTotalCase: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refScancentercaseAmount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refScancentercaseAmount: parseInt(
+                                  e.target.value
+                                ),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refScanCenterTotalCase || 0) *
+                              (input.refScancentercaseAmount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex flex-col gap-4">
+                    {otherExpenses.map((expense, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col gap-2 sm:flex-row items-start"
+                      >
+                        <div className="w-full sm:w-[65%] flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Other</p>
+                          <Textarea
+                            value={expense.name}
+                            onChange={(e) =>
+                              handleChange(index, "name", e.target.value)
+                            }
+                            placeholder="Other"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            required
+                          />
+                        </div>
+
+                        <div className="w-full sm:w-[30%] flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={expense.amount}
+                            onChange={(e) =>
+                              handleChange(
+                                index,
+                                "amount",
+                                parseFloat(e.target.value) || 0
+                              )
+                            }
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                          />
+                        </div>
+
+                        {/* Delete button (only show if more than one expense) */}
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => handleDeleteExpense(index)}
+                          className="text-xs sm:text-sm mt-7"
+                        >
+                          <Trash />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {/* Add new expense */}
+                    <Button
+                      type="button"
+                      onClick={handleAddExpense}
+                      className="w-fit text-xs sm:text-sm"
+                    >
+                      + Add
+                    </Button>
                   </div>
                 </div>
                 <div className="py-3 sm:py-4 lg:py-5 px-3 sm:px-4 flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-6">
                   <div className="text-lg sm:text-xl font-bold">Total</div>
                   <div className="text-lg sm:text-xl font-bold">
-                    {input.amount && input.quantity
-                      ? input.amount * input.quantity
-                      : 0}
-                    /-
+                    {input.total}
                   </div>
                 </div>
               </div>

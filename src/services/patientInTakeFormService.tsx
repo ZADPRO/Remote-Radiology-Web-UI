@@ -15,7 +15,7 @@ export interface FinalFormData {
 }
 
 export const patientInTakeService = {
-    addPatientInTakeForm: async ( formData: any ) => {
+  addPatientInTakeForm: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
     const res = await axios.post(
@@ -53,7 +53,26 @@ export const patientInTakeService = {
     console.log(decryptedData);
     return decryptedData;
   },
-  updatePatientInTakeForm: async ( formData: any ) => {
+  fetchPatientData: async (userId: number) => {
+    const token = localStorage.getItem("token");
+
+    const payload = encrypt({ userId }, token);
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/intakeform/viewpatient`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log(decryptedData);
+    return decryptedData;
+  },
+  updatePatientInTakeForm: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
     const res = await axios.post(
@@ -79,8 +98,8 @@ export interface AppointmentAdd {
 }
 
 export interface AppointmentDetails {
-  refAppointmentComplete: string; 
-  refAppointmentDate: string; 
+  refAppointmentComplete: string;
+  refAppointmentDate: string;
   refAppointmentId: number;
   refCategoryId: number;
   refSCCustId: string;
@@ -91,7 +110,7 @@ export const appointmentService = {
   addAppointment: async (formData: AppointmentAdd) => {
     const token = localStorage.getItem("token");
 
-     const payload = encrypt(formData, token);
+    const payload = encrypt(formData, token);
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/add`,
       { encryptedData: payload },
@@ -108,11 +127,13 @@ export const appointmentService = {
     return decryptedData;
   },
 
-  listPatientMedicalHistory: async() => {
+  listPatientMedicalHistory: async () => {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/viewpatienthistory`,
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/manageappointment/viewpatienthistory`,
       {
         headers: {
           Authorization: token,
@@ -143,7 +164,5 @@ export const appointmentService = {
     tokenService.setToken(res.data.token);
     console.log(decryptedData);
     return decryptedData;
-},
-
-  
-}
+  },
+};

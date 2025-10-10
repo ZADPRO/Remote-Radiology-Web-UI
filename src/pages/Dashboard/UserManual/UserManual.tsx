@@ -1,10 +1,6 @@
-import {
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/pages/Routes/AuthContext";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import WELLGREENPERFORMINPROVIDERUSERMANUAL from "../../../assets/UserManual/WELLGREEN PERFORMIN PROVIDER USER MANUAL.pdf";
 import TECHNICIANUSERMANUAL from "../../../assets/UserManual/TECHNICIAN USER MANUAL.pdf";
 import WELLGREENMANAGERUSERMANUAL from "../../../assets/UserManual/WELLGREEN MANAGER USER MANUAL.pdf";
@@ -14,9 +10,16 @@ import RADIOLOGYUSERMANUAL from "../../../assets/UserManual/RADIOLOGY LOGIN USER
 import CENTREREVIEWERUSERMANUAL from "../../../assets/UserManual/CENTRE REVIEWER USER MANUAL.pdf";
 import SCANCENTREPERFORMINGPROVIDERUSERMANUAL from "../../../assets/UserManual/SCAN CENTRE PERFORMING PROVIDER USER MANUAL.pdf";
 import ADMINUSERMANUAL from "../../../assets/UserManual/ADMIN LOGIN USER MANUAL.pdf";
+import PDFPreviewer from "../PDFPreviewer";
 
-const UserManual: React.FC = () => {
+interface UserManualProps {
+  userManualOpen: boolean;
+  setUserManualOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const UserManual: React.FC<UserManualProps> = (props) => {
   const { role } = useAuth();
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 
   const ViewFile = () => {
     switch (role?.type) {
@@ -45,22 +48,39 @@ const UserManual: React.FC = () => {
     }
   };
 
-  return (
-    <DialogContent className="max-[90%] h-[90vh]">
-      {/* Header */}
-      <DialogHeader className="flex flex-row items-center justify-between border-b pb-2">
-        <DialogTitle className="text-lg font-semibold">User Manual</DialogTitle>
-      </DialogHeader>
+  // 🧠 Convert URL to Blob once role changes
+  useEffect(() => {
+    const loadBlob = async () => {
+      const fileUrl = ViewFile();
+      if (!fileUrl) return setPdfBlob(null);
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      setPdfBlob(blob);
+    };
+    loadBlob();
+  }, [role]);
 
-      {/* Notification List */}
-      <div className="space-y-2 h-[73vh] overflow-y-auto">
-        <iframe
-          src={ViewFile() || ""}
-          title="Report Preview"
-          className="w-full h-[73vh] border rounded-md"
-        />
-      </div>
-    </DialogContent>
+  return (
+    <>
+      <Dialog
+        open={props.userManualOpen}
+        onOpenChange={props.setUserManualOpen}
+      >
+        <DialogContent
+          style={{
+            background:
+              "radial-gradient(100.97% 186.01% at 50.94% 50%, #F9F4EC 25.14%, #EED8D6 100%)",
+          }}
+          className="h-[90vh] w-[90%]"
+        >
+          <PDFPreviewer
+            blob={pdfBlob || null}
+            // name={pdfPreviewFile.name}
+            // onClose={() => setShowPreview(false)}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

@@ -574,7 +574,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                         className="w-full bg-[#fff] shadow-2xl rounded-lg p-2"
                       >
                         Welcome – Your Scan Appointment at{" "}
-                        {ScanCenter.name} Scan Centre
+                        {ScanCenter.name} Scan Center
                       </div>
                       <Button variant="greenTheme" onClick={handleCopy}>
                         Copy
@@ -591,7 +591,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                         Hi {formData.refUserFirstName},
                         <br />
                         <br />
-                        Thank you for choosing {ScanCenter.name} Scan Centre for
+                        Thank you for choosing {ScanCenter.name} Scan Center for
                         your Breast QT (Quantitative Transmission) Imaging, also
                         known as Breast Acoustic CT. We’re looking forward to
                         supporting you with a smooth and comfortable experience
@@ -705,12 +705,16 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          setScanCenter({
+         if(newAppointment){
+ setScanCenter({
             id: formData.refSCId,
             name: formData.refSCCustId,
           });
           setModelAppointment(true);
           setMailPurpose("registerandsendMail");
+         }else{
+          toast.error("Choose the Appintment Date");
+         }
         }}
       >
         <div className="flex gap-3 items-end relative">
@@ -726,7 +730,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               onChange={(val) => {
                 setNewAppointment(val ? formatLocalDate(val) : "");
               }}
-              required
+              required={true}
               disabledDates={dateDisablers.noPast}
             />
           </div>

@@ -121,13 +121,13 @@ const ResetPassword: React.FC = () => {
       {/* Left image section */}
       <div
         style={{ backgroundImage: `url(${loginTexture})` }}
-        className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#F9F5EF] lg:bg-cover lg:bg-center lg:bg-no-repeat"
+        className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#a4b2a1] lg:bg-cover lg:bg-center lg:bg-no-repeat"
       >
         <img src={loginImg} alt="Login" className="w-[90%] lg:w-[80%]" />
       </div>
 
       {/* Right section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:py-8 lg:px-8 lg:justify-center lg:shadow-2xl relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-center lg:py-8 lg:px-8 lg:justify-center lg:shadow-2xl relative">
         <img
           src={logoNew}
            className="hidden w-auto h-[15%] mx-auto lg:inline"
@@ -265,7 +265,7 @@ const ResetPassword: React.FC = () => {
                 type="button"
                 onClick={handleReset}
                 disabled={isSubmitting}
-                className="w-full lg:w-full mt-2 p-4 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
+                className="w-full lg:w-full mt-2 p-4 mb-5 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
               >
                 {isSubmitting ? "Resetting..." : "Reset Password"}
               </Button>

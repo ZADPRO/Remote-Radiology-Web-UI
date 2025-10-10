@@ -162,9 +162,6 @@ const MainInTakeForm: React.FC<Props> = ({
   const patientDetails = useContext(PatientContext);
 
   useEffect(() => {
-
-    console.log('MainInTakeForm.tsx / controlData.apiUpdate / 167 -------------------  ', readOnly);
-    
     if (controlData.apiUpdate || readOnly) {
       controlData.categoryId
         ? setSelectedOption(controlData.categoryId.toString())
@@ -172,6 +169,11 @@ const MainInTakeForm: React.FC<Props> = ({
             formData.find((item) => item.questionId === 170)?.answer || ""
           );
     } else {
+      controlData.categoryId
+        ? setSelectedOption(controlData.categoryId.toString())
+        : setSelectedOption(
+            formData.find((item) => item.questionId === 170)?.answer || ""
+          );
       // Suggestion logic
       // let suggestion = "";
 
@@ -223,45 +225,41 @@ const MainInTakeForm: React.FC<Props> = ({
 
   // Step 2: When selectedOption changes, add mapped values safely
   useEffect(() => {
-    if (!selectedOption || readOnly) return;
-
-    setFormData((prevFormData) => {
-      const updatedFormData = [...prevFormData];
-
-      const setOrUpdate = (qId: number, value: any) => {
-        const index = updatedFormData.findIndex(
-          (item) => item.questionId === qId
-        );
-        if (index !== -1) {
-          updatedFormData[index] = { ...updatedFormData[index], answer: value };
-        } else {
-          updatedFormData.push({ questionId: qId, answer: value });
-        }
-      };
-
-      // ✅ Set questionId: 170 with selectedOption
-      setOrUpdate(170, selectedOption);
-
-      // ✅ Set questionId: 485 with empty string
-      setOrUpdate(485, "");
-
-      // ✅ Reset all checkboxes to false
-      Object.values(checkboxData)
-        .flat()
-        .forEach((cb) => {
-          const cbId = parseInt(cb.id);
-          const idx = updatedFormData.findIndex(
-            (item) => item.questionId === cbId
-          );
-          if (idx !== -1) {
-            updatedFormData[idx] = { ...updatedFormData[idx], answer: "false" };
-          } else {
-            updatedFormData.push({ questionId: cbId, answer: "false" });
-          }
-        });
-
-      return updatedFormData;
-    });
+    // if (!selectedOption || readOnly) return;
+    // console.log("===============>")
+    // console.log("===============>")
+    // setFormData((prevFormData) => {
+    //   const updatedFormData = [...prevFormData];
+    //   const setOrUpdate = (qId: number, value: any) => {
+    //     const index = updatedFormData.findIndex(
+    //       (item) => item.questionId === qId
+    //     );
+    //     if (index !== -1) {
+    //       updatedFormData[index] = { ...updatedFormData[index], answer: value };
+    //     } else {
+    //       updatedFormData.push({ questionId: qId, answer: value });
+    //     }
+    //   };
+    //   // ✅ Set questionId: 170 with selectedOption
+    //   setOrUpdate(170, selectedOption);
+    //   // ✅ Set questionId: 485 with empty string
+    //   setOrUpdate(485, "");
+    //   // ✅ Reset all checkboxes to false
+    //   Object.values(checkboxData)
+    //     .flat()
+    //     .forEach((cb) => {
+    //       const cbId = parseInt(cb.id);
+    //       const idx = updatedFormData.findIndex(
+    //         (item) => item.questionId === cbId
+    //       );
+    //       if (idx !== -1) {
+    //         updatedFormData[idx] = { ...updatedFormData[idx], answer: "false" };
+    //       } else {
+    //         updatedFormData.push({ questionId: cbId, answer: "false" });
+    //       }
+    //     });
+    //   return updatedFormData;
+    // });
   }, [selectedOption]);
 
   const handleCheckboxChange = (id: string, checked: boolean) => {
@@ -321,7 +319,14 @@ const MainInTakeForm: React.FC<Props> = ({
                 readOnly ? "pointer-events-none" : ""
               }`}
               value={selectedOption}
-              onValueChange={setSelectedOption}
+              onValueChange={(e) => {
+                setSelectedOption(e);
+                setFormData((prev) =>
+                  prev.map((item) =>
+                    item.questionId === 170 ? { ...item, answer: e } : item
+                  )
+                );
+              }}
             >
               {intakeOptions.map(({ id, radioLabel }) => (
                 <div
