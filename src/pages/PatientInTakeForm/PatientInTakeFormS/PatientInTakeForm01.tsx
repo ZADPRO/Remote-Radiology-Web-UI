@@ -24,6 +24,7 @@ interface Props {
   openSubmitDialog: () => void;
   readOnly: boolean;
   OverrideStatus: string;
+  userId: number;
 }
 
 const PatientInTakeForm01: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
   openSubmitDialog,
   readOnly,
   OverrideStatus,
+  userId
 }) => {
   const navigate = useNavigate();
 
@@ -106,6 +108,7 @@ const PatientInTakeForm01: React.FC<Props> = ({
               weightType: 12,
             }}
             OverrideStatus={OverrideStatus}
+            userId={userId}
           />
         );
       case "Risk Stratification":

@@ -1,6 +1,6 @@
 import { DialogContent } from "@/components/ui/dialog";
 import React, { useEffect, useState } from "react";
-import logoNew from "../../assets/LogoNew2.png";
+import logoNew from "../../assets/LogoNew.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";

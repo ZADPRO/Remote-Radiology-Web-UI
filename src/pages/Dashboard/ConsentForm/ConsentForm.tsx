@@ -12,11 +12,16 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 
 interface Props {
-onSubmit?: (updatedState?: string) => void;
+  onSubmit?: (updatedState?: string) => void;
   scId?: number;
+  viewStatus?: boolean;
 }
 
-const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
+const ConsentForm: React.FC<Props> = ({
+  onSubmit,
+  scId,
+  viewStatus = false,
+}) => {
   const [defaultCheck, setDefaultCheck] = useState(false);
 
   const [patientConsent, setPatientConsent] = useState("");
@@ -30,13 +35,18 @@ const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
   const [loading, setLoading] = useState(false);
 
   const signatureRow = `<br/><h6 class=\"ql-align-right\"><strong>Electronically signed by</strong></h6><h6 class=\"ql-align-right\"><strong>${
-                      user?.refUserFirstName
-                    },</strong></h6><h6 class=\"ql-align-right\"><strong><em>${format(new Date(),"dd/MM/yyyy")}</em></strong></h6>`;
+    user?.refUserFirstName
+  },</strong></h6><h6 class=\"ql-align-right\"><strong><em>${format(
+    new Date(),
+    "dd/MM/yyyy"
+  )}</em></strong></h6>`;
 
   const listConsent = async () => {
     setLoading(true);
     try {
-      const res = await dynamicConsents.listConsent(scId ?? user?.refSCId ?? 0);
+      const res = await dynamicConsents.listConsent(
+        parseInt(String(scId ?? user?.refSCId ?? 0))
+      );
       console.log(res);
 
       if (res.status) {
@@ -103,13 +113,13 @@ const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
       </DialogHeader>
 
       <div className="w-11/12 mx-auto">
-        {role?.type === "manager" || role?.type == "admin" ? (
+        {(role?.type === "manager" || role?.type == "admin") && !viewStatus ? (
           <WGConsentForm
             patientConsent={patientConsent}
             setPatientConsent={setPatientConsent}
             onSubmit={updateConsent}
           />
-        ) : role?.type === "scadmin" ? (
+        ) : role?.type === "scadmin" && !viewStatus ? (
           <SCConsentForm
             defaultCheck={defaultCheck}
             setDefaultCheck={setDefaultCheck}
@@ -124,44 +134,54 @@ const ConsentForm: React.FC<Props> = ({ onSubmit, scId }) => {
               className="ql-editor border-2 border-gray-300 rounded-2xl shadow-2xl p-10"
               dangerouslySetInnerHTML={{
                 __html: defaultCheck
-  ? (isRoleChecked ? patientConsent + signatureRow : patientConsent)
-  : (isRoleChecked ? scPatientConsent + signatureRow : scPatientConsent)
-
+                  ? isRoleChecked
+                    ? patientConsent + signatureRow
+                    : patientConsent
+                  : isRoleChecked
+                  ? scPatientConsent + signatureRow
+                  : scPatientConsent,
               }}
             />
             {onSubmit && (
               <>
-              <div className="flex items-center space-x-2 mt-4">
-                <Checkbox2
-                  className="bg-white"
-                  checked={isRoleChecked}
-                  id="role-consent"
-                  onCheckedChange={(val) => setRoleChecked(!!val)}
-                  required
-                />
-                <Label
-                  htmlFor="role-consent"
-                  className="text-sm cursor-pointer"
-                >
-                  By checking this box, I acknowledge that I have read and agree
-                  to the consent for receiving my medical imaging results via
-                  this platform.
-                </Label>
-              </div>
+                {!viewStatus && (
+                  <div className="flex items-center space-x-2 mt-4">
+                    <Checkbox2
+                      className="bg-white"
+                      checked={isRoleChecked}
+                      id="role-consent"
+                      onCheckedChange={(val) => setRoleChecked(!!val)}
+                      required
+                    />
+                    <Label
+                      htmlFor="role-consent"
+                      className="text-sm cursor-pointer"
+                    >
+                      By checking this box, I acknowledge that I have read and
+                      agree to the consent for receiving my medical imaging
+                      results via this platform.
+                    </Label>
+                  </div>
+                )}
 
-              <Button
-                variant="greenTheme"
-                className="self-end"
-                disabled={!isRoleChecked}
-                onClick={() =>
-    onSubmit?.(defaultCheck
-  ? (isRoleChecked ? patientConsent + signatureRow : patientConsent)
-  : (isRoleChecked ? scPatientConsent + signatureRow : scPatientConsent)
-)
-  }
-              >
-                Submit
-              </Button>
+                <Button
+                  variant="greenTheme"
+                  className="self-end"
+                  disabled={!viewStatus && !isRoleChecked}
+                  onClick={() =>
+                    onSubmit?.(
+                      defaultCheck
+                        ? isRoleChecked
+                          ? patientConsent + signatureRow
+                          : patientConsent
+                        : isRoleChecked
+                        ? scPatientConsent + signatureRow
+                        : scPatientConsent
+                    )
+                  }
+                >
+                  Submit
+                </Button>
               </>
             )}
           </div>

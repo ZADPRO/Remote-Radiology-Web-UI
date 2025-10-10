@@ -201,7 +201,7 @@ const MedicalHistory: React.FC = () => {
               className="cursor-pointer font-semibold text-white"
               onClick={column.getToggleSortingHandler()}
             >
-              Scan Centre
+              Scan Center
             </span>
             <Button
               variant="ghost"
@@ -236,7 +236,7 @@ const MedicalHistory: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Scan Centre ID...`}
+                    placeholder={`Filter Scan Center ID...`}
                     value={(column.getFilterValue() ?? "") as string}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                       column.setFilterValue(event.target.value)

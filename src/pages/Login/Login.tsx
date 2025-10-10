@@ -67,7 +67,7 @@ const Login: React.FC = () => {
       </div> */}
 
       {/* Left image section */}
-      <div style={{ backgroundImage: `url(${loginTexture})`, }} className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#F9F5EF] lg:bg-cover lg:bg-center lg:bg-no-repeat">
+      <div style={{ backgroundImage: `url(${loginTexture})`, }} className="flex flex-1 lg:basis-[55%] items-center justify-center bg-[#a4b2a1] lg:bg-cover lg:bg-center lg:bg-no-repeat">
         <img
           src={loginImg}
           alt="Login"

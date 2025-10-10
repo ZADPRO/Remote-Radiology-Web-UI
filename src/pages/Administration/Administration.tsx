@@ -113,7 +113,7 @@ const Administration: React.FC = () => {
           </div>
         </div>
 
-        {/* Scan Centre Administration */}
+        {/* Scan Center Administration */}
         {(role?.type == "admin") && (
         <div
           style={{
@@ -123,15 +123,15 @@ const Administration: React.FC = () => {
           className="rounded-xl shadow-lg p-2 lg:p-6 w-full lg:w-1/2"
         >
           <h2 className="text-xl 2xl:text-2xl font-extrabold mb-4 text-center">
-            SCAN CENTRE ADMINISTRATION
+            SCAN CENTER ADMINISTRATION
           </h2>
           <div className="flex justify-center">
             <AdminCard
-              title="Manage Scan Centre"
+              title="Manage Scan Center"
               icon={
                 <img
                   src={scanCenterImg}
-                  alt="Scan centre"
+                  alt="Scan Center"
                   className="w-full h-full"
                 />
               }

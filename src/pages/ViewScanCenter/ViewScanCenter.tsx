@@ -149,7 +149,7 @@ const ViewScanCenter: React.FC = () => {
       <div className="h-[10vh] flex items-center justify-start text-xl font-bold">
         <div className="flex items-center gap-2">
           <ArrowLeft className="cursor-pointer" onClick={() => navigate(-1)} />
-          <h1>SCAN CENTRE</h1>
+          <h1>SCAN CENTER</h1>
         </div>
       </div>
 
@@ -328,7 +328,7 @@ const ViewScanCenter: React.FC = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Allow</SelectItem>
-                      <SelectItem value="false">Not allow</SelectItem>
+                      <SelectItem value="false">Do not allow</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

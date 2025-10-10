@@ -11,9 +11,14 @@ import { Button } from "@/components/ui/button";
 interface Props {
   onNext?: () => void;
   scId?: number;
+  viewStatus?: boolean;
 }
 
-const PatientInformation: React.FC<Props> = ({ onNext, scId }) => {
+const PatientInformation: React.FC<Props> = ({
+  onNext,
+  viewStatus = false,
+  scId,
+}) => {
   const { user, role } = useAuth();
   const [defaultInfo, setDefaultInfo] = useState(false);
 
@@ -27,7 +32,7 @@ const PatientInformation: React.FC<Props> = ({ onNext, scId }) => {
     setLoading(true);
     try {
       const res = await dynamicBrochure.listBrochure(
-        scId ?? user?.refSCId ?? 0
+        parseInt(String(scId ?? user?.refSCId ?? 0))
       );
       console.log(res);
 
@@ -95,13 +100,13 @@ const PatientInformation: React.FC<Props> = ({ onNext, scId }) => {
       </DialogHeader>
 
       <div className="w-11/12 mx-auto">
-        {role?.type === "manager" || role?.type == "admin" ? (
+        {(role?.type === "manager" || role?.type == "admin") && !viewStatus ? (
           <WGPatientInfo
             patientInfo={patientInfo}
             setPatientInfo={setPatientInfo}
             onSubmit={updateBrochure}
           />
-        ) : role?.type === "scadmin" ? (
+        ) : role?.type === "scadmin" && !viewStatus ? (
           <SCPatientInfo
             defaultInfo={defaultInfo}
             setDefaultInfo={setDefaultInfo}

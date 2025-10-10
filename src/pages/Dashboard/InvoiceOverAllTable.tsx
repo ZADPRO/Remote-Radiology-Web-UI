@@ -396,11 +396,11 @@ const InvoiceOverAllTable: React.FC<Props> = ({
     {
       accessorKey: "refIHTotal",
       header: "Total Amount",
-      cell: (info) =>
-        Number(info.getValue()).toLocaleString("en-IN", {
-          style: "currency",
-          currency: "INR",
-        }),
+      cell: ({ row }) => {
+        const total = Number(row.original.refIHTotal);
+        const currency = row.original.refRTId === 0 ? "USD" : "INR";
+        return `${currency} ${total}`
+      },
     },
     {
       accessorKey: "refIHModePayment",
