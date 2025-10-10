@@ -225,9 +225,15 @@ const RadiologyTrainingMaterial: React.FC = () => {
           <h3 className="text-sm font-semibold text-gray-700">
             Available Training Materials
           </h3>
-          <li onClick={()=>{
-            window.open("https://bfkaa.courses.store/631509?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp", "_blank")
-          }} className="flex items-center justify-between border cursor-pointer p-2 rounded-md bg-white shadow-sm">
+          <li
+            onClick={() => {
+              window.open(
+                "https://bfkaa.courses.store/631509?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp",
+                "_blank"
+              );
+            }}
+            className="flex items-center justify-between border cursor-pointer p-2 rounded-md bg-white shadow-sm"
+          >
             <div className="flex flex-col w-full">
               https://bfkaa.courses.store/631509?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp
             </div>

@@ -640,9 +640,10 @@ const MasterAdmin: React.FC = () => {
           )}
 
           {userManualOpen && (
-            <Dialog open={userManualOpen} onOpenChange={setUserManualOpen}>
-              <UserManual />
-            </Dialog>
+            <UserManual
+              userManualOpen={userManualOpen}
+              setUserManualOpen={setUserManualOpen}
+            />
           )}
         </header>
 
