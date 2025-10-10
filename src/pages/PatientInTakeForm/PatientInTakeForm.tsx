@@ -332,8 +332,12 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       }
 
       if (res.status) {
-        allowNavigationRef.current = true;
-        navigate(-1); // go back if success
+        if (controlData.apiUpdate) {
+          navigate(-1); // go back if successF
+        }else{
+          allowNavigationRef.current = true;
+          navigate(-1); // go back if success
+        }
       } else {
         setSubmitError("Something went wrong. Please try again.");
       }

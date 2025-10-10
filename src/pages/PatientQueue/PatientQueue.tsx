@@ -1317,9 +1317,9 @@ const PatientQueue: React.FC = () => {
               </span>
             );
           } else if (
-            (currentUserRole === "technician" || currentUserRole === "admin") &&
-            (appointmentComplete === "fillform" ||
-              appointmentComplete === "noteligible")
+            // (currentUserRole === "technician" || currentUserRole === "admin") &&
+            appointmentComplete === "fillform" ||
+            appointmentComplete === "noteligible"
           ) {
             // Form not started but technician has access and status is 'fillform'
             return (
@@ -1329,10 +1329,7 @@ const PatientQueue: React.FC = () => {
                 <div>Started</div>
               </div>
             );
-          } else if (
-            currentUserRole === "technician" ||
-            currentUserRole === "admin"
-          ) {
+          } else {
             // Not filled yet and technician has access
             return (
               <span>
@@ -1357,10 +1354,11 @@ const PatientQueue: React.FC = () => {
                 </button>
               </span>
             );
-          } else {
-            // Not filled and no write access
-            return <div className="text-muted-foreground">Not Filled</div>;
           }
+          // else {
+          //   // Not filled and no write access
+          //   return <div className="text-muted-foreground">Not Filled</div>;
+          // }
         },
         enableColumnFilter: true,
         filterFn: (row, _columnId, value) => {

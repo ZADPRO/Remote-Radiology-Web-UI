@@ -71,17 +71,17 @@ const Login: React.FC = () => {
         <img
           src={loginImg}
           alt="Login"
-          className="w-[90%] lg:w-[80%]"
+          className="w-[300px] md:w-[500px]"
         />
       </div>
 
       {/* Right login form section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:shadow-2xl lg:justify-center relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-center lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
           className="hidden h-[15%] w-auto mx-auto lg:inline"
         />
-        <div className="w-[90%] mx-auto p-5 pb-0 rounded-lg shadow-lg lg:w-[70%] lg:shadow-none">
+        <div className="w-[90%] my-5 mx-auto p-5 pb-0 rounded-lg shadow-lg lg:w-[70%] lg:shadow-none">
           <form onSubmit={(e: any) => login(e)} className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2 text-center">
               {/* <div className="items-center justify-around gap-10% pb-3 hidden lg:flex">
@@ -173,7 +173,7 @@ const Login: React.FC = () => {
               <Button
                 type="submit"
                 disabled={isVerifying}
-                className="w-full mt-2 p-4 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
+                className="w-full mt-2 p-4 mb-5 cursor-pointer text-lg font-bold bg-[#F9F5EE] text-[#3F3F3D] hover:bg-[#fef3e1]"
               >
                 {isVerifying ? "Verifying..." : "Login"}
               </Button>
