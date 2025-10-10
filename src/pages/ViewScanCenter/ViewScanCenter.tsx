@@ -53,6 +53,7 @@ const ViewScanCenter: React.FC = () => {
     refSCWebsite: "",
     refSCStatus: false,
     refSCConsultantStatus: false,
+    refSCConsultantLink: "",
   });
 
   const [files, setFiles] = useState<files>({
@@ -118,8 +119,12 @@ const ViewScanCenter: React.FC = () => {
         logo: formData.refSCProfile,
         status: formData.refSCStatus,
         refSCConsultantStatus: formData.refSCConsultantStatus,
+        refSCConsultantLink: formData.refSCConsultantLink,
       };
-      console.log('ViewScanCenter.tsx / payload / 108 -------------------  ', payload);
+      console.log(
+        "ViewScanCenter.tsx / payload / 108 -------------------  ",
+        payload
+      );
       const res = await scancenterService.updateScanCenter(payload);
       console.log(res);
       if (res.status) {
@@ -309,8 +314,8 @@ const ViewScanCenter: React.FC = () => {
                 </div>
               )}
               <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
-                <label className="font-semibold text-sm w-1/5">
-                  Consultant Link :
+                <label className="font-semibold text-sm w-full  lg:w-1/5">
+                  View Consultant Link :
                 </label>
                 <div className="flex flex-col gap-1.5 w-full relative">
                   <Select
@@ -333,6 +338,24 @@ const ViewScanCenter: React.FC = () => {
                   </Select>
                 </div>
               </div>
+              {role?.type === "admin" && (
+                <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 ">
+                  <label className="font-semibold text-sm w-1/5">
+                    Consultant Link :
+                  </label>
+                  <Input
+                    value={formData.refSCConsultantLink}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        refSCConsultantLink: e.target.value,
+                      }))
+                    }
+                    required
+                    className="w-full bg-white"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}

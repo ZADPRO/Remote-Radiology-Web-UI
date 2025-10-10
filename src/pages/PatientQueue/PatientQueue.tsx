@@ -356,6 +356,7 @@ const PatientQueue: React.FC = () => {
   };
 
   const [SCconsultantStatus, setSCConsultantStatus] = useState(false);
+  const [SCconsultantLink, setSCConsultantLink] = useState("");
 
   const fetchPatientQueue = async () => {
     setLoading(true);
@@ -365,6 +366,7 @@ const PatientQueue: React.FC = () => {
         if (res.status) {
           setPatientQueue(res.data);
           setSCConsultantStatus(res.consultantStatus);
+          setSCConsultantLink(res.consultantLink);
         } else {
           // Handle error or empty data scenario from API response
           console.warn("API response status is false, or no data:", res);
@@ -851,7 +853,7 @@ const PatientQueue: React.FC = () => {
               onClick={column.getToggleSortingHandler()}
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
-                <div>Patient</div>
+                {/* <div>Patient</div> */}
                 <div>Name</div>
               </div>
             </span>
@@ -1347,7 +1349,7 @@ const PatientQueue: React.FC = () => {
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
                         readOnly: false,
-                        overrideStatus: row.original.refOverrideStatus
+                        overrideStatus: row.original.refOverrideStatus,
                       },
                     })
                   }
@@ -3039,7 +3041,7 @@ const PatientQueue: React.FC = () => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://calendly.com/dr-mythrishankar/report-discussion"
+                href={SCconsultantLink}
                 className="text-blue-600 underline hover:text-blue-800 transition-colors italic duration-200"
               >
                 here
