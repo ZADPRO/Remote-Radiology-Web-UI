@@ -74,22 +74,22 @@ export const notificationService = {
     const token = localStorage.getItem("token");
     console.log('token', token)
 
-    // const res = await axios.get(
-    //   `${import.meta.env.VITE_API_URL_USERSERVICE}/notification/getUnreadCount`,
-    //   {
-    //     headers: {
-    //       Authorization: token,
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-    // const decryptedData: {
-    //     totalcount: number;
-    //     status: boolean;
-    //     message: string;
-    // } = decrypt(res.data.data, res.data.token);
-    // tokenService.setToken(res.data.token);
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL_USERSERVICE}/notification/getUnreadCount`,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: {
+        totalcount: number;
+        status: boolean;
+        message: string;
+    } = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
 
-    return true;
+    return decryptedData;
   },
 };

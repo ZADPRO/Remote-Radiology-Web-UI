@@ -323,9 +323,7 @@ const NewInvoice: React.FC<Props> = () => {
     const formDataObj = new FormData();
     formDataObj.append("file", file);
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
       if (response.status) {
         setInput((prev) => ({
           ...prev,

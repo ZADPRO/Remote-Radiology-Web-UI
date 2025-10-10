@@ -305,7 +305,7 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
         const result: TempLicense = {
