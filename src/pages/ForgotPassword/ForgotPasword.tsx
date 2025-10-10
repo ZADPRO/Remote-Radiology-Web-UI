@@ -164,12 +164,12 @@ const [successMessage, setSuccessMessage] = useState("");
         <img
           src={loginImg}
           alt="Login"
-          className="w-[90%] lg:w-[80%]"
+          className="w-[300px] md:w-[500px]"
         />
       </div>
 
       {/* Right section */}
-      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-start lg:px-8 lg:shadow-2xl lg:justify-center relative">
+      <div className="flex flex-1 lg:basis-[45%] bg-[#EDD1CE] flex-col justify-center lg:px-8 lg:shadow-2xl lg:justify-center relative">
         <img
           src={logoNew}
           className="hidden h-[15%] w-auto mx-auto lg:inline"

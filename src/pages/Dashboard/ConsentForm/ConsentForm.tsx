@@ -144,7 +144,7 @@ const ConsentForm: React.FC<Props> = ({
             />
             {onSubmit && (
               <>
-                {!viewStatus && (
+                {role?.id === 4 && (
                   <div className="flex items-center space-x-2 mt-4">
                     <Checkbox2
                       className="bg-white"
