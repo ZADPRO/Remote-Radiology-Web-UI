@@ -1308,6 +1308,7 @@ const PatientQueue: React.FC = () => {
                         name: row.original.refUserFirstName,
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
+                        overrideStatus: row.original.refOverrideStatus,
                       },
                     })
                   }
@@ -1346,6 +1347,7 @@ const PatientQueue: React.FC = () => {
                         custId: row.original.refUserCustId,
                         scancenterCustId: row.original.refSCCustId,
                         readOnly: false,
+                        overrideStatus: row.original.refOverrideStatus
                       },
                     })
                   }
