@@ -334,7 +334,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       if (res.status) {
         if (controlData.apiUpdate) {
           navigate(-1); // go back if successF
-        }else{
+        } else {
           allowNavigationRef.current = true;
           navigate(-1); // go back if success
         }
@@ -438,8 +438,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
           <SubmitDialog
             open={isDialogOpen}
             onClose={handleCloseDialog}
-            onSubmit={()=>{
-              handleFinalSubmit(false)
+            onSubmit={() => {
+              handleFinalSubmit(false);
             }}
             isSubmitting={isSubmitting}
             error={submitError}

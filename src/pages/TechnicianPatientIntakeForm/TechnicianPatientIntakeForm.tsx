@@ -58,6 +58,7 @@ export interface TechnicianIntakeFormNavigationState {
   custId?: string;
   scancenterCustId?: string;
   reportview?: boolean;
+  overrideStatus?: boolean;
 }
 
 interface TechnicianPatientIntakeFormProps
@@ -116,6 +117,11 @@ const TechnicianPatientIntakeForm: React.FC<
     appointmentId: props.appointmentId ?? locationState?.appointmentId ?? 0,
     userId: props.userId ?? locationState?.userId ?? 0,
     readOnly: props.readOnly ?? locationState?.readOnly ?? false,
+    overrideStatus:
+      props.overrideStatus ?? locationState?.overrideStatus ?? false,
+    custId: props.custId ?? locationState?.custId ?? "",
+    scancenterCustId:
+      props.scancenterCustId ?? locationState?.scancenterCustId ?? "",
   };
 
   // useEffect(() => {
@@ -208,7 +214,7 @@ const TechnicianPatientIntakeForm: React.FC<
       console.log(res);
 
       if (res.status) {
-        console.log("------------------------?", res);
+        // console.log("------------------------?", res);
 
         if (res.data) {
           setPatientFormData(res.data);
@@ -324,6 +330,7 @@ const TechnicianPatientIntakeForm: React.FC<
   };
 
   const handleShift = (categoryId: number) => {
+    console.log(controlData);
     navigate("/patientInTakeForm", {
       state: {
         categoryId: categoryId,
@@ -334,6 +341,7 @@ const TechnicianPatientIntakeForm: React.FC<
         name: locationState?.name,
         custId: locationState?.custId,
         scancenterCustId: locationState?.scancenterCustId,
+        OverrideStatus: locationState?.overrideStatus,
       },
     });
   };
