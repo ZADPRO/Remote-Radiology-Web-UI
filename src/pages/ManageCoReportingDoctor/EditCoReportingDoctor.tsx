@@ -404,12 +404,15 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // local upload preview
+                    : formData.profileImgFile?.contentType === "url"
+                    ? formData.profileImgFile.base64Data // direct URL
+                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}` // actual base64
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -697,13 +700,20 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 formData.driversLicenseFile && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
-                      downloadFile(
-                        formData.driversLicenseFile.base64Data,
-                        formData.driversLicenseFile.contentType,
-                        "drivers_license"
-                      )
-                    }
+                    onClick={() => {
+                      if (formData.driversLicenseFile.contentType === "url") {
+                        window.open(
+                          formData.driversLicenseFile.base64Data,
+                          "_blank"
+                        );
+                      } else {
+                        downloadFile(
+                          formData.driversLicenseFile.base64Data,
+                          formData.driversLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      }
+                    }}
                   >
                     <div className="bg-green-100 p-2 rounded-md">
                       <FileText className="w-5 h-5 text-green-600" />
@@ -846,13 +856,17 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                     >
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          if (formData.drivers_license.startsWith("https://")) {
+                            window.open(formData.drivers_license, "_blank");
+                          } else {
+                            downloadFile(
+                              file.lFileData.base64Data,
+                              file.lFileData.contentType,
+                              file.refLOldFileName
+                            );
+                          }
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -988,13 +1002,16 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                     >
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          if (formData.drivers_license.startsWith("https://")) {
+                            window.open(formData.drivers_license, "_blank");
+                          } else
+                            downloadFile(
+                              file.MPFileData.base64Data,
+                              file.MPFileData.contentType,
+                              file.refMPOldFileName
+                            );
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -1073,7 +1090,13 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
               {files.digital_signature && (
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                   <img
-                    src={URL.createObjectURL(files.digital_signature)}
+                    src={
+                      files.digital_signature
+                        ? URL.createObjectURL(files.digital_signature) // local upload
+                        : formData.digitalSignatureFile?.contentType === "url"
+                        ? formData.digitalSignatureFile.base64Data // remote S3 URL
+                        : `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}` // actual base64
+                    }
                     alt="Digital Signature"
                     className="h-16 w-auto rounded border object-contain"
                   />
@@ -1094,7 +1117,11 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 formData.digitalSignatureFile && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
                     <img
-                      src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
+                      src={
+                        formData.digitalSignatureFile?.contentType === "url"
+                          ? formData.digitalSignatureFile.base64Data // S3 URL
+                          : `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}` // base64
+                      }
                       alt="Digital Signature"
                       className="h-16 w-auto rounded border object-contain"
                     />

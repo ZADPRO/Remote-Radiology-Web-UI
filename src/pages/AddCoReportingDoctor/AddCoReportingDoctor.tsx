@@ -146,7 +146,7 @@ const AddCoReportingDoctor: React.FC = () => {
       setLoading(false);
     }
   };
-``
+
   const handleProfileImageUpload = async (file: File) => {
     const formDataImg = new FormData();
     formDataImg.append("profileImage", file);
@@ -155,9 +155,12 @@ const AddCoReportingDoctor: React.FC = () => {
       const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -348,9 +351,12 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
       const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setTempFiles((prev) => ({
@@ -565,8 +571,11 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: UploadFile = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
         };
 
@@ -657,9 +666,12 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
       const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          digital_signature: response.fileName,
+          digital_signature: cleanUrl,
         }));
 
         setTempFiles((prev) => ({
