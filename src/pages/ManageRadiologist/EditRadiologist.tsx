@@ -162,9 +162,12 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -187,9 +190,12 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refRADigitalSignature: response.fileName,
+          refRADigitalSignature: cleanUrl,
           digitalSignatureFile: null,
         }));
 
@@ -222,9 +228,12 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -252,8 +261,11 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
       const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempLicense = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -434,12 +446,17 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // new file uploaded by user
+                    : formData.profileImgFile?.base64Data // existing file from backend (if base64 or URL)
+                    ? formData.profileImgFile.base64Data.startsWith("http")
+                      ? formData.profileImgFile.base64Data // if backend already sends URL, use it
+                      : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`
+                    : formData.refUserProfileImg // fallback to backend URL if profileImgFile is null
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -644,6 +661,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
 
               {/* Show uploaded or existing Driving License file */}
               {files.drivers_license ? (
+                // New uploaded file preview
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -653,17 +671,31 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                   </span>
                 </div>
               ) : (
-                formData.refRADrivingLicense &&
-                formData.drivingLicenseFile && (
+                (formData.drivingLicenseFile ||
+                  formData.refRADrivingLicense) && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
-                      downloadFile(
-                        formData.drivingLicenseFile.base64Data,
-                        formData.drivingLicenseFile.contentType,
-                        "drivers_license"
-                      )
-                    }
+                    onClick={() => {
+                      const fileData = formData.drivingLicenseFile
+                        ? formData.drivingLicenseFile.base64Data
+                        : formData.refRADrivingLicense;
+
+                      const isS3Url = fileData.startsWith(
+                        "https://easeqt-health-archive.s3"
+                      );
+
+                      if (isS3Url) {
+                        // Open in new tab
+                        window.open(fileData, "_blank");
+                      } else {
+                        // Download base64 file
+                        downloadFile(
+                          formData.drivingLicenseFile.base64Data,
+                          formData.drivingLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      }
+                    }}
                   >
                     <div className="bg-green-100 p-2 rounded-md">
                       <FileText className="w-5 h-5 text-green-600" />
@@ -991,59 +1023,72 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               {/* Existing License Files */}
               {formData.licenseFiles?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.licenseFiles.map((file, index) => (
-                    <div
-                      key={`existing-license-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          title={file.refLOldFileName}
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refLOldFileName ||
-                            `Existing License ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updatedLicenseFiles =
-                              prev.licenseFiles?.filter((_, i) => i !== index);
-                            return {
-                              ...prev,
-                              licenseFiles: updatedLicenseFiles || [],
-                            };
-                          });
+                  {formData.licenseFiles.map((file, index) => {
+                    const fileUrl = file.lFileData.base64Data;
+                    const isS3Url = fileUrl.startsWith(
+                      "https://easeqt-health-archive.s3"
+                    );
 
-                          const data = {
-                            id: file.refLId,
-                            file_name: file.refLFileName,
-                            old_file_name: file.refLOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempLicenses((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-license-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            if (isS3Url) {
+                              window.open(fileUrl, "_blank"); // Open S3 file in new tab
+                            } else {
+                              downloadFile(
+                                file.lFileData.base64Data,
+                                file.lFileData.contentType,
+                                file.refLOldFileName
+                              ); // Download base64 file
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            title={file.refLOldFileName}
+                            className="truncate font-semibold text-green-800"
+                          >
+                            {file.refLOldFileName ||
+                              `Existing License ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updatedLicenseFiles =
+                                prev.licenseFiles?.filter(
+                                  (_, i) => i !== index
+                                );
+                              return {
+                                ...prev,
+                                licenseFiles: updatedLicenseFiles || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refLId,
+                              file_name: file.refLFileName,
+                              old_file_name: file.refLOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempLicenses((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1145,59 +1190,71 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               {/* Existing CV Files */}
               {formData.cvFiles?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.cvFiles.map((file, index) => (
-                    <div
-                      key={`existing-cv-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.cvFileData.base64Data,
-                            file.cvFileData.contentType,
-                            file.refCVOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          title={file.refCVOldFileName}
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refCVOldFileName || `Existing CV ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updatedCvFiles = prev.cvFiles?.filter(
-                              (_, i) => i !== index
-                            );
-                            return {
-                              ...prev,
-                              cvFiles: updatedCvFiles || [],
-                            };
-                          });
+                  {formData.cvFiles.map((file, index) => {
+                    const fileUrl = file.cvFileData.base64Data;
+                    const isS3Url = fileUrl.startsWith(
+                      "https://easeqt-health-archive.s3"
+                    );
 
-                          const data = {
-                            id: file.refCVID,
-                            file_name: file.refCVFileName,
-                            old_file_name: file.refCVOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempCVs((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-cv-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            if (isS3Url) {
+                              window.open(fileUrl, "_blank"); // Open S3 file in new tab
+                            } else {
+                              downloadFile(
+                                file.cvFileData.base64Data,
+                                file.cvFileData.contentType,
+                                file.refCVOldFileName
+                              ); // Download base64 file
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            title={file.refCVOldFileName}
+                            className="truncate font-semibold text-green-800"
+                          >
+                            {file.refCVOldFileName ||
+                              `Existing CV ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updatedCvFiles = prev.cvFiles?.filter(
+                                (_, i) => i !== index
+                              );
+                              return {
+                                ...prev,
+                                cvFiles: updatedCvFiles || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refCVID,
+                              file_name: file.refCVFileName,
+                              old_file_name: file.refCVOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempCVs((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1284,61 +1341,72 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               {/* Existing Malpractice Insurance Files from Backend */}
               {formData.malpracticeinsureance_files?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.malpracticeinsureance_files.map((file, index) => (
-                    <div
-                      key={`existing-malpractice-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          className="truncate font-semibold text-green-800"
-                          title={file.refMPOldFileName}
-                        >
-                          {file.refMPOldFileName ||
-                            `Malpractice File ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updated =
-                              prev.malpracticeinsureance_files?.filter(
-                                (_, i) => i !== index
-                              );
-                            return {
-                              ...prev,
-                              malpracticeinsureance_files: updated || [],
-                            };
-                          });
+                  {formData.malpracticeinsureance_files.map((file, index) => {
+                    const fileUrl = file.MPFileData.base64Data;
+                    const isS3Url = fileUrl.startsWith(
+                      "https://easeqt-health-archive.s3"
+                    );
 
-                          const data = {
-                            id: file.refMPId,
-                            file_name: file.refMPFileName,
-                            old_file_name: file.refMPOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempMalpractice((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-malpractice-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            if (isS3Url) {
+                              window.open(fileUrl, "_blank"); // Open S3 file in new tab
+                            } else {
+                              downloadFile(
+                                file.MPFileData.base64Data,
+                                file.MPFileData.contentType,
+                                file.refMPOldFileName
+                              ); // Download base64 file
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            className="truncate font-semibold text-green-800"
+                            title={file.refMPOldFileName}
+                          >
+                            {file.refMPOldFileName ||
+                              `Malpractice File ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updated =
+                                prev.malpracticeinsureance_files?.filter(
+                                  (_, i) => i !== index
+                                );
+                              return {
+                                ...prev,
+                                malpracticeinsureance_files: updated || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refMPId,
+                              file_name: file.refMPFileName,
+                              old_file_name: file.refMPOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempMalpractice((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1371,7 +1439,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 }}
               />
 
-              {/* Show newly uploaded signature */}
+              {/* New digital signature upload */}
               {files.digital_signature && (
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                   <img
@@ -1390,13 +1458,21 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                 </div>
               )}
 
-              {/* Show existing digital signature from backend */}
+              {/* Existing backend digital signature */}
               {!files.digital_signature &&
-                formData.refRADigitalSignature &&
-                formData.digitalSignatureFile && (
+                (formData.digitalSignatureFile ||
+                  formData.refRADigitalSignature) && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
                     <img
-                      src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
+                      src={
+                        formData.digitalSignatureFile
+                          ? formData.digitalSignatureFile.base64Data.startsWith(
+                              "http"
+                            )
+                            ? formData.digitalSignatureFile.base64Data
+                            : `data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`
+                          : formData.refRADigitalSignature // fallback to S3 URL
+                      }
                       alt="Digital Signature"
                       className="h-16 w-auto rounded border object-contain"
                     />

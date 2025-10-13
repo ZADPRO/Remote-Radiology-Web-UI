@@ -44,6 +44,7 @@ const MasterAdmin: React.FC = () => {
   const { user, role, setRole } = useAuth();
 
   const renderProfileComponent = () => {
+    console.log("role", role);
     switch (role?.type) {
       case "scadmin":
         return <ScanCenterAdminProfile />;

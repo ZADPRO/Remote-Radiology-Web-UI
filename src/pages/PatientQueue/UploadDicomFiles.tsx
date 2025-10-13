@@ -52,8 +52,7 @@ const UploadDicomFiles: React.FC = () => {
     Right: "",
   });
 
-    const [dicomFiles, setDicomFiles] = useState<DicomFile[]>([]);
-  
+  const [dicomFiles, setDicomFiles] = useState<DicomFile[]>([]);
 
   const [finalError, setFinalError] = useState<string>("");
 
@@ -114,20 +113,30 @@ const UploadDicomFiles: React.FC = () => {
       formData.append("file", file);
 
       technicianService
-        .uploadDicom(
-          { formFile: formData },
-          (progressEvent: AxiosProgressEvent) => {
-            const loaded = progressEvent.loaded ?? 0;
-            setFiles((prev) =>
-              prev.map((f) =>
-                f.name === file.name && f.side === side
-                  ? { ...f, uploadedSize: loaded }
-                  : f
-              )
-            );
-          }
-        )
-        .then((res) => {
+        .getDicomUploadUrl(file.name)
+        .then(async (res) => {
+          const { uploadURL, viewURL } = res;
+          console.log("\n\n\nuploadURL", uploadURL);
+
+          await technicianService.uploadDicomToS3(
+            uploadURL,
+            file,
+            (progressEvent: AxiosProgressEvent) => {
+              const loaded = progressEvent.loaded ?? 0;
+              setFiles((prev) =>
+                prev.map((f) =>
+                  f.name === file.name && f.side === side
+                    ? { ...f, uploadedSize: loaded }
+                    : f
+                )
+              );
+            }
+          );
+
+          // Once uploaded, mark it as completed
+          const cleanUrl = viewURL.includes("?")
+            ? viewURL.split("?")[0]
+            : viewURL;
           setFiles((prev) =>
             prev.map((f) =>
               f.name === file.name && f.side === side
@@ -135,13 +144,16 @@ const UploadDicomFiles: React.FC = () => {
                     ...f,
                     uploadedSize: file.size,
                     status: "completed",
-                    savedName: res?.fileName,
+                    savedName: cleanUrl,
                   }
                 : f
             )
           );
+
+          console.log("✅ File uploaded successfully to:", viewURL);
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error("❌ Upload failed:", error);
           setFiles((prev) =>
             prev.filter((f) => !(f.name === file.name && f.side === side))
           );
@@ -177,7 +189,7 @@ const UploadDicomFiles: React.FC = () => {
             side: file.side,
           })),
       };
-      console.log(payload);
+      console.log("\n\n\nDicom saved files payload => ", payload);
       const res = await technicianService.saveDicom(payload);
 
       if (res.status) {
@@ -193,51 +205,48 @@ const UploadDicomFiles: React.FC = () => {
     }
   };
 
-  const handleListDicom = async() => {
+  const handleListDicom = async () => {
     setLoading(true);
-     try {
-          const payload = {
-            patientId: appointmentDetails?.userId,
-            appointmentId: appointmentDetails.appointmentId,
-          };
-          console.log(payload);
-    
-          const res = await reportService.listDicoms(payload);
-          console.log(res);
-    
-          if (res.status) {
-            setDicomFiles(res.DicomData || []);
-          }
-        } catch (error) {
+    try {
+      const payload = {
+        patientId: appointmentDetails?.userId,
+        appointmentId: appointmentDetails.appointmentId,
+      };
+      console.log(payload);
+
+      const res = await reportService.listDicoms(payload);
+      console.log(res);
+
+      if (res.status) {
+        setDicomFiles(res.DicomData || []);
+      }
+    } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     handleListDicom();
   }, []);
 
-  console.log(dicomFiles)
+  console.log(dicomFiles);
 
   const renderUploadSection = (side: Side, label: string) => {
     const sideFiles = files.filter((f) => f.side === side);
 
-  
-    const handleFilesSelected = (
-  files: FileList,
-  side: Side
-) => {
-  // You can wrap your existing handleUpload logic here.
-  const event = { target: { files } } as React.ChangeEvent<HTMLInputElement>;
-  handleUpload(event, side);
-};
+    const handleFilesSelected = (files: FileList, side: Side) => {
+      // You can wrap your existing handleUpload logic here.
+      const event = {
+        target: { files },
+      } as React.ChangeEvent<HTMLInputElement>;
+      handleUpload(event, side);
+    };
 
     return (
       <div className="w-full lg:w-1/2 flex flex-col items-center lg:mb-0">
         <h1 className="text-lg sm:text-xl font-semibold">{label}</h1>
-        
 
         <div className="overflow-auto w-full p-3 sm:p-4 border rounded-md">
           <div className="flex gap-2 sm:gap-3 items-start">
@@ -318,31 +327,32 @@ const UploadDicomFiles: React.FC = () => {
             ))}
           </div>
 
-          <Separator className="my-4"/>
+          <Separator className="my-4" />
 
           <div className="shadow-md p-4">
             <h1>Uploaded Files</h1>
-          {dicomFiles?.filter((file) => file.Side === side).length === 0 || dicomFiles.length === 0 ? (
-            <div className="text-center text-sm text-gray-400 py-8">
-              No files uploaded
-            </div>
-          ) : (
-            dicomFiles?.map((file, index) => (
-              <>
-                {file.Side === side && (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center border-b py-3 px-2 rounded bg-[#f8f3eb] hover:bg-[#fffaf0] transition"
-                  >
-                    <div className="flex flex-col text-sm">
-                      <span className="text-gray-500">{file.FileName}</span>
-                      <span className="font-medium text-gray-800">
-                        {file.Side}
-                      </span>
-                    </div>
+            {dicomFiles?.filter((file) => file.Side === side).length === 0 ||
+            dicomFiles.length === 0 ? (
+              <div className="text-center text-sm text-gray-400 py-8">
+                No files uploaded
+              </div>
+            ) : (
+              dicomFiles?.map((file, index) => (
+                <>
+                  {file.Side === side && (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center border-b py-3 px-2 rounded bg-[#f8f3eb] hover:bg-[#fffaf0] transition"
+                    >
+                      <div className="flex flex-col text-sm">
+                        <span className="text-gray-500">{file.FileName}</span>
+                        <span className="font-medium text-gray-800">
+                          {file.Side}
+                        </span>
+                      </div>
 
-                    <div className="flex items-center gap-4">
-                    {/* <Download
+                      <div className="flex items-center gap-4">
+                        {/* <Download
                       onClick={() => {
                         downloadDicom(file.DFId, file.FileName);
                       }}
@@ -350,28 +360,26 @@ const UploadDicomFiles: React.FC = () => {
                       className="text-gray-600 cursor-pointer hover:bg-accent"
                     /> */}
 
-                    <Trash2 
-                    size={16}
-                      className="text-red-600 cursor-pointer hover:bg-accent"
-                      onClick={async() => {
-                        setLoading(true)
-                        try {
-                          await removeDicom([file.DFId]);
-                          handleListDicom();
-                        } finally {
-                          setLoading(false);
-                        }
-                      }}
-                    />
+                        <Trash2
+                          size={16}
+                          className="text-red-600 cursor-pointer hover:bg-accent"
+                          onClick={async () => {
+                            setLoading(true);
+                            try {
+                              await removeDicom([file.DFId]);
+                              handleListDicom();
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
-                    
-                  </div>
-                )}
-              </>
-            ))
-          )}
+                  )}
+                </>
+              ))
+            )}
           </div>
-            
         </div>
       </div>
     );
@@ -410,7 +418,11 @@ const UploadDicomFiles: React.FC = () => {
       <h1 className="text-center font-semibold text-xl sm:text-2xl px-4">
         Dicom
       </h1>
-      <p className="text-center"><span className="font-semibold text-red-500">Note</span>: Please remain on this page and wait until the upload process shows as completed before submitting.</p>
+      <p className="text-center">
+        <span className="font-semibold text-red-500">Note</span>: Please remain
+        on this page and wait until the upload process shows as completed
+        before submitting.
+      </p>
 
       {/* This wrapper scrolls */}
       <div className="flex-1 overflow-auto lg:p-0 p-5 m-1 sm:m-2">

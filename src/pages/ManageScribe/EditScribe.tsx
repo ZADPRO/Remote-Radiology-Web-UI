@@ -131,9 +131,12 @@ const EditScribe: React.FC<EditScribeProps> = ({
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -163,9 +166,12 @@ const EditScribe: React.FC<EditScribeProps> = ({
       const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -192,8 +198,11 @@ const EditScribe: React.FC<EditScribeProps> = ({
       const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempUpdateFiles = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -335,7 +344,13 @@ const EditScribe: React.FC<EditScribeProps> = ({
               src={
                 files.profile_img
                   ? URL.createObjectURL(files.profile_img)
-                  : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                  : formData.refUserProfileImg?.startsWith(
+                      "https://easeqt-health-archive.s3"
+                    )
+                  ? formData.refUserProfileImg
+                  : formData.profileImgFile?.base64Data
+                  ? `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}` // 🟢 Case 3: Base64 data
+                  : "/default-profile.png"
               }
               alt="Preview"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
@@ -549,7 +564,9 @@ const EditScribe: React.FC<EditScribeProps> = ({
             />
 
             {/* Show uploaded or existing Driving License file */}
+            {/* Driving License */}
             {files.drivers_license ? (
+              // User just uploaded a file (local) → show as uploaded
               <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="bg-blue-100 p-2 rounded-md">
                   <FileText className="w-5 h-5 text-blue-600" />
@@ -563,13 +580,19 @@ const EditScribe: React.FC<EditScribeProps> = ({
               formData.drivingLicenseFile && (
                 <div
                   className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  onClick={() =>
-                    downloadFile(
-                      formData.drivingLicenseFile.base64Data,
-                      formData.drivingLicenseFile.contentType,
-                      "drivers_license"
-                    )
-                  }
+                  onClick={() => {
+                    const url = formData.drivingLicenseFile.base64Data;
+                    if (url.startsWith("https://easeqt-health-archive.s3")) {
+                      window.open(url, "_blank");
+                    } else {
+                      // Trigger download for local file
+                      downloadFile(
+                        formData.drivingLicenseFile.base64Data,
+                        formData.drivingLicenseFile.contentType,
+                        "drivers_license"
+                      );
+                    }
+                  }}
                 >
                   <div className="bg-green-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-green-600" />
@@ -819,13 +842,24 @@ const EditScribe: React.FC<EditScribeProps> = ({
                   >
                     <div
                       className="flex items-center gap-3 w-4/5 truncate"
-                      onClick={() =>
-                        downloadFile(
-                          file.educationCertificateFile.base64Data,
-                          file.educationCertificateFile.contentType,
-                          file.refECOldFileName
-                        )
-                      }
+                      onClick={() => {
+                        const fileUrl =
+                          file.educationCertificateFile?.base64Data;
+                        if (!fileUrl) return;
+
+                        // Check if it's an S3 URL
+                        if (
+                          fileUrl.startsWith("https://easeqt-health-archive.s3")
+                        ) {
+                          window.open(fileUrl, "_blank"); // Open in new tab
+                        } else {
+                          downloadFile(
+                            fileUrl,
+                            file.educationCertificateFile.contentType,
+                            file.refECOldFileName
+                          ); // Download local file
+                        }
+                      }}
                     >
                       <div className="bg-green-100 p-2 rounded-md">
                         <FileText className="w-5 h-5 text-green-600" />
@@ -838,18 +872,18 @@ const EditScribe: React.FC<EditScribeProps> = ({
                           `Existing Education Certificate ${index + 1}`}
                       </span>
                     </div>
+
                     <button
                       type="button"
                       onClick={() => {
                         setFormData((prev) => {
-                          const updatedLicenseFiles =
+                          const updatedFiles =
                             prev.educationCertificateFiles?.filter(
                               (_, i) => i !== index
                             );
                           return {
                             ...prev,
-                            educationCertificateFiles:
-                              updatedLicenseFiles || [],
+                            educationCertificateFiles: updatedFiles || [],
                           };
                         });
 

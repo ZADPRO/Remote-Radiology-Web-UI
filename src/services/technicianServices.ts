@@ -427,6 +427,40 @@ export const technicianService = {
     return decryptData;
   },
 
+  uploadDicomToS3: async (
+    uploadURL: string,
+    file: File,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+  ) => {
+    await axios.put(uploadURL, file, {
+      headers: {
+        "Content-Type": file.type,
+      },
+      onUploadProgress,
+    });
+  },
+
+  getDicomUploadUrl: async (fileName: string) => {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/technicianintakeform/dicomuploadurl`,
+      { fileName },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    const decryptData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log("🔗 Pre-signed URLs:", decryptData);
+    return decryptData;
+  },
+
   saveDicom: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
