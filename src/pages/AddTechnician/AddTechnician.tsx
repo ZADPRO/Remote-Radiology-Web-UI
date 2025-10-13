@@ -132,7 +132,7 @@ const AddTechnician: React.FC = () => {
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: response.viewURL, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -162,7 +162,7 @@ const AddTechnician: React.FC = () => {
 
       if (response.status) {
         const result: UploadFile = {
-          file_name: response.fileName,
+          file_name: response.viewURL,
           old_file_name: file.name,
         };
         console.log(result);
@@ -196,7 +196,7 @@ const AddTechnician: React.FC = () => {
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          digital_signature: response.fileName,
+          digital_signature: response.viewURL,
         }));
 
         setFiles((prev) => ({
@@ -250,7 +250,7 @@ const AddTechnician: React.FC = () => {
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: response.viewURL,
         }));
 
         setFiles((prev) => ({
