@@ -115,9 +115,12 @@ const AddWGPerformingProvider: React.FC = () => {
         const response = await uploadService.uploadFile(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            [fieldName]: response.fileName, // just path to backend
+            [fieldName]: cleanUrl, // just path to backend
           }));
 
           setFiles((prev) => ({
@@ -148,8 +151,11 @@ const AddWGPerformingProvider: React.FC = () => {
         const response = await uploadService.uploadFile(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           const result: UploadFile = {
-            file_name: response.fileName,
+            file_name: cleanUrl,
             old_file_name: file.name,
           };
 
@@ -259,9 +265,12 @@ const AddWGPerformingProvider: React.FC = () => {
         const response = await uploadService.uploadImage(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            digital_signature: response.fileName,
+            digital_signature: cleanUrl,
           }));
 
           setFiles((prev) => ({
@@ -287,9 +296,12 @@ const AddWGPerformingProvider: React.FC = () => {
         const response = await uploadService.uploadImage(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            profile_img: response.fileName,
+            profile_img: cleanUrl,
           }));
 
           setFiles((prev) => ({

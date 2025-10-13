@@ -81,6 +81,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
         managerId
       );
       if (res.data && res.data.length > 0) {
+        console.log("\n\n\nres", res);
         setFormData(res.data[0]);
       } else {
         setError("Manager data not found.");
@@ -276,7 +277,11 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             />
           ) : formData.refUserProfileImg && formData.profileImgFile ? (
             <img
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              src={
+                formData.profileImgFile.base64Data.startsWith("http")
+                  ? formData.profileImgFile.base64Data // Already an S3 URL
+                  : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64 string
+              }
               alt="Manager Profile"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />
@@ -285,6 +290,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
               <Camera className="w-16 h-16" />
             </div>
           )}
+
           <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
             <Pencil className="w-5 h-5 text-background" />
             <input
@@ -495,13 +501,19 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             ) : formData.refMDDrivingLicense && formData.drivingLicenseFile ? (
               <div
                 className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                onClick={() =>
-                  downloadFile(
-                    formData.drivingLicenseFile!.base64Data,
-                    formData.drivingLicenseFile!.contentType,
-                    "License"
-                  )
-                }
+                onClick={() => {
+                  const fileData = formData.drivingLicenseFile;
+                  if (!fileData) return;
+
+                  if (fileData.base64Data?.startsWith("http")) {
+                    // ✅ S3 URL → open in a new tab
+                    window.open(fileData.base64Data, "_blank");
+                  } else {
+                    // ✅ Base64 → download as file
+                    const downloadUrl = `data:${fileData.contentType};base64,${fileData.base64Data}`;
+                    downloadFile(downloadUrl, fileData.contentType!, "License");
+                  }
+                }}
               >
                 <div className="bg-green-100 p-2 rounded-md">
                   <FileText className="w-5 h-5 text-green-600" />
@@ -708,13 +720,23 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                   >
                     <div
                       className="flex items-center gap-3 w-4/5 truncate"
-                      onClick={() =>
-                        downloadFile(
-                          cert.educationCertificateFile.base64Data,
-                          cert.educationCertificateFile.contentType,
-                          cert.refECOldFileName || `Certificate-${index + 1}`
-                        )
-                      }
+                      onClick={() => {
+                        const fileData = cert.educationCertificateFile;
+                        if (!fileData) return;
+
+                        // ✅ If from S3 → open in new tab
+                        if (fileData.base64Data?.startsWith("http")) {
+                          window.open(fileData.base64Data, "_blank");
+                        } else {
+                          // ✅ Otherwise → download base64 file
+                          const downloadUrl = `data:${fileData.contentType};base64,${fileData.base64Data}`;
+                          downloadFile(
+                            downloadUrl,
+                            fileData.contentType,
+                            cert.refECOldFileName || `Certificate-${index + 1}`
+                          );
+                        }
+                      }}
                     >
                       <div className="bg-green-100 p-2 rounded-md">
                         <FileText className="w-5 h-5 text-green-600" />
@@ -763,6 +785,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                 ))}
               </div>
             )}
+
           {/* Display Newly Added Education Certificates */}
           {files.education_certificate.length > 0 && (
             <div className="mt-3 flex flex-col gap-3">
