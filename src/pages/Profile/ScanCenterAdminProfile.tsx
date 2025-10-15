@@ -11,11 +11,13 @@ import {
 } from "@/components/ui/select";
 import { Camera, FileText } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ListSpecificScanCenterAdmin, scanCenterAdminService } from "@/services/scancenterService";
+import {
+  ListSpecificScanCenterAdmin,
+  scanCenterAdminService,
+} from "@/services/scancenterService";
 import { useAuth } from "../Routes/AuthContext";
 
 const ScanCenterAdminProfile: React.FC = () => {
-
   const { user } = useAuth();
 
   // const scanCenterId = role?.scanCenterId;
@@ -38,7 +40,7 @@ const ScanCenterAdminProfile: React.FC = () => {
     null
   );
 
-  console.log(formData)
+  console.log("\n\n\n\nformData", formData);
 
   const getSpecificCenterAdmin = async () => {
     setLoading(true);
@@ -99,8 +101,14 @@ const ScanCenterAdminProfile: React.FC = () => {
   };
 
   if (loading) return <LoadingOverlay />;
-  if (error && !formData) return <div className="p-4 text-red-500">{error}</div>;
-  if (!formData) return <div className="p-4">No Scan Center Admin data found or ID not provided.</div>;
+  if (error && !formData)
+    return <div className="p-4 text-red-500">{error}</div>;
+  if (!formData)
+    return (
+      <div className="p-4">
+        No Scan Center Admin data found or ID not provided.
+      </div>
+    );
 
   return (
     <>
@@ -141,11 +149,12 @@ const ScanCenterAdminProfile: React.FC = () => {
               <Label className="text-sm" htmlFor="status-display">
                 Status
               </Label>
-              <Select
-                disabled
-                value={String(formData.refUserStatus)}
-              >
-                <SelectTrigger id="status-display-trigger" className="bg-white w-full" disabled>
+              <Select disabled value={String(formData.refUserStatus)}>
+                <SelectTrigger
+                  id="status-display-trigger"
+                  className="bg-white w-full"
+                  disabled
+                >
                   <SelectValue placeholder="N/A" />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,7 +179,11 @@ const ScanCenterAdminProfile: React.FC = () => {
                 type="text"
                 placeholder="N/A"
                 className="bg-white"
-                value={`${formData.refUserFirstName || ""} ${formData.refUserLastName || ""}`.trim() || "N/A"}
+                value={
+                  `${formData.refUserFirstName || ""} ${
+                    formData.refUserLastName || ""
+                  }`.trim() || "N/A"
+                }
                 readOnly
               />
             </div>
@@ -213,12 +226,17 @@ const ScanCenterAdminProfile: React.FC = () => {
                   disabled
                   value={formData.refCODOPhoneNo1CountryCode || ""}
                 >
-                  <SelectTrigger className="bg-white disabled:opacity-100 disabled:pointer-events-none" disabled>
+                  <SelectTrigger
+                    className="bg-white disabled:opacity-100 disabled:pointer-events-none"
+                    disabled
+                  >
                     <SelectValue placeholder="N/A" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={formData.refCODOPhoneNo1CountryCode || ""}>
-                        {formData.refCODOPhoneNo1CountryCode || "N/A"}
+                    <SelectItem
+                      value={formData.refCODOPhoneNo1CountryCode || ""}
+                    >
+                      {formData.refCODOPhoneNo1CountryCode || "N/A"}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -241,11 +259,15 @@ const ScanCenterAdminProfile: React.FC = () => {
                 type="text"
                 placeholder="N/A"
                 className="bg-white"
-                value={formData.refUserDOB ? new Date(formData.refUserDOB).toLocaleDateString() : "N/A"}
+                value={
+                  formData.refUserDOB
+                    ? new Date(formData.refUserDOB).toLocaleDateString()
+                    : "N/A"
+                }
                 readOnly
               />
             </div>
-                        {/* Driving License File Display - Assuming it might have base64 data in future or a filename */}
+            {/* Driving License File Display - Assuming it might have base64 data in future or a filename */}
             <div className="flex flex-col gap-1.5 w-full">
               <Label className="text-sm font-medium">Driving License</Label>
               {formData.drivingLicenseFile?.base64Data ? (
@@ -258,7 +280,9 @@ const ScanCenterAdminProfile: React.FC = () => {
                       formData.refRDDrivingLicense || "Driving_License.pdf"
                     )
                   }
-                  title={`Download ${formData.refRDDrivingLicense || "Driving License Document"}`}
+                  title={`Download ${
+                    formData.refRDDrivingLicense || "Driving License Document"
+                  }`}
                 >
                   <div className="bg-green-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-green-600" />
@@ -268,17 +292,16 @@ const ScanCenterAdminProfile: React.FC = () => {
                   </span>
                 </div>
               ) : formData.refRDDrivingLicense ? (
-                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-                    Driving License: {formData.refRDDrivingLicense} (Preview not available).
-                 </div>
+                <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+                  Driving License: {formData.refRDDrivingLicense} (Preview not
+                  available).
+                </div>
               ) : (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No Driving License document uploaded.
                 </div>
               )}
             </div>
-
-
           </div>
         </div>
 

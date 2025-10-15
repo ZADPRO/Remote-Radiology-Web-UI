@@ -580,7 +580,7 @@ export const impressionRecommendation = [
         impressionBackgroundColor: "transparent",
         recommendation: "Oncologist Consultation",
         recommendationText:
-          "Oncologist consultation is recommended for further management planning based on current findings.",
+          "Oncology consultation is recommended for further management planning based on current findings.",
         recommendationTextColor: "#000000",
         recommendationBackgroundColor: "#d9d2e9",
       },
@@ -593,7 +593,7 @@ export const impressionRecommendation = [
         impressionBackgroundColor: "transparent",
         recommendation: "Oncologist Consultation",
         recommendationText:
-          "Oncologist consultation is recommended for further management planning based on current findings.",
+          "Oncology consultation is recommended for further management planning based on current findings.",
         recommendationTextColor: "#000000",
         recommendationBackgroundColor: "#d9d2e9",
       },

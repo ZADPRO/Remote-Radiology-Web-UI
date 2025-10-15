@@ -321,7 +321,7 @@ export const reportService = {
 
     const decryptedData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    console.log(decryptedData);
+    console.log("\n\nDicom files decrypted data => \n", decryptedData);
     return decryptedData;
   },
 

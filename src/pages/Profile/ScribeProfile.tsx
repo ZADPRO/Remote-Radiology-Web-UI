@@ -41,6 +41,7 @@ const ScribeProfile: React.FC = () => {
     try {
       if(scribeId) {
 const res = await scribeService.listSpecificScribe(scribeId);
+console.log('res', res)
       if (res.data && res.data.length > 0) {
         setFormData(res.data[0]);
       } else {
