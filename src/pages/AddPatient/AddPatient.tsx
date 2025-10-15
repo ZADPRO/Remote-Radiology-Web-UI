@@ -251,7 +251,11 @@ const AddPatient: React.FC = () => {
             </div>
             {formData.mailoption === "sendbywon" ? (
               <>
-                <div className="my-5 pb-10">
+                <div className="mb-5 mt-3 pb-10">
+                  <div className="flex gap-2 text-sm items-center mb-3">
+                    <Info size={15} /> Kindly copy the email content and send it
+                    to the patient.
+                  </div>
                   <div className="flex gap-2 text-sm items-center mt-2">
                     Subject
                   </div>
@@ -260,8 +264,7 @@ const AddPatient: React.FC = () => {
                       ref={textRef}
                       className="w-full bg-[#fff] shadow-2xl rounded-lg p-2"
                     >
-                      Welcome – Your Appointment at {SCName} Scan
-                      Center
+                      Welcome – Your Appointment at {SCName} Scan Center
                     </div>
                     <Button variant="greenTheme" onClick={handleCopy}>
                       Copy
@@ -338,7 +341,8 @@ const AddPatient: React.FC = () => {
                         <div className="text-center text-gray-700 text-base space-y-4">
                           <p>
                             You have successfully been onboarded as a{" "}
-                            <strong>Patient</strong> on <strong>Wellthgreen Report Portal</strong>.
+                            <strong>Patient</strong> on{" "}
+                            <strong>Wellthgreen Report Portal</strong>.
                           </p>
                           <p>Your login credentials are as follows:</p>
 
