@@ -157,9 +157,6 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
 
   const [mailPurpose, setMailPurpose] = useState("");
 
-  console.log(formData);
-  console.log(files);
-
   const handleProfileImageUpload = async (file: File) => {
     setError("");
     const formDataImg = new FormData();
@@ -557,7 +554,10 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 {(mailPurpose !== "sendMail" || mailoption !== "sendbywon") && (
                   <div className="lg:w-[30%] w-full">
                     <Button onClick={handleFinalSubmit} variant="greenTheme">
-                      Send Mail
+                      Create Appoinmtnet
+                      {mailoption === "sendbywellthgreen"
+                        ? ` and Send Mail`
+                        : ``}
                     </Button>
                   </div>
                 )}
@@ -573,8 +573,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                         ref={textRef}
                         className="w-full bg-[#fff] shadow-2xl rounded-lg p-2"
                       >
-                        Welcome – Your Scan Appointment at{" "}
-                        {ScanCenter.name} Scan Center
+                        Welcome – Your Scan Appointment at {ScanCenter.name}{" "}
+                        Scan Center
                       </div>
                       <Button variant="greenTheme" onClick={handleCopy}>
                         Copy
@@ -705,16 +705,16 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-         if(newAppointment){
- setScanCenter({
-            id: formData.refSCId,
-            name: formData.refSCCustId,
-          });
-          setModelAppointment(true);
-          setMailPurpose("registerandsendMail");
-         }else{
-          toast.error("Choose the Appintment Date");
-         }
+          if (newAppointment) {
+            setScanCenter({
+              id: formData.refSCId,
+              name: formData.refSCCustId,
+            });
+            setModelAppointment(true);
+            setMailPurpose("registerandsendMail");
+          } else {
+            toast.error("Choose the Appintment Date");
+          }
         }}
       >
         <div className="flex gap-3 items-end relative">
@@ -755,7 +755,9 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                   {formData.appointments.map((row, i) => (
                     <TableRow key={i}>
                       <TableCell>{row.refSCCustId}</TableCell>
-                      <TableCell>{formatReadableDate(row.refAppointmentDate)}</TableCell>
+                      <TableCell>
+                        {formatReadableDate(row.refAppointmentDate)}
+                      </TableCell>
                       <TableCell>
                         {isDateValid(row.refAppointmentDate) ? (
                           <Mail
