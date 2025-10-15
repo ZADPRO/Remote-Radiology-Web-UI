@@ -564,7 +564,11 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               </div>
               {mailoption === "sendbywon" ? (
                 <>
-                  <div className="my-5 pb-10">
+                  <div className="mb-5 mt-3 pb-10">
+                    <div className="flex gap-2 text-sm items-center mb-3">
+                      <Info size={15} /> Kindly copy the email content and send
+                      it to the patient.
+                    </div>
                     <div className="flex gap-2 text-sm items-center mt-2">
                       Subject
                     </div>
