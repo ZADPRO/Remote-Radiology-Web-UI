@@ -637,6 +637,7 @@ export const technicianService = {
     );
 
     const decryptData = decrypt(res.data.data, res.data.token);
+    console.log("decryptData", decryptData);
     tokenService.setToken(res.data.token);
 
     const { uploadURL, viewURL, s3Key, fileName } = decryptData;

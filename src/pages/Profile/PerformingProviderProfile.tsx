@@ -117,7 +117,14 @@ const PerformingProviderProfile: React.FC = () => {
         {formData.profileImgFile?.base64Data ? (
           <div className="relative w-32 h-32 lg:w-40 lg:h-40">
             <img
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              id="profile-img"
+              src={
+                formData?.profileImgFile
+                  ? formData.profileImgFile.base64Data?.startsWith("https://")
+                    ? formData.profileImgFile.base64Data // S3 URL → show directly
+                    : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64 → convert
+                  : "/default-profile.png" // fallback if null or missing
+              }
               alt="Profile"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />

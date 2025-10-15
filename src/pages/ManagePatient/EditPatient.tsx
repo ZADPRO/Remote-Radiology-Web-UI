@@ -167,9 +167,12 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -292,11 +295,14 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 src={
                   files.profile_img
                     ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    : formData.profileImgFile
+                    ? `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`
+                    : formData.refUserProfileImg || "/default-profile.png" // fallback image
                 }
-                alt="Preview"
+                alt="Profile Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input

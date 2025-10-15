@@ -167,9 +167,12 @@ const AddPatient: React.FC = () => {
       const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: cleanUrl,
         }));
 
         setFiles((prev) => ({

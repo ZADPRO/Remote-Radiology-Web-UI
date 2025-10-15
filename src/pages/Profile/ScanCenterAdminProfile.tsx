@@ -119,7 +119,13 @@ const ScanCenterAdminProfile: React.FC = () => {
             <div className="relative w-32 h-32 lg:w-45 lg:h-45">
               <img
                 id="profile-img"
-                src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+                src={
+                  formData.profileImgFile
+                    ? formData.profileImgFile.base64Data.startsWith("https://")
+                      ? formData.profileImgFile.base64Data // S3 URL
+                      : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64 inline
+                    : "/default-profile.png" // fallback image
+                }
                 alt="Profile"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />

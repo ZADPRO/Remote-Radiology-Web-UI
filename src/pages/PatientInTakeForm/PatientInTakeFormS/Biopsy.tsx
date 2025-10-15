@@ -58,7 +58,10 @@ const Biopsy: React.FC<Props> = ({
         try {
           const response = await uploadService.uploadFile(file);
           if (response.status) {
-            values.push(response.fileName);
+            const cleanUrl = response.viewURL.includes("?")
+              ? response.viewURL.split("?")[0]
+              : response.viewURL;
+            values.push(cleanUrl);
           }
         } catch (error) {
           console.error("File upload failed:", error);
@@ -134,10 +137,7 @@ const Biopsy: React.FC<Props> = ({
                     )
                   }
                   onDoubleClick={() =>
-                    handleInputChange(
-                      questionIds.previousBiopsy,
-                      ""
-                    )
+                    handleInputChange(questionIds.previousBiopsy, "")
                   }
                   required
                 />
@@ -196,10 +196,7 @@ const Biopsy: React.FC<Props> = ({
                     )
                   }
                   onDoubleClick={() =>
-                    handleInputChange(
-                      questionIds.previousBiopsy,
-                      ""
-                    )
+                    handleInputChange(questionIds.previousBiopsy, "")
                   }
                   required
                 />

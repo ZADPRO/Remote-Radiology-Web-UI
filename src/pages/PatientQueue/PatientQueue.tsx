@@ -1625,6 +1625,7 @@ const PatientQueue: React.FC = () => {
             );
 
             if (response.status) {
+              console.log("\n\n\nresponse\n\n", response);
               setReportData(response.data || []);
             }
             setOldLoading(false);
