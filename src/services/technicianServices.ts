@@ -588,25 +588,70 @@ export const technicianService = {
     return decryptedData;
   },
 
-  uploadOldReportFile: async ({ formFile }: UploadFilePayload) => {
+  // uploadOldReportFile: async ({ formFile }: UploadFilePayload) => {
+  //   const token = localStorage.getItem("token");
+
+  //   const res = await axios.post(
+  //     `${
+  //       import.meta.env.VITE_API_URL_USERSERVICE
+  //     }/reportintakeform/addOldReport`,
+  //     formFile,
+  //     {
+  //       headers: {
+  //         Authorization: token,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     }
+  //   );
+  //   console.log(res);
+  //   const decryptData = decrypt(res.data.data, res.data.token);
+  //   tokenService.setToken(res.data.token);
+  //   return decryptData;
+  // },
+  uploadOldReportFile: async ({
+    file,
+    patientId,
+    categoryId,
+    appointmentId,
+  }: {
+    file: File;
+    patientId: number;
+    categoryId: number;
+    appointmentId: number;
+  }) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
-      }/reportintakeform/addOldReport`,
-      formFile,
+      }/reportintakeform/oldreportuploadurl`,
       {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
+        fileName: file.name,
+        patientId: patientId.toString(),
+        categoryId: categoryId.toString(),
+        appointmentId: appointmentId.toString(),
+      },
+      {
+        headers: { Authorization: token },
       }
     );
-    console.log(res);
+
     const decryptData = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
-    return decryptData;
+
+    const { uploadURL, viewURL, s3Key, fileName } = decryptData;
+
+    await axios.put(uploadURL, file, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (progressEvent: any) => {
+        const percent = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        console.log(`Uploading ${file.name}: ${percent}%`);
+      },
+    });
+
+    return { uploadURL, viewURL, fileName, s3Key };
   },
 
   deleteOldReportFile: async (ORId: number) => {

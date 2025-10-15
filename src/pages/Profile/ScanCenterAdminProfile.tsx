@@ -40,7 +40,7 @@ const ScanCenterAdminProfile: React.FC = () => {
     null
   );
 
-  console.log(formData);
+  console.log("\n\n\n\nformData", formData);
 
   const getSpecificCenterAdmin = async () => {
     setLoading(true);

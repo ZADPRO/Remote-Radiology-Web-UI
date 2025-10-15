@@ -1641,25 +1641,28 @@ const PatientQueue: React.FC = () => {
             if (!files) return;
 
             for (const file of files) {
-              if (file) {
-                const formDataObj = new FormData();
-                formDataObj.append("file", file);
-                formDataObj.append("patientId", patientId.toString());
-                formDataObj.append("categoryId", categoryId.toString());
-                formDataObj.append("appointmentId", appointmentId.toString());
-                try {
-                  await technicianService.uploadOldReportFile({
-                    formFile: formDataObj,
-                  });
-                  // if (response.status) {
-                  //   values.push(response.fileName);
-                  // }
-                } catch (error) {
-                  console.error("File upload failed:", error);
+              try {
+                const response = await technicianService.uploadOldReportFile({
+                  file,
+                  appointmentId,
+                  patientId,
+                  categoryId,
+                });
+
+                if (response) {
+                  console.log("response", response);
+                  console.log("Uploaded:", response.viewURL);
+                  // Update UI or form data here if needed
+                } else {
+                  console.error("Upload failed for:", file.name);
                 }
+              } catch (error) {
+                console.error("Error uploading file:", file.name, error);
               }
             }
+
             ListAllOldReport(appointmentId, patientId, categoryId);
+            setOldLoading(false);
           };
 
           const handleDeleteFile = async (
