@@ -120,7 +120,7 @@ export const uploadService = {
     };
   },
 
-  uploadFile: async ( formFile: File) => {
+  uploadFile: async (formFile: File) => {
     const token = localStorage.getItem("token");
 
     // 1️⃣ Ask backend to generate presigned URLs (PUT + GET)

@@ -14,14 +14,12 @@ import { Camera, FileText } from "lucide-react"; // Removed Pencil, X
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../Routes/AuthContext";
 
-
 const ScribeProfile: React.FC = () => {
+  const { user } = useAuth();
 
-    const { user } = useAuth();
-    
-      const scribeId = user?.refUserId;
-    
-      // const scribeId = 72;
+  const scribeId = user?.refUserId;
+
+  // const scribeId = 72;
 
   const [loading, setLoading] = useState<boolean>(true); // Start with loading true
   const [error, setError] = useState<string | null>(null);
@@ -39,17 +37,16 @@ const ScribeProfile: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      if(scribeId) {
-const res = await scribeService.listSpecificScribe(scribeId);
-console.log('res', res)
-      if (res.data && res.data.length > 0) {
-        setFormData(res.data[0]);
-      } else {
-        setError("Scribe data not found.");
-        setFormData(null);
+      if (scribeId) {
+        const res = await scribeService.listSpecificScribe(scribeId);
+        console.log("res", res);
+        if (res.data && res.data.length > 0) {
+          setFormData(res.data[0]);
+        } else {
+          setError("Scribe data not found.");
+          setFormData(null);
+        }
       }
-      }
-      
     } catch (err) {
       console.error("Error fetching scribe data:", err);
       setError("Failed to fetch scribe details.");
@@ -95,7 +92,8 @@ console.log('res', res)
   };
 
   if (loading) return <LoadingOverlay />;
-  if (error && !formData) { // Show error prominently if data couldn't be loaded
+  if (error && !formData) {
+    // Show error prominently if data couldn't be loaded
     return (
       <div className="p-4">
         <Alert variant="destructive">
@@ -114,7 +112,13 @@ console.log('res', res)
           <div className="relative w-32 h-32 lg:w-45 lg:h-45">
             <img
               id="profile-img"
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              src={
+                formData.profileImgFile
+                  ? formData.profileImgFile.base64Data.startsWith("https://")
+                    ? formData.profileImgFile.base64Data // S3 URL directly
+                    : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64
+                  : "/default-profile.png" // Fallback image if null
+              }
               alt="Profile"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />
@@ -395,12 +399,13 @@ console.log('res', res)
         <div className="w-full lg:w-1/2"></div>
       </div>
 
-      {error && !loading && ( // Display non-critical errors at the bottom
-        <Alert ref={errorRef} variant="destructive" className="mt-4">
-          <AlertTitle>Notice</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      {error &&
+        !loading && ( // Display non-critical errors at the bottom
+          <Alert ref={errorRef} variant="destructive" className="mt-4">
+            <AlertTitle>Notice</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
     </div>
   );
 };
