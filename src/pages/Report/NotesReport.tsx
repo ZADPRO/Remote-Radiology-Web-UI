@@ -1346,7 +1346,7 @@ ${
             </Button>
           )} */}
           {
-            readOnly && (role?.id === 2 || role?.id === 3) ? (<></>) : (
+            (role?.id === 2 || role?.id === 3 || role?.id === 8) ? (<></>) : (
               <div className="self-start mt-2">
                 <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                   <div>
