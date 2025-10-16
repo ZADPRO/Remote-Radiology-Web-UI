@@ -64,6 +64,16 @@ const TextEditor: React.FC<TextEditorProps> = ({
       return match;
     });
   };
+
+  useEffect(() => {
+    const editorEl = quillRef.current?.editor?.root;
+    if (editorEl) {
+      editorEl.setAttribute("spellcheck", "true");
+      editorEl.setAttribute("autocorrect", "on");
+      editorEl.setAttribute("autocomplete", "on");
+    }
+  }, []);
+
   useEffect(() => {
     if (focused && active && quillRef.current) {
       const editor = quillRef.current.getEditor();
@@ -125,7 +135,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   // Apply styles based on role
   const applyRoleStyles = (editor: any) => {
-    if (role?.id === 8) {
+    if ((role?.id === 8) && (readOnly === false)) {
       const selection = editor.getSelection();
       if (selection) {
         editor.format("background", "#f4cccc"); // Apply to current selection
@@ -180,7 +190,6 @@ const TextEditor: React.FC<TextEditorProps> = ({
     };
   }, [onManualEdit]);
 
-
   useEffect(() => {
     const editorEl = quillRef.current?.editor?.root;
     if (!editorEl) return;
@@ -230,7 +239,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       <div className="w-full flex justify-end items-center mt-2">
         {/* Mic button – scoped to this editor */}
         {focused && !readOnly && (
-          <button 	
+          <button
             type="button"
             onMouseDown={(e) => e.preventDefault()} // keep focus in editor
             onClick={listening ? stopListening : startListening}

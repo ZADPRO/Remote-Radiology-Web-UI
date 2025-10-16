@@ -395,7 +395,7 @@ const UploadDicomFiles: React.FC = () => {
             <div className="flex w-[6rem]">Patient Name</div>{" "}
             <div>: {locationState?.name}</div>
           </div>
-          <div className="capitalize flex">
+          <div className="flex">
             <div className="flex w-[6rem]">Patient ID</div>{" "}
             <div>: {locationState?.custId}</div>
           </div>

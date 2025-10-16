@@ -54,6 +54,7 @@ export interface PatientAppointmentModel {
   refAppointmentDate: string;
   refSCId: number;
   refSCCustId: string;
+  allowCancelResh: boolean;
 }
 
 export const patientService = {
@@ -164,6 +165,7 @@ export const patientService = {
     const payload = encrypt(
       {
         refUserId: formData.refUserId,
+        refUserCustId: formData.refUserCustId,
         refUserStatus: formData.refUserStatus,
         refUserFirstName: formData.refUserFirstName,
         refUserProfileImg: formData.refUserProfileImg,
@@ -216,7 +218,9 @@ export const patientService = {
       token
     );
     const res = await axios.patch(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/patient/createAppointment`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/patient/createAppointment`,
       { encryptedData: payload },
       {
         headers: {
@@ -256,7 +260,41 @@ export const patientService = {
       token
     );
     const res = await axios.patch(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/patient/sendMailAppointment`,
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/patient/sendMailAppointment`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  cancelRescheduleAppointment: async (
+    appointmentId: number,
+    appointmentDate: string,
+    method: string
+  ) => {
+  
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        appointmentId: appointmentId,
+        appointmentDate: appointmentDate,
+        accessMethod: method,
+      },
+      token
+    );
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/patient/cancelReschduleAppointment`,
       { encryptedData: payload },
       {
         headers: {
