@@ -182,19 +182,20 @@ const InvoicePDFScribe = ({ invoiceHistory }: Props) => (
               (invoiceHistory.refIHScribeTotalcaseamount || 0)}
           </Text>
         </View>
-        {invoiceHistory.otherExpenses && invoiceHistory.otherExpenses.length > 0 && (
-          <>
-            {invoiceHistory.otherExpenses.map((data, index) => (
-              <View style={styles.tableRow}>
-                <Text style={styles.cellSmall}>{index + 2}.</Text>
-                <Text style={styles.cell}>{data.name}</Text>
-                <Text style={styles.cell}>-</Text>
-                <Text style={styles.cell}>{data.amount}</Text>
-                <Text style={styles.cell}>{data.amount}</Text>
-              </View>
-            ))}
-          </>
-        )}
+        {invoiceHistory.otherExpenses &&
+          invoiceHistory.otherExpenses.length > 0 && (
+            <>
+              {invoiceHistory.otherExpenses.map((data, index) => (
+                <View style={styles.tableRow}>
+                  <Text style={styles.cellSmall}>{index + 2}.</Text>
+                  <Text style={styles.cell}>{data.name}</Text>
+                  <Text style={styles.cell}>-</Text>
+                  <Text style={styles.cell}>{data.amount}</Text>
+                  <Text style={styles.cell}>{data.amount}</Text>
+                </View>
+              ))}
+            </>
+          )}
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}></Text>
           <Text style={styles.cellbold}>Total Amount</Text>
@@ -227,11 +228,15 @@ const InvoicePDFScribe = ({ invoiceHistory }: Props) => (
       </Text>
 
       <View style={styles.signature}>
-        {invoiceHistory.refIHSignatureFile && (
+        {invoiceHistory.refIHSignature && (
           <Image
-            src={`data:${invoiceHistory.refIHSignatureFile.contentType};base64,${invoiceHistory.refIHSignatureFile.base64Data}`}
-            // src={Logo}
-            style={{ width: "100px" }}
+            src={
+              invoiceHistory?.refIHSignatureFile?.base64Data
+                ? `data:${invoiceHistory.refIHSignatureFile?.contentType};base64,${invoiceHistory.refIHSignatureFile?.base64Data}`
+                : invoiceHistory.refIHSignature
+            }
+            // alt="Signature"
+            style={{ width: "100px", objectFit: "contain" }}
           />
         )}
         <Text>Signature</Text>

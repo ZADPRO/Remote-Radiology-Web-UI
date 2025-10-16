@@ -1776,10 +1776,12 @@ const Report: React.FC = () => {
           <div>
    <div style="text-align: right;">
   ${
-    ScanCenterImg?.base64Data
-      ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-      : ""
-  }
+         ScanCenterImg
+           ? ScanCenterImg.contentType === "url"
+             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+           : ""
+       }
 </div>
       </div>
            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">

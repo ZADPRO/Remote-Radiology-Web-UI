@@ -110,8 +110,11 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     try {
       const response = await uploadService.uploadImage(file);
       if (response.status && response.fileName) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) =>
-          prev ? { ...prev, refUserProfileImg: response.fileName } : null
+          prev ? { ...prev, refUserProfileImg: cleanUrl } : null
         );
         setFiles((prev) => ({ ...prev, profile_img: file }));
       } else {
@@ -139,8 +142,11 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     try {
       const response = await uploadService.uploadFile(file);
       if (response.status && response.fileName) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) =>
-          prev ? { ...prev, [fieldName]: response.fileName } : null
+          prev ? { ...prev, [fieldName]: cleanUrl } : null
         );
         setFiles((prev) => ({ ...prev, [tempFileKey]: file }));
       } else {
@@ -160,8 +166,11 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
     try {
       const response = await uploadService.uploadFile(file);
       if (response.status && response.fileName) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const newEduFileEntry: TempUpdateEduFile = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new",
         };
