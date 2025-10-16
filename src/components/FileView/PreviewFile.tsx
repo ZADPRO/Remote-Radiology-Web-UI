@@ -12,10 +12,16 @@ const PreviewFile: React.FC<Props> = (props) => {
 
   const HandleViewFile = async (filename: string) => {
     setLoading(true);
-    console.log(filename);
-    const response = await reportService.getFileView(filename);
-    setLoading(false);
-    setFileData(response);
+    try {
+      console.log("📄 Fetching file:", filename);
+      const response = await reportService.getFileView(filename);
+      console.log("📥 File response:", response);
+      setFileData(response);
+    } catch (err) {
+      console.error("Error fetching file:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -24,26 +30,37 @@ const PreviewFile: React.FC<Props> = (props) => {
     }
   }, [props.fileName]);
 
+  const isS3File =
+    fileData?.data?.contentType === "url" &&
+    typeof fileData?.data?.base64Data === "string" &&
+    fileData.data.base64Data.startsWith("http");
+
   return (
     <>
       {loading ? (
         <div className="w-[100%] h-[75vh] flex justify-center items-center">
-          <Loader2 className=" animate-spin " size={20} />
+          <Loader2 className="animate-spin" size={20} />
         </div>
       ) : (
         <>
           {fileData?.status ? (
             <>
-              {fileData?.data.contentType === "application/pdf" ? (
-                <div>
-                  <iframe
-                    src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
-                    title="Report Preview"
-                    className="w-full h-[75vh] border rounded-md"
-                  />
-                </div>
+              {isS3File ? (
+                <iframe
+                  src={fileData.data.base64Data}
+                  title="S3 File Preview"
+                  className="w-full h-[75vh] border rounded-md"
+                />
+              ) : fileData?.data.contentType === "application/pdf" ? (
+                // ✅ Base64 PDF
+                <iframe
+                  src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
+                  title="Report Preview"
+                  className="w-full h-[75vh] border rounded-md"
+                />
               ) : (
-                <div className="w-full h-[75vh]  flex items-center justify-center overflow-auto">
+                // ✅ Base64 Image
+                <div className="w-full h-[75vh] flex items-center justify-center overflow-auto">
                   <img
                     src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
                     alt="Report Preview"
@@ -53,7 +70,9 @@ const PreviewFile: React.FC<Props> = (props) => {
               )}
             </>
           ) : (
-            <>Invalid File Name</>
+            <div className="w-full h-[75vh] flex justify-center items-center text-gray-500">
+              Invalid File Name
+            </div>
           )}
         </>
       )}

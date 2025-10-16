@@ -27,10 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
-import {
-  FinalAddendumText,
-  reportService,
-} from "@/services/reportService";
+import { FinalAddendumText, reportService } from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
 import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import {
@@ -425,11 +422,13 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
-    ${
-      ScanCenterImg?.base64Data
-        ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-        : ""
-    }
+       ${
+         ScanCenterImg
+           ? ScanCenterImg.contentType === "url"
+             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+           : ""
+       }
       </div>
     <table width="100" border-collapse: collapse; font-size: 14px;">
       <tbody>
@@ -1107,9 +1106,7 @@ ${
             : "")
       );
     } else {
-      if(
-        Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]
-      ) {
+      if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
         setNotes(
           Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
             (textEditor.addendumText.value.length > 0
@@ -1118,7 +1115,7 @@ ${
               : "")
         );
       }
-      
+
       // if(Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0]){
       //   setNotes(
       //     Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0] +
@@ -1260,9 +1257,10 @@ ${
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the Wellthgreen Report Portal Find Select? Any changes made
-              or templates uploaded will be lost, and the report will contain
-              only the Wellthgreen Report Portal Find Select.
+              Do you wish to enable the Wellthgreen Report Portal Find Select?
+              Any changes made or templates uploaded will be lost, and the
+              report will contain only the Wellthgreen Report Portal Find
+              Select.
             </p>
           </div>
           <DialogFooter>
@@ -1345,38 +1343,38 @@ ${
               Sync
             </Button>
           )} */}
-          {
-            readOnly && (role?.id === 2 || role?.id === 3) ? (<></>) : (
-              <div className="self-start mt-2">
-                <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
-                  <div>
-                    <Label className="font-semibold text-[#e06666] text-base">
-                      Wellthgreen Report Portal Find Select / Load Template
-                    </Label>
-                  </div>
-                  <Switch
-                    id="qtAccess"
-                    className="cursor-pointer"
-                    checked={syncStatus.Notes}
-                    onCheckedChange={(checked: boolean) => {
-                      if (!readOnly) {
-                        setChangedOne((prev) => ({
-                          ...prev,
-                          syncStatus: true,
-                          reportTextContent: true,
-                        }));
-                        if (!checked) {
-                          setsyncStatus({ ...syncStatus, Notes: checked });
-                        } else {
-                          setDialog(true);
+              {role?.id === 2 || role?.id === 3 || role?.id === 8 ? (
+                <></>
+              ) : (
+                <div className="self-start mt-2">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-[#e06666] text-base">
+                        Wellthgreen Report Portal Find Select / Load Template
+                      </Label>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={syncStatus.Notes}
+                      onCheckedChange={(checked: boolean) => {
+                        if (!readOnly) {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            syncStatus: true,
+                            reportTextContent: true,
+                          }));
+                          if (!checked) {
+                            setsyncStatus({ ...syncStatus, Notes: checked });
+                          } else {
+                            setDialog(true);
+                          }
                         }
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            )
-          }
+              )}
             </div>
           </>
           <TextEditor

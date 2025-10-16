@@ -161,80 +161,105 @@ const InvoiceOverAllTable: React.FC<Props> = ({
     };
   }, [overallInvoiceHistory]);
 
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null)
+
   // Define your columns with filters
   const columns: ColumnDef<InvoiceHistoryInvoice>[] = [
     {
-      accessorKey: "select",
-      id: "select",
-      enableHiding: true,
-      header: ({ table }) => {
-        return (
-          <>
-            <div className="flex w-full md:w-[20px] lg:w-[10px] gap-3 justify-between items-center">
-              <Checkbox2
-                className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
-                checked={
-                  table.getRowModel().rows.length > 0 &&
-                  table
-                    .getRowModel()
-                    .rows.every((row) =>
-                      selectedRowIds.includes(row.original.refIHId)
-                    )
-                }
-                onCheckedChange={(e) => {
-                  if (e) {
-                    // Select all - add all appointment IDs
-                    setSelectedRowIds(
-                      table
-                        .getRowModel()
-                        .rows.map((row) => row.original.refIHId)
-                    );
-                  } else {
-                    // Deselect all - clear the array
-                    setSelectedRowIds([]);
-                  }
-                }}
-              />
-              <Button
-                onClick={handleAllReportsDownload}
-                className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-6 h-6"
-                disabled={selectedRowIds.length === 0}
-                title={`Download ${selectedRowIds.length} selected invoice${
-                  selectedRowIds.length === 1 ? "" : "s"
-                }`}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-          </>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <>
-            <div className="w-[10px] flex justify-start items-center">
-              <Checkbox2
-                checked={selectedRowIds.includes(row.original.refIHId)}
-                onCheckedChange={(e) => {
-                  const appointmentId = row.original.refIHId;
-                  if (e === true) {
-                    setSelectedRowIds((prev) =>
-                      prev.includes(appointmentId)
-                        ? prev
-                        : [...prev, appointmentId]
-                    );
-                  } else {
-                    setSelectedRowIds((prev) =>
-                      prev.filter((id) => id !== appointmentId)
-                    );
-                  }
-                }}
-              />
-            </div>
-          </>
-        );
-      },
+    accessorKey: "select",
+    id: "select",
+    enableHiding: true,
+    header: ({ table }) => {
+      return (
+        <div className="flex w-full md:w-[20px] lg:w-[10px] gap-3 justify-between items-center">
+          <Checkbox2
+            className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
+            checked={
+              table.getRowModel().rows.length > 0 &&
+              table.getRowModel().rows.every((row) =>
+                selectedRowIds.includes(row.original.refIHId)
+              )
+            }
+            onCheckedChange={(e) => {
+              if (e) {
+                setSelectedRowIds(
+                  table.getRowModel().rows.map((row) => row.original.refIHId)
+                )
+              } else {
+                setSelectedRowIds([])
+              }
+            }}
+          />
+          <Button
+            onClick={handleAllReportsDownload}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-6 h-6"
+            disabled={selectedRowIds.length === 0}
+            title={`Download ${selectedRowIds.length} selected invoice${
+              selectedRowIds.length === 1 ? "" : "s"
+            }`}
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+        </div>
+      )
     },
+    cell: ({ row, table }) => {
+      const rows = table.getRowModel().rows
+      const currentIndex = rows.findIndex(
+        (r) => r.original.refIHId === row.original.refIHId
+      )
+
+      const handleCheckboxChange = (
+        e: boolean,
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+      ) => {
+        const currentId = row.original.refIHId
+
+        if (event.shiftKey && lastSelectedIndex !== null) {
+          const start = Math.min(lastSelectedIndex, currentIndex)
+          const end = Math.max(lastSelectedIndex, currentIndex)
+          const rangeIds = rows
+            .slice(start, end + 1)
+            .map((r) => r.original.refIHId)
+
+          setSelectedRowIds((prev) => {
+            const newSet = new Set(prev)
+            rangeIds.forEach((id) => {
+              if (e) newSet.add(id)
+              else newSet.delete(id)
+            })
+            return Array.from(newSet)
+          })
+        } else {
+          // Normal single checkbox behavior
+          if (e) {
+            setSelectedRowIds((prev) =>
+              prev.includes(currentId) ? prev : [...prev, currentId]
+            )
+          } else {
+            setSelectedRowIds((prev) =>
+              prev.filter((id) => id !== currentId)
+            )
+          }
+          setLastSelectedIndex(currentIndex)
+        }
+      }
+
+      return (
+        <div className="w-[10px] flex justify-start items-center">
+          <Checkbox2
+            checked={selectedRowIds.includes(row.original.refIHId)}
+            onCheckedChange={(e) =>
+              handleCheckboxChange(
+                e as boolean,
+                window.event as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>
+              )
+            }
+          />
+        </div>
+      )
+    },
+  },
     {
       accessorKey: "refIHFromDate",
       header: ({ column }) => {

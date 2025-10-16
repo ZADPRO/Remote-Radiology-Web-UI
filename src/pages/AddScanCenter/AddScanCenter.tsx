@@ -107,9 +107,12 @@ const AddScanCenter: React.FC = () => {
       console.log("response", response);
 
       if (response.status) {
+         const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          logo: response.viewURL,
+          logo: cleanUrl,
         }));
 
         setFiles((prev) => ({

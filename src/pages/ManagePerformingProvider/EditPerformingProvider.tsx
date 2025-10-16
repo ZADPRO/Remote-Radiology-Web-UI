@@ -276,12 +276,16 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     setSaveLoading(true);
     setError("");
 
+    const cleanUrl = formData.refUserProfileImg.includes("?")
+      ? formData.refUserProfileImg.split("?")[0]
+      : formData.refUserProfileImg;
+
     try {
       const payload = {
         id: formData.refUserId,
         firstname: formData.refUserFirstName,
         lastname: formData.refUserLastName,
-        profile_img: formData.refUserProfileImg,
+        profile_img: cleanUrl,
         email: formData.refCODOEmail,
         dob: formData.refUserDOB,
         phone: formData.refCODOPhoneNo1,
