@@ -351,7 +351,8 @@ const ViewScanCenter: React.FC = () => {
                         refSCConsultantLink: e.target.value,
                       }))
                     }
-                    required
+                    required={formData.refSCConsultantStatus}
+                    disabled={!formData.refSCConsultantStatus}
                     className="w-full bg-white"
                   />
                 </div>
