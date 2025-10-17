@@ -407,7 +407,9 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> Dc. Diagnostic - Comparison to a Prior QT Scan</p>`;
       }
 
-      reason += PatientHistoryReportGenerator(responsePatientInTake, technicianForm) + "<br/>";
+      reason +=
+        PatientHistoryReportGenerator(responsePatientInTake, technicianForm) +
+        "<br/>";
 
       setPatientHistory(reason);
     }
@@ -946,13 +948,13 @@ const Report: React.FC = () => {
         setScanCenterImg(response.ScanCenterImg);
         setOldReport(response.oldReport || []);
 
-         if (response.ListAllSignature) {
-                        setSignatureText(
-                          response.ListAllSignature
-                            .map((data: SignatureText) => `${data.refSText}`)
-                            .join("")
-                        );
-                      }
+        if (response.ListAllSignature) {
+          setSignatureText(
+            response.ListAllSignature.map(
+              (data: SignatureText) => `${data.refSText}`
+            ).join("")
+          );
+        }
 
         if (
           response.appointmentStatus[0]
@@ -1384,14 +1386,14 @@ const Report: React.FC = () => {
 
         // let notesStatus = false;
 
-        if (response.easeQTReportAccess) {
-          if (
-            response.reportTextContentData[0]?.refRTSyncStatus === null ||
-            response.reportTextContentData[0]?.refRTSyncStatus
-          ) {
-            // notesStatus = true;
-          }
-        }
+        // if ((!stateData.readOnly) && (role?.id === 8)) {
+        //   if (
+        //     response.reportTextContentData[0]?.refRTSyncStatus === null ||
+        //     response.reportTextContentData[0]?.refRTSyncStatus
+        //   ) {
+        //     notesStatus = true;
+        //   }
+        // }
 
         setsyncStatus({
           patientHistory:
@@ -1436,12 +1438,33 @@ const Report: React.FC = () => {
           LymphNodesLeft:
             response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
             false,
-          Notes: syncStatus.Notes,
+          Notes:
+            !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes,
           ImpressionsRecommendations: true,
           symmetry:
             response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
             false,
         });
+
+        console.log(
+          "Report.tsx -------------------------- >  1448  ",
+          !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes
+        );
+
+        if (!stateData.readOnly && role?.id === 8) {
+          setChangedOne({
+            ...changedOne,
+            syncStatus: true,
+          });
+        } else {
+          setsyncStatus({
+            ...syncStatus,
+            Notes:
+              response.reportTextContentData[0]?.refRTSyncStatus === null
+                ? true
+                : response.reportTextContentData[0]?.refRTSyncStatus,
+          });
+        }
 
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
@@ -1462,13 +1485,13 @@ const Report: React.FC = () => {
         //     patientHistory: false,
         //   });
         // } else {
-        setsyncStatus({
-          ...syncStatus,
-          Notes:
-            response.reportTextContentData[0]?.refRTSyncStatus === null
-              ? true
-              : response.reportTextContentData[0]?.refRTSyncStatus,
-        });
+        // setsyncStatus({
+        //   ...syncStatus,
+        //   Notes:
+        //     response.reportTextContentData[0]?.refRTSyncStatus === null
+        //       ? true
+        //       : response.reportTextContentData[0]?.refRTSyncStatus,
+        // });
         // }
 
         if (!(response.easeQTReportAccess && response.naSystemReportAccess)) {
@@ -1803,6 +1826,24 @@ const Report: React.FC = () => {
                 </tr>
             </table>
            <br/>
+
+           ${
+             performingProviderName.length > 0 ||
+             verifyingProviderName.length > 0
+               ? `
+      <br/>
+  ${
+    performingProviderName.length > 0
+      ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+      : ``
+  }${
+                   false // verifyingProviderName.length > 0
+                     ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+                     : ``
+                 }
+      `
+               : ``
+           }
   
   <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
   
@@ -2234,8 +2275,12 @@ const Report: React.FC = () => {
           optionalImpressionRecommendation.selectedRecommendationIdRight,
         commonImpressionRecommendationRight: commonImpressRecomm.idRight,
         editStatus: editStatus,
-        patientMailStatus: showMailDialog ? mailOption === "patient" || mailOption === "both" : false,
-        managerMailStatus: showMailDialog ? mailOption === "scancenter" || mailOption === "both" : false,
+        patientMailStatus: showMailDialog
+          ? mailOption === "patient" || mailOption === "both"
+          : false,
+        managerMailStatus: showMailDialog
+          ? mailOption === "scancenter" || mailOption === "both"
+          : false,
         leaveStatus: leaveStatus,
         artificatsLeft:
           getReportAnswer(
@@ -2464,13 +2509,13 @@ const Report: React.FC = () => {
     } = await reportService.autosaveReport(payload);
 
     if (response.status) {
-       if (response.ListAllSignature) {
-                        setSignatureText(
-                          response.ListAllSignature
-                            .map((data: SignatureText) => `${data.refSText}`)
-                            .join("")
-                        );
-                      }
+      if (response.ListAllSignature) {
+        setSignatureText(
+          response.ListAllSignature.map(
+            (data: SignatureText) => `${data.refSText}`
+          ).join("")
+        );
+      }
       setPerformingProviderName(response.PerformingProviderName);
       setVerifyingProviderName(response.VerifyingProviderName);
       if (
@@ -3214,74 +3259,101 @@ const Report: React.FC = () => {
 
         {/* Report Sub-Tabs */}
         <div className="flex w-2/5 h-full items-center justify-around px-2">
-        {
-          stateData.readOnly && (role?.id === 2 || role?.id === 3) ? (
+          {stateData.readOnly && (role?.id === 2 || role?.id === 3) ? (
             <>
-            {tab === 4 &&
-            [
-              { label: "Final Report", value: 4 },
-            ].map(({ label, value }) => {
-              const accessible = isTabAccessible(value);
-              return (
-                accessible && (
-                  <div
-                    key={label}
-                    onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs ${
-                      label !== "Final Report"
-                        ? "text-[#e06666]"
-                        : "text-[#3f3f3d]"
-                    }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
-                      accessible
-                        ? subTab === value
-                          ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                          : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
-                        : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
-                    }`}
-                  >
-                    {label}
-                  </div>
-                )
-              );
-            })}
+              {tab === 4 &&
+                [{ label: "Final Report", value: 4 }].map(
+                  ({ label, value }) => {
+                    const accessible = isTabAccessible(value);
+                    return (
+                      accessible && (
+                        <div
+                          key={label}
+                          onClick={() => accessible && setSubTab(value)}
+                          className={`flex-1 max-w-xl text-xs ${
+                            label !== "Final Report"
+                              ? "text-[#e06666]"
+                              : "text-[#3f3f3d]"
+                          }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                            accessible
+                              ? subTab === value
+                                ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                                : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                              : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
+                          }`}
+                        >
+                          {label}
+                        </div>
+                      )
+                    );
+                  }
+                )}
+            </>
+          ) : role?.id === 8 ? (
+            <>
+              {tab === 4 &&
+                [{ label: "Final Report", value: 4 }].map(
+                  ({ label, value }) => {
+                    const accessible = isTabAccessible(value);
+                    return (
+                      accessible && (
+                        <div
+                          key={label}
+                          onClick={() => accessible && setSubTab(value)}
+                          className={`flex-1 max-w-xl text-xs ${
+                            label !== "Final Report"
+                              ? "text-[#e06666]"
+                              : "text-[#3f3f3d]"
+                          }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                            accessible
+                              ? subTab === value
+                                ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                                : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                              : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
+                          }`}
+                        >
+                          {label}
+                        </div>
+                      )
+                    );
+                  }
+                )}
             </>
           ) : (
             <>
-            {tab === 4 &&
-            [
-              { label: "General", value: 1 },
-              { label: "Right", value: 2 },
-              { label: "Left", value: 3 },
-              { label: "Impression + Reco", value: 5 },
-              { label: "Final Report", value: 4 },
-            ].map(({ label, value }) => {
-              const accessible = isTabAccessible(value);
-              return (
-                accessible && (
-                  <div
-                    key={label}
-                    onClick={() => accessible && setSubTab(value)}
-                    className={`flex-1 max-w-xl text-xs ${
-                      label !== "Final Report"
-                        ? "text-[#e06666]"
-                        : "text-[#3f3f3d]"
-                    }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
-                      accessible
-                        ? subTab === value
-                          ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                          : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
-                        : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
-                    }`}
-                  >
-                    {label}
-                  </div>
-                )
-              );
-            })}
+              {tab === 4 &&
+                [
+                  { label: "General", value: 1 },
+                  { label: "Right", value: 2 },
+                  { label: "Left", value: 3 },
+                  { label: "Impression + Reco", value: 5 },
+                  { label: "Final Report", value: 4 },
+                ].map(({ label, value }) => {
+                  const accessible = isTabAccessible(value);
+                  return (
+                    accessible && (
+                      <div
+                        key={label}
+                        onClick={() => accessible && setSubTab(value)}
+                        className={`flex-1 max-w-xl text-xs ${
+                          label !== "Final Report"
+                            ? "text-[#e06666]"
+                            : "text-[#3f3f3d]"
+                        }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                          accessible
+                            ? subTab === value
+                              ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
+                              : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                            : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
+                        }`}
+                      >
+                        {label}
+                      </div>
+                    )
+                  );
+                })}
             </>
-          )
-        }
-          
+          )}
         </div>
       </div>
 
@@ -3670,15 +3742,31 @@ const Report: React.FC = () => {
                 {/* Buttons */}
                 {/* {tab === 4 && subTab === 4 && ( */}
                 <>
-                  <Button
-                    variant="greenTheme"
-                    className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
-                    onClick={() => setLoadTemplateStatus(true)}
-                    disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
-                  >
-                    Load Template
-                  </Button>
-
+                  {role.id !== 8 && (
+                    <>
+                      <Button
+                        variant="greenTheme"
+                        className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                        onClick={() => setLoadTemplateStatus(true)}
+                        disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                      >
+                        Load Template
+                      </Button>
+                      <Button
+                        // key={index}
+                        variant="greenTheme"
+                        className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                        onClick={ReportResetAll}
+                        // disabled={!isAllowed}
+                        // hidden={
+                        //   label == "Insert Signature" &&
+                        //   !(tab === 4 && subTab === 4)
+                        // }
+                      >
+                        Reset to Default
+                      </Button>
+                    </>
+                  )}
                   <Dialog
                     onOpenChange={setLoadTemplateStatus}
                     open={loadTemplateStatus}
@@ -3982,19 +4070,6 @@ const Report: React.FC = () => {
                   </Dialog>
                 </>
                 {/* )} */}
-                <Button
-                  // key={index}
-                  variant="greenTheme"
-                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                  onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
-                >
-                  Reset to Default
-                </Button>
 
                 {reportStages.map(({ label, editStatus, status }, index) => {
                   const isAllowed = stageRoleMap[label]?.includes(role?.type);
@@ -4008,7 +4083,10 @@ const Report: React.FC = () => {
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const notesData = Notes + signatureRow;
                         setNotes(notesData);
                         setsyncStatus({
@@ -4023,11 +4101,14 @@ const Report: React.FC = () => {
                         await reportService.AddSignature(
                           signatureRow,
                           stateData.appointmentId,
-                          stateData.userId,
+                          stateData.userId
                         );
-                      }else{
+                      } else {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const response: {
                           status: boolean;
                           message: string;
@@ -4035,7 +4116,7 @@ const Report: React.FC = () => {
                         } = await reportService.AddSignature(
                           signatureRow,
                           stateData.appointmentId,
-                          stateData.userId,
+                          stateData.userId
                         );
                         if (response.status && response.data) {
                           setSignatureText(
@@ -4046,7 +4127,6 @@ const Report: React.FC = () => {
                         }
                         fecthautosave();
                       }
-
 
                       setLoading(false);
                     } else {
@@ -4066,10 +4146,28 @@ const Report: React.FC = () => {
                         !(tab === 4 && subTab === 4)
                       }
                     >
-                      {label}
+                      {label === "Insert Signature" && role.id === 8
+                        ? `Verified`
+                        : label}
                     </Button>
                   );
                 })}
+
+                {role?.id === 8 && (
+                  <Button
+                    // key={index}
+                    variant="greenTheme"
+                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                    onClick={ReportResetAll}
+                    // disabled={!isAllowed}
+                    // hidden={
+                    //   label == "Insert Signature" &&
+                    //   !(tab === 4 && subTab === 4)
+                    // }
+                  >
+                    Reset to Default
+                  </Button>
+                )}
                 <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
                   <DialogContent className="sm:max-w-[400px]">
                     <DialogHeader>

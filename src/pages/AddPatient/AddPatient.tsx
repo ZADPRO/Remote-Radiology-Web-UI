@@ -559,7 +559,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
 
         <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="phone">
-            Contact Number <span className="text-red-500">*</span>
+            Contact Number
           </Label>
           {/* Changed from grid to flex for better gap handling with percentage/flexible widths */}
           <div className="flex gap-2 relative">
@@ -598,7 +598,6 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
                   }));
                 }
               }}
-              required
             />
           </div>
         </div>
@@ -659,7 +658,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
       <div className="flex flex-col gap-4 2xl:gap-6 w-full lg:w-1/2">
         <div className="flex flex-col gap-1.5">
           <Label className="text-sm " htmlFor="firstname">
-            Patient ID <span className="text-red-500">*</span>
+            Patient ID
           </Label>
           <Input
             id="firstname"
@@ -673,7 +672,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
               const sanitized = value.replace(/[^a-zA-Z0-9-]/g, "");
               setFormData((prev) => ({ ...prev, custId: sanitized }));
             }}
-            required
+            // required
           />
         </div>
 

@@ -25,7 +25,7 @@ const FormHeader: React.FC<FormHeaderProps> = ({ FormTitle, className }) => {
             <div className="flex w-[6rem]">Patient Name</div>{" "}
             <div>: {patientDetails?.name}</div>
           </div>
-          <div className="capitalize flex">
+          <div className="flex">
             <div className="flex w-[6rem]">Patient ID</div>{" "}
             <div>: {patientDetails?.custId}</div>
           </div>

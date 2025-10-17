@@ -10,7 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import { Camera, Info, Mail, Pencil } from "lucide-react";
+import {
+  CalendarSync,
+  Camera,
+  CircleX,
+  Info,
+  Mail,
+  Pencil,
+} from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import {
   dateDisablers,
@@ -35,6 +42,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { formatReadableDate } from "@/utlis/calculateAge";
+import {
+  PopoverContentDialog,
+  PopoverDialog,
+  PopoverTriggerDialog,
+} from "@/components/ui/CustomComponents/popoverdialog";
 
 // Define the props interface for EditPerformingProvider
 interface EditPerformingProviderProps {
@@ -68,6 +80,10 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
     id: 0,
     name: "",
   });
+
+  const [cancelPopOverStatus, setCancelPopOverStatus] = useState(false);
+  const [ReschdulePopOverStatus, setReschdulePopOverStatus] = useState(false);
+  const [reschduleDate, setReschduleDate] = useState("");
 
   const [formData, setFormData] = useState<ListSpecificPatient>({
     profileImgFile: {
@@ -200,6 +216,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
+      } else {
+        toast.error(res.message);
       }
     } catch (error) {
       console.log(error);
@@ -245,6 +263,37 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
         getSpecificCenterAdmin();
       }
     }
+    setLoading(false);
+  };
+
+  const handleCancelReschedule = async (
+    appointmentId: number,
+    appointmentDate: string,
+    method: string
+  ) => {
+    if (appointmentDate.length === 0) {
+      toast.error("Choose the Reschdule Appointment Date");
+      return;
+    }
+
+    setLoading(true);
+
+    const response = await patientService.cancelRescheduleAppointment(
+      appointmentId,
+      appointmentDate,
+      method
+    );
+
+    if (response.status) {
+      toast.success(response.message);
+      setReschduleDate("");
+      setReschdulePopOverStatus(false);
+      setCancelPopOverStatus(false);
+      getSpecificCenterAdmin();
+    } else {
+      toast.error(response.message);
+    }
+
     setLoading(false);
   };
 
@@ -330,9 +379,14 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 id="Performing Provider Admin ID"
                 type="text"
                 className="bg-white"
-                disabled
+                // disabled
                 value={formData.refUserCustId}
-                required
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    refUserCustId: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="flex flex-col gap-1.5 w-full relative">
@@ -386,7 +440,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
 
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm " htmlFor="phone">
-                Contact Number <span className="text-red-500">*</span>
+                Contact Number
               </Label>
               {/* Changed from grid to flex for better gap handling with percentage/flexible widths */}
               <div className="flex gap-2 relative">
@@ -398,14 +452,12 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       refCODOPhoneNo1CountryCode: value,
                     }))
                   }
-                  disabled
                 >
                   <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectItem value="+1">USA (+1)</SelectItem> */}
-                    <SelectItem value="+91">IN (+91)</SelectItem>
+                    <SelectItem value="+1">USA (+1)</SelectItem>
                   </SelectContent>
                 </Select>
                 <Input
@@ -423,8 +475,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       }));
                     }
                   }}
-                  required
-                  disabled
+                  // required
+                  // disabled
                 />
               </div>
             </div>
@@ -750,6 +802,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               <TableHead className="font-bold">User ID</TableHead>
               <TableHead className="font-bold">Data</TableHead>
               <TableHead className="font-bold">Mail</TableHead>
+              <TableHead className="font-bold">Cancel</TableHead>
+              <TableHead className="font-bold">Reschedule</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -778,6 +832,141 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                           />
                         ) : (
                           `-`
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {row.allowCancelResh ? (
+                          <>
+                            <PopoverDialog
+                              open={cancelPopOverStatus}
+                              onOpenChange={setCancelPopOverStatus}
+                            >
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <PopoverTriggerDialog asChild>
+                                  <CircleX
+                                    className="cursor-pointer"
+                                    size={20}
+                                  />
+                                </PopoverTriggerDialog>
+                                <PopoverContentDialog className="w-80">
+                                  <div className="grid gap-4">
+                                    <div className="space-y-2">
+                                      <h4 className="leading-none font-medium">
+                                        Are you sure to cancel this Appointment
+                                        ?
+                                      </h4>
+                                    </div>
+                                    <div>
+                                      <Button
+                                        onClick={() => {
+                                          setCancelPopOverStatus(false);
+                                        }}
+                                        variant="outline"
+                                        className="w-35"
+                                      >
+                                        Cancel
+                                      </Button>
+                                      <Button
+                                        className="w-35 ml-2"
+                                        variant="greenTheme"
+                                         onClick={() => {
+                                          handleCancelReschedule(
+                                            row.refAppointmentId,
+                                            row.refAppointmentDate,
+                                            "delete"
+                                          );
+                                        }}
+                                      >
+                                        Confirm
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </PopoverContentDialog>
+                              </div>
+                            </PopoverDialog>
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {row.allowCancelResh ? (
+                          <>
+                            <PopoverDialog
+                              open={ReschdulePopOverStatus}
+                              onOpenChange={setReschdulePopOverStatus}
+                            >
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <PopoverTriggerDialog asChild>
+                                  <CalendarSync
+                                    className="cursor-pointer"
+                                    size={20}
+                                  />
+                                </PopoverTriggerDialog>
+                                <PopoverContentDialog className="w-80">
+                                  <div className="grid gap-4">
+                                    {/* <div className="space-y-2">
+                                      <h4 className="leading-none font-medium">
+                                        Reschedule Appointment ?
+                                      </h4>
+                                    </div> */}
+                                    <div>
+                                      <div className="flex flex-col gap-1.5 w-full">
+                                        <Label
+                                          className="text-sm "
+                                          htmlFor="dob"
+                                        >
+                                          Reschedule Appointment Date
+                                        </Label>
+                                        <DatePicker
+                                          value={
+                                            reschduleDate
+                                              ? parseLocalDate(reschduleDate)
+                                              : undefined
+                                          }
+                                          className="pointer-events-auto"
+                                          onChange={(val) => {
+                                            setReschduleDate(
+                                              val ? formatLocalDate(val) : ""
+                                            );
+                                          }}
+                                          required={true}
+                                          disabledDates={dateDisablers.noPast}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <Button
+                                        onClick={() => {
+                                          setReschdulePopOverStatus(false);
+                                        }}
+                                        variant="outline"
+                                        className="w-35"
+                                      >
+                                        Cancel
+                                      </Button>
+                                      <Button
+                                        className="w-35 ml-2"
+                                        variant="greenTheme"
+                                        disabled={!reschduleDate}
+                                        onClick={() => {
+                                          handleCancelReschedule(
+                                            row.refAppointmentId,
+                                            reschduleDate,
+                                            "reschedule"
+                                          );
+                                        }}
+                                      >
+                                        Confirm
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </PopoverContentDialog>
+                              </div>
+                            </PopoverDialog>
+                          </>
+                        ) : (
+                          "-"
                         )}
                       </TableCell>
                     </TableRow>

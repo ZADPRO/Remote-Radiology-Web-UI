@@ -586,6 +586,10 @@ const PatientQueue: React.FC = () => {
     }
   };
 
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(
+    null
+  );
+
   const columns = useMemo<ColumnDef<TechnicianPatientQueue>[]>(
     () => [
       {
@@ -594,61 +598,87 @@ const PatientQueue: React.FC = () => {
         enableHiding: true,
         header: ({ table }) => {
           return (
-            <>
-              <div className="w-full flex justify-center items-center">
-                <Checkbox2
-                  className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
-                  checked={
-                    table.getRowModel().rows.length > 0 &&
-                    table
-                      .getRowModel()
-                      .rows.every((row) =>
-                        selectedRowIds.includes(row.original.refAppointmentId)
-                      )
-                  }
-                  onCheckedChange={(e) => {
-                    if (e) {
-                      // Select all - add all appointment IDs
-                      setSelectedRowIds(
-                        table
-                          .getRowModel()
-                          .rows.map((row) => row.original.refAppointmentId)
-                      );
-                    } else {
-                      // Deselect all - clear the array
-                      setSelectedRowIds([]);
-                    }
-                  }}
-                />
-              </div>
-            </>
-          );
-        },
-        cell: ({ row }) => {
-          return (
-            <>
+            <div className="w-full flex justify-center items-center">
               <Checkbox2
+                className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
                 checked={
-                  selectedRowIds.includes(row.original.refAppointmentId) == true
-                    ? true
-                    : false
+                  table.getRowModel().rows.length > 0 &&
+                  table
+                    .getRowModel()
+                    .rows.every((row) =>
+                      selectedRowIds.includes(row.original.refAppointmentId)
+                    )
                 }
                 onCheckedChange={(e) => {
-                  const appointmentId = row.original.refAppointmentId;
-                  if (e === true) {
-                    setSelectedRowIds((prev) =>
-                      prev.includes(appointmentId)
-                        ? prev
-                        : [...prev, appointmentId]
+                  if (e) {
+                    setSelectedRowIds(
+                      table
+                        .getRowModel()
+                        .rows.map((row) => row.original.refAppointmentId)
                     );
                   } else {
-                    setSelectedRowIds((prev) =>
-                      prev.filter((id) => id !== appointmentId)
-                    );
+                    setSelectedRowIds([]);
                   }
                 }}
               />
-            </>
+            </div>
+          );
+        },
+        cell: ({ row, table }) => {
+          const appointmentId = row.original.refAppointmentId;
+
+          const handleRowSelect = (e: boolean, event: React.MouseEvent) => {
+            setSelectedRowIds((prev) => {
+              let newSelected = [...prev];
+
+              // Normal click - toggle selection
+              if (!event.shiftKey) {
+                if (e === true) {
+                  if (!newSelected.includes(appointmentId)) {
+                    newSelected.push(appointmentId);
+                  }
+                } else {
+                  newSelected = newSelected.filter(
+                    (id) => id !== appointmentId
+                  );
+                }
+                // Remember last clicked index
+                setLastSelectedIndex(row.index);
+              } else {
+                // SHIFT + click
+                if (lastSelectedIndex !== null) {
+                  const allRows = table.getRowModel().rows;
+                  const start = Math.min(lastSelectedIndex, row.index);
+                  const end = Math.max(lastSelectedIndex, row.index);
+                  const rangeIds = allRows
+                    .slice(start, end + 1)
+                    .map((r) => r.original.refAppointmentId);
+
+                  if (e === true) {
+                    newSelected = Array.from(
+                      new Set([...newSelected, ...rangeIds])
+                    );
+                  } else {
+                    newSelected = newSelected.filter(
+                      (id) => !rangeIds.includes(id)
+                    );
+                  }
+                }
+              }
+
+              return newSelected;
+            });
+          };
+
+          return (
+            <Checkbox2
+              checked={selectedRowIds.includes(appointmentId)}
+              onClick={(e) => {
+                e.stopPropagation();
+                const checked = !selectedRowIds.includes(appointmentId); // toggle manually
+                handleRowSelect(checked, e);
+              }}
+            />
           );
         },
       },
@@ -840,7 +870,26 @@ const PatientQueue: React.FC = () => {
             )}
           </div>
         ),
-        cell: ({ row }) => <span>{`${row.original.refUserCustId}`}</span>,
+        cell: ({ row }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex w-full px-1 items-center justify-center">
+                  {/* <div className="flex w-full px-1 items-center justify-center">
+                  <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
+                  <Label className=" max-w-15 2xl:max-w-30 truncate">
+                    {row.original.refUserCustId}
+                  </Label>
+                </div>
+                {/* </div>
+                </div> */}
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs" side="bottom">
+                {row.original.refUserCustId}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
         enableColumnFilter: true,
       },
       {
@@ -1060,7 +1109,7 @@ const PatientQueue: React.FC = () => {
           if (formStatus) {
             statusContent = (
               <button
-                className="hover:underline cursor-pointer font-bold"
+                className="hover:underline cursor-pointer font-bold text-center"
                 onClick={() =>
                   navigate("/patientInTakeForm", {
                     state: {
@@ -1113,19 +1162,30 @@ const PatientQueue: React.FC = () => {
           // }
 
           return (
-            <div className="text-center">
+            <div className="flex flex-wrap justify-center items-center text-center">
               {(formName !== "Not Yet Started" || role?.type === "patient") && (
-                <span className="font-xs">
+                <span className="font-xs flex flex-wrap justify-center items-center gap-x-2 gap-y-0 text-center">
                   {appointmentComplete === "noteligible" ? (
                     <>
-                      <span style={{ color: "red" }}>Not Eligible</span>
+                      <span
+                        className="text-center"
+                        style={{ color: "red" }}
+                      >
+                        Not
+                      </span>
+                      <span
+                        className="text-center"
+                        style={{ color: "red" }}
+                      >
+                        Eligible
+                      </span>
                     </>
                   ) : (
-                    formName
+                      <span className="text-center">{formName}</span>
                   )}
-                  {} -{" "}
                 </span>
               )}
+              {(formName !== "Not Yet Started" || role?.type === "patient") && (<span className="text-center">&nbsp;-&nbsp;</span>)}
               {statusContent}
               {isEditDialogBroucherOpen && (
                 <Dialog
