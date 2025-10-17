@@ -440,7 +440,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
 
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm " htmlFor="phone">
-                Contact Number <span className="text-red-500">*</span>
+                Contact Number
               </Label>
               {/* Changed from grid to flex for better gap handling with percentage/flexible widths */}
               <div className="flex gap-2 relative">
@@ -452,14 +452,12 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       refCODOPhoneNo1CountryCode: value,
                     }))
                   }
-                  disabled
                 >
                   <SelectTrigger disabled className="bg-white">
                     <SelectValue placeholder="Country Code" />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectItem value="+1">USA (+1)</SelectItem> */}
-                    <SelectItem value="+91">IN (+91)</SelectItem>
+                    <SelectItem value="+1">USA (+1)</SelectItem>
                   </SelectContent>
                 </Select>
                 <Input
@@ -477,8 +475,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       }));
                     }
                   }}
-                  required
-                  disabled
+                  // required
+                  // disabled
                 />
               </div>
             </div>
