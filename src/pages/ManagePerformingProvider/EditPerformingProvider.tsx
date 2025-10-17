@@ -280,38 +280,67 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
       ? formData.refUserProfileImg.split("?")[0]
       : formData.refUserProfileImg;
 
+    const cleanS3Url = (url: any): string => {
+      if (!url) return "";
+
+      if (typeof url === "object" && url.url) {
+        url = url.url;
+      }
+
+      if (typeof url !== "string") {
+        try {
+          url = String(url);
+        } catch {
+          return "";
+        }
+      }
+
+      const decoded = decodeURIComponent(url);
+      const parts = decoded.split("?");
+
+      return parts[0];
+    };
+
     try {
       const payload = {
         id: formData.refUserId,
         firstname: formData.refUserFirstName,
         lastname: formData.refUserLastName,
-        profile_img: cleanUrl,
+        profile_img: cleanS3Url(formData.refUserProfileImg || cleanUrl),
         email: formData.refCODOEmail,
         dob: formData.refUserDOB,
         phone: formData.refCODOPhoneNo1,
         phoneCountryCode: formData.refCODOPhoneNo1CountryCode,
-        drivers_license_no: formData.drivers_license,
+        drivers_license_no: cleanS3Url(formData.drivers_license),
         social_security_no: formData.refDDSocialSecurityNo,
-        drivers_license: formData.drivers_license,
+        drivers_license: cleanS3Url(formData.drivers_license),
         Specialization: formData.Specialization,
         npi: formData.refDDNPI,
         status: formData.refUserStatus,
-        license_files: tempLicenses,
-        malpracticeinsureance_files: tempMalpractice,
-        digital_signature: formData.digital_signature,
+        license_files: Array.isArray(tempLicenses)
+          ? tempLicenses.map((file) => cleanS3Url(file))
+          : [],
+        malpracticeinsureance_files: Array.isArray(tempMalpractice)
+          ? tempMalpractice.map((file) => cleanS3Url(file))
+          : [],
+        digital_signature: cleanS3Url(formData.digital_signature),
         easeQTReportAccess: formData.refDDEaseQTReportAccess,
         naSystemreportAcess: formData.refDDNAsystemReportAccess,
       };
-      console.log("payload", payload);
+
+      console.log("\n\npayload", payload);
+
       const res = await doctorService.updatePerformingProvider(payload);
       console.log(res);
+
       if (res.status) {
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error("❌ Error updating provider:", err);
+      toast.error("Failed to update provider");
     } finally {
       setLoading(false);
       setSaveLoading(false);
