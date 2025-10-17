@@ -1828,21 +1828,22 @@ const Report: React.FC = () => {
            <br/>
 
            ${
-      performingProviderName.length > 0 || verifyingProviderName.length > 0
-        ? `
+             performingProviderName.length > 0 ||
+             verifyingProviderName.length > 0
+               ? `
       <br/>
   ${
     performingProviderName.length > 0
       ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
       : ``
   }${
-            verifyingProviderName.length > 0
-              ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
-              : ``
-          }
+                   false // verifyingProviderName.length > 0
+                     ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+                     : ``
+                 }
       `
-        : ``
-    }
+               : ``
+           }
   
   <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
   
@@ -3743,27 +3744,27 @@ const Report: React.FC = () => {
                 <>
                   {role.id !== 8 && (
                     <>
-                    <Button
-                      variant="greenTheme"
-                      className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
-                      onClick={() => setLoadTemplateStatus(true)}
-                      disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
-                    >
-                      Load Template
-                    </Button>
-                    <Button
-                  // key={index}
-                  variant="greenTheme"
-                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                  onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
-                >
-                  Reset to Default
-                </Button>
+                      <Button
+                        variant="greenTheme"
+                        className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                        onClick={() => setLoadTemplateStatus(true)}
+                        disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                      >
+                        Load Template
+                      </Button>
+                      <Button
+                        // key={index}
+                        variant="greenTheme"
+                        className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                        onClick={ReportResetAll}
+                        // disabled={!isAllowed}
+                        // hidden={
+                        //   label == "Insert Signature" &&
+                        //   !(tab === 4 && subTab === 4)
+                        // }
+                      >
+                        Reset to Default
+                      </Button>
                     </>
                   )}
                   <Dialog
@@ -4069,7 +4070,6 @@ const Report: React.FC = () => {
                   </Dialog>
                 </>
                 {/* )} */}
-                
 
                 {reportStages.map(({ label, editStatus, status }, index) => {
                   const isAllowed = stageRoleMap[label]?.includes(role?.type);
@@ -4083,7 +4083,10 @@ const Report: React.FC = () => {
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const notesData = Notes + signatureRow;
                         setNotes(notesData);
                         setsyncStatus({
@@ -4102,7 +4105,10 @@ const Report: React.FC = () => {
                         );
                       } else {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const response: {
                           status: boolean;
                           message: string;
@@ -4140,25 +4146,27 @@ const Report: React.FC = () => {
                         !(tab === 4 && subTab === 4)
                       }
                     >
-                      {label}
+                      {label === "Insert Signature" && role.id === 8
+                        ? `Verified`
+                        : label}
                     </Button>
                   );
                 })}
 
                 {role?.id === 8 && (
                   <Button
-                  // key={index}
-                  variant="greenTheme"
-                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                  onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
-                >
-                  Reset to Default
-                </Button>
+                    // key={index}
+                    variant="greenTheme"
+                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                    onClick={ReportResetAll}
+                    // disabled={!isAllowed}
+                    // hidden={
+                    //   label == "Insert Signature" &&
+                    //   !(tab === 4 && subTab === 4)
+                    // }
+                  >
+                    Reset to Default
+                  </Button>
                 )}
                 <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
                   <DialogContent className="sm:max-w-[400px]">
