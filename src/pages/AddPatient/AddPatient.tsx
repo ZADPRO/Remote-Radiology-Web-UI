@@ -673,7 +673,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
               const sanitized = value.replace(/[^a-zA-Z0-9-]/g, "");
               setFormData((prev) => ({ ...prev, custId: sanitized }));
             }}
-            required
+            // required
           />
         </div>
 
