@@ -479,7 +479,7 @@ const NotesReport: React.FC<Props> = ({
       ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
       : ``
   }${
-            verifyingProviderName.length > 0
+            false// verifyingProviderName.length > 0
               ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
               : ``
           }
