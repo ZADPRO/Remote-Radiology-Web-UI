@@ -139,6 +139,7 @@ export interface RefAuditTransHistory {
   refUserId: number;
   refTHActionBy: number;
   refUserCustId: number;
+  refCODOEmail: string;
 }
 
 
