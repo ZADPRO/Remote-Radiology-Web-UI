@@ -1826,6 +1826,23 @@ const Report: React.FC = () => {
                 </tr>
             </table>
            <br/>
+
+           ${
+      performingProviderName.length > 0 || verifyingProviderName.length > 0
+        ? `
+      <br/>
+  ${
+    performingProviderName.length > 0
+      ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+      : ``
+  }${
+            verifyingProviderName.length > 0
+              ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+              : ``
+          }
+      `
+        : ``
+    }
   
   <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
   
