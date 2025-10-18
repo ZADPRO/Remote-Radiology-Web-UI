@@ -709,6 +709,22 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             disabledDates={dateDisablers.noFuture}
           />
         </div>
+
+        {/* <div className="flex flex-col gap-1.5 w-full">
+          <Label className="text-sm " htmlFor="dob">
+            Date Of Birth <span className="text-red-500">*</span>
+          </Label>
+          <DefaultDatePicker
+            value={formData.dob}
+            onChange={(val) => {
+              setFormData((prev) => ({
+                ...prev,
+                dob: val.target.value,
+              }));
+            }}
+            required
+          />
+        </div> */}
       </div>
     </div>
   );

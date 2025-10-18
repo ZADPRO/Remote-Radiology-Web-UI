@@ -1215,6 +1215,8 @@ const Report: React.FC = () => {
           );
         }
 
+        
+        
         //Breast Implant
         if (
           !(
@@ -1395,6 +1397,11 @@ const Report: React.FC = () => {
         //   }
         // }
 
+        
+// console.log('Report.tsx -------------------------- >  1400  ',  response.reportTextContentData[0]?.refRTBreastImplantSyncStatus !==
+//             false);
+//             console.log('Report.tsx -------------------------- >  1401  ',  response.reportTextContentData[0]?.refRTBreastImplantReportText);
+
         setsyncStatus({
           patientHistory:
             response.reportTextContentData[0].refRTPatientHistorySyncStatus !==
@@ -1439,32 +1446,32 @@ const Report: React.FC = () => {
             response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
             false,
           Notes:
-            !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes,
+            !stateData.readOnly && role?.id === 8
+              ? false
+              : response.reportTextContentData[0]?.refRTSyncStatus === null
+              ? true
+              : response.reportTextContentData[0]?.refRTSyncStatus,
           ImpressionsRecommendations: true,
           symmetry:
             response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
             false,
         });
 
-        console.log(
-          "Report.tsx -------------------------- >  1448  ",
-          !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes
-        );
-
         if (!stateData.readOnly && role?.id === 8) {
           setChangedOne({
             ...changedOne,
             syncStatus: true,
           });
-        } else {
-          setsyncStatus({
-            ...syncStatus,
-            Notes:
-              response.reportTextContentData[0]?.refRTSyncStatus === null
-                ? true
-                : response.reportTextContentData[0]?.refRTSyncStatus,
-          });
         }
+        //  else {
+        //   setsyncStatus({
+        //     ...syncStatus,
+        //     Notes:
+        //       response.reportTextContentData[0]?.refRTSyncStatus === null
+        //         ? true
+        //         : response.reportTextContentData[0]?.refRTSyncStatus,
+        //   });
+        // }
 
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
