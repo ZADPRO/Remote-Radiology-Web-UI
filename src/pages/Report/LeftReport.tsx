@@ -121,7 +121,6 @@ const LeftReport: React.FC<LeftReportProps> = ({
         ...syncStatus,
         breastDensityandImageLeft: true,
       });
-      console.log("www", questionId, value);
     }
 
     if (isNippleAreolaLeft) {
@@ -479,12 +478,12 @@ const LeftReport: React.FC<LeftReportProps> = ({
                           ...syncStatus,
                           LymphNodesLeft: false,
                         });
-                        setChangedOne({
-                          ...changedOne,
-                          LymphNodesLeftSyncStatus: true,
-                          LymphNodesLeftReportText: true,
-                        });
                       }
+                      setChangedOne({
+                        ...changedOne,
+                        LymphNodesLeftSyncStatus: true,
+                        LymphNodesLeftReportText: true,
+                      });
                     }}
                   />
                 </div>
