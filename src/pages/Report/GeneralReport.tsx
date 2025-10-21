@@ -43,6 +43,7 @@ interface TextEditorProps {
 }
 
 interface RightReportProps {
+  requestVersionRef: React.MutableRefObject<number>;
   changedOne: ChangedOneState;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
@@ -61,6 +62,7 @@ interface RightReportProps {
 }
 
 const GeneralReport: React.FC<RightReportProps> = ({
+  requestVersionRef,
   changedOne,
   setChangedOne,
   reportFormData,
@@ -128,6 +130,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
           /> */}
 
         <PatientHistory
+          requestVersionRef={requestVersionRef}
           syncStatus={syncStatus}
           setsyncStatus={setsyncStatus}
           changedOne={changedOne}
@@ -182,6 +185,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   breastImplantSyncStatus: true,
                   breastImplantReportText: true,
                 });
+                ++requestVersionRef.current;
               }}
             />
           </div>
@@ -198,6 +202,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   ...changedOne,
                   breastimplantImageText: true,
                 });
+                ++requestVersionRef.current;
               }}
               placeholder="📷 Paste image..."
             />
@@ -288,6 +293,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   symmetrySyncStatus: true,
                   symmetryReportText: true,
                 });
+                ++requestVersionRef.current;
               }}
             />
           </div>
@@ -304,6 +310,7 @@ const GeneralReport: React.FC<RightReportProps> = ({
                   ...changedOne,
                   symmetryImageText: true,
                 });
+                ++requestVersionRef.current;
               }}
               placeholder="📷 Paste image..."
             />

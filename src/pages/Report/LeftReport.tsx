@@ -68,6 +68,7 @@ interface TextEditorProps {
 }
 
 interface LeftReportProps {
+  requestVersionRef: React.MutableRefObject<number>;
   changedOne: ChangedOneState;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
@@ -87,6 +88,7 @@ interface LeftReportProps {
 }
 
 const LeftReport: React.FC<LeftReportProps> = ({
+  requestVersionRef,
   changedOne,
   setChangedOne,
   reportFormData,
@@ -281,6 +283,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         breastDensityandImageLeftSyncStatus: true,
                         breastDensityandImageLeftReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -300,6 +303,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         ...changedOne,
                         breastdensityImageTextLeft: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -340,6 +344,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         nippleAreolaSkinLeftSyncStatus: true,
                         nippleAreolaSkinLeftReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -357,6 +362,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         ...changedOne,
                         nippleareolaImageTextLeft: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -396,6 +402,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         grandularAndDuctalTissueLeftSyncStatus: true,
                         grandularAndDuctalTissueLeftReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -415,6 +422,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         ...changedOne,
                         glandularImageTextLeft: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -484,6 +492,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         LymphNodesLeftSyncStatus: true,
                         LymphNodesLeftReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -501,6 +510,7 @@ const LeftReport: React.FC<LeftReportProps> = ({
                         ...changedOne,
                         lymphnodesImageTextLeft: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />

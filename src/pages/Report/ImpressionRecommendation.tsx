@@ -19,6 +19,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 
 interface ImpressionProps {
+  requestVersionRef: React.MutableRefObject<number>;
   additionalChangesChangeStatus: boolean;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   mainImpressionRecommendation: {
@@ -1062,6 +1063,7 @@ export const NAadditionalOptions = [
 ];
 
 const ImpressionRecommendation: React.FC<ImpressionProps> = ({
+  requestVersionRef,
   additionalChangesChangeStatus,
   setChangedOne,
   mainImpressionRecommendation,
@@ -1401,6 +1403,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 recommendationTextRight:
                                   content.recommendationText,
                               }));
+                              ++requestVersionRef.current;
                             }}
                             className={`flex cursor-pointer ${
                               isFirst ? "rounded-tl-lg" : ""
@@ -1458,6 +1461,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         recommendationTextRight:
                           matched?.recommendationText || "",
                       }));
+
+                      ++requestVersionRef.current;
                     }}
                   >
                     <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full relative">
@@ -1540,6 +1545,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             setAdditionalImpressionRight((prev) =>
                               prev.filter((_, i) => i !== index)
                             );
+                            ++requestVersionRef.current;
                           }}
                         >
                           <Trash />
@@ -1577,6 +1583,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 : item
                             )
                           );
+                          ++requestVersionRef.current;
                         }}
                       >
                         <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -1710,6 +1717,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         recommendationTextRight:
                           matched?.recommendationText || "",
                       }));
+                      ++requestVersionRef.current;
                     }}
                   >
                     <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -1769,6 +1777,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         ...prev,
                         { id: "", text: "" },
                       ]);
+                      ++requestVersionRef.current;
                     }}
                   >
                     <Plus />
@@ -1792,6 +1801,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             setAdditionalRecommendationRight((prev) =>
                               prev.filter((_, i) => i !== index)
                             );
+                            ++requestVersionRef.current;
                           }}
                         >
                           <Trash />
@@ -1827,6 +1837,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 : item
                             )
                           );
+                          ++requestVersionRef.current;
                         }}
                       >
                         <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -1897,6 +1908,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       textRight: selected.text,
                     });
                   }
+                  ++requestVersionRef.current;
                 }}
               >
                 <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
@@ -2034,6 +2046,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 impressionText: content.impressionText,
                                 recommendationText: content.recommendationText,
                               }));
+                              ++requestVersionRef.current;
                             }}
                             className={`flex cursor-pointer ${
                               isFirst ? "rounded-tl-lg" : ""
@@ -2088,6 +2101,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         impressionText: matched?.impressionText || "",
                         recommendationText: matched?.recommendationText || "",
                       }));
+                      ++requestVersionRef.current;
                     }}
                   >
                     <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full relative">
@@ -2147,6 +2161,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         ...prev,
                         { id: "", text: "" },
                       ]);
+                      ++requestVersionRef.current;
                     }}
                   >
                     <Plus />
@@ -2170,6 +2185,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             setAdditionalImpression((prev) =>
                               prev.filter((_, i) => i !== index)
                             );
+                            ++requestVersionRef.current;
                           }}
                         >
                           <Trash />
@@ -2207,6 +2223,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 : item
                             )
                           );
+
+                          ++requestVersionRef.current;
                         }}
                       >
                         <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -2340,6 +2358,8 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         selectedRecommendationId: val,
                         recommendationText: matched?.recommendationText || "",
                       }));
+
+                      ++requestVersionRef.current;
                     }}
                   >
                     <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -2399,6 +2419,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                         ...prev,
                         { id: "", text: "" },
                       ]);
+                      ++requestVersionRef.current;
                     }}
                   >
                     <Plus />
@@ -2422,6 +2443,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                             setAdditionalRecommendation((prev) =>
                               prev.filter((_, i) => i !== index)
                             );
+                            ++requestVersionRef.current;
                           }}
                         >
                           <Trash />
@@ -2459,6 +2481,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                                 : item
                             )
                           );
+                          ++requestVersionRef.current;
                         }}
                       >
                         <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
@@ -2529,6 +2552,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                       text: selected.text,
                     });
                   }
+                  ++requestVersionRef.current;
                 }}
               >
                 <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
