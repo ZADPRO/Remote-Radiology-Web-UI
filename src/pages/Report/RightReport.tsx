@@ -72,6 +72,7 @@ interface TextEditorProps {
 }
 
 interface RightReportProps {
+  requestVersionRef: React.MutableRefObject<number>;
   changedOne: ChangedOneState;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
@@ -92,6 +93,7 @@ interface RightReportProps {
 }
 
 const RightReport: React.FC<RightReportProps> = ({
+  requestVersionRef,
   changedOne,
   setChangedOne,
   reportFormData,
@@ -257,6 +259,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         breastDensityandImageRightSyncStatus: true,
                         breastDensityandImageRightReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -277,6 +280,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         ...changedOne,
                         breastdensityImageText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -342,6 +346,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         nippleAreolaSkinRightSyncStatus: true,
                         nippleAreolaSkinRightReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -359,6 +364,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         ...changedOne,
                         nippleareolaImageText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -398,6 +404,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         grandularAndDuctalTissueRightSyncStatus: true,
                         grandularAndDuctalTissueRightReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -417,6 +424,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         ...changedOne,
                         glandularImageText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -487,6 +495,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         LymphNodesRightSyncStatus: true,
                         LymphNodesRightReportText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -504,6 +513,7 @@ const RightReport: React.FC<RightReportProps> = ({
                         ...changedOne,
                         lymphnodesImageText: true,
                       });
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />

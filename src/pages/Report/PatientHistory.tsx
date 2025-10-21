@@ -4,6 +4,7 @@ import React from "react";
 import { ChangedOneState } from "./Report";
 
 interface Props {
+  requestVersionRef: React.MutableRefObject<number>;
   syncStatus: {
     patientHistory: boolean;
   };
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const PatientHistory: React.FC<Props> = ({
+  requestVersionRef,
   syncStatus,
   setsyncStatus,
   changedOne,
@@ -48,6 +50,7 @@ const PatientHistory: React.FC<Props> = ({
               ...syncStatus,
               patientHistory: false,
             });
+            ++requestVersionRef.current;
           }}
         />
       </div>
