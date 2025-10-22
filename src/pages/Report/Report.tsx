@@ -1131,19 +1131,10 @@ const Report: React.FC = () => {
             )?.text || "",
         }));
 
-        console.log(
-          "--------->@@@",
-          response.reportTextContentData[0].refRTPatientHistorySyncStatus
-        );
-
         if (
           response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
           false
         ) {
-          console.log(
-            "--------->@@@",
-            response.appointmentStatus[0].refAppointmentPatietHistory
-          );
           setPatientHistory(
             response.appointmentStatus[0].refAppointmentPatietHistory
           );
@@ -1224,21 +1215,14 @@ const Report: React.FC = () => {
         }
 
         //Breast Implant
-        if (
-          !(
-            response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTBreastImplantSyncStatus) {
           setBreastImplantRight(
             response.reportTextContentData[0].refRTBreastImplantReportText
           );
         }
 
         //symmentry
-        if (
-          !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
-        ) {
+        if (!response.reportTextContentData[0].refRTSymmetrySyncStatus) {
           setSymmetry(
             response.reportTextContentData[0].refRTSymmetryReportText
           );
@@ -1246,10 +1230,8 @@ const Report: React.FC = () => {
 
         //breastDensity Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTBreastDensityandImageRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTBreastDensityandImageRightSyncStatus
         ) {
           setBreastDensityandImageRight(
             response.reportTextContentData[0]
@@ -1259,10 +1241,8 @@ const Report: React.FC = () => {
 
         //NippleAreola Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTNippleAreolaSkinRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTNippleAreolaSkinRightSyncStatus
         ) {
           setNippleAreolaSkinRight(
             response.reportTextContentData[0]
@@ -1272,10 +1252,8 @@ const Report: React.FC = () => {
 
         //Glandular Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTGrandularAndDuctalTissueRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueRightSyncStatus
         ) {
           setGrandularAndDuctalTissueRight(
             response.reportTextContentData[0]
@@ -1284,12 +1262,7 @@ const Report: React.FC = () => {
         }
 
         //Lymphnode Right
-        if (
-          !(
-            response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTLymphNodesRightSyncStatus) {
           setLymphNodesRight(
             response.reportTextContentData[0].refRTLymphNodesRightReportText
           );
@@ -1311,10 +1284,8 @@ const Report: React.FC = () => {
 
         //breastDensity Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTBreastDensityandImageLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTBreastDensityandImageLeftSyncStatus
         ) {
           setBreastDensityandImageLeft(
             response.reportTextContentData[0]
@@ -1324,10 +1295,7 @@ const Report: React.FC = () => {
 
         //NippleAreola Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTNippleAreolaSkinLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0].refRTNippleAreolaSkinLeftSyncStatus
         ) {
           setNippleAreolaSkinLeft(
             response.reportTextContentData[0]
@@ -1337,10 +1305,8 @@ const Report: React.FC = () => {
 
         //Glandular Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTGrandularAndDuctalTissueLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueLeftSyncStatus
         ) {
           setGrandularAndDuctalTissueLeft(
             response.reportTextContentData[0]
@@ -1349,12 +1315,7 @@ const Report: React.FC = () => {
         }
 
         //Lymphnode Left
-        if (
-          !(
-            response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus) {
           setLymphNodesLeft(
             response.reportTextContentData[0].refRTLymphNodesLeftReportText
           );
@@ -1463,10 +1424,10 @@ const Report: React.FC = () => {
         });
 
         if (!stateData.readOnly && role?.id === 8) {
-          setChangedOne({
-            ...changedOne,
+          setChangedOne((prev: any) => ({
+            ...prev,
             syncStatus: true,
-          });
+          }));
         }
         //  else {
         //   setsyncStatus({
@@ -3371,6 +3332,11 @@ const Report: React.FC = () => {
       },
     };
 
+    console.log(
+      "Report.tsx /Payload/ -------------------------- >  3374  ",
+      payload
+    );
+
     const response: {
       appointmentStatus: AppointmentStatus[];
       intakeFormData: ResponsePatientForm[];
@@ -3431,9 +3397,7 @@ const Report: React.FC = () => {
       setMainImpressionRecommendation((prev) => ({
         ...prev,
         selectedImpressionId:
-          tempChange.impression === changedOne.impression
-            ? response.appointmentStatus[0].refAppointmentImpression
-            : mainImpressionRecommendation.selectedImpressionId,
+          response.appointmentStatus[0].refAppointmentImpression,
         // impressionText:
         //   MainOptions.flatMap((cat) => cat.data).find(
         //     (item) =>
@@ -3441,9 +3405,7 @@ const Report: React.FC = () => {
         //       response.appointmentStatus[0].refAppointmentImpression
         //   )?.impressionText || "",
         selectedRecommendationId:
-          tempChange.recommendation === changedOne.recommendation
-            ? response.appointmentStatus[0].refAppointmentRecommendation
-            : mainImpressionRecommendation.selectedRecommendationId,
+          response.appointmentStatus[0].refAppointmentRecommendation,
         // recommendationText:
         //   MainOptions.flatMap((cat) => cat.data).find(
         //     (item) =>
@@ -3451,9 +3413,7 @@ const Report: React.FC = () => {
         //       response.appointmentStatus[0].refAppointmentImpression
         //   )?.recommendationText || "",
         selectedImpressionIdRight:
-          tempChange.impressionRight === changedOne.impressionRight
-            ? response.appointmentStatus[0].refAppointmentImpressionRight
-            : mainImpressionRecommendation.selectedImpressionIdRight,
+          response.appointmentStatus[0].refAppointmentImpressionRight,
         // impressionTextRight:
         //   MainOptions.flatMap((cat) => cat.data).find(
         //     (item) =>
@@ -3461,9 +3421,7 @@ const Report: React.FC = () => {
         //       response.appointmentStatus[0].refAppointmentImpression
         //   )?.impressionText || "",
         selectedRecommendationIdRight:
-          tempChange.recommendationRight === changedOne.recommendationRight
-            ? response.appointmentStatus[0].refAppointmentRecommendationRight
-            : mainImpressionRecommendation.selectedRecommendationIdRight,
+          response.appointmentStatus[0].refAppointmentRecommendationRight,
         // recommendationTextRight:
         //   MainOptions.flatMap((cat) => cat.data).find(
         //     (item) =>
@@ -3475,9 +3433,7 @@ const Report: React.FC = () => {
       setOptionalImpressionRecommendation((prev) => ({
         ...prev,
         selectedImpressionId:
-          tempChange.impressionaddtional === changedOne.impressionaddtional
-            ? response.appointmentStatus[0].refAppointmentImpressionAdditional
-            : optionalImpressionRecommendation.selectedImpressionId,
+          response.appointmentStatus[0].refAppointmentImpressionAdditional,
         //   impressionText:
         // MainOptions.map((item) => item.data)
         //   .flat()
@@ -3486,11 +3442,7 @@ const Report: React.FC = () => {
         //       item.id === optionalImpressionRecommendation.selectedImpressionId
         //   )?.impressionText || "",
         selectedRecommendationId:
-          tempChange.recommendationaddtional ===
-          changedOne.recommendationaddtional
-            ? response.appointmentStatus[0]
-                .refAppointmentRecommendationAdditional
-            : optionalImpressionRecommendation.selectedRecommendationId,
+          response.appointmentStatus[0].refAppointmentRecommendationAdditional,
         //   recommendationText:
         // MainOptions.map((item) => item.data)
         //   .flat()
@@ -3500,11 +3452,7 @@ const Report: React.FC = () => {
         //       optionalImpressionRecommendation.selectedRecommendationId
         //   )?.recommendationText || "",
         selectedImpressionIdRight:
-          tempChange.impressionaddtionalRight ===
-          changedOne.impressionaddtionalRight
-            ? response.appointmentStatus[0]
-                .refAppointmentImpressionAdditionalRight
-            : optionalImpressionRecommendation.selectedImpressionIdRight,
+          response.appointmentStatus[0].refAppointmentImpressionAdditionalRight,
         //    impressionTextRight:
         // MainOptions.map((item) => item.data)
         //   .flat()
@@ -3514,11 +3462,8 @@ const Report: React.FC = () => {
         //       optionalImpressionRecommendation.selectedImpressionIdRight
         //   )?.impressionText || "",
         selectedRecommendationIdRight:
-          tempChange.recommendationaddtionalRight ===
-          changedOne.recommendationaddtionalRight
-            ? response.appointmentStatus[0]
-                .refAppointmentRecommendationAdditionalRight
-            : optionalImpressionRecommendation.selectedRecommendationIdRight,
+          response.appointmentStatus[0]
+            .refAppointmentRecommendationAdditionalRight,
         //     recommendationTextRight:
         // MainOptions.map((item) => item.data)`
         //   .flat()
@@ -3553,102 +3498,80 @@ const Report: React.FC = () => {
         const updated = { ...prev };
 
         // Left side condition
-        if (
-          tempChange.commonImpressionRecommendation ===
-          changedOne.commonImpressionRecommendation
-        ) {
-          const id =
-            response.appointmentStatus[0]
-              .refAppointmentCommonImpressionRecommendation;
-          updated.id = id;
-          updated.text = Commonoptions.find((opt) => opt.id === id)?.text || "";
-        }
+        // if (
+        //   tempChange.commonImpressionRecommendation ===
+        //   changedOne.commonImpressionRecommendation
+        // ) {
+        const id =
+          response.appointmentStatus[0]
+            .refAppointmentCommonImpressionRecommendation;
+        updated.id = id;
+        updated.text = Commonoptions.find((opt) => opt.id === id)?.text || "";
+        // }
 
         // Right side condition
-        if (
-          tempChange.commonImpressionRecommendationRight ===
-          changedOne.commonImpressionRecommendationRight
-        ) {
-          const idRight =
-            response.appointmentStatus[0]
-              .refAppointmentCommonImpressionRecommendationRight;
-          updated.idRight = idRight;
-          updated.textRight =
-            Commonoptions.find((opt) => opt.id === idRight)?.text || "";
-        }
+        // if (
+        //   tempChange.commonImpressionRecommendationRight ===
+        //   changedOne.commonImpressionRecommendationRight
+        // ) {
+        const idRight =
+          response.appointmentStatus[0]
+            .refAppointmentCommonImpressionRecommendationRight;
+        updated.idRight = idRight;
+        updated.textRight =
+          Commonoptions.find((opt) => opt.id === idRight)?.text || "";
+        // }
 
         return updated;
       });
 
       if (
         response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
-          false &&
-        tempChange.patienthistory === changedOne.patienthistory
+        false
       ) {
         setPatientHistory(
           response.appointmentStatus[0].refAppointmentPatietHistory
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentBreastImplantImageText &&
-        tempChange.breastimplantImageText === changedOne.breastimplantImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentBreastImplantImageText) {
         setBreastImplantImage(
           response.appointmentStatus[0].refAppointmentBreastImplantImageText
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentSymmetryImageText &&
-        tempChange.symmetryImageText === changedOne.symmetryImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentSymmetryImageText) {
         setSymmetryImage(
           response.appointmentStatus[0].refAppointmentSymmetryImageText
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentBreastdensityImageText &&
-        tempChange.breastdensityImageText === changedOne.breastdensityImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentBreastdensityImageText) {
         setBreastDensityandImageRightImage(
           response.appointmentStatus[0].refAppointmentBreastdensityImageText
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentNippleAreolaImageText &&
-        tempChange.nippleareolaImageText === changedOne.nippleareolaImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentNippleAreolaImageText) {
         setNippleAreolaSkinRightImage(
           response.appointmentStatus[0].refAppointmentNippleAreolaImageText
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentGlandularImageText &&
-        tempChange.glandularImageText === changedOne.glandularImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentGlandularImageText) {
         setGrandularAndDuctalTissueRightImage(
           response.appointmentStatus[0].refAppointmentGlandularImageText
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentLymphnodeImageText &&
-        tempChange.lymphnodesImageText === changedOne.lymphnodesImageText
-      ) {
+      if (response.appointmentStatus[0].refAppointmentLymphnodeImageText) {
         setLymphNodesRightImage(
           response.appointmentStatus[0].refAppointmentLymphnodeImageText
         );
       }
 
       if (
-        response.appointmentStatus[0]
-          .refAppointmentBreastdensityImageTextLeft &&
-        tempChange.breastdensityImageTextLeft ===
-          changedOne.breastdensityImageTextLeft
+        response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
       ) {
         setBreastDensityandImageLeftImage(
           response.appointmentStatus[0].refAppointmentBreastdensityImageTextLeft
@@ -3656,38 +3579,26 @@ const Report: React.FC = () => {
       }
 
       if (
-        response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft &&
-        tempChange.nippleareolaImageTextLeft ===
-          changedOne.nippleareolaImageTextLeft
+        response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
       ) {
         setNippleAreolaSkinLeftImage(
           response.appointmentStatus[0].refAppointmentNippleAreolaImageTextLeft
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentGlandularImageTextLeft &&
-        tempChange.glandularImageTextLeft === changedOne.glandularImageTextLeft
-      ) {
+      if (response.appointmentStatus[0].refAppointmentGlandularImageTextLeft) {
         setGrandularAndDuctalTissueLeftImage(
           response.appointmentStatus[0].refAppointmentGlandularImageTextLeft
         );
       }
 
-      if (
-        response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft &&
-        tempChange.lymphnodesImageTextLeft ===
-          changedOne.lymphnodesImageTextLeft
-      ) {
+      if (response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft) {
         setLymphNodesLeftImage(
           response.appointmentStatus[0].refAppointmentLymphnodeImageTextLeft
         );
       }
 
-      if (
-        response.reportTextContentData &&
-        tempChange.reportTextContent === changedOne.reportTextContent
-      ) {
+      if (response.reportTextContentData) {
         setNotes(response.reportTextContentData[0]?.refRTCText);
       }
 
@@ -3712,9 +3623,7 @@ const Report: React.FC = () => {
         !(
           response.reportTextContentData[0].refRTBreastImplantReportText ||
           false
-        ) &&
-        tempChange.breastImplantReportText ===
-          changedOne.breastImplantReportText
+        )
       ) {
         setBreastImplantRight(
           response.reportTextContentData[0].refRTBreastImplantReportText
@@ -3722,21 +3631,14 @@ const Report: React.FC = () => {
       }
 
       //symmentry
-      if (
-        !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false) &&
-        tempChange.symmetryReportText === changedOne.symmetryReportText
-      ) {
+      if (!response.reportTextContentData[0].refRTSymmetrySyncStatus) {
         setSymmetry(response.reportTextContentData[0].refRTSymmetryReportText);
       }
 
       //breastDensity Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTBreastDensityandImageRightSyncStatus || false
-        ) &&
-        tempChange.breastDensityandImageRightReportText ===
-          changedOne.breastDensityandImageRightReportText
+        !response.reportTextContentData[0]
+          .refRTBreastDensityandImageRightSyncStatus
       ) {
         setBreastDensityandImageRight(
           response.reportTextContentData[0]
@@ -3746,12 +3648,7 @@ const Report: React.FC = () => {
 
       //NippleAreola Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTNippleAreolaSkinRightSyncStatus || false
-        ) &&
-        tempChange.nippleAreolaSkinRightReportText ===
-          changedOne.nippleAreolaSkinRightReportText
+        !response.reportTextContentData[0].refRTNippleAreolaSkinRightSyncStatus
       ) {
         setNippleAreolaSkinRight(
           response.reportTextContentData[0].refRTNippleAreolaSkinRightReportText
@@ -3760,12 +3657,8 @@ const Report: React.FC = () => {
 
       //Glandular Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTGrandularAndDuctalTissueRightSyncStatus || false
-        ) &&
-        tempChange.grandularAndDuctalTissueRightReportText ===
-          changedOne.grandularAndDuctalTissueRightReportText
+        !response.reportTextContentData[0]
+          .refRTGrandularAndDuctalTissueRightSyncStatus
       ) {
         setGrandularAndDuctalTissueRight(
           response.reportTextContentData[0]
@@ -3774,14 +3667,7 @@ const Report: React.FC = () => {
       }
 
       //Lymphnode Right
-      if (
-        !(
-          response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
-          false
-        ) &&
-        tempChange.LymphNodesRightReportText ===
-          changedOne.LymphNodesRightReportText
-      ) {
+      if (!response.reportTextContentData[0].refRTLymphNodesRightSyncStatus) {
         setLymphNodesRight(
           response.reportTextContentData[0].refRTLymphNodesRightReportText
         );
@@ -3791,33 +3677,29 @@ const Report: React.FC = () => {
       // if (
       //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
       // ) {
-      if (
-        tempChange.LesionsRightReportText === changedOne.LesionsRightReportText
-      ) {
-        setLesionsRight(
-          response.reportTextContentData[0].refRTLesionsRightReportText
-        );
-      }
+      // if (
+      //   tempChange.LesionsRightReportText === changedOne.LesionsRightReportText
+      // ) {
+      setLesionsRight(
+        response.reportTextContentData[0].refRTLesionsRightReportText
+      );
+      // }
       // }
 
       //ComparisonPrior Right
-      if (
-        tempChange.ComparisonPriorReportText ===
-        changedOne.ComparisonPriorReportText
-      ) {
-        setComparisonPrior(
-          response.reportTextContentData[0].refRTComparisonPriorReportText
-        );
-      }
+      // if (
+      //   tempChange.ComparisonPriorReportText ===
+      //   changedOne.ComparisonPriorReportText
+      // ) {
+      setComparisonPrior(
+        response.reportTextContentData[0].refRTComparisonPriorReportText
+      );
+      // }
 
       //breastDensity Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTBreastDensityandImageLeftSyncStatus || false
-        ) &&
-        tempChange.breastDensityandImageLeftReportText ===
-          changedOne.breastDensityandImageLeftReportText
+        !response.reportTextContentData[0]
+          .refRTBreastDensityandImageLeftSyncStatus
       ) {
         setBreastDensityandImageLeft(
           response.reportTextContentData[0]
@@ -3827,12 +3709,7 @@ const Report: React.FC = () => {
 
       //NippleAreola Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTNippleAreolaSkinLeftSyncStatus || false
-        ) &&
-        tempChange.nippleAreolaSkinLeftReportText ===
-          changedOne.nippleAreolaSkinLeftReportText
+        !response.reportTextContentData[0].refRTNippleAreolaSkinLeftSyncStatus
       ) {
         setNippleAreolaSkinLeft(
           response.reportTextContentData[0].refRTNippleAreolaSkinLeftReportText
@@ -3841,12 +3718,8 @@ const Report: React.FC = () => {
 
       //Glandular Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTGrandularAndDuctalTissueLeftSyncStatus || false
-        ) &&
-        tempChange.grandularAndDuctalTissueLeftReportText ===
-          changedOne.grandularAndDuctalTissueLeftReportText
+        !response.reportTextContentData[0]
+          .refRTGrandularAndDuctalTissueLeftSyncStatus
       ) {
         setGrandularAndDuctalTissueLeft(
           response.reportTextContentData[0]
@@ -3856,12 +3729,7 @@ const Report: React.FC = () => {
 
       //Lymphnode Left
       if (
-        !(
-          response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
-          false
-        ) &&
-        tempChange.LymphNodesLeftReportText ===
-          changedOne.LymphNodesLeftReportText
+        !response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus
       ) {
         setLymphNodesLeft(
           response.reportTextContentData[0].refRTLymphNodesLeftReportText
@@ -3872,32 +3740,27 @@ const Report: React.FC = () => {
       // if (
       //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
       // ) {
-      if (
-        tempChange.LesionsLeftReportText === changedOne.LesionsLeftReportText
-      ) {
-        setLesionsLeft(
-          response.reportTextContentData[0].refRTLesionsLeftReportText
-        );
-      }
+      // if (
+      //   tempChange.LesionsLeftReportText === changedOne.LesionsLeftReportText
+      // ) {
+      setLesionsLeft(
+        response.reportTextContentData[0].refRTLesionsLeftReportText
+      );
+      // }
       // }
 
       //ComparisonPrior Left
-      if (
-        tempChange.ComparisonPriorLeftReportText ===
-        changedOne.ComparisonPriorLeftReportText
-      ) {
-        setComparisonPriorLeft(
-          response.reportTextContentData[0].refRTComparisonPriorLeftReportText
-        );
-      }
+      // if (
+      //   tempChange.ComparisonPriorLeftReportText ===
+      //   changedOne.ComparisonPriorLeftReportText
+      // ) {
+      setComparisonPriorLeft(
+        response.reportTextContentData[0].refRTComparisonPriorLeftReportText
+      );
+      // }
 
       if (
-        !(
-          response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
-          false
-        ) &&
-        tempChange.breastImplantReportText ===
-          changedOne.breastImplantReportText
+        !response.reportTextContentData[0].refRTBreastImplantSyncStatus
       ) {
         setBreastImplantRight(
           response.reportTextContentData[0].refRTBreastImplantReportText
@@ -3906,120 +3769,77 @@ const Report: React.FC = () => {
 
       setsyncStatus({
         patientHistory:
-          tempChange.patienthistory === changedOne.patienthistory
-            ? response.reportTextContentData[0]
-                .refRTPatientHistorySyncStatus !== false
-            : syncStatus.patientHistory,
+          response.reportTextContentData[0].refRTPatientHistorySyncStatus !==
+          false,
         breastImplant:
-          tempChange.breastImplantSyncStatus ===
-          changedOne.breastImplantSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTBreastImplantSyncStatus !== false
-            : syncStatus.breastImplant,
+          response.reportTextContentData[0]?.refRTBreastImplantSyncStatus !==
+          false,
         breastDensityandImageRight:
-          tempChange.breastDensityandImageRightSyncStatus ===
-          changedOne.breastDensityandImageRightSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTBreastDensityandImageRightSyncStatus !== false
-            : syncStatus.breastDensityandImageRight,
+          response.reportTextContentData[0]
+            ?.refRTBreastDensityandImageRightSyncStatus !== false,
         nippleAreolaSkinRight:
-          tempChange.nippleAreolaSkinRightSyncStatus ===
-          changedOne.nippleAreolaSkinRightSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTNippleAreolaSkinRightSyncStatus !== false
-            : syncStatus.nippleAreolaSkinRight,
+          response.reportTextContentData[0]
+            ?.refRTNippleAreolaSkinRightSyncStatus !== false,
         LesionsRight:
-          tempChange.LesionsRightSyncStatus ===
-          changedOne.LesionsRightSyncStatus
-            ? response.reportTextContentData[0]?.refRTLesionsRightSyncStatus !==
-              false
-            : syncStatus.LesionsRight,
+          response.reportTextContentData[0]?.refRTLesionsRightSyncStatus !==
+          false,
         ComparisonPrior:
-          tempChange.ComparisonPriorSyncStatus ===
-          changedOne.ComparisonPriorSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTComparisonPriorSyncStatus !== false
-            : syncStatus.ComparisonPrior,
+          response.reportTextContentData[0]?.refRTComparisonPriorSyncStatus !==
+          false,
         grandularAndDuctalTissueRight:
-          tempChange.grandularAndDuctalTissueRightSyncStatus ===
-          changedOne.grandularAndDuctalTissueRightSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTGrandularAndDuctalTissueRightSyncStatus !== false
-            : syncStatus.grandularAndDuctalTissueRight,
+          response.reportTextContentData[0]
+            ?.refRTGrandularAndDuctalTissueRightSyncStatus !== false,
         LymphNodesRight:
-          tempChange.LymphNodesRightSyncStatus ===
-          changedOne.LymphNodesRightSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTLymphNodesRightSyncStatus !== false
-            : syncStatus.LymphNodesRight,
+          response.reportTextContentData[0]?.refRTLymphNodesRightSyncStatus !==
+          false,
         breastDensityandImageLeft:
-          tempChange.breastDensityandImageLeftSyncStatus ===
-          changedOne.breastDensityandImageLeftSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTBreastDensityandImageLeftSyncStatus !== false
-            : syncStatus.breastDensityandImageLeft,
+          response.reportTextContentData[0]
+            ?.refRTBreastDensityandImageLeftSyncStatus !== false,
         nippleAreolaSkinLeft:
-          tempChange.nippleAreolaSkinLeftSyncStatus ===
-          changedOne.nippleAreolaSkinLeftSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTNippleAreolaSkinLeftSyncStatus !== false
-            : syncStatus.nippleAreolaSkinLeft,
+          response.reportTextContentData[0]
+            ?.refRTNippleAreolaSkinLeftSyncStatus !== false,
         LesionsLeft:
-          tempChange.LesionsLeftSyncStatus === changedOne.LesionsLeftSyncStatus
-            ? response.reportTextContentData[0]?.refRTLesionsLeftSyncStatus !==
-              false
-            : syncStatus.LesionsLeft,
+          response.reportTextContentData[0]?.refRTLesionsLeftSyncStatus !==
+          false,
         ComparisonPriorLeft:
-          tempChange.ComparisonPriorLeftSyncStatus ===
-          changedOne.ComparisonPriorLeftSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTComparisonPriorLeftSyncStatus !== false
-            : syncStatus.ComparisonPriorLeft,
+          response.reportTextContentData[0]
+            ?.refRTComparisonPriorLeftSyncStatus !== false,
         grandularAndDuctalTissueLeft:
-          tempChange.grandularAndDuctalTissueLeftSyncStatus ===
-          changedOne.grandularAndDuctalTissueLeftSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTGrandularAndDuctalTissueLeftSyncStatus !== false
-            : syncStatus.grandularAndDuctalTissueLeft,
+          response.reportTextContentData[0]
+            ?.refRTGrandularAndDuctalTissueLeftSyncStatus !== false,
         LymphNodesLeft:
-          tempChange.LymphNodesLeftSyncStatus ===
-          changedOne.LymphNodesLeftSyncStatus
-            ? response.reportTextContentData[0]
-                ?.refRTLymphNodesLeftSyncStatus !== false
-            : syncStatus.LymphNodesLeft,
+          response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
+          false,
         Notes:
-          tempChange.syncStatus === changedOne.syncStatus
-            ? response.reportTextContentData[0]?.refRTSyncStatus !== false
-            : syncStatus.Notes,
+          response.reportTextContentData[0]?.refRTSyncStatus === null
+            ? true
+            : response.reportTextContentData[0]?.refRTSyncStatus,
         ImpressionsRecommendations: true,
         symmetry:
-          tempChange.symmetrySyncStatus === changedOne.symmetrySyncStatus
-            ? response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
-              false
-            : syncStatus.symmetry,
+          response.reportTextContentData[0]?.refRTSymmetrySyncStatus !== false,
       });
 
-      // if (response.reportIntakeFormData) {
-      //   setReportFormData(response.reportIntakeFormData);
-      // }
-
       if (response.reportIntakeFormData) {
-        setReportFormData((prev) => {
-          // Map through current form data
-          return prev.map((item) => {
-            // Check if this question is in the changed lisFt
-            if (tempChange.reportQuestion.includes(item.questionId)) {
-              // Find the updated question data from response
-              const updatedItem = response.reportIntakeFormData.find(
-                (r) => r.questionId === item.questionId
-              );
-              // Replace if found
-              return updatedItem ? { ...item, ...updatedItem } : item;
-            }
-            return item; // otherwise keep the old one
-          });
-        });
+        setReportFormData(response.reportIntakeFormData);
       }
+
+      // if (response.reportIntakeFormData) {
+      //   setReportFormData((prev) => {
+      //     // Map through current form data
+      //     return prev.map((item) => {
+      //       // Check if this question is in the changed lisFt
+      //       if (tempChange.reportQuestion.includes(item.questionId)) {
+      //         // Find the updated question data from response
+      //         const updatedItem = response.reportIntakeFormData.find(
+      //           (r) => r.questionId === item.questionId
+      //         );
+      //         // Replace if found
+      //         return updatedItem ? { ...item, ...updatedItem } : item;
+      //       }
+      //       return item; // otherwise keep the old one
+      //     });
+      //   });
+      // }
 
       // if (!response.easeQTReportAccess) {
       //   setsyncStatus({
@@ -4027,188 +3847,70 @@ const Report: React.FC = () => {
       //     Notes: false,
       //   });
       // } else {
-      setsyncStatus({
-        ...syncStatus,
-        Notes:
-          response.reportTextContentData[0]?.refRTSyncStatus === null
-            ? true
-            : response.reportTextContentData[0]?.refRTSyncStatus,
-      });
+      // setsyncStatus({
+      //   ...syncStatus,
+      //   Notes:
+      //     response.reportTextContentData[0]?.refRTSyncStatus === null
+      //       ? true
+      //       : response.reportTextContentData[0]?.refRTSyncStatus,
+      // });
       // }
 
       setChangedOne({
-        reportQuestion: changedOne.reportQuestion.filter(
-          (q) => !tempChange.reportQuestion.includes(q)
-        ),
-        reportTextContent: tempChange.reportTextContent
-          ? false
-          : changedOne.reportTextContent,
-        syncStatus: tempChange.syncStatus ? false : changedOne.syncStatus,
-        impression: tempChange.impression ? false : changedOne.impression,
-        recommendation: tempChange.recommendation
-          ? false
-          : changedOne.recommendation,
-        impressionaddtional: tempChange.impressionaddtional
-          ? false
-          : changedOne.impressionaddtional,
-        recommendationaddtional: tempChange.recommendationaddtional
-          ? false
-          : changedOne.recommendationaddtional,
-        commonImpressionRecommendation:
-          tempChange.commonImpressionRecommendation
-            ? false
-            : changedOne.commonImpressionRecommendation,
-        impressionRight: tempChange.impressionRight
-          ? false
-          : changedOne.impressionRight,
-        recommendationRight: tempChange.recommendationRight
-          ? false
-          : changedOne.recommendationRight,
-        impressionaddtionalRight: tempChange.impressionaddtionalRight
-          ? false
-          : changedOne.impressionaddtionalRight,
-        recommendationaddtionalRight: tempChange.recommendationaddtionalRight
-          ? false
-          : changedOne.recommendationaddtionalRight,
-        commonImpressionRecommendationRight:
-          tempChange.commonImpressionRecommendationRight
-            ? false
-            : changedOne.commonImpressionRecommendationRight,
-        artificatsLeft: tempChange.artificatsLeft
-          ? false
-          : changedOne.artificatsLeft,
-        artificatsRight: tempChange.artificatsRight
-          ? false
-          : changedOne.artificatsRight,
-        patienthistory: tempChange.patienthistory
-          ? false
-          : changedOne.patienthistory,
-        breastimplantImageText: tempChange.breastimplantImageText
-          ? false
-          : changedOne.breastimplantImageText,
-        symmetryImageText: tempChange.symmetryImageText
-          ? false
-          : changedOne.symmetryImageText,
-        breastdensityImageText: tempChange.breastdensityImageText
-          ? false
-          : changedOne.breastdensityImageText,
-        nippleareolaImageText: tempChange.nippleareolaImageText
-          ? false
-          : changedOne.nippleareolaImageText,
-        glandularImageText: tempChange.glandularImageText
-          ? false
-          : changedOne.glandularImageText,
-        lymphnodesImageText: tempChange.glandularImageText
-          ? false
-          : changedOne.lymphnodesImageText,
-        breastdensityImageTextLeft: tempChange.breastdensityImageTextLeft
-          ? false
-          : changedOne.breastdensityImageTextLeft,
-        nippleareolaImageTextLeft: tempChange.nippleareolaImageTextLeft
-          ? false
-          : changedOne.nippleareolaImageTextLeft,
-        glandularImageTextLeft: tempChange.glandularImageTextLeft
-          ? false
-          : changedOne.glandularImageTextLeft,
-        lymphnodesImageTextLeft: tempChange.lymphnodesImageTextLeft
-          ? false
-          : changedOne.lymphnodesImageTextLeft,
-        breastImplantSyncStatus: tempChange.breastdensityImageTextLeft
-          ? false
-          : changedOne.breastImplantSyncStatus,
-        symmetrySyncStatus: tempChange.symmetrySyncStatus
-          ? false
-          : changedOne.symmetrySyncStatus,
-        breastDensityandImageRightSyncStatus:
-          tempChange.breastDensityandImageRightSyncStatus
-            ? false
-            : changedOne.breastDensityandImageRightSyncStatus,
-        nippleAreolaSkinRightSyncStatus:
-          tempChange.nippleAreolaSkinRightSyncStatus
-            ? false
-            : changedOne.nippleAreolaSkinRightSyncStatus,
-        LesionsRightSyncStatus: tempChange.LesionsRightSyncStatus
-          ? false
-          : changedOne.LesionsRightSyncStatus,
-        ComparisonPriorSyncStatus: tempChange.ComparisonPriorSyncStatus
-          ? false
-          : changedOne.ComparisonPriorSyncStatus,
-        grandularAndDuctalTissueRightSyncStatus:
-          tempChange.grandularAndDuctalTissueRightSyncStatus
-            ? false
-            : changedOne.grandularAndDuctalTissueRightSyncStatus,
-        LymphNodesRightSyncStatus: tempChange.LymphNodesRightSyncStatus
-          ? false
-          : changedOne.LymphNodesRightSyncStatus,
-        breastDensityandImageLeftSyncStatus:
-          tempChange.breastDensityandImageLeftSyncStatus
-            ? false
-            : changedOne.breastDensityandImageLeftSyncStatus,
-        nippleAreolaSkinLeftSyncStatus:
-          tempChange.nippleAreolaSkinLeftSyncStatus
-            ? false
-            : changedOne.nippleAreolaSkinLeftSyncStatus,
-        LesionsLeftSyncStatus: tempChange.LesionsLeftSyncStatus
-          ? false
-          : changedOne.LesionsLeftSyncStatus,
-        ComparisonPriorLeftSyncStatus: tempChange.ComparisonPriorLeftSyncStatus
-          ? false
-          : changedOne.ComparisonPriorLeftSyncStatus,
-        grandularAndDuctalTissueLeftSyncStatus:
-          tempChange.grandularAndDuctalTissueLeftSyncStatus
-            ? false
-            : changedOne.grandularAndDuctalTissueLeftSyncStatus,
-        LymphNodesLeftSyncStatus: tempChange.LymphNodesLeftSyncStatus
-          ? false
-          : changedOne.LymphNodesLeftSyncStatus,
-        breastImplantReportText: tempChange.breastImplantReportText
-          ? false
-          : changedOne.breastImplantReportText,
-        symmetryReportText: tempChange.symmetryReportText
-          ? false
-          : changedOne.symmetryReportText,
-        breastDensityandImageRightReportText:
-          tempChange.breastDensityandImageRightReportText
-            ? false
-            : changedOne.breastDensityandImageRightReportText,
-        nippleAreolaSkinRightReportText:
-          tempChange.nippleAreolaSkinRightReportText
-            ? false
-            : changedOne.nippleAreolaSkinRightReportText,
-        LesionsRightReportText: tempChange.LesionsRightReportText
-          ? false
-          : changedOne.LesionsRightReportText,
-        ComparisonPriorReportText: tempChange.ComparisonPriorReportText
-          ? false
-          : changedOne.ComparisonPriorReportText,
-        grandularAndDuctalTissueRightReportText:
-          tempChange.grandularAndDuctalTissueRightReportText
-            ? false
-            : changedOne.grandularAndDuctalTissueRightReportText,
-        LymphNodesRightReportText: tempChange.LymphNodesRightReportText
-          ? false
-          : changedOne.LymphNodesRightReportText,
-        breastDensityandImageLeftReportText:
-          tempChange.breastDensityandImageLeftReportText
-            ? false
-            : changedOne.breastDensityandImageLeftReportText,
-        nippleAreolaSkinLeftReportText:
-          tempChange.nippleAreolaSkinLeftReportText
-            ? false
-            : changedOne.nippleAreolaSkinLeftReportText,
-        LesionsLeftReportText: tempChange.LesionsLeftReportText
-          ? false
-          : changedOne.LesionsLeftReportText,
-        ComparisonPriorLeftReportText: tempChange.ComparisonPriorLeftReportText
-          ? false
-          : changedOne.ComparisonPriorLeftReportText,
-        grandularAndDuctalTissueLeftReportText:
-          tempChange.grandularAndDuctalTissueLeftReportText
-            ? false
-            : changedOne.grandularAndDuctalTissueLeftReportText,
-        LymphNodesLeftReportText: tempChange.LymphNodesLeftReportText
-          ? false
-          : changedOne.LymphNodesLeftReportText,
+        reportQuestion: [],
+        reportTextContent: false,
+        syncStatus: false,
+        impression: false,
+        recommendation: false,
+        impressionaddtional: false,
+        recommendationaddtional: false,
+        commonImpressionRecommendation: false,
+        impressionRight: false,
+        recommendationRight: false,
+        impressionaddtionalRight: false,
+        recommendationaddtionalRight: false,
+        commonImpressionRecommendationRight: false,
+        artificatsLeft: false,
+        artificatsRight: false,
+        patienthistory: false,
+        breastimplantImageText: false,
+        symmetryImageText: false,
+        breastdensityImageText: false,
+        nippleareolaImageText: false,
+        glandularImageText: false,
+        lymphnodesImageText: false,
+        breastdensityImageTextLeft: false,
+        nippleareolaImageTextLeft: false,
+        glandularImageTextLeft: false,
+        lymphnodesImageTextLeft: false,
+        breastImplantSyncStatus: false,
+        symmetrySyncStatus: false,
+        breastDensityandImageRightSyncStatus: false,
+        nippleAreolaSkinRightSyncStatus: false,
+        LesionsRightSyncStatus: false,
+        ComparisonPriorSyncStatus: false,
+        grandularAndDuctalTissueRightSyncStatus: false,
+        LymphNodesRightSyncStatus: false,
+        breastDensityandImageLeftSyncStatus: false,
+        nippleAreolaSkinLeftSyncStatus: false,
+        LesionsLeftSyncStatus: false,
+        ComparisonPriorLeftSyncStatus: false,
+        grandularAndDuctalTissueLeftSyncStatus: false,
+        LymphNodesLeftSyncStatus: false,
+        breastImplantReportText: false,
+        symmetryReportText: false,
+        breastDensityandImageRightReportText: false,
+        nippleAreolaSkinRightReportText: false,
+        LesionsRightReportText: false,
+        ComparisonPriorReportText: false,
+        grandularAndDuctalTissueRightReportText: false,
+        LymphNodesRightReportText: false,
+        breastDensityandImageLeftReportText: false,
+        nippleAreolaSkinLeftReportText: false,
+        LesionsLeftReportText: false,
+        ComparisonPriorLeftReportText: false,
+        grandularAndDuctalTissueLeftReportText: false,
+        LymphNodesLeftReportText: false,
       });
 
       if (!(response.easeQTReportAccess && response.naSystemReportAccess)) {
@@ -4231,7 +3933,7 @@ const Report: React.FC = () => {
       );
     }
     setAutoChangeAccess(true);
-    if(requestVersionRef.current >= 500) requestVersionRef.current = 0
+    if (requestVersionRef.current >= 500) requestVersionRef.current = 0;
   };
 
   useEffect(() => {
@@ -4315,6 +4017,14 @@ const Report: React.FC = () => {
       indexVal: 9,
     },
   ];
+
+  // useEffect(() => {
+  //   console.log("syncStatus", syncStatus);
+  // }, [syncStatus]);
+
+  // useEffect(() => {
+  //   console.log("changedOne", changedOne);
+  // }, [changedOne]);
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -5410,7 +5120,6 @@ const Report: React.FC = () => {
               {subTab === 1 ? (
                 <GeneralReport
                   requestVersionRef={requestVersionRef}
-                  changedOne={changedOne}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -5439,14 +5148,12 @@ const Report: React.FC = () => {
                       onChange: setSymmetryImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={location?.readOnly ? true : false}
                 />
               ) : subTab === 2 ? (
                 <RightReport
-                 requestVersionRef={requestVersionRef}
-                  changedOne={changedOne}
+                  requestVersionRef={requestVersionRef}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -5497,14 +5204,12 @@ const Report: React.FC = () => {
                       onChange: setLymphNodesRightImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={location?.readOnly ? true : false}
                 />
               ) : subTab === 3 ? (
                 <LeftReport
-                 requestVersionRef={requestVersionRef}
-                  changedOne={changedOne}
+                  requestVersionRef={requestVersionRef}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -5551,7 +5256,6 @@ const Report: React.FC = () => {
                       onChange: setLymphNodesLeftImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={stateData.readOnly ? true : false}
                 />
@@ -5836,7 +5540,7 @@ const Report: React.FC = () => {
               ) : (
                 subTab === 5 && (
                   <Impression
-                  requestVersionRef={requestVersionRef}
+                    requestVersionRef={requestVersionRef}
                     additionalChangesChangeStatus={
                       additionalChangesChangeStatus
                     }

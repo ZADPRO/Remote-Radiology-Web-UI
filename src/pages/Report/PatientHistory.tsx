@@ -5,11 +5,7 @@ import { ChangedOneState } from "./Report";
 
 interface Props {
   requestVersionRef: React.MutableRefObject<number>;
-  syncStatus: {
-    patientHistory: boolean;
-  };
   setsyncStatus: (value: any) => void;
-  changedOne: ChangedOneState;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   patientHistoryNotes: string;
   setPatientHistoryNotes: (value: string) => void;
@@ -17,9 +13,7 @@ interface Props {
 
 const PatientHistory: React.FC<Props> = ({
   requestVersionRef,
-  syncStatus,
   setsyncStatus,
-  changedOne,
   setChangedOne,
   patientHistoryNotes,
   setPatientHistoryNotes,
@@ -39,17 +33,21 @@ const PatientHistory: React.FC<Props> = ({
         </div>
         <TextEditor
           value={patientHistoryNotes}
-          onChange={setPatientHistoryNotes}
           readOnly={false}
+          onChange={(val, _, source) => {
+            setPatientHistoryNotes(val);
+            if (source === "user") {
+              setsyncStatus((prev: any) => ({
+                ...prev,
+                patientHistory: false,
+              }));
+            }
+          }}
           onManualEdit={() => {
-            setChangedOne({
-              ...changedOne,
+            setChangedOne((prev: any) => ({
+              ...prev,
               patienthistory: true,
-            });
-            setsyncStatus({
-              ...syncStatus,
-              patientHistory: false,
-            });
+            }));
             ++requestVersionRef.current;
           }}
         />
