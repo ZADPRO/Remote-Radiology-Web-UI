@@ -787,7 +787,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 setNewAppointment(val ? formatLocalDate(val) : "");
               }}
               required={true}
-              disabledDates={dateDisablers.noPast}
+              // disabledDates={dateDisablers.noPast}
             />
           </div>
           <Button type="submit" variant="greenTheme">
@@ -869,7 +869,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                                       <Button
                                         className="w-35 ml-2"
                                         variant="greenTheme"
-                                         onClick={() => {
+                                        onClick={() => {
                                           handleCancelReschedule(
                                             row.refAppointmentId,
                                             row.refAppointmentDate,
@@ -931,8 +931,15 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                                             );
                                           }}
                                           required={true}
-                                          disabledDates={dateDisablers.noPast}
+                                          // disabledDates={dateDisablers.noPast}
                                         />
+                                        {/* <DefaultDatePicker
+                                          value={reschduleDate}
+                                          onChange={(val) => {
+                                            setReschduleDate(val.target.value);
+                                          }}
+                                          required
+                                        /> */}
                                       </div>
                                     </div>
                                     <div>
