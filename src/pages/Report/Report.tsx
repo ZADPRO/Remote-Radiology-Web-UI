@@ -1745,7 +1745,7 @@ const Report: React.FC = () => {
         setNotes(
           `
           <div>
-   <div style="text-align: right;">
+   <div style="text-align: left;">
   ${
     ScanCenterImg?.base64Data
       ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
@@ -2191,6 +2191,26 @@ const Report: React.FC = () => {
 
   const [mailOption, setMailOption] = useState("");
 
+  function quillWrapContent(html: string): string {
+    if (!html) return "";
+
+    let wrapped = html;
+
+    // Replace <div> with <p> and </div> with </p>
+    wrapped = wrapped.replace(/<div>/gi, "<p>").replace(/<\/div>/gi, "</p>");
+
+    // // Optional: convert consecutive <br> to single <br> for cleaner Quill content
+    // wrapped = wrapped.replace(/(<br\s*\/?>\s*){2,}/gi, "<br>");
+
+    // Wrap content outside <p> with <p> (if any plain text exists)
+    wrapped = wrapped.replace(/(^|>)([^<]+)(?=<|$)/g, (_, p1, p2) => {
+      const text = p2.trim();
+      return text ? `${p1}<p>${text}</p>` : p1;
+    });
+
+    return wrapped;
+  }
+
   const handleSyncNotesReport = () => {
     let ReportNotes = "";
 
@@ -2350,7 +2370,7 @@ const Report: React.FC = () => {
       ReportNotes =
         `
            <div>
-           <div style="text-align: right;">
+           <div style="text-align: left;">
         ${
           ScanCenterImg?.base64Data
             ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
@@ -3040,13 +3060,15 @@ const Report: React.FC = () => {
         `
           : ``
       }
-      <br/><strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
-      <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
+      <br/><strong><i><p>The QT Breast Acoustic CTTM Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+      <br/><strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
     ` +
         (signatureText.length > 0 ? "<br/>" + signatureText : "") +
         (addendumText.length > 0
           ? "<br/><p><strong>ADDENDUM:</strong></p>" + addendumText
           : "");
+
+      ReportNotes = quillWrapContent(ReportNotes);
     } else {
       if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
         ReportNotes =
@@ -3728,9 +3750,7 @@ const Report: React.FC = () => {
       }
 
       //Lymphnode Left
-      if (
-        !response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus
-      ) {
+      if (!response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus) {
         setLymphNodesLeft(
           response.reportTextContentData[0].refRTLymphNodesLeftReportText
         );
@@ -3759,9 +3779,7 @@ const Report: React.FC = () => {
       );
       // }
 
-      if (
-        !response.reportTextContentData[0].refRTBreastImplantSyncStatus
-      ) {
+      if (!response.reportTextContentData[0].refRTBreastImplantSyncStatus) {
         setBreastImplantRight(
           response.reportTextContentData[0].refRTBreastImplantReportText
         );
@@ -4967,9 +4985,9 @@ const Report: React.FC = () => {
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
-                        let signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
                         if (role.id === 8) {
-                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                          signatureRow = `<br/><strong><p class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
                         }
                         const notesData = Notes + signatureRow;
                         setNotes(notesData);
@@ -4989,9 +5007,9 @@ const Report: React.FC = () => {
                         // );
                       } else {
                         const date = new Date().toLocaleDateString();
-                        let signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
                         if (role.id === 8) {
-                          signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                          signatureRow = `<br/><strong><p class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
                         }
                         const response: {
                           status: boolean;

@@ -426,7 +426,7 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
-       <div style="text-align: right;">
+       <div style="text-align: left;">
     ${
       ScanCenterImg?.base64Data
         ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`

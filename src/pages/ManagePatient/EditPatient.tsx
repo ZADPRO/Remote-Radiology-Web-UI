@@ -38,11 +38,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { formatReadableDate } from "@/utlis/calculateAge";
-import {
-  PopoverContentDialog,
-  PopoverDialog,
-  PopoverTriggerDialog,
-} from "@/components/ui/CustomComponents/popoverdialog";
 import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 // Define the props interface for EditPerformingProvider
@@ -81,6 +76,8 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
   const [cancelPopOverStatus, setCancelPopOverStatus] = useState(false);
   const [ReschdulePopOverStatus, setReschdulePopOverStatus] = useState(false);
   const [reschduleDate, setReschduleDate] = useState("");
+  const [workAppointmentId, setWorkAppointmentId] = useState(0);
+  const [cancelAppointmentDate, setCancelAppointmentDate] = useState("");
 
   const [formData, setFormData] = useState<ListSpecificPatient>({
     profileImgFile: {
@@ -244,6 +241,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
         toast.success("Appointment Created");
         setModelAppointment(false);
         getSpecificCenterAdmin();
+        setNewAppointment("");
       }
     } else if (mailPurpose === "sendMail") {
       const response = await patientService.sendMailAppointmentPatient(
@@ -258,6 +256,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
         toast.success("Appointment Mail Sended");
         setModelAppointment(false);
         getSpecificCenterAdmin();
+        setNewAppointment("");
       }
     }
     setLoading(false);
@@ -763,6 +762,109 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
             </div>
           </DialogContent>
         </Dialog>
+        <Dialog
+          open={ReschdulePopOverStatus}
+          onOpenChange={setReschdulePopOverStatus}
+        >
+          <DialogContent
+            style={{ background: "#f9f4ec" }}
+            className="w-85 h-auto overflow-y-auto p-5"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <DialogHeader>
+              <DialogTitle>Reschedule Appointment Date</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4">
+              <div>
+                <div className="flex flex-col gap-1.5 w-full">
+                  <DefaultDatePicker
+                    value={reschduleDate}
+                    onChange={(val) => {
+                      setReschduleDate(val.target.value);
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <Button
+                  onClick={() => {
+                    setReschdulePopOverStatus(false);
+                  }}
+                  variant="outline"
+                  className="w-35"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="w-35"
+                  variant="greenTheme"
+                  disabled={!reschduleDate}
+                  onClick={() => {
+                    handleCancelReschedule(
+                      workAppointmentId,
+                      reschduleDate,
+                      "reschedule"
+                    );
+                  }}
+                >
+                  Confirm
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={cancelPopOverStatus}
+          onOpenChange={setCancelPopOverStatus}
+        >
+          <DialogContent
+            style={{ background: "#f9f4ec" }}
+            className="w-85 h-auto overflow-y-auto p-5"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <DialogHeader>
+              <DialogTitle>Cancel Appointment</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4">
+              {" "}
+              <div className="space-y-2">
+                {" "}
+                <h4 className="leading-none font-medium">
+                  {" "}
+                  Are you sure to cancel this Appointment ?{" "}
+                </h4>{" "}
+              </div>{" "}
+              <div>
+                {" "}
+                <Button
+                  onClick={() => {
+                    setCancelPopOverStatus(false);
+                  }}
+                  variant="outline"
+                  className="w-35"
+                >
+                  {" "}
+                  Cancel{" "}
+                </Button>{" "}
+                <Button
+                  className="w-35 ml-2"
+                  variant="greenTheme"
+                  onClick={() => {
+                    handleCancelReschedule(
+                      workAppointmentId,
+                      cancelAppointmentDate,
+                      "delete"
+                    );
+                  }}
+                >
+                  {" "}
+                  Confirm{" "}
+                </Button>{" "}
+              </div>{" "}
+            </div>
+          </DialogContent>
+        </Dialog>
       </form>
 
       <h1 className="text-2xl font-bold my-4">Appointment</h1>
@@ -852,53 +954,17 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       <TableCell>
                         {row.allowCancelResh ? (
                           <>
-                            <PopoverDialog
-                              open={cancelPopOverStatus}
-                              onOpenChange={setCancelPopOverStatus}
-                            >
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <PopoverTriggerDialog asChild>
-                                  <CircleX
-                                    className="cursor-pointer"
-                                    size={20}
-                                  />
-                                </PopoverTriggerDialog>
-                                <PopoverContentDialog className="w-80">
-                                  <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                      <h4 className="leading-none font-medium">
-                                        Are you sure to cancel this Appointment
-                                        ?
-                                      </h4>
-                                    </div>
-                                    <div>
-                                      <Button
-                                        onClick={() => {
-                                          setCancelPopOverStatus(false);
-                                        }}
-                                        variant="outline"
-                                        className="w-35"
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        className="w-35 ml-2"
-                                        variant="greenTheme"
-                                        onClick={() => {
-                                          handleCancelReschedule(
-                                            row.refAppointmentId,
-                                            row.refAppointmentDate,
-                                            "delete"
-                                          );
-                                        }}
-                                      >
-                                        Confirm
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </PopoverContentDialog>
-                              </div>
-                            </PopoverDialog>
+                            <CircleX
+                              className="cursor-pointer"
+                              size={20}
+                              onClick={() => {
+                                setWorkAppointmentId(row.refAppointmentId);
+                                setCancelAppointmentDate(
+                                  row.refAppointmentDate
+                                );
+                                setCancelPopOverStatus(true);
+                              }}
+                            />
                           </>
                         ) : (
                           "-"
@@ -907,88 +973,14 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                       <TableCell>
                         {row.allowCancelResh ? (
                           <>
-                            <PopoverDialog
-                              open={ReschdulePopOverStatus}
-                              onOpenChange={setReschdulePopOverStatus}
-                            >
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <PopoverTriggerDialog asChild>
-                                  <CalendarSync
-                                    className="cursor-pointer"
-                                    size={20}
-                                  />
-                                </PopoverTriggerDialog>
-                                <PopoverContentDialog
-                                  onOpenAutoFocus={(e) => e.preventDefault()}
-                                  className="w-80"
-                                >
-                                  <div className="grid gap-4">
-                                    {/* <div className="space-y-2">
-                                      <h4 className="leading-none font-medium">
-                                        Reschedule Appointment ?
-                                      </h4>
-                                    </div> */}
-                                    <div>
-                                      <div className="flex flex-col gap-1.5 w-full">
-                                        <Label
-                                          className="text-sm "
-                                          htmlFor="dob"
-                                        >
-                                          Reschedule Appointment Date
-                                        </Label>
-                                        {/* <DatePicker
-                                          value={
-                                            reschduleDate
-                                              ? parseLocalDate(reschduleDate)
-                                              : undefined
-                                          }
-                                          className="pointer-events-auto"
-                                          onChange={(val) => {
-                                            setReschduleDate(
-                                              val ? formatLocalDate(val) : ""
-                                            );
-                                          }}
-                                          required={true}
-                                          // disabledDates={dateDisablers.noPast}
-                                        /> */}
-                                        <DefaultDatePicker
-                                          value={reschduleDate}
-                                          onChange={(val) => {
-                                            setReschduleDate(val.target.value);
-                                          }}
-                                          required
-                                        />
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <Button
-                                        onClick={() => {
-                                          setReschdulePopOverStatus(false);
-                                        }}
-                                        variant="outline"
-                                        className="w-35"
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        className="w-35 ml-2"
-                                        variant="greenTheme"
-                                        disabled={!reschduleDate}
-                                        onClick={() => {
-                                          handleCancelReschedule(
-                                            row.refAppointmentId,
-                                            reschduleDate,
-                                            "reschedule"
-                                          );
-                                        }}
-                                      >
-                                        Confirm
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </PopoverContentDialog>
-                              </div>
-                            </PopoverDialog>
+                            <CalendarSync
+                              className="cursor-pointer"
+                              size={20}
+                              onClick={() => {
+                                setWorkAppointmentId(row.refAppointmentId);
+                                setReschdulePopOverStatus(true);
+                              }}
+                            />
                           </>
                         ) : (
                           "-"
