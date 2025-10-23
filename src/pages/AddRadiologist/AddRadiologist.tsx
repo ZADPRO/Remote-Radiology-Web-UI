@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { toast } from "sonner";
 import {
   Select,
@@ -29,7 +29,8 @@ import { useNavigate } from "react-router-dom";
 import { MedicalLicenseSecurity } from "@/services/doctorService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+// import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -504,7 +505,7 @@ const AddRadiologist: React.FC = () => {
                 <Label className="text-sm " htmlFor="dob">
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
-                <DatePicker
+                {/* <DatePicker
                   value={
                     formData.dob ? parseLocalDate(formData.dob) : undefined
                   }
@@ -515,6 +516,16 @@ const AddRadiologist: React.FC = () => {
                     }));
                   }}
                   disabledDates={dateDisablers.noFuture}
+                  required
+                /> */}
+                <DefaultDatePicker
+                  value={formData.dob}
+                  onChange={(val) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      dob: val.target.value,
+                    }));
+                  }}
                   required
                 />
               </div>

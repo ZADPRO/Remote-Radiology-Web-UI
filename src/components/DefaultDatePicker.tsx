@@ -3,7 +3,7 @@ import { Calendar } from "lucide-react";
 
 type Props = {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   disabled?: boolean;
 };

@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import FormHeader from "../FormHeader";
 import MultiOptionRadioGroup from "@/components/ui/CustomComponents/MultiOptionRadioGroup";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -16,9 +16,10 @@ import ValidatedSelect from "../../../components/ui/CustomComponents/ValidatedSe
 import { IntakeOption } from "../PatientInTakeForm";
 import LabeledRadioWithOptionalInput from "@/components/ui/CustomComponents/LabeledRadioWithOptionalInput";
 import { useAuth } from "@/pages/Routes/AuthContext";
-import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
+import { formatLocalDate } from "@/lib/dateUtils";
 import { calculateAge } from "@/utlis/calculateAge";
 import { patientInTakeService } from "@/services/patientInTakeFormService";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface QuestionIds {
   fullName: number;
@@ -206,7 +207,7 @@ const PersonalInformation: React.FC<Props> = ({
               >
                 Date of Birth <span className="text-red-500">*</span>
               </Label>
-              <DatePicker
+              {/* <DatePicker
                 value={
                   getAnswer(questionIds.dob)
                     ? parseLocalDate(getAnswer(questionIds.dob))
@@ -225,6 +226,19 @@ const PersonalInformation: React.FC<Props> = ({
                   }
                 }}
                 disabledDates={(date) => date > new Date()}
+                required
+              /> */}
+              <DefaultDatePicker
+                value={getAnswer(questionIds.dob)}
+                onChange={(val) => {
+                  handleInputChange(questionIds.dob, val.target.value);
+                  if (val.target.value) {
+                    handleInputChange(
+                      questionIds.age,
+                      String(calculateAge(val.target.value) || 0)
+                    );
+                  }
+                }}
                 required
               />
             </div>

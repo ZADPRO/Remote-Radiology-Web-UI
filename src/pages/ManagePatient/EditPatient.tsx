@@ -19,14 +19,10 @@ import {
   Pencil,
 } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
-import {
-  dateDisablers,
-  formatLocalDate,
-  parseLocalDate,
-} from "@/lib/dateUtils";
+// import { formatLocalDate, parseLocalDate } from "@/lib/dateUtils";
 import { ListSpecificPatient, patientService } from "@/services/patientService";
 import { toast } from "sonner";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import {
   Table,
   TableBody,
@@ -47,6 +43,7 @@ import {
   PopoverDialog,
   PopoverTriggerDialog,
 } from "@/components/ui/CustomComponents/popoverdialog";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 // Define the props interface for EditPerformingProvider
 interface EditPerformingProviderProps {
@@ -539,7 +536,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               <Label className="text-sm " htmlFor="dob">
                 Date Of Birth <span className="text-red-500">*</span>
               </Label>
-              <DatePicker
+              {/* <DatePicker
                 value={
                   formData.refUserDOB
                     ? parseLocalDate(formData.refUserDOB)
@@ -554,6 +551,17 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 }}
                 required
                 disabledDates={dateDisablers.noFuture}
+              /> */}
+
+              <DefaultDatePicker
+                value={formData.refUserDOB}
+                onChange={(val) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    refUserDOB: val.target.value,
+                  }));
+                }}
+                required
               />
             </div>
           </div>
@@ -778,7 +786,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
             <Label className="text-sm " htmlFor="dob">
               Date Of Appointment <span className="text-red-500">*</span>
             </Label>
-            <DatePicker
+            {/* <DatePicker
               value={
                 newAppointment ? parseLocalDate(newAppointment) : undefined
               }
@@ -788,6 +796,13 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
               }}
               required={true}
               // disabledDates={dateDisablers.noPast}
+            /> */}
+            <DefaultDatePicker
+              value={newAppointment}
+              onChange={(val) => {
+                setNewAppointment(val.target.value);
+              }}
+              required
             />
           </div>
           <Button type="submit" variant="greenTheme">
@@ -903,7 +918,10 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                                     size={20}
                                   />
                                 </PopoverTriggerDialog>
-                                <PopoverContentDialog className="w-80">
+                                <PopoverContentDialog
+                                  onOpenAutoFocus={(e) => e.preventDefault()}
+                                  className="w-80"
+                                >
                                   <div className="grid gap-4">
                                     {/* <div className="space-y-2">
                                       <h4 className="leading-none font-medium">
@@ -918,7 +936,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                                         >
                                           Reschedule Appointment Date
                                         </Label>
-                                        <DatePicker
+                                        {/* <DatePicker
                                           value={
                                             reschduleDate
                                               ? parseLocalDate(reschduleDate)
@@ -932,14 +950,14 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                                           }}
                                           required={true}
                                           // disabledDates={dateDisablers.noPast}
-                                        />
-                                        {/* <DefaultDatePicker
+                                        /> */}
+                                        <DefaultDatePicker
                                           value={reschduleDate}
                                           onChange={(val) => {
                                             setReschduleDate(val.target.value);
                                           }}
                                           required
-                                        /> */}
+                                        />
                                       </div>
                                     </div>
                                     <div>
