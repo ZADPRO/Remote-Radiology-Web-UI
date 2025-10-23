@@ -1,4 +1,5 @@
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
@@ -12,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+// import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificManager, managerService } from "@/services/managerService";
 import { Camera, FileText, Pencil, X, CircleAlert } from "lucide-react";
@@ -53,7 +54,38 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
 
-  const [formData, setFormData] = useState<ListSpecificManager | null>(null);
+  const [formData, setFormData] = useState<ListSpecificManager | null>({
+    refUserId: 0,
+    refUserCustId: "",
+    refUserFirstName: "",
+    refUserLastName: "",
+    refUserProfileImg: "",
+    profileImgFile: {
+      base64Data: "",
+      contentType: "",
+    },
+
+    refUserDOB: "", // actual value
+    refCODOPhoneNo1CountryCode: "+91",
+    refCODOPhoneNo1: "",
+    refCODOEmail: "",
+
+    refMDDrivingLicense: "",
+    drivingLicenseFile: undefined,
+
+    refMDPan: "",
+    panFile: undefined,
+
+    refMDAadhar: "",
+    aadharFile: undefined,
+
+    refRTId: undefined,
+    refUserAgreementStatus: undefined,
+
+    educationCertificateFiles: [],
+    refUserStatus: true, // default active
+  });
+
   const [files, setFiles] = useState<TempFilesState>({
     profile_img: null,
     aadhar: null,
@@ -569,7 +601,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             <Label htmlFor="dob">
               Date Of Birth <span className="text-red-500">*</span>
             </Label>
-            <DatePicker
+            {/* <DatePicker
               value={
                 formData.refUserDOB
                   ? parseLocalDate(formData.refUserDOB)
@@ -589,6 +621,19 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
                 )
               }
               disabledDates={dateDisablers.noFuture}
+            /> */}
+            <DefaultDatePicker
+              value={formData.refUserDOB}
+              onChange={(val) => {
+                setFormData((prev) => {
+                  if (!prev) return prev; // keep null if formData is null
+                  return {
+                    ...prev,
+                    refUserDOB: val.target.value, // just updating this field
+                  };
+                });
+              }}
+              required
             />
           </div>
 

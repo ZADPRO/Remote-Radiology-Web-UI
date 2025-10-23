@@ -14,13 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 // Define the props interface for EditRadiologist
 interface EditRadiologistProps {
@@ -781,7 +782,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               <Label className="text-sm" htmlFor="dob">
                 Date Of Birth <span className="text-red-500">*</span>
               </Label>
-              <DatePicker
+              {/* <DatePicker
                 value={
                   formData.refUserDOB
                     ? parseLocalDate(formData.refUserDOB)
@@ -795,6 +796,16 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
                     refUserDOB: val?.toLocaleDateString("en-CA") || "",
                   }));
                 }}
+              /> */}
+              <DefaultDatePicker
+                value={formData.refUserDOB}
+                onChange={(val) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    refUserDOB: val.target.value,
+                  }));
+                }}
+                required
               />
             </div>
 

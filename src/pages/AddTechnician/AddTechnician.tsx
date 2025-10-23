@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";import { toast } from "sonner";
+// import DatePicker from "@/components/date-picker";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -21,12 +22,19 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { UploadFile, uploadService } from "@/services/commonServices";
 import { useLocation, useNavigate } from "react-router-dom";
-import { NewTechnician, technicianService } from "@/services/technicianServices";
+import {
+  NewTechnician,
+  technicianService,
+} from "@/services/technicianServices";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ListSpecificScanCenter, scancenterService } from "@/services/scancenterService";
+import {
+  ListSpecificScanCenter,
+  scancenterService,
+} from "@/services/scancenterService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -35,15 +43,13 @@ interface TempFilesState {
   digital_signature: File | null;
 }
 
-
 const AddTechnician: React.FC = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
   const scanCenterId = location.state;
 
-  console.log(scanCenterId)
+  console.log(scanCenterId);
 
   const [formData, setFormData] = useState<NewTechnician>({
     firstname: "",
@@ -59,33 +65,32 @@ const AddTechnician: React.FC = () => {
     trained_ease_qt: false,
     scan_center_id: null,
     license_files: [],
-    
   });
 
- useEffect(() => {
- setFormData((prev) => ({
- ...prev,
- scan_center_id: scanCenterId,
- }));
- }, [scanCenterId]);
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      scan_center_id: scanCenterId,
+    }));
+  }, [scanCenterId]);
 
   const [scanCenterData, setScanCenterData] =
-      useState<ListSpecificScanCenter>();
+    useState<ListSpecificScanCenter>();
 
   const getSpecificScanCenter = async () => {
-      setLoading(true);
-      try {
-        const res = await scancenterService.getSpecificScanCenters(scanCenterId);
-        console.log(res);
-        if (res.status) {
-          setScanCenterData(res.data[0]);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      const res = await scancenterService.getSpecificScanCenters(scanCenterId);
+      console.log(res);
+      if (res.status) {
+        setScanCenterData(res.data[0]);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   console.log(formData);
 
@@ -100,175 +105,192 @@ const AddTechnician: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
 
-    const errorRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-      getSpecificScanCenter();
-    }, []);
+  useEffect(() => {
+    getSpecificScanCenter();
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (error && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [error]);
 
   // Functions moved from subcomponents
-  const handleSingleFileUpload = useCallback(async ({
-    file,
-    fieldName, // e.g., "drivers_license"
-    tempFileKey, // e.g., "drivers_license"
-  }: {
-    file: File;
-    fieldName: keyof NewTechnician;
-    tempFileKey: keyof TempFilesState;
-  }) => {
-    setError("");
-    const formDataObj = new FormData();
-    formDataObj.append("file", file);
+  const handleSingleFileUpload = useCallback(
+    async ({
+      file,
+      fieldName, // e.g., "drivers_license"
+      tempFileKey, // e.g., "drivers_license"
+    }: {
+      file: File;
+      fieldName: keyof NewTechnician;
+      tempFileKey: keyof TempFilesState;
+    }) => {
+      setError("");
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
 
-    try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      try {
+        const response = await uploadService.uploadFile({
+          formFile: formDataObj,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          [fieldName]: response.fileName, // just path to backend
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            [fieldName]: response.fileName, // just path to backend
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          [tempFileKey]: file, // store full File object for UI
-        }));
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          setFiles((prev) => ({
+            ...prev,
+            [tempFileKey]: file, // store full File object for UI
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const uploadAndStoreFile = useCallback(async (
-    file: File,
-    field: keyof NewTechnician,
-    tempField: keyof TempFilesState,
-    uploadFn = uploadService.uploadFile // optional, default upload function
-  ): Promise<void> => {
-    setError("");
-    const formData = new FormData();
-    formData.append("file", file);
+  const uploadAndStoreFile = useCallback(
+    async (
+      file: File,
+      field: keyof NewTechnician,
+      tempField: keyof TempFilesState,
+      uploadFn = uploadService.uploadFile // optional, default upload function
+    ): Promise<void> => {
+      setError("");
+      const formData = new FormData();
+      formData.append("file", file);
 
-    try {
-      const response = await uploadFn({ formFile: formData });
+      try {
+        const response = await uploadFn({ formFile: formData });
 
-      if (response.status) {
-        const result: UploadFile = {
-          file_name: response.fileName,
-          old_file_name: file.name,
-        };
-        console.log(result);
-        setFormData((prev) => ({
-          ...prev,
-          [field]: [...((prev[field] as UploadFile[]) || []), result],
-        }));
+        if (response.status) {
+          const result: UploadFile = {
+            file_name: response.fileName,
+            old_file_name: file.name,
+          };
+          console.log(result);
+          setFormData((prev) => ({
+            ...prev,
+            [field]: [...((prev[field] as UploadFile[]) || []), result],
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          [tempField]: [...((prev[tempField] as File[]) || []), file],
-        }));
-      } else {
-        setError(`Upload failed for file: ${file.name}`);
+          setFiles((prev) => ({
+            ...prev,
+            [tempField]: [...((prev[tempField] as File[]) || []), file],
+          }));
+        } else {
+          setError(`Upload failed for file: ${file.name}`);
+        }
+      } catch (err) {
+        setError(`Error uploading file: ${file.name}`);
       }
-    } catch (err) {
-      setError(`Error uploading file: ${file.name}`);
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const handleDigitalSignatureUpload = useCallback(async (
-    file: File,
-  ) => {
-    setError("");
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
-    setError("");
-    try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+  const handleDigitalSignatureUpload = useCallback(
+    async (file: File) => {
+      setError("");
+      const formDataImg = new FormData();
+      formDataImg.append("profileImage", file);
+      setError("");
+      try {
+        const response = await uploadService.uploadImage({
+          formImg: formDataImg,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          digital_signature: response.fileName,
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            digital_signature: response.fileName,
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          digital_signature: file,
-        }));
-      } else {
-        setError("Digital signature upload failed.");
+          setFiles((prev) => ({
+            ...prev,
+            digital_signature: file,
+          }));
+        } else {
+          setError("Digital signature upload failed.");
+        }
+      } catch (err) {
+        setError("Error uploading digital signature.");
       }
-    } catch (err) {
-      setError("Error uploading digital signature.");
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
-  const handleRemoveSingleFile = useCallback((
-    key: "profile_img" | "drivers_license" | "digital_signature"
-  ) => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: null,
-    }));
+  const handleRemoveSingleFile = useCallback(
+    (key: "profile_img" | "drivers_license" | "digital_signature") => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
 
-    setFormData((prev) => ({
-      ...prev,
-      [key]: "",
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [key]: "",
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
-  const handleRemoveMultiFile = useCallback((key: "license_files", index: number) => {
-    setFiles((prev) => ({
-      ...prev,
-      [key]: (prev[key] as File[]).filter((_, i) => i !== index),
-    }));
+  const handleRemoveMultiFile = useCallback(
+    (key: "license_files", index: number) => {
+      setFiles((prev) => ({
+        ...prev,
+        [key]: (prev[key] as File[]).filter((_, i) => i !== index),
+      }));
 
-    const formKey = "license_files";
+      const formKey = "license_files";
 
-    setFormData((prev) => ({
-      ...prev,
-      [formKey]: (prev[formKey] as UploadFile[]).filter((_, i) => i !== index),
-    }));
-  }, [setFormData, setFiles]);
+      setFormData((prev) => ({
+        ...prev,
+        [formKey]: (prev[formKey] as UploadFile[]).filter(
+          (_, i) => i !== index
+        ),
+      }));
+    },
+    [setFormData, setFiles]
+  );
 
-  const handleProfileImageUpload = useCallback(async (file: File) => {
-    setError("");
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
+  const handleProfileImageUpload = useCallback(
+    async (file: File) => {
+      setError("");
+      const formDataImg = new FormData();
+      formDataImg.append("profileImage", file);
 
-    try {
-      const response = await uploadService.uploadImage({ formImg: formDataImg });
+      try {
+        const response = await uploadService.uploadImage({
+          formImg: formDataImg,
+        });
 
-      if (response.status) {
-        setFormData((prev) => ({
-          ...prev,
-          profile_img: response.fileName,
-        }));
+        if (response.status) {
+          setFormData((prev) => ({
+            ...prev,
+            profile_img: response.fileName,
+          }));
 
-        setFiles((prev) => ({
-          ...prev,
-          profile_img: file,
-        }));
-
-      } else {
-        setError("Profile image upload failed");
+          setFiles((prev) => ({
+            ...prev,
+            profile_img: file,
+          }));
+        } else {
+          setError("Profile image upload failed");
+        }
+      } catch (err) {
+        setError("Error uploading profile image");
       }
-    } catch (err) {
-      setError("Error uploading profile image");
-    }
-  }, [setFormData, setFiles, setError]);
+    },
+    [setFormData, setFiles, setError]
+  );
 
   const renderStepForm = () => {
     return (
@@ -289,7 +311,10 @@ const AddTechnician: React.FC = () => {
                   className="bg-white"
                   value={formData.firstname}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, firstname: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      firstname: e.target.value,
+                    }))
                   }
                   required
                 />
@@ -323,7 +348,10 @@ const AddTechnician: React.FC = () => {
                   className="bg-white"
                   value={formData.social_security_no}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, social_security_no: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      social_security_no: e.target.value,
+                    }))
                   }
                   required
                 />
@@ -345,7 +373,10 @@ const AddTechnician: React.FC = () => {
                       }))
                     }
                   >
-                    <SelectTrigger disabled className="bg-white disabled:opacity-100 disabled:pointer-events-none">
+                    <SelectTrigger
+                      disabled
+                      className="bg-white disabled:opacity-100 disabled:pointer-events-none"
+                    >
                       <SelectValue placeholder="Country Code" />
                     </SelectTrigger>
                     <SelectContent>
@@ -376,12 +407,22 @@ const AddTechnician: React.FC = () => {
                 <Label className="text-sm " htmlFor="dob">
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
-                <DatePicker
+                {/* <DatePicker
                   value={formData.dob ? parseLocalDate(formData.dob) : undefined}
                   onChange={(val) => {
                     setFormData((prev) => ({
                       ...prev,
                       dob: val?.toLocaleDateString("en-CA") || "",
+                    }));
+                  }}
+                  required
+                /> */}
+                <DefaultDatePicker
+                  value={formData.dob}
+                  onChange={(val) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      dob: val.target.value,
                     }));
                   }}
                   required
@@ -499,7 +540,9 @@ const AddTechnician: React.FC = () => {
                         </span>
                         <button
                           type="button"
-                          onClick={() => handleRemoveMultiFile("license_files", index)}
+                          onClick={() =>
+                            handleRemoveMultiFile("license_files", index)
+                          }
                           className="text-red-500 hover:text-red-700"
                         >
                           <X className="w-4 h-4" />
@@ -550,7 +593,9 @@ const AddTechnician: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() => handleRemoveSingleFile("digital_signature")}
+                      onClick={() =>
+                        handleRemoveSingleFile("digital_signature")
+                      }
                       className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
                     >
                       <X className="w-4 h-4" />
@@ -570,8 +615,17 @@ const AddTechnician: React.FC = () => {
     setError(null); // Clear previous errors
 
     // Basic validation before submission
-    if (!formData.firstname || !formData.email || !formData.phone || !formData.dob || !formData.social_security_no || !formData.drivers_license ) {
-      setError("Please fill in all required fields and upload all necessary documents.");
+    if (
+      !formData.firstname ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.dob ||
+      !formData.social_security_no ||
+      !formData.drivers_license
+    ) {
+      setError(
+        "Please fill in all required fields and upload all necessary documents."
+      );
       setLoading(false);
       return;
     }
@@ -592,7 +646,8 @@ const AddTechnician: React.FC = () => {
     }
 
     // Social Security Number validation (basic check, can be enhanced)
-    if (formData.social_security_no.length < 9) { // Assuming a minimum length for SSN
+    if (formData.social_security_no.length < 9) {
+      // Assuming a minimum length for SSN
       setError("Please enter a valid Social Security Number.");
       setLoading(false);
       return;
@@ -610,12 +665,10 @@ const AddTechnician: React.FC = () => {
       } else {
         setError(res.message);
       }
-
     } catch (error) {
       console.error("Submission error:", error);
       setError("An unexpected error occurred during submission.");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -737,7 +790,7 @@ const AddTechnician: React.FC = () => {
               </span>
             </div>
             {error && (
-               <Alert ref={errorRef} variant="destructive" className="mt-2">
+              <Alert ref={errorRef} variant="destructive" className="mt-2">
                 <CircleAlert />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>

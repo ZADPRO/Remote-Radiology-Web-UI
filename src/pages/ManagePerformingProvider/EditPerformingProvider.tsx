@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
@@ -21,7 +21,8 @@ import {
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "../Routes/AuthContext";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 // Define the props interface for EditPerformingProvider
 interface EditPerformingProviderProps {
@@ -712,7 +713,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               <Label className="text-sm" htmlFor="dob">
                 Date Of Birth <span className="text-red-500">*</span>
               </Label>
-              <DatePicker
+              {/* <DatePicker
                 value={
                   formData.refUserDOB
                     ? parseLocalDate(formData.refUserDOB)
@@ -726,6 +727,16 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                     refUserDOB: val?.toLocaleDateString("en-CA") || "",
                   }));
                 }}
+              /> */}
+              <DefaultDatePicker
+                value={formData.refUserDOB}
+                onChange={(val) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    refUserDOB: val.target.value,
+                  }));
+                }}
+                required
               />
             </div>
             <div className="flex flex-col gap-1.5 w-full">

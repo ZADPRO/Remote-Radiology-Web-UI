@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { toast } from "sonner";
 import {
   Select,
@@ -29,7 +29,8 @@ import {
   wgDoctorService,
 } from "@/services/wgdoctorService";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -507,7 +508,7 @@ const AddWGPerformingProvider: React.FC = () => {
                 <Label className="text-sm " htmlFor="dob">
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
-                <DatePicker
+                {/* <DatePicker
                   value={
                     formData.dob ? parseLocalDate(formData.dob) : undefined
                   }
@@ -515,6 +516,16 @@ const AddWGPerformingProvider: React.FC = () => {
                     setFormData((prev) => ({
                       ...prev,
                       dob: val?.toLocaleDateString("en-CA") || "",
+                    }));
+                  }}
+                  required
+                /> */}
+                 <DefaultDatePicker
+                  value={formData.dob}
+                  onChange={(val) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      dob: val.target.value,
                     }));
                   }}
                   required
