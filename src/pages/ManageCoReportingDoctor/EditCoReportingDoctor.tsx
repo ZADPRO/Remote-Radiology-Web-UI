@@ -149,9 +149,12 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.viewURL,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -182,9 +185,12 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
       const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -308,8 +314,11 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
       const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempLicense = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -344,9 +353,12 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
       const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          digital_signature: response.fileName,
+          digital_signature: cleanUrl,
           digitalSignatureFile: null,
         }));
 
