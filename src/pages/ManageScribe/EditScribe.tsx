@@ -1,4 +1,5 @@
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
@@ -12,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import { ListSpecificScribe, scribeService } from "@/services/scribeService";
 import { Camera, FileText, Pencil, X } from "lucide-react";
@@ -637,7 +638,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
             <Label className="text-sm" htmlFor="dob">
               Date Of Birth <span className="text-red-500">*</span>
             </Label>
-            <DatePicker
+            {/* <DatePicker
               value={
                 formData.refUserDOB
                   ? parseLocalDate(formData.refUserDOB)
@@ -649,6 +650,16 @@ const EditScribe: React.FC<EditScribeProps> = ({
                 setFormData((prev) => ({
                   ...prev,
                   refUserDOB: val?.toLocaleDateString("en-CA") || "",
+                }));
+              }}
+              required
+            /> */}
+            <DefaultDatePicker
+              value={formData.refUserDOB}
+              onChange={(val) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  refUserDOB: val.target.value,
                 }));
               }}
               required

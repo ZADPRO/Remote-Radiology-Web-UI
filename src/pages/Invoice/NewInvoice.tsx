@@ -1,4 +1,4 @@
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import { Input } from "@/components/ui/input";
@@ -21,10 +21,11 @@ import { ArrowLeft, Loader, Trash } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { parseLocalDate } from "@/lib/dateUtils";
+// import { parseLocalDate } from "@/lib/dateUtils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import SignatureCanvas from "react-signature-canvas";
 import { uploadService } from "@/services/commonServices";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 type Props = {};
 
@@ -574,7 +575,7 @@ const NewInvoice: React.FC<Props> = () => {
               <p className="text-sm sm:text-base font-bold">Billing Period</p>
               <div className="flex flex-col gap-2 sm:gap-3 items-center">
                 <div className="w-full">
-                  <DatePicker
+                  {/* <DatePicker
                     value={
                       input.billingfrom
                         ? parseLocalDate(input.billingfrom)
@@ -582,11 +583,12 @@ const NewInvoice: React.FC<Props> = () => {
                     }
                     placeholder="From Date"
                     disabled
-                  />
+                  /> */}
+                  <DefaultDatePicker value={input.billingfrom} disabled />
                 </div>
                 <p className="text-sm sm:text-base font-bold">To</p>
                 <div className="w-full">
-                  <DatePicker
+                  {/* <DatePicker
                     value={
                       input.billingto
                         ? parseLocalDate(input.billingto)
@@ -594,7 +596,8 @@ const NewInvoice: React.FC<Props> = () => {
                     }
                     placeholder="To Date"
                     disabled
-                  />
+                  /> */}
+                  <DefaultDatePicker value={input.billingto} disabled />
                 </div>
               </div>
             </div>

@@ -383,6 +383,7 @@ const NotesReport: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    
     if (syncStatus.Notes) {
       let lesionsVal: LesionsVal = {} as LesionsVal;
 
@@ -425,11 +426,13 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
+       <div style="text-align: left;">
     ${
       ScanCenterImg?.base64Data
         ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
         : ""
     }
+    </div>
       </div>
     <table width="100" border-collapse: collapse; font-size: 14px;">
       <tbody>
@@ -1063,8 +1066,8 @@ ${
    textEditor.CommonImpresRecommTextVal.value === "Q" ||
    textEditor.CommonImpresRecommTextVal.value === "U" ||
    textEditor.CommonImpresRecommTextVal.value === "Y" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "2NA" ||
-   textEditor.CommonImpresRecommTextRightVal.value === "3NA"
+   textEditor.CommonImpresRecommTextVal.value === "2NA" ||
+   textEditor.CommonImpresRecommTextVal.value === "3NA"
      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
@@ -1136,7 +1139,32 @@ ${
     reportFormData,
     syncStatus,
     patientHistory,
+    textEditor.patientHistory.value,
     textEditor.breastImplant.value,
+    textEditor.breastImplantImage.value,
+    textEditor.symmetry.value,
+    textEditor.symmetryImage.value,
+    textEditor.breastDensityandImageRight.value,
+    textEditor.breastDensityandImageRightImage.value,
+    textEditor.nippleAreolaSkinRight.value,
+    textEditor.nippleAreolaSkinRightImage.value,
+    textEditor.LesionsRight.value,
+    textEditor.LesionsRightImage.value,
+    textEditor.ComparisonPrior.value,
+    textEditor.grandularAndDuctalTissueRight.value,
+    textEditor.grandularAndDuctalTissueRightImage.value,
+    textEditor.LymphNodesRight.value,
+    textEditor.LymphNodesRightImage.value,
+    textEditor.breastDensityandImageLeft.value,
+    textEditor.breastDensityandImageLeftImage.value,
+    textEditor.nippleAreolaSkinLeft.value,
+    textEditor.nippleAreolaSkinLeftImage.value,
+    textEditor.grandularAndDuctalTissueLeft.value,
+    textEditor.grandularAndDuctalTissueLeftImage.value,
+    textEditor.LesionsLeft.value,
+    textEditor.LymphNodesLeft.value,
+    textEditor.LymphNodesLeftImage.value,
+    textEditor.ComparisonPriorLeft.value,
     textEditor.addendumText.value,
   ]);
 

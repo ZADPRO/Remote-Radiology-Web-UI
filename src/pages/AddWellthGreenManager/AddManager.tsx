@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import { toast } from "sonner";
 import {
   Select,
@@ -24,8 +24,9 @@ import { UploadFile, uploadService } from "@/services/commonServices";
 import { useNavigate } from "react-router-dom";
 import { managerService, NewManager } from "@/services/managerService";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+// import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -587,7 +588,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <Label className="text-sm " htmlFor="dob">
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
-          <DatePicker
+          {/* <DatePicker
             value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
               setFormData((prev) => ({
@@ -597,6 +598,16 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             }}
             required
             disabledDates={dateDisablers.noFuture}
+          /> */}
+          <DefaultDatePicker
+            value={formData.dob}
+            onChange={(val) => {
+              setFormData((prev) => ({
+                ...prev,
+                dob: val.target.value,
+              }));
+            }}
+            required
           />
         </div>
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { reportService, ViewFileRes } from "@/services/reportService";
 import LoadingOverlay from "../ui/CustomComponents/loadingOverlay";
+import { ViewPDFHelper } from "./ViewPDFHelper";
 
 type Props = {
   fileName: string;
@@ -40,11 +41,12 @@ const FileView: React.FC<Props> = (props) => {
                 <>
                   {fileData?.data.contentType === "application/pdf" ? (
                     <div>
-                      <iframe
+                      <ViewPDFHelper base64Data={fileData.data.base64Data} />
+                      {/* <iframe
                         src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
                         title="Report Preview"
                         className="w-full h-[80vh] border rounded-md"
-                      />
+                      /> */}
                     </div>
                   ) : (
                     <div className="w-full h-[80vh]  flex items-center justify-center overflow-auto">

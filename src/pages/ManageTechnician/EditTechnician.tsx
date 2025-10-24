@@ -1,4 +1,5 @@
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
@@ -12,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
+// import { dateDisablers, parseLocalDate } from "@/lib/dateUtils";
 import { uploadService } from "@/services/commonServices";
 import {
   ListSpecificTechnician,
@@ -576,7 +577,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
             <Label className="text-sm" htmlFor="dob">
               Date Of Birth <span className="text-red-500">*</span>
             </Label>
-            <DatePicker
+            {/* <DatePicker
               value={
                 formData.refUserDOB
                   ? parseLocalDate(formData.refUserDOB)
@@ -591,6 +592,16 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                 }));
               }}
               disabledDates={dateDisablers.noFuture}
+            /> */}
+            <DefaultDatePicker
+              value={formData.refUserDOB}
+              onChange={(val) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  refUserDOB: val.target.value,
+                }));
+              }}
+              required
             />
           </div>
 

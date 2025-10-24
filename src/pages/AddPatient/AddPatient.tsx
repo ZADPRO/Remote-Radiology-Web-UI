@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import DatePicker from "@/components/date-picker";
+// import DatePicker from "@/components/date-picker";
 import {
   Select,
   SelectContent,
@@ -22,11 +22,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { uploadService } from "@/services/commonServices";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
-import {
-  dateDisablers,
-  formatLocalDate,
-  parseLocalDate,
-} from "@/lib/dateUtils";
+// import {
+//   dateDisablers,
+//   formatLocalDate,
+//   parseLocalDate,
+// } from "@/lib/dateUtils";
 import { NewPatient, patientService } from "@/services/patientService";
 import { toast } from "sonner";
 import {
@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { formatReadableDate } from "@/utlis/calculateAge";
+import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 interface TempFilesState {
   profile_img: File | null;
@@ -637,7 +638,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <Label className="text-sm " htmlFor="dob">
             Date Of Appointment <span className="text-red-500">*</span>
           </Label>
-          <DatePicker
+          {/* <DatePicker
             value={
               formData.dateofAppointment
                 ? parseLocalDate(formData.dateofAppointment)
@@ -651,6 +652,16 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             }}
             required
             disabledDates={dateDisablers.noPast}
+          /> */}
+          <DefaultDatePicker
+            value={formData.dateofAppointment}
+            onChange={(val) => {
+              setFormData((prev) => ({
+                ...prev,
+                dateofAppointment: val.target.value,
+              }));
+            }}
+            required
           />
         </div>
       </div>
@@ -693,7 +704,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           />
         </div>
 
-        <div className="flex flex-col gap-1.5 w-full">
+        {/* <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm " htmlFor="dob">
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
@@ -707,6 +718,22 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             }}
             required
             disabledDates={dateDisablers.noFuture}
+          />
+        </div> */}
+
+        <div className="flex flex-col gap-1.5 w-full">
+          <Label className="text-sm " htmlFor="dob">
+            Date Of Birth <span className="text-red-500">*</span>
+          </Label>
+          <DefaultDatePicker
+            value={formData.dob}
+            onChange={(val) => {
+              setFormData((prev) => ({
+                ...prev,
+                dob: val.target.value,
+              }));
+            }}
+            required
           />
         </div>
       </div>

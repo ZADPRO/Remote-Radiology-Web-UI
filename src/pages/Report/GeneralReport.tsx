@@ -43,7 +43,7 @@ interface TextEditorProps {
 }
 
 interface RightReportProps {
-  changedOne: ChangedOneState;
+  requestVersionRef: React.MutableRefObject<number>;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
@@ -51,17 +51,12 @@ interface RightReportProps {
   handlePatientInputChange: (questionId: number, value: string) => void;
   technicianFormData: ResponseTechnicianForm[];
   textEditor: TextEditorProps;
-  syncStatus: {
-    patientHistory: boolean;
-    breastImplant: boolean;
-    symmetry: boolean;
-  };
   setsyncStatus: any;
   readOnly: boolean;
 }
 
 const GeneralReport: React.FC<RightReportProps> = ({
-  changedOne,
+  requestVersionRef,
   setChangedOne,
   reportFormData,
   handleReportInputChange,
@@ -69,38 +64,36 @@ const GeneralReport: React.FC<RightReportProps> = ({
   handlePatientInputChange,
   // technicianFormData,
   textEditor,
-  syncStatus,
   setsyncStatus,
   readOnly,
 }) => {
   const syncHandleReportChange = (questionId: number, value: string) => {
+    console.log(
+      "GeneralReport.tsx -------------------------- > 79 calling...."
+    );
+
     const isBreastImplant = Object.values(breastImpantQuestions).includes(
       questionId
     );
+    const isSymmetry = Object.values(symmetryQuestions).includes(questionId);
 
-    if (isBreastImplant) {
-      setsyncStatus({
-        ...syncStatus,
-        breastImplant: true,
-      });
-    }
+    setsyncStatus((prev: any) => ({
+      ...prev,
+      breastImplant: isBreastImplant ? true : prev.breastImplant,
+      symmetry: isSymmetry ? true : prev.symmetry,
+    }));
 
-    const symmentry = Object.values(symmetryQuestions).includes(questionId);
-
-    if (symmentry) {
-      setsyncStatus({
-        ...syncStatus,
-        symmetry: true,
-      });
-    }
-
-    setChangedOne({
-      ...changedOne,
-      breastImplantSyncStatus: isBreastImplant ? true : false,
-      breastImplantReportText: isBreastImplant ? true : false,
-      symmetrySyncStatus: symmentry ? true : false,
-      symmetryReportText: symmentry ? true : false,
-    });
+    setChangedOne((prev) => ({
+      ...prev,
+      breastImplantSyncStatus: isBreastImplant
+        ? true
+        : prev.breastImplantSyncStatus,
+      breastImplantReportText: isBreastImplant
+        ? true
+        : prev.breastImplantReportText,
+      symmetrySyncStatus: isSymmetry ? true : prev.symmetrySyncStatus,
+      symmetryReportText: isSymmetry ? true : prev.symmetryReportText,
+    }));
 
     handleReportInputChange(questionId, value);
   };
@@ -128,9 +121,8 @@ const GeneralReport: React.FC<RightReportProps> = ({
           /> */}
 
         <PatientHistory
-          syncStatus={syncStatus}
+          requestVersionRef={requestVersionRef}
           setsyncStatus={setsyncStatus}
-          changedOne={changedOne}
           setChangedOne={setChangedOne}
           patientHistoryNotes={textEditor.patientHistory.value}
           setPatientHistoryNotes={textEditor.patientHistory.onChange}
@@ -169,19 +161,22 @@ const GeneralReport: React.FC<RightReportProps> = ({
             </div>
             <TextEditor
               value={textEditor.breastImplant.value}
-              onChange={textEditor.breastImplant.onChange}
-              onManualEdit={() => {
-                if (syncStatus.breastImplant) {
-                  setsyncStatus({
-                    ...syncStatus,
+              onChange={(val, _, source) => {
+                textEditor.breastImplant.onChange(val);
+                if (source === "user") {
+                  setsyncStatus((prev: any) => ({
+                    ...prev,
                     breastImplant: false,
-                  });
+                  }));
                 }
-                setChangedOne({
-                  ...changedOne,
+              }}
+              onManualEdit={() => {
+                setChangedOne((prev: any) => ({
+                  ...prev,
                   breastImplantSyncStatus: true,
                   breastImplantReportText: true,
-                });
+                }));
+                ++requestVersionRef.current;
               }}
             />
           </div>
@@ -194,10 +189,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
               value={textEditor.breastImplantImage.value}
               onChange={textEditor.breastImplantImage.onChange}
               onManualEdit={() => {
-                setChangedOne({
-                  ...changedOne,
+                setChangedOne((prev: any) => ({
+                  ...prev,
                   breastimplantImageText: true,
-                });
+                }));
+                ++requestVersionRef.current;
               }}
               placeholder="📷 Paste image..."
             />
@@ -275,19 +271,22 @@ const GeneralReport: React.FC<RightReportProps> = ({
             </div>
             <TextEditor
               value={textEditor.symmetry.value}
-              onChange={textEditor.symmetry.onChange}
-              onManualEdit={() => {
-                if (syncStatus.symmetry) {
-                  setsyncStatus({
-                    ...syncStatus,
+              onChange={(val, _, source) => {
+                textEditor.symmetry.onChange(val);
+                if (source === "user") {
+                  setsyncStatus((prev: any) => ({
+                    ...prev,
                     symmetry: false,
-                  });
+                  }));
                 }
-                setChangedOne({
-                  ...changedOne,
+              }}
+              onManualEdit={() => {
+                setChangedOne((prev: any) => ({
+                  ...prev,
                   symmetrySyncStatus: true,
                   symmetryReportText: true,
-                });
+                }));
+                ++requestVersionRef.current;
               }}
             />
           </div>
@@ -300,10 +299,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
               value={textEditor.symmetryImage.value}
               onChange={textEditor.symmetryImage.onChange}
               onManualEdit={() => {
-                setChangedOne({
-                  ...changedOne,
+                setChangedOne((prev:any) => ({
+                  ...prev,
                   symmetryImageText: true,
-                });
+                }));
+                ++requestVersionRef.current;
               }}
               placeholder="📷 Paste image..."
             />
