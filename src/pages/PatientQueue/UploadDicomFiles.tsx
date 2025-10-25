@@ -322,6 +322,7 @@ const UploadDicomFiles: React.FC = () => {
       console.log(res);
 
       if (res.status) {
+        console.log("res", res);
         setDicomFiles(res.DicomData || []);
       }
     } catch (error) {
@@ -435,42 +436,39 @@ const UploadDicomFiles: React.FC = () => {
 
           <div className="shadow-md p-4">
             <h1>Uploaded Files</h1>
-            {dicomFiles?.filter((file) => file.Side === side).length === 0 ||
-            dicomFiles.length === 0 ? (
+            {dicomFiles?.filter((file) => file.Side === side).length === 0 ? (
               <div className="text-center text-sm text-gray-400 py-8">
                 No files uploaded
               </div>
             ) : (
-              dicomFiles?.map((file, index) => (
-                <>
-                  {file.Side === side && (
+              dicomFiles
+                ?.filter((file) => file.Side === side)
+                .map((file, index) => {
+                  const displayName =
+                    file.FileName.split("/").pop() || "unknown_file";
+
+                  return (
                     <div
                       key={index}
                       className="flex justify-between items-center border-b py-3 px-2 rounded bg-[#f8f3eb] hover:bg-[#fffaf0] transition"
                     >
                       <div className="flex flex-col text-sm">
-                        <span className="text-gray-500">{file.FileName}</span>
+                        <span className="text-gray-500 truncate">
+                          {displayName}
+                        </span>
                         <span className="font-medium text-gray-800">
                           {file.Side}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-4">
-                        {/* <Download
-                      onClick={() => {
-                        downloadDicom(file.DFId, file.FileName);
-                      }}
-                      size={16}
-                      className="text-gray-600 cursor-pointer hover:bg-accent"
-                    /> */}
-
                         <Trash2
                           size={16}
                           className="text-red-600 cursor-pointer hover:bg-accent"
                           onClick={async () => {
                             setLoading(true);
                             try {
-                              await removeDicom([file.DFId]);
+                              await removeDicom([file.DFId]); // use full URL internally
                               handleListDicom();
                             } finally {
                               setLoading(false);
@@ -479,9 +477,8 @@ const UploadDicomFiles: React.FC = () => {
                         />
                       </div>
                     </div>
-                  )}
-                </>
-              ))
+                  );
+                })
             )}
           </div>
         </div>

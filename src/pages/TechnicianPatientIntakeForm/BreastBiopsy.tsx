@@ -393,32 +393,40 @@ const BreastBiopsy: React.FC<Props> = ({
                 {getPatientAnswer(165) &&
                   (() => {
                     try {
-                      const fileNames: string[] = JSON.parse(
+                      const fileUrls: string[] = JSON.parse(
                         getPatientAnswer(165)
                       );
 
-                      console.log(fileNames);
-                      return fileNames.length > 0 ? (
+                      return fileUrls.length > 0 ? (
                         <div className="w-full space-y-2">
-                          {fileNames.map((fileName, index) => (
-                            <div
-                              key={index}
-                              className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                            >
-                              {/* File name (downloadable) */}
-                              <FileView fileName={fileName} />
+                          {fileUrls.map((fileUrl: string, index: number) => {
+                            // Extract only the file name for display
+                            const displayName =
+                              fileUrl.split("/").pop() || "unknown_file";
 
-                              {/* Delete icon */}
+                            return (
                               <div
-                                className="cursor-pointer"
-                                onClick={() => handleDeleteFile(fileName, 165)}
+                                key={index}
+                                className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                               >
-                                {readOnly ? null : (
-                                  <Trash size={15} className="text-red-500" />
+                                <FileView
+                                  displayName={displayName}
+                                  fileUrl={fileUrl}
+                                />
+
+                                {!readOnly && (
+                                  <div
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      handleDeleteFile(fileUrl, 165)
+                                    } 
+                                  >
+                                    <Trash size={15} className="text-red-500" />
+                                  </div>
                                 )}
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : null;
                     } catch (err) {
