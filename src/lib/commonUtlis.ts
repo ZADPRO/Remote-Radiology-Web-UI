@@ -77,6 +77,16 @@ export const downloadAllDicom = async (
   window.URL.revokeObjectURL(url);
 };
 
+// Utility to extract the file name from an S3 URL
+const getFileNameFromS3Url = (url: string) => {
+  try {
+    const pathname = new URL(url).pathname;
+    return pathname.substring(pathname.lastIndexOf("/") + 1);
+  } catch {
+    return "unknown_file";
+  }
+};
+
 export const downloadDicom = async (fileId: number, filename: string) => {
   const token = localStorage.getItem("token");
 
@@ -85,8 +95,18 @@ export const downloadDicom = async (fileId: number, filename: string) => {
     return;
   }
 
-  // Encrypt the payload with your token
-  const payload = encrypt({ fileId: fileId }, token);
+  // Determine if filename is an S3 URL
+  const isS3 =
+    filename.startsWith("http") || filename.includes("amazonaws.com");
+  let downloadName = filename;
+
+  if (isS3) {
+    // Extract actual file name from S3 URL
+    downloadName = getFileNameFromS3Url(filename);
+  }
+
+  // Encrypt the payload
+  const payload = encrypt({ fileId }, token);
 
   try {
     const response = await axios.post(
@@ -110,8 +130,8 @@ export const downloadDicom = async (fileId: number, filename: string) => {
     const a = document.createElement("a");
     a.href = url;
 
-    // Sanitize filename (basic)
-    const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    // Sanitize filename
+    const safeFilename = downloadName.replace(/[^a-zA-Z0-9._-]/g, "_");
     a.download = safeFilename;
 
     document.body.appendChild(a);
