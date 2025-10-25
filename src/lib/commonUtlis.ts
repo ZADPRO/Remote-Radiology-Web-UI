@@ -1,5 +1,7 @@
 import { decrypt, encrypt } from "@/Helper";
 import axios from "axios";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 import { tokenService } from "./tokenService";
 
 export function downloadDocumentFile(
@@ -122,17 +124,87 @@ export const downloadDicom = async (fileId: number, filename: string) => {
   }
 };
 
-export const handleAllDownloadDicom = async (selectedRowIds: number[]) => {
-  const token = localStorage.getItem("token");
+// export const handleAllDownloadDicom = async (selectedRowIds: number[]) => {
+//   const token = localStorage.getItem("token");
 
+//   if (!token) {
+//     console.error("No token found in localStorage");
+//     return;
+//   }
+
+//   console.log({ refAppointmentId: selectedRowIds });
+
+//   // Fix: The payload structure should match what the backend expects
+//   const payload = encrypt({ refAppointmentId: selectedRowIds }, token);
+
+//   try {
+//     const response = await axios.post(
+//       `${
+//         import.meta.env.VITE_API_URL_PROFILESERVICE
+//       }/technicianintakeform/overalldownloaddicom`,
+//       { encryptedData: payload },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//         responseType: "blob",
+//       }
+//     );
+
+//     const blob = response.data;
+
+//     // Get filename from response headers if available
+//     const contentDisposition = response.headers["content-disposition"];
+//     let filename = "DicomFiles.zip";
+
+//     if (contentDisposition) {
+//       const filenameMatch = contentDisposition.match(/filename=(.+)/);
+//       if (filenameMatch) {
+//         filename = filenameMatch[1].replace(/"/g, "");
+//       }
+//     }
+
+//     // Create download link
+//     const url = window.URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = filename;
+
+//     document.body.appendChild(a);
+//     a.click();
+//     document.body.removeChild(a);
+//     window.URL.revokeObjectURL(url);
+//   } catch (error: any) {
+//     console.error("Download failed:", error);
+//     // Handle error appropriately
+//     if (error.response?.status === 404) {
+//       alert("No DICOM files found for the selected appointments.");
+//     } else {
+//       alert("Failed to download DICOM files. Please try again.");
+//     }
+//   }
+// };
+
+interface DicomFile {
+  fileName: string;
+  url: string;
+  side: string;
+}
+
+interface DicomFolders {
+  [folderName: string]: DicomFile[];
+}
+
+export const handleAllDownloadDicom = async (
+  selectedRowIds: number[]
+): Promise<void> => {
+  const token = localStorage.getItem("token");
   if (!token) {
     console.error("No token found in localStorage");
     return;
   }
 
-  console.log({ refAppointmentId: selectedRowIds });
-
-  // Fix: The payload structure should match what the backend expects
   const payload = encrypt({ refAppointmentId: selectedRowIds }, token);
 
   try {
@@ -146,63 +218,83 @@ export const handleAllDownloadDicom = async (selectedRowIds: number[]) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        responseType: "blob",
       }
     );
 
-    const blob = response.data;
+    const decrypted = decrypt(response.data.data, response.data.token);
+    localStorage.setItem("token", response.data.token);
 
-    // Get filename from response headers if available
-    const contentDisposition = response.headers["content-disposition"];
-    let filename = "DicomFiles.zip";
+    if (!decrypted.status) {
+      alert(decrypted.message || "Failed to fetch DICOM URLs.");
+      return;
+    }
 
-    if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename=(.+)/);
-      if (filenameMatch) {
-        filename = filenameMatch[1].replace(/"/g, "");
+    const folders: DicomFolders = decrypted.folders || {};
+    if (Object.keys(folders).length === 0) {
+      alert("No DICOM files found for the selected appointments.");
+      return;
+    }
+
+    const zip = new JSZip();
+
+    for (const rawFolderName of Object.keys(folders)) {
+      const folderNameParts = rawFolderName.split("/");
+      const folderName = folderNameParts[folderNameParts.length - 1];
+
+      const folder = zip.folder(folderName);
+      if (!folder) continue;
+
+      for (const file of folders[rawFolderName]) {
+        try {
+          const fileResponse = await axios.get(file.url, {
+            responseType: "blob",
+          });
+
+          // ✅ Use only the last segment of the file path as the filename
+          const fileNameParts = file.fileName.split("/");
+          const fileNameOnly = fileNameParts[fileNameParts.length - 1];
+
+          folder.file(fileNameOnly, fileResponse.data);
+        } catch (err) {
+          console.error(`Failed to fetch file ${file.fileName}:`, err);
+        }
       }
     }
 
-    // Create download link
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const zipFilename = `DicomFiles_${new Date()
+      .toISOString()
+      .slice(0, 10)}.zip`;
+    saveAs(zipBlob, zipFilename);
 
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    console.log("✅ ZIP file generated and downloaded:", zipFilename);
   } catch (error: any) {
-    console.error("Download failed:", error);
-    // Handle error appropriately
-    if (error.response?.status === 404) {
-      alert("No DICOM files found for the selected appointments.");
-    } else {
-      alert("Failed to download DICOM files. Please try again.");
-    }
+    console.error("❌ Fetch failed:", error);
+    alert("Failed to retrieve DICOM URLs. Please try again.");
   }
 };
 
 export const removeDicom = async (refDFId: number[]) => {
   const token = localStorage.getItem("token");
   console.log(refDFId);
-  
-    const payload = encrypt({ refDFId: refDFId }, token);
- 
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/deleteDicom`,
-      { encryptedData: payload },
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      }
-    );
- 
-    const decryptedData = decrypt(res.data.data, res.data.token);
-    tokenService.setToken(res.data.token);
-    console.log(decryptedData);
-    return decryptedData;
-}
+
+  const payload = encrypt({ refDFId: refDFId }, token);
+
+  const res = await axios.post(
+    `${
+      import.meta.env.VITE_API_URL_PROFILESERVICE
+    }/technicianintakeform/deleteDicom`,
+    { encryptedData: payload },
+    {
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const decryptedData = decrypt(res.data.data, res.data.token);
+  tokenService.setToken(res.data.token);
+  console.log(decryptedData);
+  return decryptedData;
+};

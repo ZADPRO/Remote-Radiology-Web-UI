@@ -18,7 +18,7 @@ type Side = "Left" | "Right";
 interface UploadedFile {
   name: string;
   size: number;
-  status: "uploading" | "completed";
+  status: "uploading" | "completed" | "pending";
   uploadedSize: number;
   file: File;
   savedName?: string;
@@ -81,6 +81,93 @@ const UploadDicomFiles: React.FC = () => {
   //   fileInputRefs[side].current?.click();
   // };
 
+  // const handleUpload = (e: React.ChangeEvent<HTMLInputElement>, side: Side) => {
+  //   const selectedFiles = Array.from(e.target.files || []);
+  //   setError((prev) => ({ ...prev, [side]: "" }));
+
+  //   selectedFiles.forEach((file) => {
+  //     const isDuplicate = files.some(
+  //       (f) => f.name === file.name && f.side === side
+  //     );
+  //     if (isDuplicate) {
+  //       setError((prev) => ({
+  //         ...prev,
+  //         [side]: `File "${file.name}" is already uploaded.`,
+  //       }));
+  //       scrollToError(side);
+  //       return;
+  //     }
+
+  //     const newFile: UploadedFile = {
+  //       name: file.name,
+  //       size: file.size,
+  //       status: "uploading",
+  //       uploadedSize: 0,
+  //       file,
+  //       side,
+  //     };
+
+  //     setFiles((prev) => [...prev, newFile]);
+
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+
+  //     technicianService
+  //       .getDicomUploadUrl(file.name)
+  //       .then(async (res) => {
+  //         const { uploadURL, viewURL } = res;
+  //         console.log("\n\n\nuploadURL", uploadURL);
+
+  //         await technicianService.uploadDicomToS3(
+  //           uploadURL,
+  //           file,
+  //           (progressEvent: AxiosProgressEvent) => {
+  //             const loaded = progressEvent.loaded ?? 0;
+  //             setFiles((prev) =>
+  //               prev.map((f) =>
+  //                 f.name === file.name && f.side === side
+  //                   ? { ...f, uploadedSize: loaded }
+  //                   : f
+  //               )
+  //             );
+  //           }
+  //         );
+
+  //         // Once uploaded, mark it as completed
+  //         const cleanUrl = viewURL.includes("?")
+  //           ? viewURL.split("?")[0]
+  //           : viewURL;
+  //         setFiles((prev) =>
+  //           prev.map((f) =>
+  //             f.name === file.name && f.side === side
+  //               ? {
+  //                   ...f,
+  //                   uploadedSize: file.size,
+  //                   status: "completed",
+  //                   savedName: cleanUrl,
+  //                 }
+  //               : f
+  //           )
+  //         );
+
+  //         console.log("✅ File uploaded successfully to:", viewURL);
+  //       })
+  //       .catch((error) => {
+  //         console.error("❌ Upload failed:", error);
+  //         setFiles((prev) =>
+  //           prev.filter((f) => !(f.name === file.name && f.side === side))
+  //         );
+  //         setError((prev) => ({
+  //           ...prev,
+  //           [side]: `${file.name} failed to upload.`,
+  //         }));
+  //         scrollToError(side);
+  //       });
+  //   });
+
+  //   e.target.value = "";
+  // };
+
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>, side: Side) => {
     const selectedFiles = Array.from(e.target.files || []);
     setError((prev) => ({ ...prev, [side]: "" }));
@@ -92,7 +179,7 @@ const UploadDicomFiles: React.FC = () => {
       if (isDuplicate) {
         setError((prev) => ({
           ...prev,
-          [side]: `File "${file.name}" is already uploaded.`,
+          [side]: `File "${file.name}" is already selected.`,
         }));
         scrollToError(side);
         return;
@@ -101,68 +188,13 @@ const UploadDicomFiles: React.FC = () => {
       const newFile: UploadedFile = {
         name: file.name,
         size: file.size,
-        status: "uploading",
+        status: "pending", // ✅ changed from uploading
         uploadedSize: 0,
         file,
         side,
       };
 
       setFiles((prev) => [...prev, newFile]);
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      technicianService
-        .getDicomUploadUrl(file.name)
-        .then(async (res) => {
-          const { uploadURL, viewURL } = res;
-          console.log("\n\n\nuploadURL", uploadURL);
-
-          await technicianService.uploadDicomToS3(
-            uploadURL,
-            file,
-            (progressEvent: AxiosProgressEvent) => {
-              const loaded = progressEvent.loaded ?? 0;
-              setFiles((prev) =>
-                prev.map((f) =>
-                  f.name === file.name && f.side === side
-                    ? { ...f, uploadedSize: loaded }
-                    : f
-                )
-              );
-            }
-          );
-
-          // Once uploaded, mark it as completed
-          const cleanUrl = viewURL.includes("?")
-            ? viewURL.split("?")[0]
-            : viewURL;
-          setFiles((prev) =>
-            prev.map((f) =>
-              f.name === file.name && f.side === side
-                ? {
-                    ...f,
-                    uploadedSize: file.size,
-                    status: "completed",
-                    savedName: cleanUrl,
-                  }
-                : f
-            )
-          );
-
-          console.log("✅ File uploaded successfully to:", viewURL);
-        })
-        .catch((error) => {
-          console.error("❌ Upload failed:", error);
-          setFiles((prev) =>
-            prev.filter((f) => !(f.name === file.name && f.side === side))
-          );
-          setError((prev) => ({
-            ...prev,
-            [side]: `${file.name} failed to upload.`,
-          }));
-          scrollToError(side);
-        });
     });
 
     e.target.value = "";
@@ -174,32 +206,104 @@ const UploadDicomFiles: React.FC = () => {
     );
   };
 
+  // const handleSaveDicom = async () => {
+  //   setLoading(true);
+  //   setFinalError("");
+  //   try {
+  //     const payload = {
+  //       patientId: appointmentDetails.userId,
+  //       appointmentId: appointmentDetails.appointmentId,
+  //       dicom_files: files
+  //         .filter((file) => file.status === "completed" && file.savedName)
+  //         .map((file) => ({
+  //           file_name: file.savedName,
+  //           old_file_name: file.name,
+  //           side: file.side,
+  //         })),
+  //     };
+  //     console.log("\n\n\nDicom saved files payload => ", payload);
+  //     const res = await technicianService.saveDicom(payload);
+
+  //     if (res.status) {
+  //       navigate(-1);
+  //     } else {
+  //       setFinalError(res.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     setFinalError("Something went wrong");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSaveDicom = async () => {
     setLoading(true);
     setFinalError("");
+
     try {
+      // Mark all as uploading
+      setFiles((prev) =>
+        prev.map((f) => ({ ...f, status: "uploading", uploadedSize: 0 }))
+      );
+
+      const uploadedFiles = [];
+
+      for (const file of files) {
+        const { uploadURL, viewURL } =
+          await technicianService.getDicomUploadUrl({
+            fileName: file.name,
+            side: file.side,
+            appointmentId: appointmentDetails.appointmentId,
+            patientId: appointmentDetails.userId,
+          });
+
+        await technicianService.uploadDicomToS3(
+          uploadURL,
+          file.file,
+          (progressEvent: AxiosProgressEvent) => {
+            const loaded = progressEvent.loaded ?? 0;
+            setFiles((prev) =>
+              prev.map((f) =>
+                f.name === file.name && f.side === file.side
+                  ? { ...f, uploadedSize: loaded }
+                  : f
+              )
+            );
+          }
+        );
+
+        const cleanUrl = viewURL.includes("?")
+          ? viewURL.split("?")[0]
+          : viewURL;
+        uploadedFiles.push({
+          file_name: cleanUrl,
+          old_file_name: file.name,
+          side: file.side,
+        });
+
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.name === file.name && f.side === file.side
+              ? { ...f, status: "completed", savedName: cleanUrl }
+              : f
+          )
+        );
+      }
+
       const payload = {
         patientId: appointmentDetails.userId,
         appointmentId: appointmentDetails.appointmentId,
-        dicom_files: files
-          .filter((file) => file.status === "completed" && file.savedName)
-          .map((file) => ({
-            file_name: file.savedName,
-            old_file_name: file.name,
-            side: file.side,
-          })),
+        dicom_files: uploadedFiles,
       };
-      console.log("\n\n\nDicom saved files payload => ", payload);
-      const res = await technicianService.saveDicom(payload);
 
-      if (res.status) {
-        navigate(-1);
-      } else {
-        setFinalError(res.message);
-      }
+      const res = await technicianService.saveDicomsToS3(payload);
+
+      if (res.status) navigate(-1);
+      else setFinalError(res.message);
     } catch (error) {
-      console.log(error);
-      setFinalError("Something went wrong");
+      console.error(error);
+      setFinalError("Something went wrong while uploading");
     } finally {
       setLoading(false);
     }
@@ -438,7 +542,7 @@ const UploadDicomFiles: React.FC = () => {
           variant="pinkTheme"
           onClick={handleSaveDicom}
           className="w-full sm:w-auto mx-4 sm:mx-0"
-          disabled={files.some((file) => file.status !== "completed")}
+          disabled={files.length === 0 || loading}
         >
           Submit
         </Button>
