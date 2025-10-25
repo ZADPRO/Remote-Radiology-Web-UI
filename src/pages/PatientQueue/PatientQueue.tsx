@@ -1170,25 +1170,21 @@ const PatientQueue: React.FC = () => {
                 <span className="font-xs flex flex-wrap justify-center items-center gap-x-2 gap-y-0 text-center">
                   {appointmentComplete === "noteligible" ? (
                     <>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Not
                       </span>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Eligible
                       </span>
                     </>
                   ) : (
-                      <span className="text-center">{formName}</span>
+                    <span className="text-center">{formName}</span>
                   )}
                 </span>
               )}
-              {(formName !== "Not Yet Started" || role?.type === "patient") && (<span className="text-center">&nbsp;-&nbsp;</span>)}
+              {(formName !== "Not Yet Started" || role?.type === "patient") && (
+                <span className="text-center">&nbsp;-&nbsp;</span>
+              )}
               {statusContent}
               {isEditDialogBroucherOpen && (
                 <Dialog
@@ -1833,38 +1829,43 @@ const PatientQueue: React.FC = () => {
                             </label>
                           </div>
 
-                          <div className=" space-y-2 px-2 lg:px-10 my-5">
+                          <div className="space-y-2 px-2 lg:px-10 my-5">
                             {reportData.length > 0 ? (
                               <>
-                                {reportData.map((fileName, index) => (
-                                  <div
-                                    key={index}
-                                    className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                                  >
-                                    {/* File name (downloadable) */}
-                                    <FileView
-                                      fileName={fileName.refORFilename}
-                                    />
+                                {reportData.map((file, index) => {
+                                  const displayName =
+                                    file.refORFilename.split("/").pop() ||
+                                    "unknown_file";
 
-                                    {/* Delete icon */}
+                                  return (
                                     <div
-                                      className="cursor-pointer"
-                                      onClick={() =>
-                                        handleDeleteFile(
-                                          fileName.refORId,
-                                          row.original.refAppointmentId,
-                                          row.original.refUserId,
-                                          currentOpen
-                                        )
-                                      }
+                                      key={index}
+                                      className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                                     >
-                                      <Trash
-                                        size={15}
-                                        className="text-red-500"
+                                      <FileView
+                                        displayName={displayName} 
+                                        fileUrl={file.refORFilename} 
                                       />
+
+                                      <div
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleDeleteFile(
+                                            file.refORId,
+                                            row.original.refAppointmentId,
+                                            row.original.refUserId,
+                                            currentOpen
+                                          )
+                                        }
+                                      >
+                                        <Trash
+                                          size={15}
+                                          className="text-red-500"
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </>
                             ) : (
                               <div>No Report Uploaded</div>
