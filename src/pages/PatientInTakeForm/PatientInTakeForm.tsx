@@ -304,6 +304,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       controlData.appointmentId,
       controlData.userId
     );
+    console.log("\n\n\ncontrolData", controlData);
 
     const overide =
       formData.find((item) => item.questionId === 10)?.answer === "YES"
@@ -337,15 +338,29 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       .toString()
       .padStart(2, "0")}`;
 
-    console.log("payload", payload);
-    const filename = `${payload.patientId}_${payload.appointmentId}_ConsentForm_${formattedTimestamp}.pdf`;
+    console.log("\n\n\n\npayload\n\n", locationState);
+    const filename = `${locationState?.custId}_ConsentForm_${formattedTimestamp}.pdf`;
+    const token = localStorage.getItem("token");
 
-    const uploadRes = await axios.get(
+    const payloadS3 = {
+      fileType: "consentForm", // or "consentForm"
+      fileUrl: filename,
+      patientId: payload.patientId,
+      appointmentId: payload.appointmentId,
+    };
+
+    const uploadRes = await axios.post(
       `${import.meta.env.VITE_API_URL_AUTH}/storage/s3/final-report-upload`,
-      { params: { filename } }
+      payloadS3, // <-- this is the body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // <-- actual HTTP header
+          "Content-Type": "application/json",
+        },
+      }
     );
 
-    const uploadUrl = uploadRes.data.url;
+    const uploadUrl = uploadRes.data.data.url;
     console.log("Generated Upload URL:", uploadUrl);
 
     const pdfBlob = await generateReportsPdfBlob(controlData.consent);

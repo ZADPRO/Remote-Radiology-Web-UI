@@ -395,25 +395,34 @@ const ImagingSection: React.FC<ImagingSectionProps> = React.memo(
             {answers.reportDetails &&
               (() => {
                 try {
-                  const fileNames: string[] = JSON.parse(answers.reportDetails);
-                  return fileNames.length > 0 ? (
+                  const fileUrls: string[] = JSON.parse(answers.reportDetails);
+
+                  return fileUrls.length > 0 ? (
                     <div className="w-full space-y-2">
-                      {fileNames.map((fileName: string, index: number) => (
-                        <div
-                          key={index}
-                          className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                        >
-                          <FileView fileName={fileName} />
-                          {!readOnly && (
-                            <div
-                              className="cursor-pointer"
-                              onClick={() => handleDeleteFile(fileName)}
-                            >
-                              <Trash size={15} className="text-red-500" />
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                      {fileUrls.map((fileUrl: string, index: number) => {
+                        const displayName =
+                          fileUrl.split("/").pop() || "unknown_file";
+
+                        return (
+                          <div
+                            key={index}
+                            className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
+                          >
+                            <FileView
+                              displayName={displayName}
+                              fileUrl={fileUrl}
+                            />
+                            {!readOnly && (
+                              <div
+                                className="cursor-pointer"
+                                onClick={() => handleDeleteFile(fileUrl)} 
+                              >
+                                <Trash size={15} className="text-red-500" />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : null;
                 } catch (err) {

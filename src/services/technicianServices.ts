@@ -440,14 +440,19 @@ export const technicianService = {
     });
   },
 
-  getDicomUploadUrl: async (fileName: string) => {
+  getDicomUploadUrl: async (payload: {
+    fileName: string;
+    side: string;
+    appointmentId: any;
+    patientId: any;
+  }) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/technicianintakeform/dicomuploadurl`,
-      { fileName },
+      payload, 
       {
         headers: {
           Authorization: token,
@@ -482,6 +487,29 @@ export const technicianService = {
     tokenService.setToken(res.data.token);
     return decryptedData;
   },
+
+  saveDicomsToS3: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const encryptedPayload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/savedicom`,
+      { encryptedData: encryptedPayload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
   downLoadDicom: async (fileId: number) => {
     const token = localStorage.getItem("token");
     const payload = encrypt({ fileId: fileId }, token);
