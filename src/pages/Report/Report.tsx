@@ -3187,7 +3187,7 @@ const Report: React.FC = () => {
               .toString()
               .padStart(2, "0")}`;
 
-            const filename = `${patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            const filename = `${patientDetails.refUserCustId}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
             console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
