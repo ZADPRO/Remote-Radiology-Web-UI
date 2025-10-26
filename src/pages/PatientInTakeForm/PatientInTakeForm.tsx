@@ -339,7 +339,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       .padStart(2, "0")}`;
 
     console.log("\n\n\n\npayload\n\n", locationState);
-    const filename = `${locationState?.name}_ConsentForm_${formattedTimestamp}.pdf`;
+    const filename = `${locationState?.custId}_ConsentForm_${formattedTimestamp}.pdf`;
     const token = localStorage.getItem("token");
 
     const payloadS3 = {
