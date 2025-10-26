@@ -2376,12 +2376,12 @@ const Report: React.FC = () => {
            <div>
            <div style="text-align: left;">
         ${
-    ScanCenterImg
-      ? ScanCenterImg.contentType === "url"
-        ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
-        : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-      : ""
-  }
+          ScanCenterImg
+            ? ScanCenterImg.contentType === "url"
+              ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+              : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+            : ""
+        }
         </div>
           </div>
         <table width="100" border-collapse: collapse; font-size: 14px;">
@@ -3191,18 +3191,33 @@ const Report: React.FC = () => {
             console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
-            const uploadRes = await axios.get(
+            const token = localStorage.getItem("token");
+
+            const payloadS3 = {
+              fileType: "finalReport", // or "consentForm"
+              fileUrl: filename,
+              appointmentId: payload.appointmentId,
+              patientId: payload.patientId,
+            };
+
+            const uploadRes = await axios.post(
               `${
                 import.meta.env.VITE_API_URL_AUTH
               }/storage/s3/final-report-upload`,
-              { params: { filename } }
+              payloadS3, // <-- this is the body
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`, // <-- actual HTTP header
+                  "Content-Type": "application/json",
+                },
+              }
             );
 
-            const uploadUrl = uploadRes.data.url;
+            const uploadUrl = uploadRes.data.data.url;
             console.log("Generated Upload URL:", uploadUrl);
 
             // 2️⃣ Step 2: Generate PDF blob (instead of downloading)
-            console.log("\n\n\n\n\npayload", payload)
+            console.log("\n\n\n\n\npayload", payload.reportTextContent);
             const pdfBlob = await generateReportsPdfBlob(
               payload.reportTextContent
             );

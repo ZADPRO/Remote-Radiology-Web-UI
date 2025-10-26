@@ -151,7 +151,6 @@ function processContentSpacing(content: any): any {
 
   if (typeof content === "object" && content !== null) {
     // Log every node for debugging
-    console.log(content);
 
     // Table: force full width
     if (content.table && content.table.body) {
