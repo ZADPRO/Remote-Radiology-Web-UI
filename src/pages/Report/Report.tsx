@@ -67,7 +67,11 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
   nippleAreolaSkinRightQuestions,
+  lesionsRightQuestions,
   symmetryQuestions,
+  ComparisonPriorLeftQuestion,
+  ComparisonPriorRightQuestion,
+  lesionsLeftQuestions,
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
@@ -82,6 +86,7 @@ import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
+import { LesionsVal } from "./Lisons/LesionsRightString";
 import axios from "axios";
 import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 
@@ -351,6 +356,7 @@ const Report: React.FC = () => {
   });
 
   const [AutoReportAccess, setAutoReportAccess] = useState(false);
+  const [AutoChangeAccess, setAutoChangeAccess] = useState(true);
 
   // const hasProcessedRef = useRef<{ hash: string | null }>({ hash: null });
 
@@ -554,6 +560,8 @@ const Report: React.FC = () => {
         q.questionId === questionId ? { ...q, answer: value } : q
       )
     );
+
+    ++requestVersionRef.current;
   };
 
   const handlePatientInputChange = (questionId: number, value: string) => {
@@ -1125,19 +1133,10 @@ const Report: React.FC = () => {
             )?.text || "",
         }));
 
-        console.log(
-          "--------->@@@",
-          response.reportTextContentData[0].refRTPatientHistorySyncStatus
-        );
-
         if (
           response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
           false
         ) {
-          console.log(
-            "--------->@@@",
-            response.appointmentStatus[0].refAppointmentPatietHistory
-          );
           setPatientHistory(
             response.appointmentStatus[0].refAppointmentPatietHistory
           );
@@ -1218,21 +1217,14 @@ const Report: React.FC = () => {
         }
 
         //Breast Implant
-        if (
-          !(
-            response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTBreastImplantSyncStatus) {
           setBreastImplantRight(
             response.reportTextContentData[0].refRTBreastImplantReportText
           );
         }
 
         //symmentry
-        if (
-          !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
-        ) {
+        if (!response.reportTextContentData[0].refRTSymmetrySyncStatus) {
           setSymmetry(
             response.reportTextContentData[0].refRTSymmetryReportText
           );
@@ -1240,10 +1232,8 @@ const Report: React.FC = () => {
 
         //breastDensity Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTBreastDensityandImageRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTBreastDensityandImageRightSyncStatus
         ) {
           setBreastDensityandImageRight(
             response.reportTextContentData[0]
@@ -1253,10 +1243,8 @@ const Report: React.FC = () => {
 
         //NippleAreola Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTNippleAreolaSkinRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTNippleAreolaSkinRightSyncStatus
         ) {
           setNippleAreolaSkinRight(
             response.reportTextContentData[0]
@@ -1266,10 +1254,8 @@ const Report: React.FC = () => {
 
         //Glandular Right
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTGrandularAndDuctalTissueRightSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueRightSyncStatus
         ) {
           setGrandularAndDuctalTissueRight(
             response.reportTextContentData[0]
@@ -1278,12 +1264,7 @@ const Report: React.FC = () => {
         }
 
         //Lymphnode Right
-        if (
-          !(
-            response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTLymphNodesRightSyncStatus) {
           setLymphNodesRight(
             response.reportTextContentData[0].refRTLymphNodesRightReportText
           );
@@ -1305,10 +1286,8 @@ const Report: React.FC = () => {
 
         //breastDensity Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTBreastDensityandImageLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTBreastDensityandImageLeftSyncStatus
         ) {
           setBreastDensityandImageLeft(
             response.reportTextContentData[0]
@@ -1318,10 +1297,7 @@ const Report: React.FC = () => {
 
         //NippleAreola Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTNippleAreolaSkinLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0].refRTNippleAreolaSkinLeftSyncStatus
         ) {
           setNippleAreolaSkinLeft(
             response.reportTextContentData[0]
@@ -1331,10 +1307,8 @@ const Report: React.FC = () => {
 
         //Glandular Left
         if (
-          !(
-            response.reportTextContentData[0]
-              .refRTGrandularAndDuctalTissueLeftSyncStatus || false
-          )
+          !response.reportTextContentData[0]
+            .refRTGrandularAndDuctalTissueLeftSyncStatus
         ) {
           setGrandularAndDuctalTissueLeft(
             response.reportTextContentData[0]
@@ -1343,12 +1317,7 @@ const Report: React.FC = () => {
         }
 
         //Lymphnode Left
-        if (
-          !(
-            response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
-            false
-          )
-        ) {
+        if (!response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus) {
           setLymphNodesLeft(
             response.reportTextContentData[0].refRTLymphNodesLeftReportText
           );
@@ -1397,6 +1366,10 @@ const Report: React.FC = () => {
         //   }
         // }
 
+        // console.log('Report.tsx -------------------------- >  1400  ',  response.reportTextContentData[0]?.refRTBreastImplantSyncStatus !==
+        //             false);
+        //             console.log('Report.tsx -------------------------- >  1401  ',  response.reportTextContentData[0]?.refRTBreastImplantReportText);
+
         setsyncStatus({
           patientHistory:
             response.reportTextContentData[0].refRTPatientHistorySyncStatus !==
@@ -1441,32 +1414,32 @@ const Report: React.FC = () => {
             response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
             false,
           Notes:
-            !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes,
+            !stateData.readOnly && role?.id === 8
+              ? false
+              : response.reportTextContentData[0]?.refRTSyncStatus === null
+              ? true
+              : response.reportTextContentData[0]?.refRTSyncStatus,
           ImpressionsRecommendations: true,
           symmetry:
             response.reportTextContentData[0]?.refRTSymmetrySyncStatus !==
             false,
         });
 
-        console.log(
-          "Report.tsx -------------------------- >  1448  ",
-          !stateData.readOnly && role?.id === 8 ? false : syncStatus.Notes
-        );
-
         if (!stateData.readOnly && role?.id === 8) {
-          setChangedOne({
-            ...changedOne,
+          setChangedOne((prev: any) => ({
+            ...prev,
             syncStatus: true,
-          });
-        } else {
-          setsyncStatus({
-            ...syncStatus,
-            Notes:
-              response.reportTextContentData[0]?.refRTSyncStatus === null
-                ? true
-                : response.reportTextContentData[0]?.refRTSyncStatus,
-          });
+          }));
         }
+        //  else {
+        //   setsyncStatus({
+        //     ...syncStatus,
+        //     Notes:
+        //       response.reportTextContentData[0]?.refRTSyncStatus === null
+        //         ? true
+        //         : response.reportTextContentData[0]?.refRTSyncStatus,
+        //   });
+        // }
 
         setUserDetails(response.userDeatils[0]);
         setPatintDetails(response.patientDetails[0]);
@@ -1774,14 +1747,14 @@ const Report: React.FC = () => {
         setNotes(
           `
           <div>
-   <div style="text-align: right;">
+   <div style="text-align: left;">
   ${
-         ScanCenterImg
-           ? ScanCenterImg.contentType === "url"
-             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
-             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-           : ""
-       }
+    ScanCenterImg
+      ? ScanCenterImg.contentType === "url"
+        ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+        : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+      : ""
+  }
 </div>
       </div>
            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -1829,9 +1802,25 @@ const Report: React.FC = () => {
                     
                 </tr>
             </table>
-           <br/>
-  
-  <h2><strong>QT ULTRASOUND BREAST IMAGING</strong></h2>
+           ${
+             performingProviderName.length > 0 ||
+             verifyingProviderName.length > 0
+               ? `
+      <br/>
+  ${
+    performingProviderName.length > 0
+      ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+      : ``
+  }${
+                   false // verifyingProviderName.length > 0
+                     ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+                     : ``
+                 }
+      `
+               : ``
+           }
+
+ <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
   
   <br/>
 
@@ -1848,42 +1837,20 @@ const Report: React.FC = () => {
             `
             <br/>
              <h3><strong>RIGHT BREAST:</strong></h3>
-  <p><strong>IMPRESSION:</strong></p>
-  <p>${mainImpressionRecommendation.impressionTextRight}</p>
- <p> ${optionalImpressionRecommendation.impressionTextRight}</p><br />
+  <p><strong>IMPRESSION:</strong></p><br />
 
-  <p><strong>RECOMMENDATION:</strong></p>
- <p> ${mainImpressionRecommendation.recommendationTextRight}</p>
-  <p>${optionalImpressionRecommendation.recommendationTextRight}</p>
-
-  <br />
-  <p><i>${commonImpressRecomm.textRight}</i></p>
+  <p><strong>RECOMMENDATION:</strong></p><br />
 
   <br/>
   <br/>
 
     <h3><strong>LEFT BREAST:</strong></h3>
-  <p><strong>IMPRESSION:</strong></p>
-  <p>${mainImpressionRecommendation.impressionText}</p>
- <p> ${optionalImpressionRecommendation.impressionText}</p><br />
+  <p><strong>IMPRESSION:</strong></p><br />
 
-  <p><strong>RECOMMENDATION:</strong></p>
- <p> ${mainImpressionRecommendation.recommendationText}</p>
-  <p>${optionalImpressionRecommendation.recommendationText}</p>
+  <p><strong>RECOMMENDATION:</strong></p><br />
 
-  <br />
-  <p><i>${commonImpressRecomm.text}</i></p>
-  <br/>
-  <strong><i><p>Patients are encouraged to continue routine annual breast cancer screening as appropriate for their age and risk profile. In addition to imaging, monthly breast self-examinations are recommended. Patients should monitor for any new lumps, focal thickening, changes in breast size or shape, skin dimpling, nipple inversion or discharge, or any other unusual changes. If any new symptoms or palpable abnormalities are identified between scheduled screenings, patients should promptly consult their healthcare provider for further evaluation.</p></i></strong>
-  <strong><i><p>It is important to recognize that even findings which appear benign may warrant periodic imaging follow-up to ensure stability over time. Early detection of changes plays a key role in maintaining long-term breast health.</p></i></strong>
-  <i><p>Nothing in this report is intended to be – nor should it be construed to be – an order or referral or a direction to the treating physician to order any particular diagnostic testing. The treating physician will decide whether or not to order or initiate a consultation for such testing and which qualified facility performs such testing.</p></i>
-  <i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Scars, dense breast tissue, and breast implants can obscure masses and other findings. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the QT Imaging Center where you receive your scan and discussed with your doctor. Even if the doctor reading the QT scan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QT scan findings. Consultation with the doctor reading your QT scan is also available if requested. </p></i>
-  <i><p>The QT Ultrasound Breast Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.” FDA 510k K162372 and K220933 
-  The QT Ultrasound Breast Scanner Model 2000A satisfies the requirements of the Certification Mark of the ECM [CE Mark Certification of the European Union] – No. 0P210730.QTUTQ02” and is ISO 90001 and ISO 13485 compliant. 
-  </p></i>
-  <i><p>QT’s first blinded trial: Malik B, Iuanow E, Klock J. An Exploratory Multi-reader, Multicase Study Comparing Transmission Ultrasound to Mammography on Recall Rates and Detection Rates for Breast Cancer Lesions. Academic Radiology February 2021. https://www.sciencedirect.com/science/article/pii/S1076633220306462 ; https://doi.org/10.1016/j.acra.2020.11.011 </p></i>
-  <i><p>QT’s most recent second blinded trial against DBT: Jiang Y, Iuanow E, Malik B and Klock J. A Multireader Multicase (MRMC) Receiver Operating Characteristic (ROC) Study Evaluating Noninferiority of Quantitative Transmission (QT) Ultrasound to Digital Breast Tomosynthesis (DBT) on Detection and Recall of Breast Lesions. Academic Radiology 2024. https://authors.elsevier.com/sd/article/S1076-6332(23)00716-X </p></i>
-
+  <strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+  <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
             `
         );
         setChangedOne((prev) => ({
@@ -2228,6 +2195,899 @@ const Report: React.FC = () => {
 
   const [mailOption, setMailOption] = useState("");
 
+  function quillWrapContent(html: string): string {
+    if (!html) return "";
+
+    let wrapped = html;
+
+    // Replace <div> with <p> and </div> with </p>
+    wrapped = wrapped.replace(/<div>/gi, "<p>").replace(/<\/div>/gi, "</p>");
+
+    // // Optional: convert consecutive <br> to single <br> for cleaner Quill content
+    // wrapped = wrapped.replace(/(<br\s*\/?>\s*){2,}/gi, "<br>");
+
+    // Wrap content outside <p> with <p> (if any plain text exists)
+    wrapped = wrapped.replace(/(^|>)([^<]+)(?=<|$)/g, (_, p1, p2) => {
+      const text = p2.trim();
+      return text ? `${p1}<p>${text}</p>` : p1;
+    });
+
+    return wrapped;
+  }
+
+  const handleSyncNotesReport = () => {
+    let ReportNotes = "";
+
+    if (syncStatus.Notes) {
+      console.log(
+        "Report.tsx -------------------------- >  2234  ",
+        getReportAnswer(130) === "Present"
+      );
+      const FindAssessmentCategory = (val: string): string => {
+        const O1 = ["0"];
+        const N1 = ["1", "N1"];
+        const N2 = ["1a", "1b", "7", "N2"];
+        const A1 = [
+          "2",
+          "2a",
+          "3",
+          "3a",
+          "3b",
+          "3c",
+          "3d",
+          "3e",
+          "3f",
+          "3g",
+          "4",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "4f",
+          "4g",
+          "4h",
+          "4i1",
+          "4i2",
+          "4j",
+          "4k",
+          "4l",
+          "4m",
+          "4n",
+          "8",
+          "8a",
+          "10",
+          "A1",
+        ];
+        const A2 = ["5", "6a", "A2"];
+        const A3 = ["5a", "7b", "7c", "A3"];
+        const A4 = ["6", "6b", "6c", "6d", "6e", "6f", "6h", "7e", "10a", "A4"];
+
+        if (O1.includes(val))
+          return "0 : Prior breast imaging is needed for interpretation";
+        if (N1.includes(val)) return "N1 (Nomral 1)";
+        if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
+        if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
+        if (A2.includes(val)) return "A2 (Abnormal 2: Possible malignancy)";
+        if (A3.includes(val)) return "A3 (Abnormal 3: Most likely malignant)";
+        if (A4.includes(val)) return "A4 (Abnormal 4: Known malignancy)";
+
+        return ""; // fallback if no match
+      };
+
+      const breastDensityRight =
+        getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
+        "Present"
+          ? true
+          : false;
+
+      const nippleAreolaRight =
+        getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
+        "Present"
+          ? true
+          : false;
+      const glandularRight =
+        getReportAnswer(
+          grandularAndDuctalTissueRightQuestions.grandularSelect
+        ) == "Present"
+          ? true
+          : false;
+      const lessionsRight =
+        getReportAnswer(lesionsRightQuestions.lesionsr) == "Present"
+          ? true
+          : false;
+      const lymphRight =
+        getReportAnswer(LymphNodesRightQuestions.Intramammaryr) == "Present"
+          ? true
+          : false;
+      const comparisonRight =
+        getReportAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ==
+        "Present"
+          ? true
+          : false;
+      const breastDensityLeft =
+        getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
+        "Present"
+          ? true
+          : false;
+      const nippleAreolaLeft =
+        getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
+        "Present"
+          ? true
+          : false;
+      const glandularLeft =
+        getReportAnswer(
+          grandularAndDuctalTissueRightQuestions.grandularSelect
+        ) == "Present"
+          ? true
+          : false;
+      const lessionsLeft =
+        getReportAnswer(lesionsLeftQuestions.lesionsr) == "Present"
+          ? true
+          : false;
+      const lymphLeft =
+        getReportAnswer(LymphNodesLeftQuestions.Intramammaryr) == "Present"
+          ? true
+          : false;
+      const comparisonLeftVal =
+        getReportAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) ==
+        "Present"
+          ? true
+          : false;
+
+      let lesionsVal: LesionsVal = {} as LesionsVal;
+
+      try {
+        lesionsVal = JSON.parse(LesionsRight) as LesionsVal;
+      } catch (err) {
+        console.log(err);
+        lesionsVal = {} as LesionsVal;
+      }
+
+      let lesionsValLeft: LesionsVal = {} as LesionsVal;
+
+      try {
+        lesionsValLeft = JSON.parse(LesionsLeft) as LesionsVal;
+      } catch (err) {
+        console.log(err);
+        lesionsValLeft = {} as LesionsVal;
+      }
+
+      let comparison: string[] = [];
+
+      try {
+        comparison = JSON.parse(ComparisonPrior) as string[];
+      } catch (err) {
+        console.log(err);
+        comparison = [] as string[];
+      }
+
+      let comparisonLeft: string[] = [];
+
+      try {
+        comparisonLeft = JSON.parse(ComparisonPriorLeft) as string[];
+      } catch (err) {
+        console.log(err);
+        comparisonLeft = [] as string[];
+      }
+
+      ReportNotes =
+        `
+           <div>
+           <div style="text-align: left;">
+        ${
+    ScanCenterImg
+      ? ScanCenterImg.contentType === "url"
+        ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+        : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+      : ""
+  }
+        </div>
+          </div>
+        <table width="100" border-collapse: collapse; font-size: 14px;">
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${
+                patientDetails.refUserFirstName
+              }</td>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${
+                patientDetails.refUserDOB
+                  ? formatDateWithAge(patientDetails.refUserDOB)
+                  : ""
+              }</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${
+                patientDetails.refUserGender
+                  ? patientDetails.refUserGender === "female"
+                    ? "F"
+                    : patientDetails.refUserGender.toUpperCase()
+                  : ``
+              }</td>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${
+                assignData?.appointmentStatus[0]?.refSCCustId || ""
+              }, ${ScanCenterAddress}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>USER ID</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${
+                patientDetails.refUserCustId
+              }</td>
+              <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
+              <td style="border: 1px solid #000; padding: 4px;">${formatReadableDate(
+                assignData?.appointmentStatus[0]?.refAppointmentDate
+                  ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
+                  : ""
+              )}</td>
+            </tr>
+          </tbody>
+        </table>
+    
+        ${
+          performingProviderName.length > 0 || verifyingProviderName.length > 0
+            ? `
+          <br/>
+      ${
+        performingProviderName.length > 0
+          ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+          : ``
+      }${
+                false // verifyingProviderName.length > 0
+                  ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+                  : ``
+              }
+          `
+            : ``
+        }
+    
+      <br/>
+      
+      <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
+      
+    
+      ${patientHistory}
+    
+      <br />
+    
+      <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound breast imaging was performed using the QT Scanner. Images were reviewed with the QTviewer in coronal, axial, and sagittal planes.</p>
+    
+      ${
+        getReportAnswer(1) === "Present"
+          ? `
+        <br />
+      <div><strong>BREAST IMPLANTS:</strong><br />${breastImplantRight}${
+              breastImplantImage ? breastImplantImage : ""
+            }</div>
+        `
+          : ``
+      }
+    
+      ${
+        symmetry
+          ? `
+        <br />
+      <div>${symmetry}${symmentryImage ? symmentryImage : ""}</div>
+        `
+          : ``
+      }
+      <br />
+    
+      ${
+        getReportAnswer(130) === "Present"
+          ? `
+        <p><strong>RIGHT BREAST FINDINGS:</strong></p>
+    
+      ${
+        breastDensityRight
+          ? `<span>${breastDensityandImageRight}</span>${
+              breastDensityandImageRightImage.length > 7
+                ? `<span>${breastDensityandImageRightImage}<br/></span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+      ${
+        nippleAreolaRight
+          ? `${nippleAreolaSkinRight}${
+              nippleAreolaSkinRightImage.length > 7
+                ? `<span>${nippleAreolaSkinRightImage}<br/></span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+      ${
+        glandularRight
+          ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueRight}${
+              grandularAndDuctalTissueRightImage.length > 7
+                ? `<span>${grandularAndDuctalTissueRightImage}<br/></span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+      ${
+        lessionsRight
+          ? `${
+              lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
+                ? lesionsVal["simple cyst"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.simplecrstDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        "" +
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["complex cystic structure"] &&
+              lesionsVal["complex cystic structure"].length > 0
+                ? lesionsVal["complex cystic structure"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.complexcrstDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["heterogeneous tissue prominence"] &&
+              lesionsVal["heterogeneous tissue prominence"].length > 0
+                ? lesionsVal["heterogeneous tissue prominence"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.HeterogeneousDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["hypertrophic tissue with microcysts"] &&
+              lesionsVal["hypertrophic tissue with microcysts"].length > 0
+                ? lesionsVal["hypertrophic tissue with microcysts"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.HypertrophicDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["fibronodular density"] &&
+              lesionsVal["fibronodular density"].length > 0
+                ? lesionsVal["fibronodular density"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.fibronodulardensityDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["multiple simple cysts"] &&
+              lesionsVal["multiple simple cysts"].length > 0
+                ? lesionsVal["multiple simple cysts"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.multipleCystsDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["solid mass / nodule"] &&
+              lesionsVal["solid mass / nodule"].length > 0
+                ? lesionsVal["solid mass / nodule"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.solidmassDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }${
+              lesionsVal["others"] && lesionsVal["others"].length > 0
+                ? lesionsVal["others"]
+                    .map((data, index) => {
+                      let dataArray: any[] = [];
+                      const raw = getReportAnswer(
+                        lesionsRightQuestions.OtherDatar
+                      );
+                      dataArray = raw ? JSON.parse(raw) : [];
+
+                      return (
+                        data +
+                        (dataArray[index]?.ImageText
+                          ? dataArray[index].ImageText
+                          : "")
+                      );
+                    })
+                    .join("")
+                : ""
+            }`
+          : ``
+      }
+      ${
+        lymphRight
+          ? `<div><strong>Lymph Nodes: </strong>${LymphNodesRight}${
+              LymphNodesRightImage.length > 7
+                ? `<span>${LymphNodesRightImage}<br/></span>`
+                : "<p><br/></p>"
+            }<div>`
+          : ``
+      }
+      ${
+        comparisonRight
+          ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
+              .map((data, index) => {
+                let dataArray: any[] = [];
+                const raw = getReportAnswer(
+                  ComparisonPriorRightQuestion.LesionCompTable
+                );
+                dataArray = raw ? JSON.parse(raw) : [];
+
+                return (
+                  data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
+                );
+              })
+              .join("<br/>")}</p><br/>`
+          : ``
+      }
+        `
+          : ``
+      }
+      
+      ${
+        getReportAnswer(131) === "Present"
+          ? `
+        <p><strong>LEFT BREAST FINDINGS:</strong></p>
+    
+      ${
+        breastDensityLeft
+          ? `<span>${breastDensityandImageLeft}</span>${
+              breastDensityandImageLeftImage.length > 7
+                ? `<span>${breastDensityandImageLeftImage}<br/></span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+      ${
+        nippleAreolaLeft
+          ? `${nippleAreolaSkinLeft}${
+              nippleAreolaSkinLeftImage.length > 7
+                ? `<span>${nippleAreolaSkinLeftImage}<br/><span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+      ${
+        glandularLeft
+          ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueLeft}${
+              grandularAndDuctalTissueLeftImage.length > 7
+                ? `<span>${grandularAndDuctalTissueLeftImage}<br/></span>`
+                : "<p><br/></p>"
+            }`
+          : ``
+      }
+        ${
+          lessionsLeft
+            ? `${
+                lesionsValLeft["simple cyst"] &&
+                lesionsValLeft["simple cyst"].length > 0
+                  ? lesionsValLeft["simple cyst"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.simplecrstDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          "" +
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["complex cystic structure"] &&
+                lesionsValLeft["complex cystic structure"].length > 0
+                  ? lesionsValLeft["complex cystic structure"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.complexcrstDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["heterogeneous tissue prominence"] &&
+                lesionsValLeft["heterogeneous tissue prominence"].length > 0
+                  ? lesionsValLeft["heterogeneous tissue prominence"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.HeterogeneousDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["hypertrophic tissue with microcysts"] &&
+                lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
+                  ? lesionsValLeft["hypertrophic tissue with microcysts"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.HypertrophicDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["fibronodular density"] &&
+                lesionsValLeft["fibronodular density"].length > 0
+                  ? lesionsValLeft["fibronodular density"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.fibronodulardensityDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["multiple simple cysts"] &&
+                lesionsValLeft["multiple simple cysts"].length > 0
+                  ? lesionsValLeft["multiple simple cysts"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.multipleCystsDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["solid mass / nodule"] &&
+                lesionsValLeft["solid mass / nodule"].length > 0
+                  ? lesionsValLeft["solid mass / nodule"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.solidmassDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }${
+                lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
+                  ? lesionsValLeft["others"]
+                      .map((data, index) => {
+                        let dataArray: any[] = [];
+                        const raw = getReportAnswer(
+                          lesionsLeftQuestions.OtherDatar
+                        );
+                        dataArray = raw ? JSON.parse(raw) : [];
+
+                        return (
+                          data +
+                          (dataArray[index]?.ImageText
+                            ? dataArray[index].ImageText
+                            : "")
+                        );
+                      })
+                      .join("")
+                  : ""
+              }`
+            : ``
+        }
+      ${
+        lymphLeft
+          ? `<div><strong>Lymph Nodes: </strong>${LymphNodesLeft}${
+              LymphNodesLeftImage.length > 7
+                ? `<span>${LymphNodesLeftImage}<br/></span>`
+                : "<p><br/></p>"
+            }</div>`
+          : ``
+      }
+      ${
+        comparisonLeftVal
+          ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
+              .map((data, index) => {
+                let dataArray: any[] = [];
+                const raw = getReportAnswer(
+                  ComparisonPriorLeftQuestion.LesionCompTable
+                );
+                dataArray = raw ? JSON.parse(raw) : [];
+
+                return (
+                  data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
+                );
+              })
+              .join("<br/>")}</p>`
+          : ``
+      }
+        `
+          : ``
+      }
+    
+    
+      ${
+        getReportAnswer(132) === "Present"
+          ? `
+      <p><strong>RIGHT BREAST:</strong></p>
+      ${
+        mainImpressionRecommendation.impressionTextRight &&
+        getReportAnswer(81) === "true"
+          ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+              mainImpressionRecommendation.selectedImpressionIdRight
+            )}</p>`
+          : ``
+      }
+      <strong>Impression:</strong>
+      ${
+        mainImpressionRecommendation.impressionTextRight
+          ? `<br/><p>${mainImpressionRecommendation.impressionTextRight}</p>`
+          : "<p></p>"
+      }
+      ${
+        optionalImpressionRecommendation.impressionTextRight.length > 7
+          ? ` <p> ${optionalImpressionRecommendation.impressionTextRight}</p>`
+          : ""
+      }
+    
+     ${
+       commonImpressRecomm.idRight === "A" ||
+       commonImpressRecomm.idRight === "E" ||
+       commonImpressRecomm.idRight === "I" ||
+       commonImpressRecomm.idRight === "L" ||
+       commonImpressRecomm.idRight === "M" ||
+       commonImpressRecomm.idRight === "Q" ||
+       commonImpressRecomm.idRight === "U" ||
+       commonImpressRecomm.idRight === "Y" ||
+       commonImpressRecomm.idRight === "2" ||
+       commonImpressRecomm.idRight === "3"
+         ? `<p>${commonImpressRecomm.textRight}</p>`
+         : ``
+     }
+    
+      <p><strong>Recommendation:</strong></p>
+    ${
+      mainImpressionRecommendation.recommendationTextRight
+        ? `<p>${mainImpressionRecommendation.recommendationTextRight}</p>`
+        : ""
+    }
+      ${
+        optionalImpressionRecommendation.recommendationTextRight.length > 7
+          ? `<p>${optionalImpressionRecommendation.recommendationTextRight}</p>`
+          : ""
+      }
+    
+       ${
+         commonImpressRecomm.idRight !== "A" &&
+         commonImpressRecomm.idRight !== "E" &&
+         commonImpressRecomm.idRight !== "I" &&
+         commonImpressRecomm.idRight !== "L" &&
+         commonImpressRecomm.idRight !== "M" &&
+         commonImpressRecomm.idRight !== "Q" &&
+         commonImpressRecomm.idRight !== "U" &&
+         commonImpressRecomm.idRight !== "Y" &&
+         commonImpressRecomm.idRight !== "2" &&
+         commonImpressRecomm.idRight !== "3"
+           ? `<p>${commonImpressRecomm.textRight}</p>`
+           : ``
+       }
+        `
+          : ``
+      }
+    
+      ${
+        getReportAnswer(133) === "Present"
+          ? `
+            <br/><p><strong>LEFT BREAST:</strong></p>
+            ${
+              mainImpressionRecommendation.impressionTextRight &&
+              getReportAnswer(81) === "true"
+                ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+                    mainImpressionRecommendation.selectedImpressionId
+                  )}</p>`
+                : ``
+            }
+      <strong>Impression:</strong>
+      ${
+        mainImpressionRecommendation.impressionText
+          ? `<br/><p>${mainImpressionRecommendation.impressionText}</p>`
+          : `<p></p>`
+      }
+      ${
+        optionalImpressionRecommendation.impressionText.length > 7
+          ? ` <p> ${optionalImpressionRecommendation.impressionText}</p>`
+          : ""
+      }
+    
+     ${
+       commonImpressRecomm.id === "A" ||
+       commonImpressRecomm.id === "E" ||
+       commonImpressRecomm.id === "I" ||
+       commonImpressRecomm.id === "L" ||
+       commonImpressRecomm.id === "M" ||
+       commonImpressRecomm.id === "Q" ||
+       commonImpressRecomm.id === "U" ||
+       commonImpressRecomm.id === "Y" ||
+       commonImpressRecomm.id === "2NA" ||
+       commonImpressRecomm.id === "3NA"
+         ? `<p>${commonImpressRecomm.text}</p>`
+         : ``
+     }
+      <p><strong>Recommendation:</strong></p>
+      ${
+        mainImpressionRecommendation.recommendationText
+          ? `<p>${mainImpressionRecommendation.recommendationText}</p>`
+          : ""
+      }
+     ${
+       optionalImpressionRecommendation.impressionText.length > 7
+         ? `<p>${optionalImpressionRecommendation.impressionText}</p>`
+         : ""
+     }
+      
+      ${
+        commonImpressRecomm.id !== "A" &&
+        commonImpressRecomm.id !== "E" &&
+        commonImpressRecomm.id !== "I" &&
+        commonImpressRecomm.id !== "L" &&
+        commonImpressRecomm.id !== "M" &&
+        commonImpressRecomm.id !== "Q" &&
+        commonImpressRecomm.id !== "U" &&
+        commonImpressRecomm.id !== "Y" &&
+        commonImpressRecomm.id !== "2NA" &&
+        commonImpressRecomm.id !== "3NA"
+          ? `<p>${commonImpressRecomm.text}</p>`
+          : ``
+      }
+        `
+          : ``
+      }
+      <br/><strong><i><p>The QT Breast Acoustic CTTM Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+      <br/><strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
+    ` +
+        (signatureText.length > 0 ? "<br/>" + signatureText : "") +
+        (addendumText.length > 0
+          ? "<br/><p><strong>ADDENDUM:</strong></p>" + addendumText
+          : "");
+
+      ReportNotes = quillWrapContent(ReportNotes);
+    } else {
+      if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
+        ReportNotes =
+          Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
+          (addendumText.length > 0
+            ? "<p><strong>ADDENDUM:</strong></p>" + addendumText
+            : "");
+      }
+    }
+
+    return ReportNotes;
+  };
+
   const handleReportSubmit = async (
     movedStatus: string,
     editStatus: boolean,
@@ -2235,12 +3095,15 @@ const Report: React.FC = () => {
   ) => {
     setLoading(true);
     try {
+      await fecthautosave();
+      let notesVal = handleSyncNotesReport();
+
       const payload = {
         reportIntakeForm: reportFormData,
         appointmentId: stateData.appointmentId,
         technicianIntakeForm: [],
         patientIntakeForm: [],
-        reportTextContent: Notes,
+        reportTextContent: notesVal,
         patientId: stateData.userId,
         movedStatus: movedStatus,
         currentStatus: assignData?.appointmentStatus[0]?.refAppointmentComplete,
@@ -2325,6 +3188,7 @@ const Report: React.FC = () => {
               .padStart(2, "0")}`;
 
             const filename = `${patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
             const uploadRes = await axios.get(
@@ -2338,6 +3202,7 @@ const Report: React.FC = () => {
             console.log("Generated Upload URL:", uploadUrl);
 
             // 2️⃣ Step 2: Generate PDF blob (instead of downloading)
+            console.log("\n\n\n\n\npayload", payload)
             const pdfBlob = await generateReportsPdfBlob(
               payload.reportTextContent
             );
@@ -2459,8 +3324,24 @@ const Report: React.FC = () => {
   const [additionalChangesChangeStatus, setAdditionalChangesChangeStatus] =
     useState(false);
 
+  const requestVersionRef = useRef(0);
+
   const fecthautosave = async () => {
-    // i++;
+    const currentRequestVersion = ++requestVersionRef.current;
+    console.log(
+      "Report.tsx / requestVersionRef / 3275 -------------------  ",
+      requestVersionRef.current
+    );
+    // i++
+
+    setAutoChangeAccess(false);
+
+    const tempChange = { ...changedOne };
+    console.log(
+      "Report.tsx / tempChange / 3277 -------------------  ",
+      tempChange.symmetryReportText
+    );
+
     const payload = {
       changedOne: changedOne,
       reportIntakeForm:
@@ -2543,6 +3424,11 @@ const Report: React.FC = () => {
       },
     };
 
+    console.log(
+      "Report.tsx /Payload/ -------------------------- >  3374  ",
+      payload
+    );
+
     const response: {
       appointmentStatus: AppointmentStatus[];
       intakeFormData: ResponsePatientForm[];
@@ -2556,7 +3442,14 @@ const Report: React.FC = () => {
       ListAllSignature: SignatureText[];
     } = await reportService.autosaveReport(payload);
 
-    if (response.status) {
+    if (
+      response.status &&
+      currentRequestVersion === requestVersionRef.current
+    ) {
+      console.log(
+        "Report.tsx / changedOne / 3277 -------------------  ",
+        changedOne.symmetryReportText
+      );
       if (response.ListAllSignature) {
         setSignatureText(
           response.ListAllSignature.map(
@@ -2586,6 +3479,12 @@ const Report: React.FC = () => {
         easeQTReportAccess: response.easeQTReportAccess || false,
         naSystemReportAccess: response.naSystemReportAccess || false,
       }));
+
+      console.log(
+        "Report.tsx -------------------------- >  3406  ",
+        tempChange.impressionRight === changedOne.impressionRight,
+        response.appointmentStatus[0].refAppointmentImpressionRight
+      );
 
       setMainImpressionRecommendation((prev) => ({
         ...prev,
@@ -2658,7 +3557,7 @@ const Report: React.FC = () => {
           response.appointmentStatus[0]
             .refAppointmentRecommendationAdditionalRight,
         //     recommendationTextRight:
-        // MainOptions.map((item) => item.data)
+        // MainOptions.map((item) => item.data)`
         //   .flat()
         //   .find(
         //     (item) =>
@@ -2687,28 +3586,36 @@ const Report: React.FC = () => {
         Commonoptions = NAadditionalOptions;
       }
 
-      setCommonImpressRecomm((prev) => ({
-        ...prev,
-        id: response.appointmentStatus[0]
-          .refAppointmentCommonImpressionRecommendation,
-        text:
-          Commonoptions.find(
-            (opt) =>
-              opt.id ===
-              response.appointmentStatus[0]
-                .refAppointmentCommonImpressionRecommendation
-          )?.text || "",
-        idRight:
+      setCommonImpressRecomm((prev) => {
+        const updated = { ...prev };
+
+        // Left side condition
+        // if (
+        //   tempChange.commonImpressionRecommendation ===
+        //   changedOne.commonImpressionRecommendation
+        // ) {
+        const id =
           response.appointmentStatus[0]
-            .refAppointmentCommonImpressionRecommendationRight,
-        textRight:
-          Commonoptions.find(
-            (opt) =>
-              opt.id ===
-              response.appointmentStatus[0]
-                .refAppointmentCommonImpressionRecommendationRight
-          )?.text || "",
-      }));
+            .refAppointmentCommonImpressionRecommendation;
+        updated.id = id;
+        updated.text = Commonoptions.find((opt) => opt.id === id)?.text || "";
+        // }
+
+        // Right side condition
+        // if (
+        //   tempChange.commonImpressionRecommendationRight ===
+        //   changedOne.commonImpressionRecommendationRight
+        // ) {
+        const idRight =
+          response.appointmentStatus[0]
+            .refAppointmentCommonImpressionRecommendationRight;
+        updated.idRight = idRight;
+        updated.textRight =
+          Commonoptions.find((opt) => opt.id === idRight)?.text || "";
+        // }
+
+        return updated;
+      });
 
       if (
         response.reportTextContentData[0].refRTPatientHistorySyncStatus ===
@@ -2805,7 +3712,10 @@ const Report: React.FC = () => {
 
       //Breast Implant
       if (
-        !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
+        !(
+          response.reportTextContentData[0].refRTBreastImplantReportText ||
+          false
+        )
       ) {
         setBreastImplantRight(
           response.reportTextContentData[0].refRTBreastImplantReportText
@@ -2813,18 +3723,14 @@ const Report: React.FC = () => {
       }
 
       //symmentry
-      if (
-        !(response.reportTextContentData[0].refRTSymmetrySyncStatus || false)
-      ) {
+      if (!response.reportTextContentData[0].refRTSymmetrySyncStatus) {
         setSymmetry(response.reportTextContentData[0].refRTSymmetryReportText);
       }
 
       //breastDensity Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTBreastDensityandImageRightSyncStatus || false
-        )
+        !response.reportTextContentData[0]
+          .refRTBreastDensityandImageRightSyncStatus
       ) {
         setBreastDensityandImageRight(
           response.reportTextContentData[0]
@@ -2834,10 +3740,7 @@ const Report: React.FC = () => {
 
       //NippleAreola Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTNippleAreolaSkinRightSyncStatus || false
-        )
+        !response.reportTextContentData[0].refRTNippleAreolaSkinRightSyncStatus
       ) {
         setNippleAreolaSkinRight(
           response.reportTextContentData[0].refRTNippleAreolaSkinRightReportText
@@ -2846,10 +3749,8 @@ const Report: React.FC = () => {
 
       //Glandular Right
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTGrandularAndDuctalTissueRightSyncStatus || false
-        )
+        !response.reportTextContentData[0]
+          .refRTGrandularAndDuctalTissueRightSyncStatus
       ) {
         setGrandularAndDuctalTissueRight(
           response.reportTextContentData[0]
@@ -2858,12 +3759,7 @@ const Report: React.FC = () => {
       }
 
       //Lymphnode Right
-      if (
-        !(
-          response.reportTextContentData[0].refRTLymphNodesRightSyncStatus ||
-          false
-        )
-      ) {
+      if (!response.reportTextContentData[0].refRTLymphNodesRightSyncStatus) {
         setLymphNodesRight(
           response.reportTextContentData[0].refRTLymphNodesRightReportText
         );
@@ -2873,22 +3769,29 @@ const Report: React.FC = () => {
       // if (
       //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
       // ) {
+      // if (
+      //   tempChange.LesionsRightReportText === changedOne.LesionsRightReportText
+      // ) {
       setLesionsRight(
         response.reportTextContentData[0].refRTLesionsRightReportText
       );
       // }
+      // }
 
       //ComparisonPrior Right
+      // if (
+      //   tempChange.ComparisonPriorReportText ===
+      //   changedOne.ComparisonPriorReportText
+      // ) {
       setComparisonPrior(
         response.reportTextContentData[0].refRTComparisonPriorReportText
       );
+      // }
 
       //breastDensity Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTBreastDensityandImageLeftSyncStatus || false
-        )
+        !response.reportTextContentData[0]
+          .refRTBreastDensityandImageLeftSyncStatus
       ) {
         setBreastDensityandImageLeft(
           response.reportTextContentData[0]
@@ -2898,10 +3801,7 @@ const Report: React.FC = () => {
 
       //NippleAreola Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTNippleAreolaSkinLeftSyncStatus || false
-        )
+        !response.reportTextContentData[0].refRTNippleAreolaSkinLeftSyncStatus
       ) {
         setNippleAreolaSkinLeft(
           response.reportTextContentData[0].refRTNippleAreolaSkinLeftReportText
@@ -2910,10 +3810,8 @@ const Report: React.FC = () => {
 
       //Glandular Left
       if (
-        !(
-          response.reportTextContentData[0]
-            .refRTGrandularAndDuctalTissueLeftSyncStatus || false
-        )
+        !response.reportTextContentData[0]
+          .refRTGrandularAndDuctalTissueLeftSyncStatus
       ) {
         setGrandularAndDuctalTissueLeft(
           response.reportTextContentData[0]
@@ -2922,12 +3820,7 @@ const Report: React.FC = () => {
       }
 
       //Lymphnode Left
-      if (
-        !(
-          response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus ||
-          false
-        )
-      ) {
+      if (!response.reportTextContentData[0].refRTLymphNodesLeftSyncStatus) {
         setLymphNodesLeft(
           response.reportTextContentData[0].refRTLymphNodesLeftReportText
         );
@@ -2937,32 +3830,30 @@ const Report: React.FC = () => {
       // if (
       //   !(response.reportTextContentData[0].refRTLesionsRightS || false)
       // ) {
+      // if (
+      //   tempChange.LesionsLeftReportText === changedOne.LesionsLeftReportText
+      // ) {
       setLesionsLeft(
         response.reportTextContentData[0].refRTLesionsLeftReportText
       );
       // }
+      // }
 
       //ComparisonPrior Left
+      // if (
+      //   tempChange.ComparisonPriorLeftReportText ===
+      //   changedOne.ComparisonPriorLeftReportText
+      // ) {
       setComparisonPriorLeft(
         response.reportTextContentData[0].refRTComparisonPriorLeftReportText
       );
+      // }
 
-      if (
-        !(
-          response.reportTextContentData[0].refRTBreastImplantSyncStatus ||
-          false
-        )
-      ) {
+      if (!response.reportTextContentData[0].refRTBreastImplantSyncStatus) {
         setBreastImplantRight(
           response.reportTextContentData[0].refRTBreastImplantReportText
         );
       }
-
-      console.log(
-        "--->",
-        response.reportTextContentData[0]
-          ?.refRTBreastDensityandImageRightSyncStatus !== false
-      );
 
       setsyncStatus({
         patientHistory:
@@ -3007,7 +3898,10 @@ const Report: React.FC = () => {
         LymphNodesLeft:
           response.reportTextContentData[0]?.refRTLymphNodesLeftSyncStatus !==
           false,
-        Notes: syncStatus.Notes,
+        Notes:
+          response.reportTextContentData[0]?.refRTSyncStatus === null
+            ? true
+            : response.reportTextContentData[0]?.refRTSyncStatus,
         ImpressionsRecommendations: true,
         symmetry:
           response.reportTextContentData[0]?.refRTSymmetrySyncStatus !== false,
@@ -3017,19 +3911,37 @@ const Report: React.FC = () => {
         setReportFormData(response.reportIntakeFormData);
       }
 
+      // if (response.reportIntakeFormData) {
+      //   setReportFormData((prev) => {
+      //     // Map through current form data
+      //     return prev.map((item) => {
+      //       // Check if this question is in the changed lisFt
+      //       if (tempChange.reportQuestion.includes(item.questionId)) {
+      //         // Find the updated question data from response
+      //         const updatedItem = response.reportIntakeFormData.find(
+      //           (r) => r.questionId === item.questionId
+      //         );
+      //         // Replace if found
+      //         return updatedItem ? { ...item, ...updatedItem } : item;
+      //       }
+      //       return item; // otherwise keep the old one
+      //     });
+      //   });
+      // }
+
       // if (!response.easeQTReportAccess) {
       //   setsyncStatus({
       //     ...syncStatus,
       //     Notes: false,
       //   });
       // } else {
-      setsyncStatus({
-        ...syncStatus,
-        Notes:
-          response.reportTextContentData[0]?.refRTSyncStatus === null
-            ? true
-            : response.reportTextContentData[0]?.refRTSyncStatus,
-      });
+      // setsyncStatus({
+      //   ...syncStatus,
+      //   Notes:
+      //     response.reportTextContentData[0]?.refRTSyncStatus === null
+      //       ? true
+      //       : response.reportTextContentData[0]?.refRTSyncStatus,
+      // });
       // }
 
       setChangedOne({
@@ -3108,12 +4020,16 @@ const Report: React.FC = () => {
         assignData
       );
     }
+    setAutoChangeAccess(true);
+    if (requestVersionRef.current >= 500) requestVersionRef.current = 0;
   };
 
   useEffect(() => {
     if (AutoReportAccess) {
       if (!loading) {
-        fecthautosave();
+        if (AutoChangeAccess) {
+          fecthautosave();
+        }
       }
     }
   }, [timeOut]);
@@ -3189,6 +4105,14 @@ const Report: React.FC = () => {
       indexVal: 9,
     },
   ];
+
+  // useEffect(() => {
+  //   console.log("syncStatus", syncStatus);
+  // }, [syncStatus]);
+
+  // useEffect(() => {
+  //   console.log("changedOne", changedOne);
+  // }, [changedOne]);
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
@@ -3792,27 +4716,27 @@ const Report: React.FC = () => {
                 <>
                   {role.id !== 8 && (
                     <>
-                    <Button
-                      variant="greenTheme"
-                      className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
-                      onClick={() => setLoadTemplateStatus(true)}
-                      disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
-                    >
-                      Load Template
-                    </Button>
-                    <Button
-                  // key={index}
-                  variant="greenTheme"
-                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                  onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
-                >
-                  Reset to Default
-                </Button>
+                      <Button
+                        variant="greenTheme"
+                        className="text-xs w-[48%] text-white px-3 py-2 mb-2 min-w-[48%]"
+                        onClick={() => setLoadTemplateStatus(true)}
+                        disabled={tab !== 4 || subTab !== 4 || syncStatus.Notes}
+                      >
+                        Load Template
+                      </Button>
+                      <Button
+                        // key={index}
+                        variant="greenTheme"
+                        className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                        onClick={ReportResetAll}
+                        // disabled={!isAllowed}
+                        // hidden={
+                        //   label == "Insert Signature" &&
+                        //   !(tab === 4 && subTab === 4)
+                        // }
+                      >
+                        Reset to Default
+                      </Button>
                     </>
                   )}
                   <Dialog
@@ -4118,7 +5042,6 @@ const Report: React.FC = () => {
                   </Dialog>
                 </>
                 {/* )} */}
-                
 
                 {reportStages.map(({ label, editStatus, status }, index) => {
                   const isAllowed = stageRoleMap[label]?.includes(role?.type);
@@ -4132,7 +5055,10 @@ const Report: React.FC = () => {
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<br/><strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<br/><strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const notesData = Notes + signatureRow;
                         setNotes(notesData);
                         setsyncStatus({
@@ -4144,14 +5070,17 @@ const Report: React.FC = () => {
                           syncStatus: true,
                           reportTextContent: true,
                         }));
-                        await reportService.AddSignature(
-                          signatureRow,
-                          stateData.appointmentId,
-                          stateData.userId
-                        );
+                        // await reportService.AddSignature(
+                        //   signatureRow,
+                        //   stateData.appointmentId,
+                        //   stateData.userId
+                        // );
                       } else {
                         const date = new Date().toLocaleDateString();
-                        const signatureRow = `<strong><p style="text-align: right;" class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        let signatureRow = `<strong><p class="ql-align-right"><strong>Electronically signed by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        if (role.id === 8) {
+                          signatureRow = `<br/><strong><p class="ql-align-right"><strong>Verified by ${userDetails.refUserFirstName}, on <em>${date}</em></strong></p></strong>`;
+                        }
                         const response: {
                           status: boolean;
                           message: string;
@@ -4168,7 +5097,6 @@ const Report: React.FC = () => {
                               .join("<br/>")
                           );
                         }
-                        fecthautosave();
                       }
 
                       setLoading(false);
@@ -4189,25 +5117,27 @@ const Report: React.FC = () => {
                         !(tab === 4 && subTab === 4)
                       }
                     >
-                      {label}
+                      {label === "Insert Signature" && role.id === 8
+                        ? `Verified`
+                        : label}
                     </Button>
                   );
                 })}
 
                 {role?.id === 8 && (
                   <Button
-                  // key={index}
-                  variant="greenTheme"
-                  className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
-                  onClick={ReportResetAll}
-                  // disabled={!isAllowed}
-                  // hidden={
-                  //   label == "Insert Signature" &&
-                  //   !(tab === 4 && subTab === 4)
-                  // }
-                >
-                  Reset to Default
-                </Button>
+                    // key={index}
+                    variant="greenTheme"
+                    className="text-xs text-white px-3 py-2 w-[48%] break-words whitespace-normal"
+                    onClick={ReportResetAll}
+                    // disabled={!isAllowed}
+                    // hidden={
+                    //   label == "Insert Signature" &&
+                    //   !(tab === 4 && subTab === 4)
+                    // }
+                  >
+                    Reset to Default
+                  </Button>
                 )}
                 <Dialog open={showMailDialog} onOpenChange={setShowMailDialog}>
                   <DialogContent className="sm:max-w-[400px]">
@@ -4277,7 +5207,7 @@ const Report: React.FC = () => {
             <>
               {subTab === 1 ? (
                 <GeneralReport
-                  changedOne={changedOne}
+                  requestVersionRef={requestVersionRef}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -4306,13 +5236,12 @@ const Report: React.FC = () => {
                       onChange: setSymmetryImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={location?.readOnly ? true : false}
                 />
               ) : subTab === 2 ? (
                 <RightReport
-                  changedOne={changedOne}
+                  requestVersionRef={requestVersionRef}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -4363,13 +5292,12 @@ const Report: React.FC = () => {
                       onChange: setLymphNodesRightImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={location?.readOnly ? true : false}
                 />
               ) : subTab === 3 ? (
                 <LeftReport
-                  changedOne={changedOne}
+                  requestVersionRef={requestVersionRef}
                   setChangedOne={setChangedOne}
                   reportFormData={reportFormData}
                   handleReportInputChange={handleReportInputChange}
@@ -4416,7 +5344,6 @@ const Report: React.FC = () => {
                       onChange: setLymphNodesLeftImage,
                     },
                   }}
-                  syncStatus={syncStatus}
                   setsyncStatus={setsyncStatus}
                   readOnly={stateData.readOnly ? true : false}
                 />
@@ -4701,6 +5628,7 @@ const Report: React.FC = () => {
               ) : (
                 subTab === 5 && (
                   <Impression
+                    requestVersionRef={requestVersionRef}
                     additionalChangesChangeStatus={
                       additionalChangesChangeStatus
                     }

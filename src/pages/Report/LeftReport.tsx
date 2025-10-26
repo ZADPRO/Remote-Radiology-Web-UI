@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import BreastDensityandImageQuality from "./BreastDensityandImageQuality/BreastDensityandImageQuality";
 import NippleAreolaSkin from "./NippleAreolaSkin/NippleAreolaSkin";
 import GrandularAndDuctalTissueRight from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRight";
@@ -68,32 +68,23 @@ interface TextEditorProps {
 }
 
 interface LeftReportProps {
-  changedOne: ChangedOneState;
+  requestVersionRef: React.MutableRefObject<number>;
   setChangedOne: React.Dispatch<React.SetStateAction<ChangedOneState>>;
   reportFormData: ReportQuestion[];
   handleReportInputChange: (questionId: number, value: string) => void;
   patientFormData: ResponsePatientForm[];
   textEditor: TextEditorProps;
-  syncStatus: {
-    breastDensityandImageLeft: boolean;
-    nippleAreolaSkinLeft: boolean;
-    LesionsLeft: boolean;
-    ComparisonPriorLeft: boolean;
-    grandularAndDuctalTissueLeft: boolean;
-    LymphNodesLeft: boolean;
-  };
   setsyncStatus: any;
   readOnly: boolean;
 }
 
 const LeftReport: React.FC<LeftReportProps> = ({
-  changedOne,
+  requestVersionRef,
   setChangedOne,
   reportFormData,
   handleReportInputChange,
   patientFormData,
   textEditor,
-  syncStatus,
   setsyncStatus,
   readOnly,
 }) => {
@@ -117,86 +108,101 @@ const LeftReport: React.FC<LeftReportProps> = ({
     ).includes(questionId);
 
     if (isBreastDensityLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         breastDensityandImageLeft: true,
-      });
-      console.log("www", questionId, value);
+      }));
     }
 
     if (isNippleAreolaLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         nippleAreolaSkinLeft: true,
-      });
+      }));
     }
 
     if (isGrandularLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         grandularAndDuctalTissueLeft: true,
-      });
+      }));
     }
 
     if (isLesionsLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         LesionsLeft: true,
-      });
+      }));
     }
 
     if (isLymphNodesLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         LymphNodesLeft: true,
-      });
+      }));
     }
 
     if (isComparisonPriorLeft) {
-      setsyncStatus({
-        ...syncStatus,
+      setsyncStatus((prev: any) => ({
+        ...prev,
         ComparisonPrior: true,
-      });
+      }));
     }
 
-    setChangedOne({
-      ...changedOne,
-      breastDensityandImageLeftSyncStatus: isBreastDensityLeft ? true : false,
-      breastDensityandImageLeftReportText: isBreastDensityLeft ? true : false,
-      nippleAreolaSkinLeftSyncStatus: isNippleAreolaLeft ? true : false,
-      nippleAreolaSkinLeftReportText: isNippleAreolaLeft ? true : false,
-      grandularAndDuctalTissueLeftSyncStatus: isGrandularLeft ? true : false,
-      grandularAndDuctalTissueLeftReportText: isGrandularLeft ? true : false,
-      LesionsLeftSyncStatus: isLesionsLeft ? true : false,
-      LesionsLeftReportText: isLesionsLeft ? true : false,
-      LymphNodesLeftSyncStatus: isLymphNodesLeft ? true : false,
-      LymphNodesLeftReportText: isLymphNodesLeft ? true : false,
-      ComparisonPriorLeftSyncStatus: isComparisonPriorLeft ? true : false,
-      ComparisonPriorLeftReportText: isComparisonPriorLeft ? true : false,
-    });
+    setChangedOne((prev: any) => ({
+      ...prev,
+      breastDensityandImageLeftSyncStatus: isBreastDensityLeft
+        ? true
+        : prev.breastDensityandImageLeftSyncStatus,
+      breastDensityandImageLeftReportText: isBreastDensityLeft
+        ? true
+        : prev.breastDensityandImageLeftReportText,
+      nippleAreolaSkinLeftSyncStatus: isNippleAreolaLeft
+        ? true
+        : prev.nippleAreolaSkinLeftSyncStatus,
+      nippleAreolaSkinLeftReportText: isNippleAreolaLeft
+        ? true
+        : prev.nippleAreolaSkinLeftReportText,
+      grandularAndDuctalTissueLeftSyncStatus: isGrandularLeft
+        ? true
+        : prev.grandularAndDuctalTissueLeftSyncStatus,
+      grandularAndDuctalTissueLeftReportText: isGrandularLeft
+        ? true
+        : prev.grandularAndDuctalTissueLeftReportText,
+      LesionsLeftSyncStatus: isLesionsLeft ? true : prev.LesionsLeftSyncStatus,
+      LesionsLeftReportText: isLesionsLeft ? true : prev.LesionsLeftReportText,
+      LymphNodesLeftSyncStatus: isLymphNodesLeft
+        ? true
+        : prev.LymphNodesLeftSyncStatus,
+      LymphNodesLeftReportText: isLymphNodesLeft
+        ? true
+        : prev.LymphNodesLeftReportText,
+      ComparisonPriorLeftSyncStatus: isComparisonPriorLeft
+        ? true
+        : prev.ComparisonPriorLeftSyncStatus,
+      ComparisonPriorLeftReportText: isComparisonPriorLeft
+        ? true
+        : prev.ComparisonPriorLeftReportText,
+    }));
 
     handleReportInputChange(questionId, value);
   };
 
-   useEffect(()=>{
-  
-       setChangedOne({
-        ...changedOne,
-        LesionsLeftSyncStatus: true,
-        LesionsLeftReportText: true,
-      });
-  
-    },[textEditor.LesionsLeft.value])
-  
-    useEffect(()=>{
-  
-       setChangedOne({
-        ...changedOne,
-        ComparisonPriorLeftSyncStatus: true,
-        ComparisonPriorLeftReportText: true,
-      });
-  
-    },[textEditor.ComparisonPriorLeft.value])
+  // useEffect(() => {
+  //   setChangedOne((prev: any) => ({
+  //     ...prev,
+  //     LesionsLeftSyncStatus: true,
+  //     LesionsLeftReportText: true,
+  //   }));
+  // }, [textEditor.LesionsLeft.value]);
+
+  // useEffect(() => {
+  //   setChangedOne((prev: any) => ({
+  //     ...prev,
+  //     ComparisonPriorLeftSyncStatus: true,
+  //     ComparisonPriorLeftReportText: true,
+  //   }));
+  // }, [textEditor.ComparisonPriorLeft.value]);
 
   const getAnswer = (id: number) =>
     reportFormData.find((q) => q.questionId === id)?.answer || "";
@@ -269,19 +275,22 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   </div>
                   <TextEditor
                     value={textEditor.breastDensityandImageLeft.value}
-                    onChange={textEditor.breastDensityandImageLeft.onChange}
-                    onManualEdit={() => {
-                      if (syncStatus.breastDensityandImageLeft) {
-                        setsyncStatus({
-                          ...syncStatus,
+                    onChange={(val, _, source) => {
+                      textEditor.breastDensityandImageLeft.onChange(val);
+                      if (source === "user") {
+                        setsyncStatus((prev: any) => ({
+                          ...prev,
                           breastDensityandImageLeft: false,
-                        });
+                        }));
                       }
-                      setChangedOne({
-                        ...changedOne,
+                    }}
+                    onManualEdit={() => {
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         breastDensityandImageLeftSyncStatus: true,
                         breastDensityandImageLeftReportText: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -297,10 +306,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
                       textEditor.breastDensityandImageLeftImage.onChange
                     }
                     onManualEdit={() => {
-                      setChangedOne({
-                        ...changedOne,
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         breastdensityImageTextLeft: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -328,19 +338,22 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   </div>
                   <TextEditor
                     value={textEditor.nippleAreolaSkinLeft.value}
-                    onChange={textEditor.nippleAreolaSkinLeft.onChange}
-                    onManualEdit={() => {
-                      if (syncStatus.nippleAreolaSkinLeft) {
-                        setsyncStatus({
-                          ...syncStatus,
+                    onChange={(val, _, source) => {
+                      textEditor.nippleAreolaSkinLeft.onChange(val);
+                      if (source === "user") {
+                        setsyncStatus((prev: any) => ({
+                          ...prev,
                           nippleAreolaSkinLeft: false,
-                        });
+                        }));
                       }
-                      setChangedOne({
-                        ...changedOne,
+                    }}
+                    onManualEdit={() => {
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         nippleAreolaSkinLeftSyncStatus: true,
                         nippleAreolaSkinLeftReportText: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -354,10 +367,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
                     value={textEditor.nippleAreolaSkinLeftImage.value}
                     onChange={textEditor.nippleAreolaSkinLeftImage.onChange}
                     onManualEdit={() => {
-                      setChangedOne({
-                        ...changedOne,
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         nippleareolaImageTextLeft: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -384,19 +398,22 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   </div>
                   <TextEditor
                     value={textEditor.grandularAndDuctalTissueLeft.value}
-                    onChange={textEditor.grandularAndDuctalTissueLeft.onChange}
-                    onManualEdit={() => {
-                      if (syncStatus.grandularAndDuctalTissueLeft) {
-                        setsyncStatus({
-                          ...syncStatus,
+                    onChange={(val, _, source) => {
+                      textEditor.grandularAndDuctalTissueLeft.onChange(val);
+                      if (source === "user") {
+                        setsyncStatus((prev: any) => ({
+                          ...prev,
                           grandularAndDuctalTissueLeft: false,
-                        });
+                        }));
                       }
-                      setChangedOne({
-                        ...changedOne,
+                    }}
+                    onManualEdit={() => {
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         grandularAndDuctalTissueLeftSyncStatus: true,
                         grandularAndDuctalTissueLeftReportText: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -412,10 +429,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
                       textEditor.grandularAndDuctalTissueLeftImage.onChange
                     }
                     onManualEdit={() => {
-                      setChangedOne({
-                        ...changedOne,
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         glandularImageTextLeft: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
@@ -472,19 +490,22 @@ const LeftReport: React.FC<LeftReportProps> = ({
                   </div>
                   <TextEditor
                     value={textEditor.LymphNodesLeft.value}
-                    onChange={textEditor.LymphNodesLeft.onChange}
-                    onManualEdit={() => {
-                      if (syncStatus.LymphNodesLeft) {
-                        setsyncStatus({
-                          ...syncStatus,
+                    onChange={(val, _, source) => {
+                      textEditor.LymphNodesLeft.onChange(val);
+                      if (source === "user") {
+                        setsyncStatus((prev: any) => ({
+                          ...prev,
                           LymphNodesLeft: false,
-                        });
-                        setChangedOne({
-                          ...changedOne,
-                          LymphNodesLeftSyncStatus: true,
-                          LymphNodesLeftReportText: true,
-                        });
+                        }));
                       }
+                    }}
+                    onManualEdit={() => {
+                      setChangedOne((prev: any) => ({
+                        ...prev,
+                        LymphNodesLeftSyncStatus: true,
+                        LymphNodesLeftReportText: true,
+                      }));
+                      ++requestVersionRef.current;
                     }}
                   />
                 </div>
@@ -498,10 +519,11 @@ const LeftReport: React.FC<LeftReportProps> = ({
                     value={textEditor.LymphNodesLeftImage.value}
                     onChange={textEditor.LymphNodesLeftImage.onChange}
                     onManualEdit={() => {
-                      setChangedOne({
-                        ...changedOne,
+                      setChangedOne((prev: any) => ({
+                        ...prev,
                         lymphnodesImageTextLeft: true,
-                      });
+                      }));
+                      ++requestVersionRef.current;
                     }}
                     placeholder="📷 Paste image..."
                   />
