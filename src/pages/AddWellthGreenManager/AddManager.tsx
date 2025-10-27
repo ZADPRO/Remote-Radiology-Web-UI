@@ -610,7 +610,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <Input
             id="pannumber"
             type="text"
-            placeholder="Enter Pan"
+            placeholder="Enter PAN"
             className="bg-white" // Takes remaining space
             value={formData.pan}
             onChange={(e) => {

@@ -34,10 +34,11 @@ export interface UserProfile {
   refUserId: number;
   refUserFirstName: string;
   refUserLastName: string;
-  refUserCustId: string;
+  refSCCustId: string;
   refCODOPhoneNo1?: string;
   refRTId: number;
   refSCId: number;
+  refUserCustId: string;
   refCODOEmail: string;
   refUserDOB: string;
   refUserGender: string;

@@ -225,7 +225,7 @@ const ViewScanCenter: React.FC = () => {
           {/* Form and Buttons */}
           <div className="flex flex-col justify-between h-full w-full lg:w-3/4">
             {/* Appointment */}
-            <h1 className="text-2xl font-bold">SCAN CENTER DETAILS</h1>
+            <h1 className="text-2xl font-bold mb-2">SCAN CENTER DETAILS</h1>
             {/* <div className="flex justify-start lg:justify-end items-center gap-2 mb-4">
               <Checkbox2
                 id="appointment"

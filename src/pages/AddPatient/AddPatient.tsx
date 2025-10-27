@@ -237,7 +237,7 @@ const AddPatient: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="sendbywellthgreen">
-                      Send email by Wellthgreeen
+                      Send email by Wellthgreen
                     </SelectItem>
                     <SelectItem value="sendbywon">Send email by own</SelectItem>
                   </SelectContent>
