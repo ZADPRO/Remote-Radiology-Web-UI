@@ -57,20 +57,38 @@ export const downloadAllDicom = async (
     { encryptedData: payload },
     {
       headers: {
-        Authorization: `Bearer ${token}`, // <-- Add 'Bearer ' prefix
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      responseType: "blob", // <-- Important for binary data
+      responseType: "blob",
     }
   );
 
-  const blob = response.data;
+  // 🔹 Extract clean filename
+  let cleanFileName = filename;
 
-  // Create a URL for the blob and trigger download
+  // If filename looks like a URL or has encoded underscores, handle both cases
+  if (filename.includes("dicom")) {
+    // Try to match both "dicom_" and "dicom/"
+    const match = filename.match(/dicom[_/](.+)/);
+    if (match && match[1]) {
+      cleanFileName = match[1];
+    }
+  }
+
+  // Optional: Add default extension if missing
+  if (!/\.[a-zA-Z0-9]+$/.test(cleanFileName)) {
+    cleanFileName += ".zip"; // or ".pdf" if that’s your expected type
+  }
+
+  console.log("Final cleaned file name:", cleanFileName);
+
+  // 🔹 Download
+  const blob = response.data;
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename;
+  a.download = cleanFileName;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -242,6 +260,7 @@ export const handleAllDownloadDicom = async (
     );
 
     const decrypted = decrypt(response.data.data, response.data.token);
+    console.log("decrypted", decrypted);
     localStorage.setItem("token", response.data.token);
 
     if (!decrypted.status) {
@@ -250,6 +269,7 @@ export const handleAllDownloadDicom = async (
     }
 
     const folders: DicomFolders = decrypted.folders || {};
+    console.log("folders", folders);
     if (Object.keys(folders).length === 0) {
       alert("No DICOM files found for the selected appointments.");
       return;
@@ -260,6 +280,7 @@ export const handleAllDownloadDicom = async (
     for (const rawFolderName of Object.keys(folders)) {
       const folderNameParts = rawFolderName.split("/");
       const folderName = folderNameParts[folderNameParts.length - 1];
+      console.log("folderName", folderName);
 
       const folder = zip.folder(folderName);
       if (!folder) continue;
