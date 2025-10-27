@@ -832,7 +832,7 @@ const EditRadiologist: React.FC<EditRadiologistProps> = ({
               <Input
                 id="pan"
                 type="text"
-                placeholder="Enter Pan"
+                placeholder="Enter PAN"
                 className="bg-white"
                 value={formData.refRAPan || ""}
                 onChange={(e) =>

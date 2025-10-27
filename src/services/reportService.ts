@@ -84,6 +84,25 @@ export interface ViewFileRes {
   data: FileData;
 }
 
+export interface ImpressionRecommendationModel {
+  id: string;
+  impression: string;
+  impressionText: string;
+  impressionTextColor: string;
+  impressionBackgroundColor: string;
+  recommendation: string;
+  recommendationText: string;
+  recommendationTextColor: string;
+  recommendationBackgroundColor: string;
+}
+
+export interface ImpressionRecommendationData {
+  impressionColor: string;
+  recommendationColor: string;
+  data: ImpressionRecommendationModel[];
+}
+
+
 export const reportService = {
   checkAccess: async (appointmentId: number) => {
     const token = localStorage.getItem("token");

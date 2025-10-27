@@ -533,7 +533,7 @@ const AddRadiologist: React.FC = () => {
                 <Input
                   id="pan"
                   type="text"
-                  placeholder="Enter Pan"
+                  placeholder="Enter PAN"
                   className="bg-white"
                   value={formData.pan}
                   onChange={(e) =>
