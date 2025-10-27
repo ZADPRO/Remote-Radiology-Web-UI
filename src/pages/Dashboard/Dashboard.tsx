@@ -10,6 +10,7 @@ import {
   UserCog,
   Stethoscope,
   ScrollText,
+  TextCursorInput,
 } from "lucide-react";
 import React, { JSX, useEffect, useState } from "react";
 import { useAuth, UserProfile } from "../Routes/AuthContext";
@@ -24,6 +25,7 @@ import PatientInformation from "./PatientBrouchure/PatientInformation";
 import ConsentForm from "./ConsentForm/ConsentForm";
 import TechGuidelineForm from "./TechGuidelines/TechGuidelineForm";
 import TechConsentForm from "./TechConsent/TechConsentForm";
+import ImpressionandRecommendationEdit from "./ImpressionRecommendationEdit/ImpressionandRecommendationEdit";
 
 const Dashboard: React.FC = () => {
   const [userData, setUserData] = useState<UserProfile>();
@@ -49,7 +51,7 @@ const Dashboard: React.FC = () => {
     try {
       const res = await dashboardService.dashboardInfo();
       if (res.status) {
-        console.log(res.data)
+        console.log(res.data);
         setUserData(res.data);
       }
     } catch (error) {
@@ -83,7 +85,7 @@ const Dashboard: React.FC = () => {
             "codoctor",
             "manager",
             "doctor",
-            "wgdoctor"
+            "wgdoctor",
           ],
         },
         // {
@@ -147,7 +149,7 @@ const Dashboard: React.FC = () => {
             "codoctor",
             "doctor",
             "manager",
-            "wgdoctor"
+            "wgdoctor",
           ],
         },
       ],
@@ -161,7 +163,7 @@ const Dashboard: React.FC = () => {
         "codoctor",
         "doctor",
         "manager",
-        "wgdoctor"
+        "wgdoctor",
       ],
     },
     {
@@ -171,7 +173,7 @@ const Dashboard: React.FC = () => {
         {
           label: "Tech Guidelines",
           icon: <BookOpen className="w-6 h-6" />,
-          dialogContent: <TechGuidelineForm /> ,
+          dialogContent: <TechGuidelineForm />,
           allowesUser: [
             "admin",
             "technician",
@@ -181,7 +183,7 @@ const Dashboard: React.FC = () => {
             "codoctor",
             "doctor",
             "manager",
-            "wgdoctor"
+            "wgdoctor",
           ],
         },
         {
@@ -196,7 +198,7 @@ const Dashboard: React.FC = () => {
             "codoctor",
             "doctor",
             "manager",
-            "wgdoctor"
+            "wgdoctor",
           ],
         },
       ],
@@ -209,7 +211,7 @@ const Dashboard: React.FC = () => {
         "doctor",
         "codoctor",
         "manager",
-        "wgdoctor"
+        "wgdoctor",
       ],
     },
     {
@@ -267,10 +269,37 @@ const Dashboard: React.FC = () => {
           label: "Invoices",
           icon: <ReceiptText className="w-6 h-6" />,
           dialogContent: <InvoicePopUp />,
-          allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin", "manager"],
+          allowesUser: [
+            "admin",
+            "radiologist",
+            "scribe",
+            "wgdoctor",
+            "scadmin",
+            "manager",
+          ],
         },
       ],
-      allowesUser: ["admin", "radiologist", "scribe", "wgdoctor", "scadmin", "manager"],
+      allowesUser: [
+        "admin",
+        "radiologist",
+        "scribe",
+        "wgdoctor",
+        "scadmin",
+        "manager",
+      ],
+    },
+    {
+      role: "Sentence Edit",
+      icon: <TextCursorInput className="w-12 h-12 text-[#4e5b4d]" />,
+      options: [
+        {
+          label: "Impression and Recommendation",
+          icon: <BookOpen className="w-6 h-6" />,
+          dialogContent: <ImpressionandRecommendationEdit />,
+          allowesUser: ["admin"],
+        },
+      ],
+      allowesUser: ["admin"],
     },
   ];
 
@@ -336,7 +365,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Right Role Selection Section */}
-        <div className="w-full lg:w-3/5 grid grid-cols-2 md:grid-cols-2 gap-4">
+        <div className="w-full lg:w-3/5 grid grid-cols-2 md:grid-cols-2 gap-4 pb-10 h-[80vh] px-5 overflow-auto">
           {roleOptions.map((item, idx) => (
             <>
               {item.allowesUser.includes(role?.type || "") && (

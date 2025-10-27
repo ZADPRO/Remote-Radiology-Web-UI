@@ -817,7 +817,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               <Input
                 id="pan"
                 type="text"
-                placeholder="Enter Pan"
+                placeholder="Enter PAN"
                 className="bg-white"
                 value={formData.refWGPPPan || ""}
                 onChange={(e) =>
