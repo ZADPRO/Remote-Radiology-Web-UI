@@ -602,7 +602,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="sendbywellthgreen">
-                        Send email by Wellthgreeen
+                        Send email by Wellthgreen
                       </SelectItem>
                       <SelectItem value="sendbywon">
                         Send email by own
@@ -613,7 +613,7 @@ const EditPatient: React.FC<EditPerformingProviderProps> = ({
                 {(mailPurpose !== "sendMail" || mailoption !== "sendbywon") && (
                   <div className="lg:w-[30%] w-full">
                     <Button onClick={handleFinalSubmit} variant="greenTheme">
-                      Create Appoinmtnet
+                      Create Appointment
                       {mailoption === "sendbywellthgreen"
                         ? ` and Send Mail`
                         : ``}

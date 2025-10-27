@@ -674,7 +674,7 @@ const EditScribe: React.FC<EditScribeProps> = ({
             <Input
               id="pan"
               type="text"
-              placeholder="Enter Pan"
+              placeholder="Enter PAN"
               className="bg-white"
               value={formData.refSDPan || ""}
               onChange={(e) =>

@@ -645,7 +645,7 @@ const EditWellthGreenManager: React.FC<EditWellthGreenManagerProps> = ({
             <Input
               id="pan"
               type="text"
-              placeholder="Enter Pan"
+              placeholder="Enter PAN"
               value={formData.refMDPan || ""}
               onChange={(e) => {
                 if (e.target.value.length <= 10) {

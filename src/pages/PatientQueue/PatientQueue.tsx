@@ -22,6 +22,7 @@ import {
   Trash,
   CircleCheckBig,
   Circle,
+  UserRoundCog,
 } from "lucide-react";
 
 import {
@@ -777,7 +778,7 @@ const PatientQueue: React.FC = () => {
       {
         accessorKey: "refSCCustId",
         id: "refSCCustId",
-        header: ({ column }) => (
+        header: ({ column, table }) => (
           <div className="flex items-center justify-center gap-1">
             <span
               className="cursor-pointer text-grey font-semibold"
@@ -788,6 +789,7 @@ const PatientQueue: React.FC = () => {
                 <div>Center</div>
               </div>
             </span>
+
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -798,30 +800,70 @@ const PatientQueue: React.FC = () => {
                     <Filter />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-48 p-2">
-                  <Input
-                    placeholder={`Filter Scan Center ID...`}
-                    value={(column.getFilterValue() ?? "") as string}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      column.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                  />
+
+                <PopoverContent className="w-64 p-2">
+                  <Command>
+                    <CommandGroup className="max-h-60 overflow-auto">
+                      {/* ✅ dynamically get all unique Scan Centers from table data */}
+                      {Array.from(
+                        new Set(
+                          table
+                            .getCoreRowModel()
+                            .rows.map((r) => r.original.refSCCustId)
+                        )
+                      ).map((scanCenter) => {
+                        const current =
+                          (column.getFilterValue() as string[]) ?? [];
+                        const isSelected = current.includes(scanCenter);
+
+                        return (
+                          <CommandItem
+                            key={scanCenter}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={() => {
+                              const updated = isSelected
+                                ? current.filter((id) => id !== scanCenter)
+                                : [...current, scanCenter];
+                              column.setFilterValue(
+                                updated.length ? updated : undefined
+                              );
+                            }}
+                          >
+                            <Checkbox2
+                              checked={isSelected}
+                              onCheckedChange={() => {}}
+                            />
+                            <span>{scanCenter}</span>
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </Command>
+
                   <Button
                     variant="ghost"
                     onClick={() => column.setFilterValue(undefined)}
-                    className="p-0 mt-2 text-red-500 hover:text-red-700"
-                    title="Clear filter"
+                    className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
-                    <XCircle className="h-4 w-4" /> <span>Clear</span>
+                    <XCircle className="h-4 w-4" />
+                    <span>Clear</span>
                   </Button>
                 </PopoverContent>
               </Popover>
             )}
           </div>
         ),
-        cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
+
+        cell: ({ row }) => <span>{row.original.refSCCustId}</span>,
+
         enableColumnFilter: true,
+
+        // ✅ Custom filter logic for multiple selections
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue || !Array.isArray(filterValue)) return true;
+          const value = row.getValue(columnId);
+          return filterValue.includes(value);
+        },
       },
       {
         // Changed from refSCId to refUserCustId for PatientQueue
@@ -1167,25 +1209,21 @@ const PatientQueue: React.FC = () => {
                 <span className="font-xs flex flex-wrap justify-center items-center gap-x-2 gap-y-0 text-center">
                   {appointmentComplete === "noteligible" ? (
                     <>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Not
                       </span>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Eligible
                       </span>
                     </>
                   ) : (
-                      <span className="text-center">{formName}</span>
+                    <span className="text-center">{formName}</span>
                   )}
                 </span>
               )}
-              {(formName !== "Not Yet Started" || role?.type === "patient") && (<span className="text-center">&nbsp;-&nbsp;</span>)}
+              {(formName !== "Not Yet Started" || role?.type === "patient") && (
+                <span className="text-center">&nbsp;-&nbsp;</span>
+              )}
               {statusContent}
               {isEditDialogBroucherOpen && (
                 <Dialog
@@ -2951,6 +2989,21 @@ const PatientQueue: React.FC = () => {
       <div className="w-[99%] h-[85vh] overflow-y-scroll bg-radial-greeting-02 mx-auto space-y-3 p-1 my-2 lg:py-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
+          <Button
+            onClick={() => {
+              navigate("../managePatient", {
+                state: {
+                  scanCenterId: user?.refSCId,
+                  SCName: user?.refSCCustId,
+                },
+              });
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
+            hidden={role?.type !== "scadmin"}
+          >
+            <UserRoundCog className="h-4 w-4" />
+            Manage Patient
+          </Button>
           <Button
             onClick={async () => {
               setLoading(true);
