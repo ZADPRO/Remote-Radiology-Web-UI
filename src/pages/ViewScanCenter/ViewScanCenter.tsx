@@ -185,7 +185,7 @@ const ViewScanCenter: React.FC = () => {
               </div>
             ) : (
               <div className="relative w-32 h-32 lg:w-52 lg:h-52">
-                <img
+                {/* <img
                   src={
                     files.profile_img
                       ? URL.createObjectURL(files.profile_img)
@@ -195,6 +195,21 @@ const ViewScanCenter: React.FC = () => {
                       ? `https://easeqt-health-archive.s3.us-east-2.amazonaws.com/images/${formData.refSCProfile}`
                       : formData.profileImgFile?.base64Data
                       ? `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                      : "/default-avatar.svg"
+                  }
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
+                /> */}
+                <img
+                  src={
+                    files.profile_img
+                      ? URL.createObjectURL(files.profile_img)
+                      : formData.profileImgFile?.base64Data
+                      ? `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`
+                      : formData.refSCProfile?.startsWith("http")
+                      ? formData.refSCProfile
+                      : formData.refSCProfile
+                      ? `https://easeqt-health-archive.s3.us-east-2.amazonaws.com/images/${formData.refSCProfile}`
                       : "/default-avatar.svg"
                   }
                   alt="Profile"
