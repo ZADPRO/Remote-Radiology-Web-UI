@@ -20,7 +20,7 @@ const PatientReport: React.FC<PatientReportProps> = ({
   const [patientReport, setPatientReport] = useState("");
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   const fetchPatientReport = async () => {
     try {
@@ -42,7 +42,11 @@ const PatientReport: React.FC<PatientReportProps> = ({
 
       downloadReportsPdf(
         patientReport,
-        `${user?.refUserCustId}_${appointmentDate}_Consent`
+        `${
+          user?.refUserCustId && user?.refUserCustId.length > 0
+            ? user?.refUserCustId
+            : user?.refUserFirstName
+        }_${appointmentDate}_ReportFile`
       );
 
       //   const jsPDF = (await import("jspdf")).jsPDF;

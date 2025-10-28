@@ -563,7 +563,11 @@ const PatientQueue: React.FC = () => {
 
           downloadReportsPdf(
             reportData.refRTCText,
-            `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_FinalReport`
+            `${
+              tempData?.refUserCustId && tempData?.refUserCustId.length > 0
+                ? tempData?.refUserCustId
+                : tempData?.refUserFirstName
+            }_${tempData?.refAppointmentDate}_FinalReport`
           );
         });
       }
@@ -587,7 +591,11 @@ const PatientQueue: React.FC = () => {
 
           downloadReportsPdf(
             reportData.refAppointmentConsent,
-            `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_Consent`
+            `${
+              tempData?.refUserCustId && tempData?.refUserCustId.length > 0
+                ? tempData?.refUserCustId
+                : tempData?.refUserFirstName
+            }_${tempData?.refAppointmentDate}_Consent`
           );
         });
       }
@@ -1058,7 +1066,13 @@ const PatientQueue: React.FC = () => {
                       patientConsentDialog={consentDialogOpen}
                       appointmentDate={row.original.refAppointmentDate}
                       patientCustId={
-                        row.original.refUserCustId ?? user?.refUserCustId
+                        (row.original.refUserCustId &&
+                        row.original.refUserCustId.length > 0
+                          ? row.original.refUserCustId
+                          : row.original.refUserFirstName) ??
+                        (user?.refUserCustId && user?.refUserCustId.length > 0
+                          ? user?.refUserCustId
+                          : user?.refUserFirstName)
                       }
                     />
                   </Dialog>
