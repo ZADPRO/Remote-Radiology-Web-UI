@@ -101,6 +101,7 @@ import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
 import { formatReadableDate } from "@/utlis/calculateAge";
 import FileView from "@/components/FileView/FileView";
+import DownloadingOverlay from "@/components/ui/CustomComponents/DownloadingOverlay";
 
 interface staffData {
   refUserCustId: string;
@@ -129,6 +130,13 @@ const PatientQueue: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
+
+  const [progress, setProgress] = useState({
+    downloadedMB: 0,
+    percentage: 0,
+    currentFile: "",
+  });
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const hasSignedOffReport = (
     ids: number[],
@@ -1524,7 +1532,9 @@ const PatientQueue: React.FC = () => {
                         rightDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_R.zip"
+                          .join("_") + "_R.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1552,7 +1562,9 @@ const PatientQueue: React.FC = () => {
                         leftDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_L.zip"
+                          .join("_") + "_L.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1885,8 +1897,8 @@ const PatientQueue: React.FC = () => {
                                       className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                                     >
                                       <FileView
-                                        displayName={displayName} 
-                                        fileUrl={file.refORFilename} 
+                                        displayName={displayName}
+                                        fileUrl={file.refORFilename}
                                       />
 
                                       <div
@@ -2019,9 +2031,9 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              if(role === "patient"){
+              if (role === "patient") {
                 setPatientReportDialog(true);
-              }else{
+              } else {
                 navigate("/report", {
                   state: {
                     appointmentId: row.original.refAppointmentId,
@@ -3003,6 +3015,13 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
+      {isDownloading && (
+        <DownloadingOverlay
+          downloadedMB={progress.downloadedMB}
+          percentage={progress.percentage}
+          currentFile={progress.currentFile}
+        />
+      )}
       <div className="w-[99%] h-[85vh] overflow-y-scroll bg-radial-greeting-02 mx-auto space-y-3 p-1 my-2 lg:py-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
@@ -3023,9 +3042,10 @@ const PatientQueue: React.FC = () => {
           </Button>
           <Button
             onClick={async () => {
-              setLoading(true);
-              await handleAllDownloadDicom(selectedRowIds);
-              setLoading(false);
+              setIsDownloading(true);
+              setProgress({ downloadedMB: 0, percentage: 0, currentFile: "" });
+              await handleAllDownloadDicom(selectedRowIds, setProgress);
+              setIsDownloading(false);
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
@@ -3034,7 +3054,6 @@ const PatientQueue: React.FC = () => {
             <Download className="h-4 w-4" />
             Download Dicom
           </Button>
-
           <Button
             onClick={async () => {
               setLoading(true);

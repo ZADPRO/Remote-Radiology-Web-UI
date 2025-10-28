@@ -36,7 +36,9 @@ export const downloadAllDicom = async (
   userId: number,
   appointmentId: number,
   side: string,
-  filename: string
+  filename: string,
+  setProgress: React.Dispatch<React.SetStateAction<DownloadProgress>>,
+  setIsDownloading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -45,15 +47,13 @@ export const downloadAllDicom = async (
   }
 
   try {
-    const payload = encrypt(
-      { userId: userId, appointmentId: appointmentId, side: side },
-      token
-    );
+    setIsDownloading(true);
+    setProgress({ downloadedMB: 0, percentage: 0, currentFile: "" });
+
+    const payload = encrypt({ userId, appointmentId, side }, token);
 
     const response = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_PROFILESERVICE
-      }/technicianintakeform/alldownloaddicom`,
+      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/alldownloaddicom`,
       { encryptedData: payload },
       {
         headers: {
@@ -68,110 +68,119 @@ export const downloadAllDicom = async (
 
     if (!decrypted.status) {
       alert(decrypted.message || "Failed to fetch DICOM URLs.");
+      setIsDownloading(false);
       return;
     }
 
-    const folders = decrypted.folders || {};
-    console.log("decrypted", decrypted);
+    const folders: DicomFolders = decrypted.folders || {};
     if (Object.keys(folders).length === 0) {
       alert("No DICOM files found for this appointment.");
+      setIsDownloading(false);
       return;
     }
 
-    // ✅ Create ZIP and populate
     const zip = new JSZip();
 
+    const allFiles: DicomFile[] = [];
+    for (const folderName of Object.keys(folders)) {
+      allFiles.push(...folders[folderName]);
+    }
+
+    let totalDownloadedBytes = 0;
+    const totalFiles = allFiles.length;
+    let completedFiles = 0;
+
     for (const rawFolderName of Object.keys(folders)) {
-      console.log("rawFolderName", rawFolderName);
       const folderNameParts = rawFolderName.split("/");
       const folderName = folderNameParts[folderNameParts.length - 1];
       const folder = zip.folder(folderName);
       if (!folder) continue;
 
       for (const file of folders[rawFolderName]) {
+        let previousLoaded = 0;
+
         try {
-          const fileResponse = await axios.get(file.url, {
-            responseType: "blob",
+          setProgress({
+            downloadedMB: totalDownloadedBytes / (1024 * 1024),
+            percentage: (completedFiles / totalFiles) * 100,
+            currentFile: file.fileName.split("/").pop() || file.fileName,
           });
 
-          const fileNameParts = file.fileName.split("/");
-          const fileNameOnly =
-            fileNameParts[fileNameParts.length - 1] || "file.dcm";
+          const fileResponse = await axios.get(file.url, {
+            responseType: "blob",
+            onDownloadProgress: (progressEvent) => {
+              if (progressEvent.loaded) {
+                const incremental = progressEvent.loaded - previousLoaded;
+                previousLoaded = progressEvent.loaded;
 
+                totalDownloadedBytes += incremental;
+                const downloadedMB = totalDownloadedBytes / (1024 * 1024);
+                const percentage =
+                  ((completedFiles +
+                    (progressEvent.loaded / (progressEvent.total || 1))) /
+                    totalFiles) *
+                  100;
+
+                setProgress({
+                  downloadedMB,
+                  percentage,
+                  currentFile: file.fileName.split("/").pop() || file.fileName,
+                });
+              }
+            },
+          });
+
+          const fileNameOnly = file.fileName.split("/").pop() || "file.dcm";
           folder.file(fileNameOnly, fileResponse.data);
+          completedFiles++;
         } catch (err) {
           console.error(`Failed to fetch file ${file.fileName}:`, err);
         }
       }
     }
 
-    // ✅ Generate ZIP file
     const zipBlob = await zip.generateAsync({ type: "blob" });
-    console.log("zipBlob", zipBlob);
 
-    // -----------------------
-    // Filename parsing logic
-    // -----------------------
-
-    // helper to remove epoch/timestamp suffixes like _1761397903080 or -1761397903080
+    // ✅ Filename logic remains unchanged
     const stripEpochSuffix = (name: string) =>
       name.replace(/[_-]\d{10,13}(\.\w+)?$/, "");
 
-    // try to extract a clean name from filename (various patterns)
     const extractFromFilename = (raw: string | undefined): string | null => {
       if (!raw) return null;
       let s = raw;
-
-      // If looks like transformed URL starting with https___ or http___
       if (s.startsWith("https___") || s.startsWith("http___")) {
-        // remove leading protocol marker and convert underscores to slashes to find "dicom/..."
         const restored = s.replace(/^https?___/, "").replace(/_/g, "/");
         const parts = restored.split("/");
         const dicomIndex = parts.indexOf("dicom");
         if (dicomIndex !== -1 && dicomIndex + 1 < parts.length) {
-          return parts[dicomIndex + 1]; // take segment after dicom/
+          return parts[dicomIndex + 1];
         }
-        // fallback: last segment
         return parts[parts.length - 1] || null;
       }
-
-      // If contains '/dicom/' as normal URL
       if (s.includes("/dicom/")) {
         const parts = s.split("/dicom/");
         if (parts.length > 1) {
           const after = parts[1];
-          // if there are further slashes, take the first segment or last depending on form
           const segs = after.split("/");
           return segs[0] || segs[segs.length - 1] || null;
         }
       }
-
-      // If it's like '..._dicom_<NAME>_...' or contains 'dicom_' token
       const tokenSplit = s.split(/_dicom_|dicom_/);
       if (tokenSplit.length > 1) {
         return tokenSplit[1].split(/[\/_]/)[0] || tokenSplit[1];
       }
-
-      // If filename contains slashes (normal path), take last path segment
       if (s.includes("/")) {
         const parts = s.split("/");
         return parts[parts.length - 1] || null;
       }
-
-      // Otherwise, if underscores separate meaningful pieces, try to take last 4 segments
       if (s.includes("_")) {
         const parts = s.split("_");
-        // if long, take last 4; else return whole
         return parts.length > 4 ? parts.slice(-4).join("_") : s;
       }
-
       return s || null;
     };
 
-    // Primary candidate: try from passed filename
     let cleanBaseNameCandidate = extractFromFilename(filename) || "";
-
-    // Secondary fallback: use first folder key from API (prefer last path segment)
     if (!cleanBaseNameCandidate) {
       const firstFolderKey = Object.keys(folders)[0];
       if (firstFolderKey) {
@@ -179,44 +188,30 @@ export const downloadAllDicom = async (
         cleanBaseNameCandidate = parts[parts.length - 1] || "";
       }
     }
-
-    // Additional fallback if still empty
     if (!cleanBaseNameCandidate) {
       cleanBaseNameCandidate = `DicomFiles_${appointmentId}`;
     }
 
-    // Remove trailing epoch-like numbers if present
     cleanBaseNameCandidate = stripEpochSuffix(cleanBaseNameCandidate);
-
-    // If the name contains words like "Right" or "Left", normalize them to R/L or keep as-is
-    // (optional: convert "Right" -> "R" if you want shorter names)
-    // e.g., keep `..._Right` as `_Right`. We'll keep as-is.
-
-    // Final sanitize: allow letters, numbers, underscore, dash; replace rest with underscore
     let cleanBaseName = cleanBaseNameCandidate.replace(/[^a-zA-Z0-9_\-]/g, "_");
-
-    // If after sanitization it's empty, fallback
     if (!cleanBaseName) cleanBaseName = `DicomFiles_${appointmentId}`;
-
-    // Add date suffix
-    const dateSuffix = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const dateSuffix = new Date().toISOString().slice(0, 10);
     const zipFilename = `${cleanBaseName}_${dateSuffix}.zip`;
 
-    console.log(
-      "Chosen base name:",
-      cleanBaseNameCandidate,
-      "-> sanitized:",
-      cleanBaseName
-    );
-    console.log("zipFilename", zipFilename);
-
-    // ✅ Save ZIP locally
     saveAs(zipBlob, zipFilename);
 
+    setProgress({
+      downloadedMB: totalDownloadedBytes / (1024 * 1024),
+      percentage: 100,
+      currentFile: "Completed",
+    });
+
+    setIsDownloading(false);
     console.log("✅ ZIP file downloaded:", zipFilename);
   } catch (error: any) {
     console.error("❌ DICOM download failed:", error);
     alert("Failed to download DICOM files. Please try again.");
+    setIsDownloading(false);
   }
 };
 
@@ -348,7 +343,6 @@ export const downloadDicom = async (fileId: number, filename: string) => {
 //     }
 //   }
 // };
-
 interface DicomFile {
   fileName: string;
   url: string;
@@ -359,8 +353,15 @@ interface DicomFolders {
   [folderName: string]: DicomFile[];
 }
 
+interface DownloadProgress {
+  downloadedMB: number;
+  percentage: number;
+  currentFile: string;
+}
+
 export const handleAllDownloadDicom = async (
-  selectedRowIds: number[]
+  selectedRowIds: number[],
+  setProgress: React.Dispatch<React.SetStateAction<DownloadProgress>>
 ): Promise<void> => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -372,9 +373,7 @@ export const handleAllDownloadDicom = async (
 
   try {
     const response = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_PROFILESERVICE
-      }/technicianintakeform/overalldownloaddicom`,
+      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/overalldownloaddicom`,
       { encryptedData: payload },
       {
         headers: {
@@ -385,7 +384,6 @@ export const handleAllDownloadDicom = async (
     );
 
     const decrypted = decrypt(response.data.data, response.data.token);
-    console.log("decrypted", decrypted);
     localStorage.setItem("token", response.data.token);
 
     if (!decrypted.status) {
@@ -394,39 +392,69 @@ export const handleAllDownloadDicom = async (
     }
 
     const folders: DicomFolders = decrypted.folders || {};
-    console.log("folders", folders);
     if (Object.keys(folders).length === 0) {
       alert("No DICOM files found for the selected appointments.");
       return;
     }
 
     const zip = new JSZip();
+    const allFiles: DicomFile[] = [];
+    for (const folderName of Object.keys(folders)) {
+      allFiles.push(...folders[folderName]);
+    }
 
+    let totalDownloadedBytes = 0;
+    let totalFiles = allFiles.length;
+    let completedFiles = 0;
+
+    // ✅ Start download
     for (const rawFolderName of Object.keys(folders)) {
-      const folderNameParts = rawFolderName.split("/");
-      const folderName = folderNameParts[folderNameParts.length - 1];
-      console.log("folderName", folderName);
-
+      const folderName = rawFolderName.split("/").pop() || rawFolderName;
       const folder = zip.folder(folderName);
       if (!folder) continue;
 
       for (const file of folders[rawFolderName]) {
         try {
-          const fileResponse = await axios.get(file.url, {
-            responseType: "blob",
+          setProgress({
+            downloadedMB: totalDownloadedBytes / (1024 * 1024),
+            percentage: (completedFiles / totalFiles) * 100,
+            currentFile: file.fileName.split("/").pop() || file.fileName,
           });
 
-          // ✅ Use only the last segment of the file path as the filename
-          const fileNameParts = file.fileName.split("/");
-          const fileNameOnly = fileNameParts[fileNameParts.length - 1];
+          let previousLoaded = 0;
+          const fileResponse = await axios.get(file.url, {
+            responseType: "blob",
+            onDownloadProgress: (progressEvent) => {
+              if (progressEvent.loaded) {
+                const incremental = progressEvent.loaded - previousLoaded;
+                previousLoaded = progressEvent.loaded;
 
+                totalDownloadedBytes += incremental;
+                const downloadedMB = totalDownloadedBytes / (1024 * 1024);
+                const percentage =
+                  ((completedFiles + progressEvent.loaded / (progressEvent.total || 1)) /
+                    totalFiles) *
+                  100;
+
+                setProgress({
+                  downloadedMB,
+                  percentage,
+                  currentFile: file.fileName.split("/").pop() || file.fileName,
+                });
+              }
+            },
+          });
+
+          const fileNameOnly = file.fileName.split("/").pop() || file.fileName;
           folder.file(fileNameOnly, fileResponse.data);
+          completedFiles++;
         } catch (err) {
           console.error(`Failed to fetch file ${file.fileName}:`, err);
         }
       }
     }
 
+    // ✅ Generate ZIP
     const zipBlob = await zip.generateAsync({ type: "blob" });
     const zipFilename = `DicomFiles_${new Date()
       .toISOString()
@@ -434,6 +462,11 @@ export const handleAllDownloadDicom = async (
     saveAs(zipBlob, zipFilename);
 
     console.log("✅ ZIP file generated and downloaded:", zipFilename);
+    setProgress({
+      downloadedMB: totalDownloadedBytes / (1024 * 1024),
+      percentage: 100,
+      currentFile: "Completed",
+    });
   } catch (error: any) {
     console.error("❌ Fetch failed:", error);
     alert("Failed to retrieve DICOM URLs. Please try again.");
