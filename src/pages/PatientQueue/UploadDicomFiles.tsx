@@ -3,11 +3,10 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { technicianService } from "@/services/technicianServices";
 import { AxiosProgressEvent } from "axios";
-import { ArrowLeft, CloudUpload, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, CloudUpload, Loader2, Trash2, Upload } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import dicomFile from "../../assets/Patient-InTake Form/Dicomfile_img.png";
-import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import DragAndDropUploadBox from "@/components/ui/CustomComponents/DragAndDropFileUpload";
 import { reportService } from "@/services/reportService";
 import { DicomFile } from "../Report/DicomList";
@@ -390,14 +389,16 @@ const UploadDicomFiles: React.FC = () => {
           <div className="w-full mt-3 sm:mt-4 space-y-3 sm:space-y-4">
             {sideFiles.map((file, idx) => (
               <div key={idx} className="border rounded-lg p-2 sm:p-3 lg:p-4">
-                <div className="flex justify-end mb-2">
-                  <button onClick={() => handleDelete(side, file.name)}>
-                    <Trash2
-                      className="text-red-500 hover:text-red-700"
-                      size={16}
-                    />
-                  </button>
-                </div>
+                {!loading && (
+                  <div className="flex justify-end mb-2">
+                    <button onClick={() => handleDelete(side, file.name)}>
+                      <Trash2
+                        className="text-red-500 hover:text-red-700"
+                        size={16}
+                      />
+                    </button>
+                  </div>
+                )}
 
                 <div className="flex gap-3 sm:gap-4 items-start">
                   <img
@@ -406,26 +407,36 @@ const UploadDicomFiles: React.FC = () => {
                     alt="DICOM file icon"
                   />
                   <div className="flex flex-col w-full min-w-0">
-                    <p className="text-xs sm:text-sm font-medium truncate">
+                    <p className="text-xs w-[24rem] sm:text-sm font-medium truncate">
                       {file.name}
                     </p>
-                    <p className="text-xs text-gray-500">
-                      {Math.round(file.uploadedSize / 1024)} KB of{" "}
-                      {Math.round(file.size / 1024)} KB
-                    </p>
-                    {file.status === "completed" ? (
-                      <span className="text-xs sm:text-sm text-green-500">
-                        Completed
-                      </span>
+                    {loading ? (
+                      <>
+                        <p className="text-xs text-gray-500">
+                          {Math.round(file.uploadedSize / 1024)} KB of{" "}
+                          {Math.round(file.size / 1024)} KB
+                        </p>
+                        {file.status === "completed" ? (
+                          <span className="text-xs sm:text-sm text-green-500">
+                            Completed
+                          </span>
+                        ) : (
+                          <span className="text-xs sm:text-sm text-blue-500 animate-pulse">
+                            Uploading...
+                          </span>
+                        )}
+                        <Progress
+                          value={(file.uploadedSize / file.size) * 100}
+                          className="mt-2 transition-all h-1.5 sm:h-2"
+                        />
+                      </>
                     ) : (
-                      <span className="text-xs sm:text-sm text-blue-500 animate-pulse">
-                        Uploading...
-                      </span>
+                      <>
+                        <span className="text-xs sm:text-sm text-blue-500 animate-pulse">
+                          Yet to Upload
+                        </span>
+                      </>
                     )}
-                    <Progress
-                      value={(file.uploadedSize / file.size) * 100}
-                      className="mt-2 transition-all h-1.5 sm:h-2"
-                    />
                   </div>
                 </div>
               </div>
@@ -453,7 +464,7 @@ const UploadDicomFiles: React.FC = () => {
                       className="flex justify-between items-center border-b py-3 px-2 rounded bg-[#f8f3eb] hover:bg-[#fffaf0] transition"
                     >
                       <div className="flex flex-col text-sm">
-                        <span className="text-gray-500 truncate">
+                        <span className="text-gray-500 w-[27rem] truncate">
                           {displayName}
                         </span>
                         <span className="font-medium text-gray-800">
@@ -461,21 +472,23 @@ const UploadDicomFiles: React.FC = () => {
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-4">
-                        <Trash2
-                          size={16}
-                          className="text-red-600 cursor-pointer hover:bg-accent"
-                          onClick={async () => {
-                            setLoading(true);
-                            try {
-                              await removeDicom([file.DFId]); // use full URL internally
-                              handleListDicom();
-                            } finally {
-                              setLoading(false);
-                            }
-                          }}
-                        />
-                      </div>
+                      {!loading && (
+                        <div className="flex items-center gap-4">
+                          <Trash2
+                            size={16}
+                            className="text-red-600 cursor-pointer hover:bg-accent"
+                            onClick={async () => {
+                              setLoading(true);
+                              try {
+                                await removeDicom([file.DFId]); // use full URL internally
+                                handleListDicom();
+                              } finally {
+                                setLoading(false);
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -488,7 +501,7 @@ const UploadDicomFiles: React.FC = () => {
 
   return (
     <div className="bg-radial-greeting-02 mx-auto my-2 py-2 rounded w-[95%] sm:w-[90%] h-[95%] flex flex-col">
-      {loading && <LoadingOverlay />}
+      {/* {loading && <LoadingOverlay />} */}
       <div className="flex justify-between flex-col lg:flex-row">
         <Button
           type="button"
@@ -521,8 +534,8 @@ const UploadDicomFiles: React.FC = () => {
       </h1>
       <p className="text-center">
         <span className="font-semibold text-red-500">Note</span>: Please remain
-        on this page and wait until the upload process shows as completed
-        before submitting.
+        on this page and wait until the upload process shows as completed after
+        submitting.
       </p>
 
       {/* This wrapper scrolls */}
@@ -541,7 +554,13 @@ const UploadDicomFiles: React.FC = () => {
           className="w-full sm:w-auto mx-4 sm:mx-0"
           disabled={files.length === 0 || loading}
         >
-          Submit
+          {loading ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+            </>
+          ) : (
+            "Submit"
+          )}
         </Button>
       </div>
 
