@@ -225,60 +225,85 @@ const getFileNameFromS3Url = (url: string) => {
   }
 };
 
-export const downloadDicom = async (fileId: number, filename: string) => {
+export const downloadDicom = async (
+  fileId: number,
+  filename: string,
+  setProgress: React.Dispatch<
+    React.SetStateAction<{ downloadedMB: number; percentage: number; currentFile: string }>
+  >,
+  setIsDownloading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   const token = localStorage.getItem("token");
-
   if (!token) {
     console.error("No token found in localStorage");
     return;
   }
 
-  // Determine if filename is an S3 URL
   const isS3 =
     filename.startsWith("http") || filename.includes("amazonaws.com");
   let downloadName = filename;
 
   if (isS3) {
-    // Extract actual file name from S3 URL
     downloadName = getFileNameFromS3Url(filename);
   }
 
-  // Encrypt the payload
   const payload = encrypt({ fileId }, token);
 
   try {
+    setIsDownloading(true);
+    setProgress({ downloadedMB: 0, percentage: 0, currentFile: downloadName });
+
     const response = await axios.post(
-      `${
-        import.meta.env.VITE_API_URL_PROFILESERVICE
-      }/technicianintakeform/downloaddicom`,
+      `${import.meta.env.VITE_API_URL_PROFILESERVICE}/technicianintakeform/downloaddicom`,
       { encryptedData: payload },
       {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        responseType: "blob", // Important for file download
+        responseType: "blob",
+        onDownloadProgress: (progressEvent) => {
+          const loadedBytes = progressEvent.loaded || 0;
+          const downloadedMB = loadedBytes / (1024 * 1024);
+
+          // If total size available, show percentage, else fallback
+          const totalBytes = progressEvent.total || 0;
+          const percentage = totalBytes
+            ? (loadedBytes / totalBytes) * 100
+            : 0;
+
+          setProgress({
+            downloadedMB,
+            percentage,
+            currentFile: downloadName,
+          });
+        },
       }
     );
 
+    // Create blob & trigger download
     const blob = response.data;
-
-    // Create a download link and trigger click
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-
-    // Sanitize filename
-    const safeFilename = downloadName.replace(/[^a-zA-Z0-9._-]/g, "_");
-    a.download = safeFilename;
-
+    a.download = downloadName.replace(/[^a-zA-Z0-9._-]/g, "_");
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+
+    // Final update
+    setProgress({
+      downloadedMB: response.data.size
+        ? response.data.size / (1024 * 1024)
+        : 0,
+      percentage: 100,
+      currentFile: "Completed",
+    });
+    setIsDownloading(false);
   } catch (error) {
-    console.error("Download failed:", error);
-    // Optionally show user notification here
+    console.error("❌ Download failed:", error);
+    setIsDownloading(false);
   }
 };
 
