@@ -2007,14 +2007,18 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              navigate("/report", {
-                state: {
-                  appointmentId: row.original.refAppointmentId,
-                  userId: row.original.refUserId,
-                  readOnly: true,
-                  categoryId: row.original.refCategoryId,
-                },
-              });
+              if(role === "patient"){
+                setPatientReportDialog(true);
+              }else{
+                navigate("/report", {
+                  state: {
+                    appointmentId: row.original.refAppointmentId,
+                    userId: row.original.refUserId,
+                    readOnly: true,
+                    categoryId: row.original.refCategoryId,
+                  },
+                });
+              }
               // }
             } else {
               const { status, accessId, custId } = await handleCheckAccess(
@@ -2168,7 +2172,7 @@ const PatientQueue: React.FC = () => {
                   onOpenChange={setPatientReportDialog}
                 >
                   <PatientReport
-                    userId={row.original.refUserId ?? user?.refUserId}
+                    appointmentDate={row.original.refAppointmentDate}
                     appointmentId={row.original.refAppointmentId}
                     patientReportDialog={patientReportDialog}
                   />
@@ -2840,6 +2844,7 @@ const PatientQueue: React.FC = () => {
       "refSCCustId",
       "patientFormAndStatus",
       "oldreport",
+      "reportStatus",
     ],
     doctor: [
       "select",
