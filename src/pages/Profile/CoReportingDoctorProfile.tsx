@@ -33,11 +33,12 @@ const CoReportingDoctorProfile: React.FC = () => {
     }
   }, [error]);
 
-  const [formData, setFormData] =
-    useState<ListSpecificCoDoctor | null>(null); // Changed type
+  const [formData, setFormData] = useState<ListSpecificCoDoctor | null>(null); // Changed type
 
-  const getSpecificCoDoctor = async () => { // Changed function name
-    if (!scanCenterId || !coReportingDoctorId) { // Changed variable name
+  const getSpecificCoDoctor = async () => {
+    // Changed function name
+    if (!scanCenterId || !coReportingDoctorId) {
+      // Changed variable name
       setError("Required IDs are not available.");
       setLoading(false);
       return;
@@ -45,7 +46,8 @@ const CoReportingDoctorProfile: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await doctorService.getSpecificCoDoctor( // Changed service call
+      const res = await doctorService.getSpecificCoDoctor(
+        // Changed service call
         scanCenterId,
         coReportingDoctorId // Changed variable name
       );
@@ -68,7 +70,7 @@ const CoReportingDoctorProfile: React.FC = () => {
     getSpecificCoDoctor(); // Changed function name
   }, [scanCenterId, coReportingDoctorId]); // Changed variable name
 
-  console.log(formData)
+  console.log(formData);
   const downloadFile = (
     base64Data: string,
     contentType: string,
@@ -118,7 +120,14 @@ const CoReportingDoctorProfile: React.FC = () => {
         {formData.profileImgFile?.base64Data ? (
           <div className="relative w-32 h-32 lg:w-40 lg:h-40">
             <img
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              id="profile-img"
+              src={
+                formData?.profileImgFile
+                  ? formData.profileImgFile.base64Data?.startsWith("https://")
+                    ? formData.profileImgFile.base64Data // if it's an S3 URL
+                    : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // if it's Base64
+                  : "/default-profile.png" // fallback image if null
+              }
               alt="Profile"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />
@@ -130,7 +139,8 @@ const CoReportingDoctorProfile: React.FC = () => {
         )}
         <div className="flex flex-col gap-4 w-full lg:w-1/3">
           <div>
-            <Label htmlFor="coDoctorID">Co-Doctor ID</Label> {/* Changed text */}
+            <Label htmlFor="coDoctorID">Co-Doctor ID</Label>{" "}
+            {/* Changed text */}
             <Input
               id="coDoctorID"
               value={formData.refUserCustId || "N/A"}
@@ -240,7 +250,8 @@ const CoReportingDoctorProfile: React.FC = () => {
           </div>
           <div>
             <Label>Driving License</Label>
-            {formData.drivers_license && formData.driversLicenseFile?.base64Data ? (
+            {formData.drivers_license &&
+            formData.driversLicenseFile?.base64Data ? (
               <div
                 className="mt-1 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
                 onClick={() =>

@@ -151,18 +151,38 @@ const LeftReport: React.FC<LeftReportProps> = ({
 
     setChangedOne((prev: any) => ({
       ...prev,
-      breastDensityandImageLeftSyncStatus: isBreastDensityLeft ? true : prev.breastDensityandImageLeftSyncStatus,
-      breastDensityandImageLeftReportText: isBreastDensityLeft ? true : prev.breastDensityandImageLeftReportText,
-      nippleAreolaSkinLeftSyncStatus: isNippleAreolaLeft ? true : prev.nippleAreolaSkinLeftSyncStatus,
-      nippleAreolaSkinLeftReportText: isNippleAreolaLeft ? true : prev.nippleAreolaSkinLeftReportText,
-      grandularAndDuctalTissueLeftSyncStatus: isGrandularLeft ? true : prev.grandularAndDuctalTissueLeftSyncStatus,
-      grandularAndDuctalTissueLeftReportText: isGrandularLeft ? true : prev.grandularAndDuctalTissueLeftReportText,
+      breastDensityandImageLeftSyncStatus: isBreastDensityLeft
+        ? true
+        : prev.breastDensityandImageLeftSyncStatus,
+      breastDensityandImageLeftReportText: isBreastDensityLeft
+        ? true
+        : prev.breastDensityandImageLeftReportText,
+      nippleAreolaSkinLeftSyncStatus: isNippleAreolaLeft
+        ? true
+        : prev.nippleAreolaSkinLeftSyncStatus,
+      nippleAreolaSkinLeftReportText: isNippleAreolaLeft
+        ? true
+        : prev.nippleAreolaSkinLeftReportText,
+      grandularAndDuctalTissueLeftSyncStatus: isGrandularLeft
+        ? true
+        : prev.grandularAndDuctalTissueLeftSyncStatus,
+      grandularAndDuctalTissueLeftReportText: isGrandularLeft
+        ? true
+        : prev.grandularAndDuctalTissueLeftReportText,
       LesionsLeftSyncStatus: isLesionsLeft ? true : prev.LesionsLeftSyncStatus,
       LesionsLeftReportText: isLesionsLeft ? true : prev.LesionsLeftReportText,
-      LymphNodesLeftSyncStatus: isLymphNodesLeft ? true : prev.LymphNodesLeftSyncStatus,
-      LymphNodesLeftReportText: isLymphNodesLeft ? true : prev.LymphNodesLeftReportText,
-      ComparisonPriorLeftSyncStatus: isComparisonPriorLeft ? true : prev.ComparisonPriorLeftSyncStatus,
-      ComparisonPriorLeftReportText: isComparisonPriorLeft ? true : prev.ComparisonPriorLeftReportText,
+      LymphNodesLeftSyncStatus: isLymphNodesLeft
+        ? true
+        : prev.LymphNodesLeftSyncStatus,
+      LymphNodesLeftReportText: isLymphNodesLeft
+        ? true
+        : prev.LymphNodesLeftReportText,
+      ComparisonPriorLeftSyncStatus: isComparisonPriorLeft
+        ? true
+        : prev.ComparisonPriorLeftSyncStatus,
+      ComparisonPriorLeftReportText: isComparisonPriorLeft
+        ? true
+        : prev.ComparisonPriorLeftReportText,
     }));
 
     handleReportInputChange(questionId, value);

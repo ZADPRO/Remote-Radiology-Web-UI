@@ -17,12 +17,11 @@ import { Camera, FileText } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "../Routes/AuthContext";
 
-
 const RadiologistProfile: React.FC = () => {
   const { user } = useAuth();
-      
-        // const scribeId = role?.scanCenterId;
-      
+
+  // const scribeId = role?.scanCenterId;
+
   const radiologistId = user?.refUserId;
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,7 +42,7 @@ const RadiologistProfile: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      if(radiologistId === undefined) return;
+      if (radiologistId === undefined) return;
       const res = await radiologistService.listSpecificRadiologist(
         radiologistId
       );
@@ -97,8 +96,12 @@ const RadiologistProfile: React.FC = () => {
   };
 
   if (loading) return <LoadingOverlay />;
-  if (error && !formData) return <div className="p-4 text-red-500">{error}</div>;
-  if (!formData) return <div className="p-4">No radiologist data found or ID not provided.</div>;
+  if (error && !formData)
+    return <div className="p-4 text-red-500">{error}</div>;
+  if (!formData)
+    return (
+      <div className="p-4">No radiologist data found or ID not provided.</div>
+    );
 
   return (
     <>
@@ -109,7 +112,13 @@ const RadiologistProfile: React.FC = () => {
             <div className="relative w-32 h-32 lg:w-45 lg:h-45">
               <img
                 id="profile-img"
-                src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+                src={
+                  formData?.profileImgFile
+                    ? formData.profileImgFile.base64Data?.startsWith("https://")
+                      ? formData.profileImgFile.base64Data // S3 URL directly
+                      : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64 encoded
+                    : "/default-profile.png" // fallback if no image
+                }
                 alt="Profile"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
@@ -139,11 +148,12 @@ const RadiologistProfile: React.FC = () => {
               <Label className="text-sm" htmlFor="status-display">
                 Status
               </Label>
-              <Select
-                disabled
-                value={String(formData.refUserStatus)}
-              >
-                <SelectTrigger id="status-display-trigger" className="bg-white w-full" disabled>
+              <Select disabled value={String(formData.refUserStatus)}>
+                <SelectTrigger
+                  id="status-display-trigger"
+                  className="bg-white w-full"
+                  disabled
+                >
                   <SelectValue placeholder="N/A" />
                 </SelectTrigger>
                 <SelectContent>
@@ -198,7 +208,9 @@ const RadiologistProfile: React.FC = () => {
                       formData.refRAAadhar || "Aadhar_Document.pdf"
                     )
                   }
-                  title={`Download ${formData.refRAAadhar || "Aadhar Document"}`}
+                  title={`Download ${
+                    formData.refRAAadhar || "Aadhar Document"
+                  }`}
                 >
                   <div className="bg-green-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-green-600" />
@@ -208,9 +220,10 @@ const RadiologistProfile: React.FC = () => {
                   </span>
                 </div>
               ) : formData.refRAAadhar ? (
-                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-                    Aadhar document: {formData.refRAAadhar} (Preview not available).
-                 </div>
+                <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+                  Aadhar document: {formData.refRAAadhar} (Preview not
+                  available).
+                </div>
               ) : (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No Aadhar document uploaded.
@@ -230,7 +243,9 @@ const RadiologistProfile: React.FC = () => {
                       formData.refRADrivingLicense || "Driving_License.pdf"
                     )
                   }
-                  title={`Download ${formData.refRADrivingLicense || "Driving License Document"}`}
+                  title={`Download ${
+                    formData.refRADrivingLicense || "Driving License Document"
+                  }`}
                 >
                   <div className="bg-green-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-green-600" />
@@ -241,8 +256,9 @@ const RadiologistProfile: React.FC = () => {
                 </div>
               ) : formData.refRADrivingLicense ? (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-                    Driving License: {formData.refRADrivingLicense} (Preview not available).
-                 </div>
+                  Driving License: {formData.refRADrivingLicense} (Preview not
+                  available).
+                </div>
               ) : (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No Driving License document uploaded.
@@ -262,12 +278,17 @@ const RadiologistProfile: React.FC = () => {
                   disabled
                   value={formData.refCODOPhoneNo1CountryCode || "+91"}
                 >
-                  <SelectTrigger className="bg-white disabled:opacity-100 disabled:pointer-events-none" disabled>
+                  <SelectTrigger
+                    className="bg-white disabled:opacity-100 disabled:pointer-events-none"
+                    disabled
+                  >
                     <SelectValue placeholder="N/A" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={formData.refCODOPhoneNo1CountryCode || "+91"}>
-                        {formData.refCODOPhoneNo1CountryCode || "IN (+91)"}
+                    <SelectItem
+                      value={formData.refCODOPhoneNo1CountryCode || "+91"}
+                    >
+                      {formData.refCODOPhoneNo1CountryCode || "IN (+91)"}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -290,7 +311,11 @@ const RadiologistProfile: React.FC = () => {
                 type="text"
                 placeholder="N/A"
                 className="bg-white"
-                value={formData.refUserDOB ? new Date(formData.refUserDOB).toLocaleDateString() : "N/A"}
+                value={
+                  formData.refUserDOB
+                    ? new Date(formData.refUserDOB).toLocaleDateString()
+                    : "N/A"
+                }
                 readOnly
               />
             </div>
@@ -318,8 +343,8 @@ const RadiologistProfile: React.FC = () => {
                 </div>
               ) : formData.refRAPan ? (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-                    PAN document: {formData.refRAPan} (Preview not available).
-                 </div>
+                  PAN document: {formData.refRAPan} (Preview not available).
+                </div>
               ) : (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No PAN document uploaded.
@@ -367,25 +392,36 @@ const RadiologistProfile: React.FC = () => {
                   {formData.licenseFiles.map((file, index) => (
                     <div
                       key={`existing-license-${index}`}
-                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${file.lFileData?.base64Data ? 'cursor-pointer' : 'cursor-default'}`}
-                       onClick={() => file.lFileData?.base64Data &&
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName || `License_${index + 1}.pdf`
-                          )
-                        }
-                        title={file.lFileData?.base64Data ? `Download ${file.refLOldFileName || `License ${index + 1}`}` : (file.refLOldFileName || `License ${index + 1}`)}
+                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${
+                        file.lFileData?.base64Data
+                          ? "cursor-pointer"
+                          : "cursor-default"
+                      }`}
+                      onClick={() =>
+                        file.lFileData?.base64Data &&
+                        downloadFile(
+                          file.lFileData.base64Data,
+                          file.lFileData.contentType,
+                          file.refLOldFileName || `License_${index + 1}.pdf`
+                        )
+                      }
+                      title={
+                        file.lFileData?.base64Data
+                          ? `Download ${
+                              file.refLOldFileName || `License ${index + 1}`
+                            }`
+                          : file.refLOldFileName || `License ${index + 1}`
+                      }
                     >
                       <div className="flex items-center gap-3 w-full truncate">
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
                         </div>
-                        <span
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refLOldFileName || `Existing License ${index + 1}`}
-                          {!file.lFileData?.base64Data && " (Preview not available)"}
+                        <span className="truncate font-semibold text-green-800">
+                          {file.refLOldFileName ||
+                            `Existing License ${index + 1}`}
+                          {!file.lFileData?.base64Data &&
+                            " (Preview not available)"}
                         </span>
                       </div>
                     </div>
@@ -422,25 +458,35 @@ const RadiologistProfile: React.FC = () => {
                   {formData.cvFiles.map((file, index) => (
                     <div
                       key={`existing-cv-${index}`}
-                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${file.cvFileData?.base64Data ? 'cursor-pointer' : 'cursor-default'}`}
-                      onClick={() => file.cvFileData?.base64Data &&
-                          downloadFile(
-                            file.cvFileData.base64Data,
-                            file.cvFileData.contentType,
-                            file.refCVOldFileName || `CV_${index + 1}.pdf`
-                          )
-                        }
-                        title={file.cvFileData?.base64Data ? `Download ${file.refCVOldFileName || `CV ${index + 1}`}` : (file.refCVOldFileName || `CV ${index + 1}`)}
+                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${
+                        file.cvFileData?.base64Data
+                          ? "cursor-pointer"
+                          : "cursor-default"
+                      }`}
+                      onClick={() =>
+                        file.cvFileData?.base64Data &&
+                        downloadFile(
+                          file.cvFileData.base64Data,
+                          file.cvFileData.contentType,
+                          file.refCVOldFileName || `CV_${index + 1}.pdf`
+                        )
+                      }
+                      title={
+                        file.cvFileData?.base64Data
+                          ? `Download ${
+                              file.refCVOldFileName || `CV ${index + 1}`
+                            }`
+                          : file.refCVOldFileName || `CV ${index + 1}`
+                      }
                     >
                       <div className="flex items-center gap-3 w-full truncate">
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
                         </div>
-                        <span
-                          className="truncate font-semibold text-green-800"
-                        >
+                        <span className="truncate font-semibold text-green-800">
                           {file.refCVOldFileName || `Existing CV ${index + 1}`}
-                          {!file.cvFileData?.base64Data && " (Preview not available)"}
+                          {!file.cvFileData?.base64Data &&
+                            " (Preview not available)"}
                         </span>
                       </div>
                     </div>
@@ -454,38 +500,55 @@ const RadiologistProfile: React.FC = () => {
             </div>
             {/* Malpractice Insurance Files Display */}
             <div className="flex flex-col gap-1.5 w-full">
-              <Label className="text-sm font-medium">Malpractice Insurance</Label>
-              {formData.malpracticeinsureance_files && formData.malpracticeinsureance_files.length > 0 ? (
+              <Label className="text-sm font-medium">
+                Malpractice Insurance
+              </Label>
+              {formData.malpracticeinsureance_files &&
+              formData.malpracticeinsureance_files.length > 0 ? (
                 <div className="mt-3 flex flex-col gap-3">
                   {formData.malpracticeinsureance_files.map((file, index) => (
                     <div
                       key={`existing-malpractice-${index}`}
-                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${file.MPFileData?.base64Data ? 'cursor-pointer' : 'cursor-default'}`}
-                      onClick={() => file.MPFileData?.base64Data &&
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName || `Malpractice_${index + 1}.pdf`
-                          )
-                        }
-                        title={file.MPFileData?.base64Data ? `Download ${file.refMPOldFileName || `Malpractice File ${index + 1}`}` : (file.refMPOldFileName || `Malpractice File ${index + 1}`)}
+                      className={`flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group ${
+                        file.MPFileData?.base64Data
+                          ? "cursor-pointer"
+                          : "cursor-default"
+                      }`}
+                      onClick={() =>
+                        file.MPFileData?.base64Data &&
+                        downloadFile(
+                          file.MPFileData.base64Data,
+                          file.MPFileData.contentType,
+                          file.refMPOldFileName ||
+                            `Malpractice_${index + 1}.pdf`
+                        )
+                      }
+                      title={
+                        file.MPFileData?.base64Data
+                          ? `Download ${
+                              file.refMPOldFileName ||
+                              `Malpractice File ${index + 1}`
+                            }`
+                          : file.refMPOldFileName ||
+                            `Malpractice File ${index + 1}`
+                      }
                     >
                       <div className="flex items-center gap-3 w-full truncate">
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
                         </div>
-                        <span
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refMPOldFileName || `Malpractice File ${index + 1}`}
-                          {!file.MPFileData?.base64Data && " (Preview not available)"}
+                        <span className="truncate font-semibold text-green-800">
+                          {file.refMPOldFileName ||
+                            `Malpractice File ${index + 1}`}
+                          {!file.MPFileData?.base64Data &&
+                            " (Preview not available)"}
                         </span>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
+                <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No Malpractice Insurance documents uploaded.
                 </div>
               )}
@@ -503,8 +566,9 @@ const RadiologistProfile: React.FC = () => {
                 </div>
               ) : formData.refRADigitalSignature ? (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
-                    Digital signature: {formData.refRADigitalSignature} (Preview not available).
-                 </div>
+                  Digital signature: {formData.refRADigitalSignature} (Preview
+                  not available).
+                </div>
               ) : (
                 <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-500">
                   No digital signature uploaded.

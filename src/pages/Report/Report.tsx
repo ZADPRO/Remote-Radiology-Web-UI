@@ -89,6 +89,8 @@ import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryRe
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
 import { LesionsVal } from "./Lisons/LesionsRightString";
+import axios from "axios";
+import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -1773,8 +1775,10 @@ const Report: React.FC = () => {
           <div>
    <div style="text-align: left;">
   ${
-    ScanCenterImg?.base64Data
-      ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+    ScanCenterImg
+      ? ScanCenterImg.contentType === "url"
+        ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+        : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
       : ""
   }
 </div>
@@ -2373,8 +2377,10 @@ const Report: React.FC = () => {
            <div>
            <div style="text-align: left;">
         ${
-          ScanCenterImg?.base64Data
-            ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+          ScanCenterImg
+            ? ScanCenterImg.contentType === "url"
+              ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+              : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
             : ""
         }
         </div>
@@ -3151,6 +3157,85 @@ const Report: React.FC = () => {
         lymphnodesImageTextLeft: LymphNodesLeftImage,
       };
       console.log("payload", payload);
+
+      if (movedStatus) {
+        if (movedStatus === "Signed Off") {
+          console.log("\n\nmovedStatus ===>", movedStatus);
+          console.log(
+            "\n\nPatient dataa -> ",
+            patientDetails,
+            "\n\n\n",
+            assignData
+          );
+
+          try {
+            const date = new Date();
+            const formattedTimestamp = `${date.getFullYear()}-${(
+              date.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}-${date
+              .getDate()
+              .toString()
+              .padStart(2, "0")}_${date
+              .getHours()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getSeconds()
+              .toString()
+              .padStart(2, "0")}`;
+
+            const filename = `${patientDetails.refUserCustId}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            console.log("patientDetails", patientDetails);
+
+            // 1️⃣ Step 1: Request presigned PUT URL from backend
+            const token = localStorage.getItem("token");
+
+            const payloadS3 = {
+              fileType: "finalReport", // or "consentForm"
+              fileUrl: filename,
+              appointmentId: payload.appointmentId,
+              patientId: payload.patientId,
+            };
+
+            const uploadRes = await axios.post(
+              `${
+                import.meta.env.VITE_API_URL_AUTH
+              }/storage/s3/final-report-upload`,
+              payloadS3, // <-- this is the body
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`, // <-- actual HTTP header
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            const uploadUrl = uploadRes.data.data.url;
+            console.log("Generated Upload URL:", uploadUrl);
+
+            // 2️⃣ Step 2: Generate PDF blob (instead of downloading)
+            console.log("\n\n\n\n\npayload", payload.reportTextContent);
+            const pdfBlob = await generateReportsPdfBlob(
+              payload.reportTextContent
+            );
+
+            // 3️⃣ Step 3: Upload PDF to presigned S3 URL
+            await axios.put(uploadUrl, pdfBlob, {
+              headers: {
+                "Content-Type": "application/pdf",
+              },
+            });
+
+            console.log("✅ PDF successfully uploaded to S3");
+          } catch (err) {
+            console.error("❌ Error generating or uploading report:", err);
+          }
+        }
+      }
 
       const res = await reportService.submitReport(payload);
       console.log(res);

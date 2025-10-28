@@ -18,14 +18,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../Routes/AuthContext";
 
 const TechnicianProfile: React.FC = () => {
+  const { user } = useAuth();
 
-    const { user } = useAuth();
-    
-      const scanCenterId = user?.refSCId;
-      const technicianId = user?.refUserId;
-    
-      // const scanCenterId = 5;
-      // const technicianId = 52;
+  const scanCenterId = user?.refSCId;
+  const technicianId = user?.refUserId;
+
+  // const scanCenterId = 5;
+  // const technicianId = 52;
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -36,27 +35,24 @@ const TechnicianProfile: React.FC = () => {
     }
   }, [error]);
 
-  const [formData, setFormData] = useState<ListSpecificTechnician | null>(
-    null
-  );
+  const [formData, setFormData] = useState<ListSpecificTechnician | null>(null);
 
   const getSpecificTechnician = async () => {
     setLoading(true);
     setError(null);
     try {
-      if(scanCenterId && technicianId) {
+      if (scanCenterId && technicianId) {
         const res = await technicianService.getSpecificTechnician(
-        scanCenterId, // Pass scanCenterId if your service requires it
-        technicianId
-      );
-      if (res.data && res.data.length > 0) {
-        setFormData(res.data[0]);
-      } else {
-        setError("Technician data not found.");
-        setFormData(null);
+          scanCenterId, // Pass scanCenterId if your service requires it
+          technicianId
+        );
+        if (res.data && res.data.length > 0) {
+          setFormData(res.data[0]);
+        } else {
+          setError("Technician data not found.");
+          setFormData(null);
+        }
       }
-      }
-      
     } catch (err) {
       console.error("Error fetching technician data:", err);
       setError("Failed to fetch technician details.");
@@ -122,7 +118,14 @@ const TechnicianProfile: React.FC = () => {
         {formData.profileImgFile?.base64Data ? (
           <div className="relative w-32 h-32 lg:w-40 lg:h-40">
             <img
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              id="profile-img"
+              src={
+                formData.profileImgFile
+                  ? formData.profileImgFile.base64Data?.startsWith("https://")
+                    ? formData.profileImgFile.base64Data // ✅ S3 URL
+                    : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // ✅ Base64 data
+                  : "/default-profile.png" // ✅ Fallback image
+              }
               alt="Profile"
               className="w-full h-full rounded-full object-cover border-4 border-gray-300 shadow"
             />
@@ -193,10 +196,7 @@ const TechnicianProfile: React.FC = () => {
         <div>
           <Label htmlFor="phone">Contact Number</Label>
           <div className="flex gap-2">
-            <Select
-              value={formData.refCODOPhoneNo1CountryCode || ""}
-              disabled
-            >
+            <Select value={formData.refCODOPhoneNo1CountryCode || ""} disabled>
               <SelectTrigger className="bg-white w-[100px]">
                 <SelectValue placeholder="Code" />
               </SelectTrigger>
@@ -257,8 +257,8 @@ const TechnicianProfile: React.FC = () => {
               }
             >
               <div className="bg-green-100 p-2 rounded-md">
-                      <FileText className="w-5 h-5 text-green-600" />
-                    </div>
+                <FileText className="w-5 h-5 text-green-600" />
+              </div>
               <span className="truncate font-semibold text-sm text-green-800">
                 View Driving License
               </span>
@@ -275,7 +275,9 @@ const TechnicianProfile: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
         <div>
-          <Label htmlFor="trainedEaseQT">Trained Wellthgreen Report Portal Status</Label>
+          <Label htmlFor="trainedEaseQT">
+            Trained Wellthgreen Report Portal Status
+          </Label>
           <Input
             id="trainedEaseQT"
             value={formData.refTDTrainedEaseQTStatus ? "Yes" : "No"}
@@ -283,7 +285,7 @@ const TechnicianProfile: React.FC = () => {
             className="bg-white"
           />
         </div>
-        
+
         <div>
           <Label>License Files</Label>
           {formData.licenseFiles && formData.licenseFiles.length > 0 ? (
@@ -297,8 +299,7 @@ const TechnicianProfile: React.FC = () => {
                       downloadFile(
                         file.lFileData.base64Data,
                         file.lFileData.contentType,
-                        file.refLOldFileName ||
-                          `LicenseFile_${index + 1}.pdf`
+                        file.refLOldFileName || `LicenseFile_${index + 1}.pdf`
                       );
                     } else {
                       setError("File data is not available for download.");
