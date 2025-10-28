@@ -150,15 +150,16 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -187,14 +188,15 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -275,38 +277,71 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     setSaveLoading(true);
     setError("");
 
+    const cleanUrl = formData.refUserProfileImg.includes("?")
+      ? formData.refUserProfileImg.split("?")[0]
+      : formData.refUserProfileImg;
+
+    const cleanS3Url = (url: any): string => {
+      if (!url) return "";
+
+      if (typeof url === "object" && url.url) {
+        url = url.url;
+      }
+
+      if (typeof url !== "string") {
+        try {
+          url = String(url);
+        } catch {
+          return "";
+        }
+      }
+
+      const decoded = decodeURIComponent(url);
+      const parts = decoded.split("?");
+
+      return parts[0];
+    };
+
     try {
       const payload = {
         id: formData.refUserId,
         firstname: formData.refUserFirstName,
         lastname: formData.refUserLastName,
-        profile_img: formData.refUserProfileImg,
+        profile_img: cleanS3Url(formData.refUserProfileImg || cleanUrl),
         email: formData.refCODOEmail,
         dob: formData.refUserDOB,
         phone: formData.refCODOPhoneNo1,
         phoneCountryCode: formData.refCODOPhoneNo1CountryCode,
-        drivers_license_no: formData.drivers_license,
+        drivers_license_no: cleanS3Url(formData.drivers_license),
         social_security_no: formData.refDDSocialSecurityNo,
-        drivers_license: formData.drivers_license,
+        drivers_license: cleanS3Url(formData.drivers_license),
         Specialization: formData.Specialization,
         npi: formData.refDDNPI,
         status: formData.refUserStatus,
-        license_files: tempLicenses,
-        malpracticeinsureance_files: tempMalpractice,
-        digital_signature: formData.digital_signature,
+        license_files: Array.isArray(tempLicenses)
+          ? tempLicenses.map((file) => cleanS3Url(file))
+          : [],
+        malpracticeinsureance_files: Array.isArray(tempMalpractice)
+          ? tempMalpractice.map((file) => cleanS3Url(file))
+          : [],
+        digital_signature: cleanS3Url(formData.digital_signature),
         easeQTReportAccess: formData.refDDEaseQTReportAccess,
         naSystemreportAcess: formData.refDDNAsystemReportAccess,
       };
-      console.log("payload", payload);
+
+      console.log("\n\npayload", payload);
+
       const res = await doctorService.updatePerformingProvider(payload);
       console.log(res);
+
       if (res.status) {
         toast.success(res.message);
         setIsEditDialogOpen(false);
         onUpdate();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error("❌ Error updating provider:", err);
+      toast.error("Failed to update provider");
     } finally {
       setLoading(false);
       setSaveLoading(false);
@@ -357,11 +392,14 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempLicense = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -394,14 +432,15 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          digital_signature: response.fileName,
+          digital_signature: cleanUrl,
           digitalSignatureFile: null,
         }));
 
@@ -462,12 +501,18 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // Local uploaded file
+                    : formData.refUserProfileImg &&
+                      formData.refUserProfileImg.startsWith("https")
+                    ? formData.refUserProfileImg // S3 URL (presigned or public)
+                    : formData.profileImgFile?.base64Data
+                    ? `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}` // Local base64
+                    : "/assets/default-profile.png" // Fallback default image
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -780,17 +825,24 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                   </span>
                 </div>
               ) : (
-                formData.drivers_license &&
-                formData.driversLicenseFile && (
+                formData.drivers_license && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
-                      downloadFile(
-                        formData.driversLicenseFile.base64Data,
-                        formData.driversLicenseFile.contentType,
-                        "drivers_license"
-                      )
-                    }
+                    onClick={() => {
+                      if (formData.drivers_license.startsWith("https://")) {
+                        window.open(formData.drivers_license, "_blank");
+                      } else if (formData.driversLicenseFile?.base64Data) {
+                        downloadFile(
+                          formData.driversLicenseFile.base64Data,
+                          formData.driversLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      } else {
+                        console.warn(
+                          "No valid driver’s license file available for download."
+                        );
+                      }
+                    }}
                   >
                     <div className="bg-green-100 p-2 rounded-md">
                       <FileText className="w-5 h-5 text-green-600" />
@@ -933,13 +985,24 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                     >
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          // ✅ Check if it's an S3 URL
+                          if (file.refLFileName?.startsWith("https://")) {
+                            // Open S3 file directly in new tab (browser handles download/view)
+                            window.open(file.refLFileName, "_blank");
+                          } else if (file.lFileData?.base64Data) {
+                            // ✅ Fallback to base64 download
+                            downloadFile(
+                              file.lFileData.base64Data,
+                              file.lFileData.contentType,
+                              file.refLOldFileName
+                            );
+                          } else {
+                            console.warn(
+                              "No valid file data found for download."
+                            );
+                          }
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -952,6 +1015,7 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                             `Existing License ${index + 1}`}
                         </span>
                       </div>
+
                       <button
                         type="button"
                         onClick={() => {
@@ -1075,13 +1139,22 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
                     >
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          if (file.refMPFileName?.startsWith("https://")) {
+                            // ✅ File from S3 — open or download directly
+                            window.open(file.refMPFileName, "_blank");
+                          } else if (file.MPFileData?.base64Data) {
+                            // ✅ File from base64 (local or DB)
+                            downloadFile(
+                              file.MPFileData.base64Data,
+                              file.MPFileData.contentType,
+                              file.refMPOldFileName
+                            );
+                          } else {
+                            // ✅ Fallback (no data)
+                            console.warn("No valid malpractice file found");
+                          }
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -1160,7 +1233,16 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               {files.digital_signature && (
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                   <img
-                    src={URL.createObjectURL(files.digital_signature)}
+                    src={
+                      files.digital_signature
+                        ? URL.createObjectURL(files.digital_signature) // If new file uploaded
+                        : formData.digital_signature &&
+                          formData.digital_signature.startsWith("https")
+                        ? formData.digital_signature // S3 URL from backend
+                        : formData.digitalSignatureFile?.base64Data
+                        ? `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}` // Local base64
+                        : "/assets/default-signature.png" // Default fallback
+                    }
                     alt="Digital Signature"
                     className="h-16 w-auto rounded border object-contain"
                   />
@@ -1176,31 +1258,37 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
               )}
 
               {/* Show existing digital signature from backend */}
-              {!files.digital_signature &&
-                formData.digital_signature &&
-                formData.digitalSignatureFile && (
-                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
-                    <img
-                      src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
-                      alt="Digital Signature"
-                      className="h-16 w-auto rounded border object-contain"
-                    />
+              {formData.digital_signature && (
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
+                  <img
+                    src={
+                      files.digital_signature
+                        ? URL.createObjectURL(files.digital_signature) // ✅ Local uploaded file
+                        : formData.digital_signature?.startsWith("https")
+                        ? formData.digital_signature // ✅ S3 URL from backend
+                        : formData.digitalSignatureFile?.base64Data
+                        ? `data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}` // ✅ Base64 file from DB
+                        : "/assets/default-signature.png" // ✅ Default placeholder
+                    }
+                    alt="Digital Signature"
+                    className="h-16 w-auto rounded border object-contain"
+                  />
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          digital_signature: "",
-                          digitalSignatureFile: null,
-                        }));
-                      }}
-                      className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        digital_signature: "",
+                        digitalSignatureFile: null,
+                      }));
+                    }}
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

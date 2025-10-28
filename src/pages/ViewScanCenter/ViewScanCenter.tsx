@@ -62,19 +62,19 @@ const ViewScanCenter: React.FC = () => {
 
   const handleProfileImageUpload = async (file: File) => {
     setError("");
-    const formDataImg = new FormData();
-    formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
-
+      // Use the new simplified public upload flow
+      const response = await uploadService.uploadImage(file);
+      console.log("\n\nresponse", response);
       if (response.status) {
+        // Save public S3 URL in DB field
         setFormData((prev) => ({
           ...prev,
-          refSCProfile: response.fileName,
+          refSCProfile: response.viewURL, // directly use public URL
         }));
+
+        // Save local file object for preview
         setFiles((prev) => ({
           ...prev,
           profile_img: file,
@@ -83,6 +83,7 @@ const ViewScanCenter: React.FC = () => {
         setError("Profile image upload failed");
       }
     } catch (err) {
+      console.error(err);
       setError("Error uploading profile image");
     }
   };
@@ -106,12 +107,11 @@ const ViewScanCenter: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
+      console.log("formData", formData);
       const payload = {
         id: formData.refSCId,
         name: formData.refSCName,
         address: formData.refSCAddress,
-        // contact_number_code: formData.refSCPhoneNo1CountryCode,
-        // contact_number: formData.refSCPhoneNo1,
         website: formData.refSCWebsite,
         email: formData.refSCEmail,
         telephone: formData.refSCPhoneNo1,
@@ -126,14 +126,14 @@ const ViewScanCenter: React.FC = () => {
         payload
       );
       const res = await scancenterService.updateScanCenter(payload);
-      console.log(res);
+      console.log("res", res);
       if (res.status) {
         navigate(-1);
       } else {
         setError(res.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -189,11 +189,18 @@ const ViewScanCenter: React.FC = () => {
                   src={
                     files.profile_img
                       ? URL.createObjectURL(files.profile_img)
-                      : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                      : formData.refSCProfile?.startsWith("http")
+                      ? formData.refSCProfile
+                      : formData.refSCProfile
+                      ? `https://easeqt-health-archive.s3.us-east-2.amazonaws.com/images/${formData.refSCProfile}`
+                      : formData.profileImgFile?.base64Data
+                      ? `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                      : "/default-avatar.svg"
                   }
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
                 />
+
                 <label className="absolute bottom-2 right-2 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                   <Pencil className="w-5 h-5 text-white" />
                   <input

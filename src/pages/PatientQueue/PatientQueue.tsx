@@ -101,6 +101,7 @@ import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
 import { formatReadableDate } from "@/utlis/calculateAge";
 import FileView from "@/components/FileView/FileView";
+import DownloadingOverlay from "@/components/ui/CustomComponents/DownloadingOverlay";
 
 interface staffData {
   refUserCustId: string;
@@ -129,6 +130,13 @@ const PatientQueue: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
+
+  const [progress, setProgress] = useState({
+    downloadedMB: 0,
+    percentage: 0,
+    currentFile: "",
+  });
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const hasSignedOffReport = (
     ids: number[],
@@ -364,6 +372,7 @@ const PatientQueue: React.FC = () => {
     try {
       if (role?.type == "patient") {
         const res = await appointmentService.listPatientMedicalHistory();
+        console.log("res", res);
         if (res.status) {
           setPatientQueue(res.data);
           setSCConsultantStatus(res.consultantStatus);
@@ -375,6 +384,8 @@ const PatientQueue: React.FC = () => {
         }
       } else {
         const res = await technicianService.listPatientQueue();
+        console.log("res", res);
+        console.log("PatientQueue.tsx / res / 371 -------------------  ", res);
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
@@ -1521,7 +1532,9 @@ const PatientQueue: React.FC = () => {
                         rightDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_R.zip"
+                          .join("_") + "_R.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1549,7 +1562,9 @@ const PatientQueue: React.FC = () => {
                         leftDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_L.zip"
+                          .join("_") + "_L.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1720,6 +1735,7 @@ const PatientQueue: React.FC = () => {
             );
 
             if (response.status) {
+              console.log("\n\n\nresponse\n\n", response);
               setReportData(response.data || []);
             }
             setOldLoading(false);
@@ -1736,25 +1752,28 @@ const PatientQueue: React.FC = () => {
             if (!files) return;
 
             for (const file of files) {
-              if (file) {
-                const formDataObj = new FormData();
-                formDataObj.append("file", file);
-                formDataObj.append("patientId", patientId.toString());
-                formDataObj.append("categoryId", categoryId.toString());
-                formDataObj.append("appointmentId", appointmentId.toString());
-                try {
-                  await technicianService.uploadOldReportFile({
-                    formFile: formDataObj,
-                  });
-                  // if (response.status) {
-                  //   values.push(response.fileName);
-                  // }
-                } catch (error) {
-                  console.error("File upload failed:", error);
+              try {
+                const response = await technicianService.uploadOldReportFile({
+                  file,
+                  appointmentId,
+                  patientId,
+                  categoryId,
+                });
+
+                if (response) {
+                  console.log("response", response);
+                  console.log("Uploaded:", response.viewURL);
+                  // Update UI or form data here if needed
+                } else {
+                  console.error("Upload failed for:", file.name);
                 }
+              } catch (error) {
+                console.error("Error uploading file:", file.name, error);
               }
             }
+
             ListAllOldReport(appointmentId, patientId, categoryId);
+            setOldLoading(false);
           };
 
           const handleDeleteFile = async (
@@ -1864,38 +1883,43 @@ const PatientQueue: React.FC = () => {
                             </label>
                           </div>
 
-                          <div className=" space-y-2 px-2 lg:px-10 my-5">
+                          <div className="space-y-2 px-2 lg:px-10 my-5">
                             {reportData.length > 0 ? (
                               <>
-                                {reportData.map((fileName, index) => (
-                                  <div
-                                    key={index}
-                                    className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                                  >
-                                    {/* File name (downloadable) */}
-                                    <FileView
-                                      fileName={fileName.refORFilename}
-                                    />
+                                {reportData.map((file, index) => {
+                                  const displayName =
+                                    file.refORFilename.split("/").pop() ||
+                                    "unknown_file";
 
-                                    {/* Delete icon */}
+                                  return (
                                     <div
-                                      className="cursor-pointer"
-                                      onClick={() =>
-                                        handleDeleteFile(
-                                          fileName.refORId,
-                                          row.original.refAppointmentId,
-                                          row.original.refUserId,
-                                          currentOpen
-                                        )
-                                      }
+                                      key={index}
+                                      className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                                     >
-                                      <Trash
-                                        size={15}
-                                        className="text-red-500"
+                                      <FileView
+                                        displayName={displayName}
+                                        fileUrl={file.refORFilename}
                                       />
+
+                                      <div
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleDeleteFile(
+                                            file.refORId,
+                                            row.original.refAppointmentId,
+                                            row.original.refUserId,
+                                            currentOpen
+                                          )
+                                        }
+                                      >
+                                        <Trash
+                                          size={15}
+                                          className="text-red-500"
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </>
                             ) : (
                               <div>No Report Uploaded</div>
@@ -2007,9 +2031,9 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              if(role === "patient"){
+              if (role === "patient") {
                 setPatientReportDialog(true);
-              }else{
+              } else {
                 navigate("/report", {
                   state: {
                     appointmentId: row.original.refAppointmentId,
@@ -2991,6 +3015,13 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
+      {isDownloading && (
+        <DownloadingOverlay
+          downloadedMB={progress.downloadedMB}
+          percentage={progress.percentage}
+          currentFile={progress.currentFile}
+        />
+      )}
       <div className="w-[99%] h-[85vh] overflow-y-scroll bg-radial-greeting-02 mx-auto space-y-3 p-1 my-2 lg:py-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
@@ -3011,9 +3042,10 @@ const PatientQueue: React.FC = () => {
           </Button>
           <Button
             onClick={async () => {
-              setLoading(true);
-              await handleAllDownloadDicom(selectedRowIds);
-              setLoading(false);
+              setIsDownloading(true);
+              setProgress({ downloadedMB: 0, percentage: 0, currentFile: "" });
+              await handleAllDownloadDicom(selectedRowIds, setProgress);
+              setIsDownloading(false);
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
@@ -3022,7 +3054,6 @@ const PatientQueue: React.FC = () => {
             <Download className="h-4 w-4" />
             Download Dicom
           </Button>
-
           <Button
             onClick={async () => {
               setLoading(true);

@@ -133,14 +133,15 @@ const AddTechnician: React.FC = () => {
       formDataObj.append("file", file);
 
       try {
-        const response = await uploadService.uploadFile({
-          formFile: formDataObj,
-        });
+        const response = await uploadService.uploadFile(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            [fieldName]: response.fileName, // just path to backend
+            [fieldName]: cleanUrl, // just path to backend
           }));
 
           setFiles((prev) => ({
@@ -169,11 +170,14 @@ const AddTechnician: React.FC = () => {
       formData.append("file", file);
 
       try {
-        const response = await uploadFn({ formFile: formData });
+        const response = await uploadFn(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           const result: UploadFile = {
-            file_name: response.fileName,
+            file_name: cleanUrl,
             old_file_name: file.name,
           };
           console.log(result);
@@ -203,14 +207,15 @@ const AddTechnician: React.FC = () => {
       formDataImg.append("profileImage", file);
       setError("");
       try {
-        const response = await uploadService.uploadImage({
-          formImg: formDataImg,
-        });
+        const response = await uploadService.uploadImage(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            digital_signature: response.fileName,
+            digital_signature: cleanUrl,
           }));
 
           setFiles((prev) => ({
@@ -268,14 +273,15 @@ const AddTechnician: React.FC = () => {
       formDataImg.append("profileImage", file);
 
       try {
-        const response = await uploadService.uploadImage({
-          formImg: formDataImg,
-        });
+        const response = await uploadService.uploadImage(file);
 
         if (response.status) {
+          const cleanUrl = response.viewURL.includes("?")
+            ? response.viewURL.split("?")[0]
+            : response.viewURL;
           setFormData((prev) => ({
             ...prev,
-            profile_img: response.fileName,
+            profile_img: cleanUrl,
           }));
 
           setFiles((prev) => ({
@@ -408,7 +414,9 @@ const AddTechnician: React.FC = () => {
                   Date Of Birth <span className="text-red-500">*</span>
                 </Label>
                 {/* <DatePicker
-                  value={formData.dob ? parseLocalDate(formData.dob) : undefined}
+                  value={
+                    formData.dob ? parseLocalDate(formData.dob) : undefined
+                  }
                   onChange={(val) => {
                     setFormData((prev) => ({
                       ...prev,

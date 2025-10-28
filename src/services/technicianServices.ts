@@ -427,6 +427,45 @@ export const technicianService = {
     return decryptData;
   },
 
+  uploadDicomToS3: async (
+    uploadURL: string,
+    file: File,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+  ) => {
+    await axios.put(uploadURL, file, {
+      headers: {
+        "Content-Type": file.type,
+      },
+      onUploadProgress,
+    });
+  },
+
+  getDicomUploadUrl: async (payload: {
+    fileName: string;
+    side: string;
+    appointmentId: any;
+    patientId: any;
+  }) => {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/technicianintakeform/dicomuploadurl`,
+      payload, 
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    const decryptData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    console.log("🔗 Pre-signed URLs:", decryptData);
+    return decryptData;
+  },
+
   saveDicom: async (formData: any) => {
     const token = localStorage.getItem("token");
     const payload = encrypt(formData, token);
@@ -448,6 +487,29 @@ export const technicianService = {
     tokenService.setToken(res.data.token);
     return decryptedData;
   },
+
+  saveDicomsToS3: async (formData: any) => {
+    const token = localStorage.getItem("token");
+    const encryptedPayload = encrypt(formData, token);
+
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_PROFILESERVICE
+      }/technicianintakeform/savedicom`,
+      { encryptedData: encryptedPayload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData = decrypt(res.data.data, res.data.token);
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
   downLoadDicom: async (fileId: number) => {
     const token = localStorage.getItem("token");
     const payload = encrypt({ fileId: fileId }, token);
@@ -554,25 +616,71 @@ export const technicianService = {
     return decryptedData;
   },
 
-  uploadOldReportFile: async ({ formFile }: UploadFilePayload) => {
+  // uploadOldReportFile: async ({ formFile }: UploadFilePayload) => {
+  //   const token = localStorage.getItem("token");
+
+  //   const res = await axios.post(
+  //     `${
+  //       import.meta.env.VITE_API_URL_USERSERVICE
+  //     }/reportintakeform/addOldReport`,
+  //     formFile,
+  //     {
+  //       headers: {
+  //         Authorization: token,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     }
+  //   );
+  //   console.log(res);
+  //   const decryptData = decrypt(res.data.data, res.data.token);
+  //   tokenService.setToken(res.data.token);
+  //   return decryptData;
+  // },
+  uploadOldReportFile: async ({
+    file,
+    patientId,
+    categoryId,
+    appointmentId,
+  }: {
+    file: File;
+    patientId: number;
+    categoryId: number;
+    appointmentId: number;
+  }) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
-      }/reportintakeform/addOldReport`,
-      formFile,
+      }/reportintakeform/oldreportuploadurl`,
       {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
+        fileName: file.name,
+        patientId: patientId.toString(),
+        categoryId: categoryId.toString(),
+        appointmentId: appointmentId.toString(),
+      },
+      {
+        headers: { Authorization: token },
       }
     );
-    console.log(res);
+
     const decryptData = decrypt(res.data.data, res.data.token);
+    console.log("decryptData", decryptData);
     tokenService.setToken(res.data.token);
-    return decryptData;
+
+    const { uploadURL, viewURL, s3Key, fileName } = decryptData;
+
+    await axios.put(uploadURL, file, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (progressEvent: any) => {
+        const percent = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        console.log(`Uploading ${file.name}: ${percent}%`);
+      },
+    });
+
+    return { uploadURL, viewURL, fileName, s3Key };
   },
 
   deleteOldReportFile: async (ORId: number) => {

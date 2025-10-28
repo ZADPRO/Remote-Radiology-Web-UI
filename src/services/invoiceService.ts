@@ -156,7 +156,8 @@ export interface InvoiceHistoryInvoice {
   refIHScanCenterTotalCase: number | null;
   refIHScancentercaseAmount: number | null;
   total: number;
-  otherExpenses: OtherExpensesModel[]
+  otherExpenses: OtherExpensesModel[];
+  refIHSignature: string;
 }
 
 export interface InvoiceInput {
@@ -329,7 +330,7 @@ export const invoiceServie = {
       ...formData,
       otherExpenses: otherExpenses, // include the full array
     };
-    
+
     // ✅ Encrypt the combined data
     const payload = encrypt(combinedData, token);
     const res = await axios.post(

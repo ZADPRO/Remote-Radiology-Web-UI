@@ -9,6 +9,8 @@ import PatientInTakeForm03 from "./PatientInTakeFormDb/PatientInTakeForm03";
 import PatientInTakeForm04 from "./PatientInTakeFormDC/PatientInTakeForm04";
 import { SubmitDialog } from "./SubmitDialog";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
+import axios from "axios";
+import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 import {
   Dialog,
   DialogContent,
@@ -93,6 +95,8 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
   const location = useLocation();
   const locationState =
     location.state as PatientInTakeFormNavigationState | null;
+
+  console.log(locationState, "-------------------->");
 
   const controlData: PatientInTakeFormNavigationState = {
     fetchFormData: props.fetchFormData ?? locationState?.fetchFormData ?? false,
@@ -300,6 +304,7 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       controlData.appointmentId,
       controlData.userId
     );
+    console.log("\n\n\ncontrolData", controlData);
 
     const overide =
       formData.find((item) => item.questionId === 10)?.answer === "YES"
@@ -321,7 +326,50 @@ const PatientInTakeForm: React.FC<PatientInTakeFormProps> = (props) => {
       saveStatus: saveStatus ? true : false,
     };
 
-    console.log("payload", payload);
+    const date = new Date();
+
+    const formattedTimestamp = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}_${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}-${date.getMinutes().toString().padStart(2, "0")}-${date
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`;
+
+    console.log("\n\n\n\npayload\n\n", locationState);
+    const filename = `${locationState?.custId}_ConsentForm_${formattedTimestamp}.pdf`;
+    const token = localStorage.getItem("token");
+
+    const payloadS3 = {
+      fileType: "consentForm", // or "consentForm"
+      fileUrl: filename,
+      patientId: payload.patientId,
+      appointmentId: payload.appointmentId,
+    };
+
+    const uploadRes = await axios.post(
+      `${import.meta.env.VITE_API_URL_AUTH}/storage/s3/final-report-upload`,
+      payloadS3, // <-- this is the body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // <-- actual HTTP header
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const uploadUrl = uploadRes.data.data.url;
+    console.log("Generated Upload URL:", uploadUrl);
+
+    const pdfBlob = await generateReportsPdfBlob(controlData.consent);
+
+    await axios.put(uploadUrl, pdfBlob, {
+      headers: {
+        "Content-Type": "application/pdf",
+      },
+    });
 
     try {
       let res;

@@ -391,13 +391,13 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
-       <div style="text-align: left;">
-    ${
-      ScanCenterImg?.base64Data
-        ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-        : ""
-    }
-    </div>
+       ${
+         ScanCenterImg
+           ? ScanCenterImg.contentType === "url"
+             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+           : ""
+       }
       </div>
     <table width="100" border-collapse: collapse; font-size: 14px;">
       <tbody>
@@ -1031,8 +1031,8 @@ ${
    textEditor.CommonImpresRecommTextVal.value === "Q" ||
    textEditor.CommonImpresRecommTextVal.value === "U" ||
    textEditor.CommonImpresRecommTextVal.value === "Y" ||
-   textEditor.CommonImpresRecommTextVal.value === "2NA" ||
-   textEditor.CommonImpresRecommTextVal.value === "3NA"
+   textEditor.CommonImpresRecommTextRightVal.value === "2NA" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "3NA"
      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }

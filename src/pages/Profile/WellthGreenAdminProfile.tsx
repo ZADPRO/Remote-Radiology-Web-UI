@@ -15,10 +15,9 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../Routes/AuthContext";
 
 const WellthGreenAdminProfile: React.FC = () => {
-    const { user } = useAuth();
-        
-        
-          const managerId = user?.refUserId;
+  const { user } = useAuth();
+
+  const managerId = user?.refUserId;
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<ListSpecificManager | null>(null);
@@ -27,16 +26,17 @@ const WellthGreenAdminProfile: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-        if(managerId) {
-            const res = await managerService.listSpecificWellthGreenManager(managerId);
-      if (res.data && res.data.length > 0) {
-        setFormData(res.data[0]);
-      } else {
-        setError("Manager data not found.");
-        setFormData(null);
-      }
+      if (managerId) {
+        const res = await managerService.listSpecificWellthGreenManager(
+          managerId
+        );
+        if (res.data && res.data.length > 0) {
+          setFormData(res.data[0]);
+        } else {
+          setError("Manager data not found.");
+          setFormData(null);
         }
-      
+      }
     } catch (err) {
       console.error("Error fetching manager data:", err);
       setError("Failed to load manager data. Please try again.");
@@ -52,10 +52,16 @@ const WellthGreenAdminProfile: React.FC = () => {
     }
   }, [managerId]);
 
-  const downloadFile = (base64Data: string, contentType: string, filename: string) => {
+  const downloadFile = (
+    base64Data: string,
+    contentType: string,
+    filename: string
+  ) => {
     try {
       const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+      const byteNumbers = new Array(byteCharacters.length)
+        .fill(0)
+        .map((_, i) => byteCharacters.charCodeAt(i));
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: contentType });
       const url = URL.createObjectURL(blob);
@@ -73,7 +79,12 @@ const WellthGreenAdminProfile: React.FC = () => {
   };
 
   if (loading) return <LoadingOverlay />;
-  if (!formData) return <div className="p-4 text-center">{error || "Manager data could not be loaded."}</div>;
+  if (!formData)
+    return (
+      <div className="p-4 text-center">
+        {error || "Manager data could not be loaded."}
+      </div>
+    );
 
   return (
     <div className="w-full p-4">
@@ -82,7 +93,13 @@ const WellthGreenAdminProfile: React.FC = () => {
         <div className="relative w-32 h-32 lg:w-45 lg:h-45">
           {formData.refUserProfileImg && formData.profileImgFile ? (
             <img
-              src={`data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}`}
+              src={
+                formData?.profileImgFile
+                  ? formData.profileImgFile.base64Data?.startsWith("https://")
+                    ? formData.profileImgFile.base64Data // S3 URL
+                    : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64
+                  : "/default-profile.png" // fallback image
+              }
               alt="Manager Profile"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />
@@ -227,15 +244,15 @@ const WellthGreenAdminProfile: React.FC = () => {
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="dob">Date Of Birth</Label>
             <Input
-                        id="dob"
-                        value={
-                          formData.refUserDOB
-                            ? new Date(formData.refUserDOB).toLocaleDateString()
-                            : "N/A"
-                        }
-                        readOnly
-                        className="bg-white"
-                      />
+              id="dob"
+              value={
+                formData.refUserDOB
+                  ? new Date(formData.refUserDOB).toLocaleDateString()
+                  : "N/A"
+              }
+              readOnly
+              className="bg-white"
+            />
           </div>
 
           {/* PAN Card */}
@@ -271,7 +288,8 @@ const WellthGreenAdminProfile: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-15 w-full">
         <div className="flex flex-col gap-4 2xl:gap-6 w-full">
           <Label>Educational Certificates</Label>
-          {formData.educationCertificateFiles && formData.educationCertificateFiles.length > 0 ? (
+          {formData.educationCertificateFiles &&
+          formData.educationCertificateFiles.length > 0 ? (
             <div className="mt-3 flex flex-col gap-3">
               {formData.educationCertificateFiles.map((cert, index) => (
                 <div
@@ -290,7 +308,9 @@ const WellthGreenAdminProfile: React.FC = () => {
                       <FileText className="w-5 h-5 text-green-600" />
                     </div>
                     <span
-                      title={cert.refECOldFileName || `Certificate ${index + 1}`}
+                      title={
+                        cert.refECOldFileName || `Certificate ${index + 1}`
+                      }
                       className="truncate font-semibold text-green-800"
                     >
                       {cert.refECOldFileName || `Certificate ${index + 1}`}
@@ -300,7 +320,9 @@ const WellthGreenAdminProfile: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="mt-1 text-sm text-gray-500">No certificates provided.</div>
+            <div className="mt-1 text-sm text-gray-500">
+              No certificates provided.
+            </div>
           )}
         </div>
       </div>
@@ -327,4 +349,3 @@ const WellthGreenAdminProfile: React.FC = () => {
 };
 
 export default WellthGreenAdminProfile;
-

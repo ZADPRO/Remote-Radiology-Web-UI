@@ -102,15 +102,13 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: response.viewURL,
         }));
 
         setFiles((prev) => ({
@@ -138,14 +136,16 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
+
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -317,12 +317,19 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // 🟢 New upload (preview)
+                    : formData.refUserProfileImg &&
+                      /^https?:\/\/[^\s]+$/i.test(formData.refUserProfileImg)
+                    ? formData.refUserProfileImg // 🟢 S3 URL (from backend)
+                    : formData.profileImgFile?.base64Data
+                    ? `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // 🟢 Base64 (old flow)
+                    : "" // 🔴 Fallback (no image)
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
+              {/* 📸 Upload button */}
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -575,6 +582,7 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
 
               {/* Show uploaded or existing Driving License file */}
               {files.drivers_license ? (
+                // 🟢 Show when a new file is uploaded
                 <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all">
                   <div className="bg-blue-100 p-2 rounded-md">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -584,17 +592,32 @@ const EditScanCenterAdmin: React.FC<EditScanCenterAdminProps> = ({
                   </span>
                 </div>
               ) : (
-                formData.refRDDrivingLicense &&
-                formData.drivingLicenseFile && (
+                // 🟢 Handle existing files from backend (S3 or base64)
+                (formData.refRDDrivingLicense ||
+                  formData.drivingLicenseFile) && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
-                      downloadFile(
-                        formData.drivingLicenseFile.base64Data,
-                        formData.drivingLicenseFile.contentType,
-                        "drivers_license"
-                      )
-                    }
+                    onClick={() => {
+                      const licenseUrl = formData.refRDDrivingLicense;
+                      if (
+                        licenseUrl &&
+                        /^https?:\/\/.*s3.*amazonaws\.com/i.test(licenseUrl)
+                      ) {
+                        const link = document.createElement("a");
+                        link.href = licenseUrl;
+                        link.download = "";
+                        link.target = "_blank";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      } else if (formData.drivingLicenseFile) {
+                        downloadFile(
+                          formData.drivingLicenseFile.base64Data,
+                          formData.drivingLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      }
+                    }}
                   >
                     <div className="bg-green-100 p-2 rounded-md">
                       <FileText className="w-5 h-5 text-green-600" />

@@ -24,19 +24,22 @@ function processSup(content: any): any {
       if (supRegex.test(content.text)) {
         const parts: any[] = [];
         let lastIndex = 0;
-        content.text.replace(supRegex, (match:any, supText:any, offset:any) => {
-          // Text before sup
-          if (offset > lastIndex) {
-            parts.push({ text: content.text.substring(lastIndex, offset) });
+        content.text.replace(
+          supRegex,
+          (match: any, supText: any, offset: any) => {
+            // Text before sup
+            if (offset > lastIndex) {
+              parts.push({ text: content.text.substring(lastIndex, offset) });
+            }
+            // Superscript text
+            parts.push({
+              text: supText,
+              fontSize: (content.fontSize || 10) * 0.7,
+              baseline: 6, // lift it above normal text
+            });
+            lastIndex = offset + match.length;
           }
-          // Superscript text
-          parts.push({
-            text: supText,
-            fontSize: (content.fontSize || 10) * 0.7,
-            baseline: 6, // lift it above normal text
-          });
-          lastIndex = offset + match.length;
-        });
+        );
         // Remaining text
         if (lastIndex < content.text.length) {
           parts.push({ text: content.text.substring(lastIndex) });
@@ -53,7 +56,6 @@ function processSup(content: any): any {
 
   return content;
 }
-
 
 function applyRightAlignment(content: any): any {
   if (Array.isArray(content)) return content.map(applyRightAlignment);
@@ -149,7 +151,6 @@ function processContentSpacing(content: any): any {
 
   if (typeof content === "object" && content !== null) {
     // Log every node for debugging
-    console.log(content);
 
     // Table: force full width
     if (content.table && content.table.body) {
@@ -303,4 +304,39 @@ export function downloadReportsPdf(
       }`
     );
   }
+}
+
+export async function generateReportsPdfBlob(
+  htmlString: string | any
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    try {
+      const styledHtml = addControlledSpacingStyles(htmlString);
+      const converted = htmlToPdfmake(styledHtml, {
+        tableAutoSize: true,
+        listType: "ul",
+      });
+
+      let processedContent: any = processContentSpacing(converted);
+      processedContent = applyRightAlignment(processedContent);
+      processedContent = processSup(processedContent);
+
+      const documentDefinition: TDocumentDefinitions = {
+        content: Array.isArray(processedContent)
+          ? processedContent
+          : [processedContent],
+        defaultStyle: { fontSize: 10, lineHeight: 1.2 },
+        pageSize: "A4",
+        pageMargins: [40, 30, 40, 30],
+      };
+
+      const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
+
+      pdfDocGenerator.getBlob((blob: Blob) => {
+        resolve(blob);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 }

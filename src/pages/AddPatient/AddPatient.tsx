@@ -165,14 +165,15 @@ const AddPatient: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -704,11 +705,11 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           />
         </div>
 
-        {/* <div className="flex flex-col gap-1.5 w-full">
+        <div className="flex flex-col gap-1.5 w-full">
           <Label className="text-sm " htmlFor="dob">
             Date Of Birth <span className="text-red-500">*</span>
           </Label>
-          <DatePicker
+          {/* <DatePicker
             value={formData.dob ? parseLocalDate(formData.dob) : undefined}
             onChange={(val) => {
               setFormData((prev) => ({
@@ -718,13 +719,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
             }}
             required
             disabledDates={dateDisablers.noFuture}
-          />
-        </div> */}
-
-        <div className="flex flex-col gap-1.5 w-full">
-          <Label className="text-sm " htmlFor="dob">
-            Date Of Birth <span className="text-red-500">*</span>
-          </Label>
+          /> */}
           <DefaultDatePicker
             value={formData.dob}
             onChange={(val) => {

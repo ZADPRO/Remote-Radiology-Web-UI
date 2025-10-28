@@ -42,16 +42,17 @@ const RadiologyTrainingMaterial: React.FC = () => {
 
         try {
           setUploading(true);
-          const response = await uploadService.uploadFile({
-            formFile: formData,
-          });
+          const response = await uploadService.uploadFile(file);
 
           console.log(response);
 
           if (response.status) {
+            const cleanUrl = response.viewURL.includes("?")
+              ? response.viewURL.split("?")[0]
+              : response.viewURL;
             const uploaded: UploadedFile = {
-              fileName: response.oldFilename,
-              filepath: response.fileName,
+              fileName: response.viewURL,
+              filepath: cleanUrl,
             };
             setDocuments((prev) => [...prev, uploaded]);
           }
