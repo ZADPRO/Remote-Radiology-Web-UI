@@ -3188,7 +3188,7 @@ const Report: React.FC = () => {
               .toString()
               .padStart(2, "0")}`;
 
-            const filename = `${patientDetails.refUserCustId}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            const filename = `${patientDetails.refUserCustId && patientDetails.refUserCustId.length > 0 ? patientDetails.refUserCustId : patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
             console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
@@ -4453,7 +4453,7 @@ const Report: React.FC = () => {
                     const yesNoItem = responsePatientInTake.find(
                       (item) => item.questionId === report.yesNocheckQId
                     );
-                    return yesNoItem?.answer === "Yes";
+                    return yesNoItem?.answer === "Yes" || yesNoItem?.answer === "Unknown";
                   });
 
                   const availableReports = filteredReports.filter((report) => {

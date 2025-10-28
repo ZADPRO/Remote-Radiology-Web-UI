@@ -34,10 +34,10 @@ const PatientConsentDialog: React.FC<PatientReportProps> = ({
       } else {
         setPatientReport("");
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -68,6 +68,7 @@ const PatientConsentDialog: React.FC<PatientReportProps> = ({
                     patientReport,
                     `${patientCustId}_${appointmentDate}_Consent`
                   );
+                  setDownloading(false);
                 }}
                 disabled={downloading}
                 className="flex items-center gap-2"

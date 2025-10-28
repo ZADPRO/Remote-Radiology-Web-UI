@@ -248,6 +248,9 @@ const UploadDicomFiles: React.FC = () => {
 
       const uploadedFiles = [];
 
+      
+console.log('UploadDicomFiles.tsx -------------------------- >  251  ', appointmentDetails.userId);
+
       for (const file of files) {
         const { uploadURL, viewURL } =
           await technicianService.getDicomUploadUrl({
