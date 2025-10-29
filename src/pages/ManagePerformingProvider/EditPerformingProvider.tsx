@@ -318,12 +318,8 @@ const EditPerformingProvider: React.FC<EditPerformingProviderProps> = ({
         Specialization: formData.Specialization,
         npi: formData.refDDNPI,
         status: formData.refUserStatus,
-        license_files: Array.isArray(tempLicenses)
-          ? tempLicenses.map((file) => cleanS3Url(file))
-          : [],
-        malpracticeinsureance_files: Array.isArray(tempMalpractice)
-          ? tempMalpractice.map((file) => cleanS3Url(file))
-          : [],
+        license_files: tempLicenses,
+        malpracticeinsureance_files: tempMalpractice,
         digital_signature: cleanS3Url(formData.digital_signature),
         easeQTReportAccess: formData.refDDEaseQTReportAccess,
         naSystemreportAcess: formData.refDDNAsystemReportAccess,
