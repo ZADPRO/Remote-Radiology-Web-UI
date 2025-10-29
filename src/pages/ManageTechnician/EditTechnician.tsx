@@ -331,7 +331,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         license_files: tempLicense,
         digital_signature: formData.refTDDigitalSignature,
       };
-      console.log(payload);
+      console.log("--------------->",payload);
       const res = await technicianService.updateTechnician(payload);
       console.log(res);
       if (res.status) {
@@ -744,19 +744,19 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        setFiles((prev) => ({
-                          ...prev,
-                          license_files:
-                            prev.license_files?.filter((_, i) => i !== index) ||
-                            [],
-                        }));
-                        setTempLicense((prev) =>
-                          prev.filter(
-                            (license_files) =>
-                              license_files.old_file_name !== file.name
-                          )
-                        );
-                      }}
+                          setFiles((prev) => ({
+                            ...prev,
+                            license_files:
+                              prev.license_files?.filter(
+                                (_, i) => i !== index
+                              ) || [],
+                          }));
+                          setTempLicense((prev) =>
+                            prev.filter(
+                              (license) => license.old_file_name !== file.name
+                            )
+                          );
+                        }}
                       className="text-red-500 hover:text-red-700 transition"
                       title="Remove file"
                     >
