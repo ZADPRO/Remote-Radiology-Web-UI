@@ -324,13 +324,14 @@ const NewInvoice: React.FC<Props> = () => {
     const formDataObj = new FormData();
     formDataObj.append("file", file);
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadImage(file);
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setInput((prev) => ({
           ...prev,
-          signature: response.fileName,
+          signature: cleanUrl,
         }));
         console.log(`Upload successful for file: ${file.name}`);
       } else {

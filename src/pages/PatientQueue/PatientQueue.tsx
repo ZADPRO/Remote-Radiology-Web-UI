@@ -22,6 +22,7 @@ import {
   Trash,
   CircleCheckBig,
   Circle,
+  UserRoundCog,
 } from "lucide-react";
 
 import {
@@ -100,6 +101,7 @@ import { downloadReportsPdf } from "@/utlis/downloadReportsPdf";
 import { Label } from "@/components/ui/label";
 import { formatReadableDate } from "@/utlis/calculateAge";
 import FileView from "@/components/FileView/FileView";
+import DownloadingOverlay from "@/components/ui/CustomComponents/DownloadingOverlay";
 
 interface staffData {
   refUserCustId: string;
@@ -128,6 +130,13 @@ const PatientQueue: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
+
+  const [progress, setProgress] = useState({
+    downloadedMB: 0,
+    percentage: 0,
+    currentFile: "",
+  });
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const hasSignedOffReport = (
     ids: number[],
@@ -363,6 +372,7 @@ const PatientQueue: React.FC = () => {
     try {
       if (role?.type == "patient") {
         const res = await appointmentService.listPatientMedicalHistory();
+        console.log("res", res);
         if (res.status) {
           setPatientQueue(res.data);
           setSCConsultantStatus(res.consultantStatus);
@@ -374,6 +384,8 @@ const PatientQueue: React.FC = () => {
         }
       } else {
         const res = await technicianService.listPatientQueue();
+        console.log("res", res);
+        console.log("PatientQueue.tsx / res / 371 -------------------  ", res);
         if (res.status) {
           const filteredData = res.data.filter(
             (item: TechnicianPatientQueue) => {
@@ -551,7 +563,11 @@ const PatientQueue: React.FC = () => {
 
           downloadReportsPdf(
             reportData.refRTCText,
-            `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_FinalReport`
+            `${
+              tempData?.refUserCustId && tempData?.refUserCustId.length > 0
+                ? tempData?.refUserCustId
+                : tempData?.refUserFirstName
+            }_${tempData?.refAppointmentDate}_FinalReport`
           );
         });
       }
@@ -575,7 +591,11 @@ const PatientQueue: React.FC = () => {
 
           downloadReportsPdf(
             reportData.refAppointmentConsent,
-            `${tempData?.refUserCustId}_${tempData?.refAppointmentDate}_Consent`
+            `${
+              tempData?.refUserCustId && tempData?.refUserCustId.length > 0
+                ? tempData?.refUserCustId
+                : tempData?.refUserFirstName
+            }_${tempData?.refAppointmentDate}_Consent`
           );
         });
       }
@@ -777,7 +797,7 @@ const PatientQueue: React.FC = () => {
       {
         accessorKey: "refSCCustId",
         id: "refSCCustId",
-        header: ({ column }) => (
+        header: ({ column, table }) => (
           <div className="flex items-center justify-center gap-1">
             <span
               className="cursor-pointer text-grey font-semibold"
@@ -788,6 +808,7 @@ const PatientQueue: React.FC = () => {
                 <div>Center</div>
               </div>
             </span>
+
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -798,30 +819,70 @@ const PatientQueue: React.FC = () => {
                     <Filter />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-48 p-2">
-                  <Input
-                    placeholder={`Filter Scan Center ID...`}
-                    value={(column.getFilterValue() ?? "") as string}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      column.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                  />
+
+                <PopoverContent className="w-64 p-2">
+                  <Command>
+                    <CommandGroup className="max-h-60 overflow-auto">
+                      {/* ✅ dynamically get all unique Scan Centers from table data */}
+                      {Array.from(
+                        new Set(
+                          table
+                            .getCoreRowModel()
+                            .rows.map((r) => r.original.refSCCustId)
+                        )
+                      ).map((scanCenter) => {
+                        const current =
+                          (column.getFilterValue() as string[]) ?? [];
+                        const isSelected = current.includes(scanCenter);
+
+                        return (
+                          <CommandItem
+                            key={scanCenter}
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={() => {
+                              const updated = isSelected
+                                ? current.filter((id) => id !== scanCenter)
+                                : [...current, scanCenter];
+                              column.setFilterValue(
+                                updated.length ? updated : undefined
+                              );
+                            }}
+                          >
+                            <Checkbox2
+                              checked={isSelected}
+                              onCheckedChange={() => {}}
+                            />
+                            <span>{scanCenter}</span>
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </Command>
+
                   <Button
                     variant="ghost"
                     onClick={() => column.setFilterValue(undefined)}
-                    className="p-0 mt-2 text-red-500 hover:text-red-700"
-                    title="Clear filter"
+                    className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
-                    <XCircle className="h-4 w-4" /> <span>Clear</span>
+                    <XCircle className="h-4 w-4" />
+                    <span>Clear</span>
                   </Button>
                 </PopoverContent>
               </Popover>
             )}
           </div>
         ),
-        cell: ({ row }) => <span>{`${row.original.refSCCustId}`}</span>,
+
+        cell: ({ row }) => <span>{row.original.refSCCustId}</span>,
+
         enableColumnFilter: true,
+
+        // ✅ Custom filter logic for multiple selections
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue || !Array.isArray(filterValue)) return true;
+          const value = row.getValue(columnId);
+          return filterValue.includes(value);
+        },
       },
       {
         // Changed from refSCId to refUserCustId for PatientQueue
@@ -1005,7 +1066,13 @@ const PatientQueue: React.FC = () => {
                       patientConsentDialog={consentDialogOpen}
                       appointmentDate={row.original.refAppointmentDate}
                       patientCustId={
-                        row.original.refUserCustId ?? user?.refUserCustId
+                        (row.original.refUserCustId &&
+                        row.original.refUserCustId.length > 0
+                          ? row.original.refUserCustId
+                          : row.original.refUserFirstName) ??
+                        (user?.refUserCustId && user?.refUserCustId.length > 0
+                          ? user?.refUserCustId
+                          : user?.refUserFirstName)
                       }
                     />
                   </Dialog>
@@ -1167,25 +1234,21 @@ const PatientQueue: React.FC = () => {
                 <span className="font-xs flex flex-wrap justify-center items-center gap-x-2 gap-y-0 text-center">
                   {appointmentComplete === "noteligible" ? (
                     <>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Not
                       </span>
-                      <span
-                        className="text-center"
-                        style={{ color: "red" }}
-                      >
+                      <span className="text-center" style={{ color: "red" }}>
                         Eligible
                       </span>
                     </>
                   ) : (
-                      <span className="text-center">{formName}</span>
+                    <span className="text-center">{formName}</span>
                   )}
                 </span>
               )}
-              {(formName !== "Not Yet Started" || role?.type === "patient") && (<span className="text-center">&nbsp;-&nbsp;</span>)}
+              {(formName !== "Not Yet Started" || role?.type === "patient") && (
+                <span className="text-center">&nbsp;-&nbsp;</span>
+              )}
               {statusContent}
               {isEditDialogBroucherOpen && (
                 <Dialog
@@ -1483,7 +1546,9 @@ const PatientQueue: React.FC = () => {
                         rightDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_R.zip"
+                          .join("_") + "_R.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1511,7 +1576,9 @@ const PatientQueue: React.FC = () => {
                         leftDicom.refDFFilename
                           .split("_")
                           .slice(0, -2)
-                          .join("_") + "_L.zip"
+                          .join("_") + "_L.zip",
+                        setProgress,
+                        setIsDownloading
                       )
                     }
                     className="hover:bg-[#d4d5ca]"
@@ -1682,6 +1749,7 @@ const PatientQueue: React.FC = () => {
             );
 
             if (response.status) {
+              console.log("\n\n\nresponse\n\n", response);
               setReportData(response.data || []);
             }
             setOldLoading(false);
@@ -1698,25 +1766,28 @@ const PatientQueue: React.FC = () => {
             if (!files) return;
 
             for (const file of files) {
-              if (file) {
-                const formDataObj = new FormData();
-                formDataObj.append("file", file);
-                formDataObj.append("patientId", patientId.toString());
-                formDataObj.append("categoryId", categoryId.toString());
-                formDataObj.append("appointmentId", appointmentId.toString());
-                try {
-                  await technicianService.uploadOldReportFile({
-                    formFile: formDataObj,
-                  });
-                  // if (response.status) {
-                  //   values.push(response.fileName);
-                  // }
-                } catch (error) {
-                  console.error("File upload failed:", error);
+              try {
+                const response = await technicianService.uploadOldReportFile({
+                  file,
+                  appointmentId,
+                  patientId,
+                  categoryId,
+                });
+
+                if (response) {
+                  console.log("response", response);
+                  console.log("Uploaded:", response.viewURL);
+                  // Update UI or form data here if needed
+                } else {
+                  console.error("Upload failed for:", file.name);
                 }
+              } catch (error) {
+                console.error("Error uploading file:", file.name, error);
               }
             }
+
             ListAllOldReport(appointmentId, patientId, categoryId);
+            setOldLoading(false);
           };
 
           const handleDeleteFile = async (
@@ -1826,38 +1897,43 @@ const PatientQueue: React.FC = () => {
                             </label>
                           </div>
 
-                          <div className=" space-y-2 px-2 lg:px-10 my-5">
+                          <div className="space-y-2 px-2 lg:px-10 my-5">
                             {reportData.length > 0 ? (
                               <>
-                                {reportData.map((fileName, index) => (
-                                  <div
-                                    key={index}
-                                    className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                                  >
-                                    {/* File name (downloadable) */}
-                                    <FileView
-                                      fileName={fileName.refORFilename}
-                                    />
+                                {reportData.map((file, index) => {
+                                  const displayName =
+                                    file.refORFilename.split("/").pop() ||
+                                    "unknown_file";
 
-                                    {/* Delete icon */}
+                                  return (
                                     <div
-                                      className="cursor-pointer"
-                                      onClick={() =>
-                                        handleDeleteFile(
-                                          fileName.refORId,
-                                          row.original.refAppointmentId,
-                                          row.original.refUserId,
-                                          currentOpen
-                                        )
-                                      }
+                                      key={index}
+                                      className="bg-[#f9f4ed] rounded-lg px-0 lg:px-2 py-2 w-[80%] md:w-[60%] lg:w-[100%] flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                                     >
-                                      <Trash
-                                        size={15}
-                                        className="text-red-500"
+                                      <FileView
+                                        displayName={displayName}
+                                        fileUrl={file.refORFilename}
                                       />
+
+                                      <div
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleDeleteFile(
+                                            file.refORId,
+                                            row.original.refAppointmentId,
+                                            row.original.refUserId,
+                                            currentOpen
+                                          )
+                                        }
+                                      >
+                                        <Trash
+                                          size={15}
+                                          className="text-red-500"
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </>
                             ) : (
                               <div>No Report Uploaded</div>
@@ -1969,14 +2045,18 @@ const PatientQueue: React.FC = () => {
                 setDialogOpen(true);
               }
             } else if (hasReadOnlyAccess) {
-              navigate("/report", {
-                state: {
-                  appointmentId: row.original.refAppointmentId,
-                  userId: row.original.refUserId,
-                  readOnly: true,
-                  categoryId: row.original.refCategoryId,
-                },
-              });
+              if (role === "patient") {
+                setPatientReportDialog(true);
+              } else {
+                navigate("/report", {
+                  state: {
+                    appointmentId: row.original.refAppointmentId,
+                    userId: row.original.refUserId,
+                    readOnly: true,
+                    categoryId: row.original.refCategoryId,
+                  },
+                });
+              }
               // }
             } else {
               const { status, accessId, custId } = await handleCheckAccess(
@@ -2130,7 +2210,7 @@ const PatientQueue: React.FC = () => {
                   onOpenChange={setPatientReportDialog}
                 >
                   <PatientReport
-                    userId={row.original.refUserId ?? user?.refUserId}
+                    appointmentDate={row.original.refAppointmentDate}
                     appointmentId={row.original.refAppointmentId}
                     patientReportDialog={patientReportDialog}
                   />
@@ -2802,6 +2882,7 @@ const PatientQueue: React.FC = () => {
       "refSCCustId",
       "patientFormAndStatus",
       "oldreport",
+      "reportStatus",
     ],
     doctor: [
       "select",
@@ -2939,6 +3020,25 @@ const PatientQueue: React.FC = () => {
     },
   });
 
+  const pageCount = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex + 1;
+
+  const visiblePages = 10; // show only 10 pages
+  const half = Math.floor(visiblePages / 2);
+
+  let startPage = Math.max(currentPage - half, 1);
+  let endPage = startPage + visiblePages - 1;
+
+  if (endPage > pageCount) {
+    endPage = pageCount;
+    startPage = Math.max(endPage - visiblePages + 1, 1);
+  }
+
+  const pages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
   const clearAllFilters = () => {
     setGlobalFilter("");
     setColumnFilters([]);
@@ -2948,14 +3048,37 @@ const PatientQueue: React.FC = () => {
   return (
     <div className="w-full mx-auto">
       {loading && <LoadingOverlay />}
+      {isDownloading && (
+        <DownloadingOverlay
+          downloadedMB={progress.downloadedMB}
+          percentage={progress.percentage}
+          currentFile={progress.currentFile}
+        />
+      )}
       <div className="w-[99%] h-[85vh] overflow-y-scroll bg-radial-greeting-02 mx-auto space-y-3 p-1 my-2 lg:py-2 rounded-lg">
         {/* Global Filter and Clear Filters Button */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-2 w-full">
           <Button
+            onClick={() => {
+              navigate("../managePatient", {
+                state: {
+                  scanCenterId: user?.refSCId,
+                  SCName: user?.refSCCustId,
+                },
+              });
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
+            hidden={role?.type !== "scadmin"}
+          >
+            <UserRoundCog className="h-4 w-4" />
+            Manage Patient
+          </Button>
+          <Button
             onClick={async () => {
-              setLoading(true);
-              await handleAllDownloadDicom(selectedRowIds);
-              setLoading(false);
+              setIsDownloading(true);
+              setProgress({ downloadedMB: 0, percentage: 0, currentFile: "" });
+              await handleAllDownloadDicom(selectedRowIds, setProgress);
+              setIsDownloading(false);
             }}
             className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
             disabled={selectedRowIds.length === 0}
@@ -2964,7 +3087,6 @@ const PatientQueue: React.FC = () => {
             <Download className="h-4 w-4" />
             Download Dicom
           </Button>
-
           <Button
             onClick={async () => {
               setLoading(true);
@@ -3021,8 +3143,8 @@ const PatientQueue: React.FC = () => {
         <div
           className={`rounded-lg grid w-full ${
             role?.type === "patient" && SCconsultantStatus
-              ? "h-[68%]"
-              : "h-[76%]"
+              ? "h-[64%]"
+              : "h-[74%]"
           } border `}
           style={{
             background:
@@ -3167,8 +3289,9 @@ const PatientQueue: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6 lg:space-x-8 relative">
-              <Pagination>
+              <Pagination className="mt-4 flex justify-center">
                 <PaginationContent>
+                  {/* First Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
@@ -3177,15 +3300,14 @@ const PatientQueue: React.FC = () => {
                       disabled={!table.getCanPreviousPage()}
                       aria-label="Go to first page"
                     >
-                      <span className="sr-only">Go to first page</span>
                       <ChevronsLeft className="h-4 w-4" />
                     </Button>
                   </PaginationItem>
+
+                  {/* Previous Page */}
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        table.getCanPreviousPage() && table.previousPage()
-                      }
+                      onClick={() => table.previousPage()}
                       className={
                         !table.getCanPreviousPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -3194,14 +3316,26 @@ const PatientQueue: React.FC = () => {
                       aria-label="Go to previous page"
                     />
                   </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink isActive>
-                      {table.getState().pagination.pageIndex + 1}
-                    </PaginationLink>
-                  </PaginationItem>
+
+                  {/* Page Numbers */}
+                  {pages.map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => table.setPageIndex(page - 1)}
+                        isActive={page === currentPage}
+                        className={`cursor-pointer ${
+                          page === currentPage ? "bg-primary text-white" : ""
+                        }`}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  {/* Next Page */}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => table.getCanNextPage() && table.nextPage()}
+                      onClick={() => table.nextPage()}
                       className={
                         !table.getCanNextPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -3210,17 +3344,16 @@ const PatientQueue: React.FC = () => {
                       aria-label="Go to next page"
                     />
                   </PaginationItem>
+
+                  {/* Last Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
                       className="h-8 w-8 p-0"
-                      onClick={() =>
-                        table.setPageIndex(table.getPageCount() - 1)
-                      }
+                      onClick={() => table.setPageIndex(pageCount - 1)}
                       disabled={!table.getCanNextPage()}
                       aria-label="Go to last page"
                     >
-                      <span className="sr-only">Go to last page</span>
                       <ChevronsRight className="h-4 w-4" />
                     </Button>
                   </PaginationItem>

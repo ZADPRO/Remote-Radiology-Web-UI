@@ -21,6 +21,8 @@ import {
   ReportHistoryData,
   reportService,
   GetOldReport,
+  ImpressionRecommendationData,
+  ImpressionRecommendationModel,
 } from "@/services/reportService";
 import { ArrowLeft, Loader } from "lucide-react";
 import {
@@ -44,9 +46,9 @@ import logo from "../../assets/LogoNew.png";
 import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 import Impression, {
   additionalOptions,
-  impressionRecommendation,
+  // impressionRecommendation,
   NAadditionalOptions,
-  NAimpressionRecommendation,
+  // NAimpressionRecommendation,
 } from "./ImpressionRecommendation";
 import {
   Select,
@@ -87,6 +89,8 @@ import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryRe
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
 import { LesionsVal } from "./Lisons/LesionsRightString";
+import axios from "axios";
+import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -397,7 +401,7 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
         // reason += DbFormReportGenerator(responsePatientInTake);
-        reason += `<div><strong>Indication:</strong> Diagnostic : For further evaluation of a biopsy diagnosis.<br/>
+        reason += `<div><strong>Indication:</strong> Diagnostic - Biopsy.<br/>
         <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
@@ -770,6 +774,11 @@ const Report: React.FC = () => {
   const [ScanCenterImg, setScanCenterImg] = useState<FileData | null>(null);
   const [ScanCenterAddress, setScanCenterAddress] = useState<string>("");
 
+  const [ReportPortalImpresRecom, setReportPortalImpresRecom] =
+    useState<ImpressionRecommendationData[]>();
+  const [NAImpresRecom, setNAImpresRecom] =
+    useState<ImpressionRecommendationData[]>();
+
   const [changedOne, setChangedOne] = useState<ChangedOneState>({
     reportQuestion: [],
     reportTextContent: false,
@@ -938,6 +947,8 @@ const Report: React.FC = () => {
         PerformingProviderName: string;
         VerifyingProviderName: string;
         ListAllSignature: SignatureText[];
+        NAImpRecom: ImpressionRecommendationModel[];
+        ReportPortalImpRecom: ImpressionRecommendationModel[];
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -947,6 +958,23 @@ const Report: React.FC = () => {
       console.log("---------->", response);
 
       if (response.status) {
+        const ReportPortalImpresRecomVal = [
+          {
+            impressionColor: "#a0a0a0",
+            recommendationColor: "#6e6e6e",
+            data: response.ReportPortalImpRecom,
+          },
+        ];
+
+        const NAImpresRecomVal = [
+          {
+            impressionColor: "#a0a0a0",
+            recommendationColor: "#6e6e6e",
+            data: response.NAImpRecom,
+          },
+        ];
+        setReportPortalImpresRecom(ReportPortalImpresRecomVal);
+        setNAImpresRecom(NAImpresRecomVal);
         setPerformingProviderName(response.PerformingProviderName);
         setVerifyingProviderName(response.VerifyingProviderName);
         setPatientpublicprivate(response.patientpublicprivate);
@@ -987,12 +1015,12 @@ const Report: React.FC = () => {
           naSystemReportAccess: response.naSystemReportAccess || false,
         });
 
-        let MainOptions = impressionRecommendation;
+        let MainOptions = ReportPortalImpresRecomVal;
         if (
           (response.naSystemReportAccess || false) &&
           getReportAnswer(81) === "true"
         ) {
-          MainOptions = NAimpressionRecommendation;
+          MainOptions = NAImpresRecomVal;
         }
 
         setMainImpressionRecommendation((prev) => ({
@@ -1747,8 +1775,10 @@ const Report: React.FC = () => {
           <div>
    <div style="text-align: left;">
   ${
-    ScanCenterImg?.base64Data
-      ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+    ScanCenterImg
+      ? ScanCenterImg.contentType === "url"
+        ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+        : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
       : ""
   }
 </div>
@@ -1845,7 +1875,7 @@ const Report: React.FC = () => {
 
   <p><strong>RECOMMENDATION:</strong></p><br />
 
-  <strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+  <strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. </p></i></strong>
   <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
             `
         );
@@ -2174,8 +2204,14 @@ const Report: React.FC = () => {
     }
   }, [responsePatientInTake, technicianForm]);
 
+  const question81Answer = reportFormData.find(
+    (q) => q.questionId === 81
+  )?.answer;
+
   useEffect(() => {
     AutoPopulateReportImpressRecomm(
+      ReportPortalImpresRecom || [],
+      NAImpresRecom || [],
       mainImpressionRecommendation,
       setMainImpressionRecommendation,
       optionalImpressionRecommendation,
@@ -2185,7 +2221,7 @@ const Report: React.FC = () => {
       reportFormData,
       assignData
     );
-  }, [assignData]);
+  }, [assignData, question81Answer]);
 
   const [showMailDialog, setShowMailDialog] = useState(false);
 
@@ -2220,44 +2256,13 @@ const Report: React.FC = () => {
         getReportAnswer(130) === "Present"
       );
       const FindAssessmentCategory = (val: string): string => {
-        const O1 = ["0"];
-        const N1 = ["1", "N1"];
-        const N2 = ["1a", "1b", "7", "N2"];
-        const A1 = [
-          "2",
-          "2a",
-          "3",
-          "3a",
-          "3b",
-          "3c",
-          "3d",
-          "3e",
-          "3f",
-          "3g",
-          "4",
-          "4a",
-          "4b",
-          "4c",
-          "4d",
-          "4e",
-          "4f",
-          "4g",
-          "4h",
-          "4i1",
-          "4i2",
-          "4j",
-          "4k",
-          "4l",
-          "4m",
-          "4n",
-          "8",
-          "8a",
-          "10",
-          "A1",
-        ];
-        const A2 = ["5", "6a", "A2"];
-        const A3 = ["5a", "7b", "7c", "A3"];
-        const A4 = ["6", "6b", "6c", "6d", "6e", "6f", "6h", "7e", "10a", "A4"];
+       const O1 = ["N0"];
+    const N1 = ["N1"];
+    const N2 = ["N2"];
+    const A1 = ["A1"];
+    const A2 = ["A2"];
+    const A3 = ["A3"];
+    const A4 = ["A4"];
 
         if (O1.includes(val))
           return "0 : Prior breast imaging is needed for interpretation";
@@ -2372,8 +2377,10 @@ const Report: React.FC = () => {
            <div>
            <div style="text-align: left;">
         ${
-          ScanCenterImg?.base64Data
-            ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+          ScanCenterImg
+            ? ScanCenterImg.contentType === "url"
+              ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+              : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
             : ""
         }
         </div>
@@ -2998,7 +3005,7 @@ const Report: React.FC = () => {
           ? `
             <br/><p><strong>LEFT BREAST:</strong></p>
             ${
-              mainImpressionRecommendation.impressionTextRight &&
+              mainImpressionRecommendation.impressionText &&
               getReportAnswer(81) === "true"
                 ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
                     mainImpressionRecommendation.selectedImpressionId
@@ -3060,7 +3067,7 @@ const Report: React.FC = () => {
         `
           : ``
       }
-      <br/><strong><i><p>The QT Breast Acoustic CTTM Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+      <br/><strong><i><p>The QT Breast Acoustic CTTM Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.</p></i></strong>
       <br/><strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
     ` +
         (signatureText.length > 0 ? "<br/>" + signatureText : "") +
@@ -3150,6 +3157,85 @@ const Report: React.FC = () => {
         lymphnodesImageTextLeft: LymphNodesLeftImage,
       };
       console.log("payload", payload);
+
+      if (movedStatus) {
+        if (movedStatus === "Signed Off") {
+          console.log("\n\nmovedStatus ===>", movedStatus);
+          console.log(
+            "\n\nPatient dataa -> ",
+            patientDetails,
+            "\n\n\n",
+            assignData
+          );
+
+          try {
+            const date = new Date();
+            const formattedTimestamp = `${date.getFullYear()}-${(
+              date.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}-${date
+              .getDate()
+              .toString()
+              .padStart(2, "0")}_${date
+              .getHours()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}-${date
+              .getSeconds()
+              .toString()
+              .padStart(2, "0")}`;
+
+            const filename = `${patientDetails.refUserCustId && patientDetails.refUserCustId.length > 0 ? patientDetails.refUserCustId : patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            console.log("patientDetails", patientDetails);
+
+            // 1️⃣ Step 1: Request presigned PUT URL from backend
+            const token = localStorage.getItem("token");
+
+            const payloadS3 = {
+              fileType: "finalReport", // or "consentForm"
+              fileUrl: filename,
+              appointmentId: payload.appointmentId,
+              patientId: payload.patientId,
+            };
+
+            const uploadRes = await axios.post(
+              `${
+                import.meta.env.VITE_API_URL_AUTH
+              }/storage/s3/final-report-upload`,
+              payloadS3, // <-- this is the body
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`, // <-- actual HTTP header
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            const uploadUrl = uploadRes.data.data.url;
+            console.log("Generated Upload URL:", uploadUrl);
+
+            // 2️⃣ Step 2: Generate PDF blob (instead of downloading)
+            console.log("\n\n\n\n\npayload", payload.reportTextContent);
+            const pdfBlob = await generateReportsPdfBlob(
+              payload.reportTextContent
+            );
+
+            // 3️⃣ Step 3: Upload PDF to presigned S3 URL
+            await axios.put(uploadUrl, pdfBlob, {
+              headers: {
+                "Content-Type": "application/pdf",
+              },
+            });
+
+            console.log("✅ PDF successfully uploaded to S3");
+          } catch (err) {
+            console.error("❌ Error generating or uploading report:", err);
+          }
+        }
+      }
 
       const res = await reportService.submitReport(payload);
       console.log(res);
@@ -3940,6 +4026,8 @@ const Report: React.FC = () => {
       }
 
       AutoPopulateReportImpressRecomm(
+        ReportPortalImpresRecom || [],
+        NAImpresRecom || [],
         mainImpressionRecommendation,
         setMainImpressionRecommendation,
         optionalImpressionRecommendation,
@@ -4365,7 +4453,7 @@ const Report: React.FC = () => {
                     const yesNoItem = responsePatientInTake.find(
                       (item) => item.questionId === report.yesNocheckQId
                     );
-                    return yesNoItem?.answer === "Yes";
+                    return yesNoItem?.answer === "Yes" || yesNoItem?.answer === "Unknown";
                   });
 
                   const availableReports = filteredReports.filter((report) => {
@@ -5558,6 +5646,8 @@ const Report: React.FC = () => {
               ) : (
                 subTab === 5 && (
                   <Impression
+                    ReportPortalImpresRecom={ReportPortalImpresRecom || []}
+                    NAImpresRecom={NAImpresRecom || []}
                     requestVersionRef={requestVersionRef}
                     additionalChangesChangeStatus={
                       additionalChangesChangeStatus

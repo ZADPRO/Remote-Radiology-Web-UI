@@ -14,13 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"; // Import Select components
-// import DatePicker from "@/components/date-picker";
 import { Camera, FileText, Pencil, X } from "lucide-react";
 import { uploadService } from "@/services/commonServices";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import FileUploadButton from "@/components/ui/CustomComponents/FileUploadButton";
-// import { parseLocalDate } from "@/lib/dateUtils";
 import DefaultDatePicker from "@/components/DefaultDatePicker";
 
 // Define the props interface for EditRadiologist
@@ -150,7 +148,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     }
   };
 
-  console.log(formData);
+  console.log("\n\n\n\nform Data", formData);
   console.log(files);
 
   const handleProfileImageUpload = async (file: File) => {
@@ -159,15 +157,16 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -188,14 +187,15 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refWGPPDigitalSignature: response.fileName,
+          refWGPPDigitalSignature: cleanUrl,
           digitalSignatureFile: null,
         }));
 
@@ -225,14 +225,15 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -257,11 +258,14 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempLicense = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -443,11 +447,16 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 src={
                   files.profile_img
                     ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    : formData.profileImgFile?.base64Data
+                    ? formData.profileImgFile.base64Data.startsWith("http")
+                      ? formData.profileImgFile.base64Data // It's an S3 URL
+                      : `data:${formData.profileImgFile.contentType};base64,${formData.profileImgFile.base64Data}` // Base64
+                    : formData.refUserProfileImg // Fallback (S3 URL from backend)
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -660,28 +669,37 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                     {files.drivers_license.name}
                   </span>
                 </div>
-              ) : (
-                formData.refWGPPDrivingLicense &&
-                formData.drivingLicenseFile && (
-                  <div
-                    className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
+              ) : formData.refWGPPDrivingLicense ? (
+                <div
+                  className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  onClick={() => {
+                    const s3Url = formData.refWGPPDrivingLicense;
+                    const isS3File = s3Url?.startsWith("https");
+
+                    if (isS3File) {
+                      console.log("isS3File", isS3File);
+                      // Open S3 file in new tab
+                      window.open(s3Url, "_blank");
+                    } else if (formData.drivingLicenseFile) {
+                      // Download base64 file
                       downloadFile(
                         formData.drivingLicenseFile.base64Data,
                         formData.drivingLicenseFile.contentType,
                         "drivers_license"
-                      )
+                      );
+                    } else {
+                      console.warn("No driving license file available");
                     }
-                  >
-                    <div className="bg-green-100 p-2 rounded-md">
-                      <FileText className="w-5 h-5 text-green-600" />
-                    </div>
-                    <span className="truncate text-sm font-medium text-green-800">
-                      Driving License Document
-                    </span>
+                  }}
+                >
+                  <div className="bg-green-100 p-2 rounded-md">
+                    <FileText className="w-5 h-5 text-green-600" />
                   </div>
-                )
-              )}
+                  <span className="truncate text-sm font-medium text-green-800">
+                    Driving License Document
+                  </span>
+                </div>
+              ) : null}
             </div>
             {/* <div className="flex flex-col gap-1.5 w-full">
                       <Label className="text-sm" htmlFor="drivers-license-upload">
@@ -817,7 +835,7 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               <Input
                 id="pan"
                 type="text"
-                placeholder="Enter Pan"
+                placeholder="Enter PAN"
                 className="bg-white"
                 value={formData.refWGPPPan || ""}
                 onChange={(e) =>
@@ -1008,59 +1026,75 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               {/* Existing License Files */}
               {formData.licenseFiles?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.licenseFiles.map((file, index) => (
-                    <div
-                      key={`existing-license-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          title={file.refLOldFileName}
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refLOldFileName ||
-                            `Existing License ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updatedLicenseFiles =
-                              prev.licenseFiles?.filter((_, i) => i !== index);
-                            return {
-                              ...prev,
-                              licenseFiles: updatedLicenseFiles || [],
-                            };
-                          });
+                  {formData.licenseFiles.map((file, index) => {
+                    const isS3File =
+                      file.lFileData?.base64Data?.startsWith("http");
 
-                          const data = {
-                            id: file.refLId,
-                            file_name: file.refLFileName,
-                            old_file_name: file.refLOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempLicenses((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-license-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            const { base64Data, contentType } = file.lFileData;
+                            if (!base64Data) return;
+
+                            if (isS3File) {
+                              // Open S3 file in new tab
+                              window.open(base64Data, "_blank");
+                            } else {
+                              // Download base64 file
+                              downloadFile(
+                                base64Data,
+                                contentType,
+                                file.refLOldFileName
+                              );
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            title={file.refLOldFileName}
+                            className="truncate font-semibold text-green-800"
+                          >
+                            {file.refLOldFileName ||
+                              `Existing License ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updatedLicenseFiles =
+                                prev.licenseFiles?.filter(
+                                  (_, i) => i !== index
+                                );
+                              return {
+                                ...prev,
+                                licenseFiles: updatedLicenseFiles || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refLId,
+                              file_name: file.refLFileName,
+                              old_file_name: file.refLOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempLicenses((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1162,59 +1196,74 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               {/* Existing CV Files */}
               {formData.cvFiles?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.cvFiles.map((file, index) => (
-                    <div
-                      key={`existing-cv-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.cvFileData.base64Data,
-                            file.cvFileData.contentType,
-                            file.refCVOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          title={file.refCVOldFileName}
-                          className="truncate font-semibold text-green-800"
-                        >
-                          {file.refCVOldFileName || `Existing CV ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updatedCvFiles = prev.cvFiles?.filter(
-                              (_, i) => i !== index
-                            );
-                            return {
-                              ...prev,
-                              cvFiles: updatedCvFiles || [],
-                            };
-                          });
+                  {formData.cvFiles.map((file, index) => {
+                    const isS3File =
+                      file.cvFileData?.base64Data?.startsWith("http");
 
-                          const data = {
-                            id: file.refCVID,
-                            file_name: file.refCVFileName,
-                            old_file_name: file.refCVOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempCVs((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-cv-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            const { base64Data, contentType } = file.cvFileData;
+                            if (!base64Data) return;
+
+                            if (isS3File) {
+                              // Open S3 file in new tab
+                              window.open(base64Data, "_blank");
+                            } else {
+                              // Download base64 file
+                              downloadFile(
+                                base64Data,
+                                contentType,
+                                file.refCVOldFileName
+                              );
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            title={file.refCVOldFileName}
+                            className="truncate font-semibold text-green-800"
+                          >
+                            {file.refCVOldFileName ||
+                              `Existing CV ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updatedCvFiles = prev.cvFiles?.filter(
+                                (_, i) => i !== index
+                              );
+                              return {
+                                ...prev,
+                                cvFiles: updatedCvFiles || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refCVID,
+                              file_name: file.refCVFileName,
+                              old_file_name: file.refCVOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempCVs((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1301,61 +1350,75 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
               {/* Existing Malpractice Insurance Files from Backend */}
               {formData.malpracticeinsureance_files?.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
-                  {formData.malpracticeinsureance_files.map((file, index) => (
-                    <div
-                      key={`existing-malpractice-${index}`}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                    >
-                      <div
-                        className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName
-                          )
-                        }
-                      >
-                        <div className="bg-green-100 p-2 rounded-md">
-                          <FileText className="w-5 h-5 text-green-600" />
-                        </div>
-                        <span
-                          className="truncate font-semibold text-green-800"
-                          title={file.refMPOldFileName}
-                        >
-                          {file.refMPOldFileName ||
-                            `Malpractice File ${index + 1}`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => {
-                            const updated =
-                              prev.malpracticeinsureance_files?.filter(
-                                (_, i) => i !== index
-                              );
-                            return {
-                              ...prev,
-                              malpracticeinsureance_files: updated || [],
-                            };
-                          });
+                  {formData.malpracticeinsureance_files.map((file, index) => {
+                    const isS3File =
+                      file.MPFileData?.base64Data?.startsWith("http");
 
-                          const data = {
-                            id: file.refMPId,
-                            file_name: file.refMPFileName,
-                            old_file_name: file.refMPOldFileName,
-                            status: "delete" as const,
-                          };
-                          setTempMalpractice((prev) => [...prev, data]);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition"
-                        title="Remove file"
+                    return (
+                      <div
+                        key={`existing-malpractice-${index}`}
+                        className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div
+                          className="flex items-center gap-3 w-4/5 truncate"
+                          onClick={() => {
+                            const { base64Data, contentType } = file.MPFileData;
+                            if (!base64Data) return;
+
+                            if (isS3File) {
+                              // 🌐 Open S3 file in new tab
+                              window.open(base64Data, "_blank");
+                            } else {
+                              // 📄 Download base64 file
+                              downloadFile(
+                                base64Data,
+                                contentType,
+                                file.refMPOldFileName
+                              );
+                            }
+                          }}
+                        >
+                          <div className="bg-green-100 p-2 rounded-md">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span
+                            className="truncate font-semibold text-green-800"
+                            title={file.refMPOldFileName}
+                          >
+                            {file.refMPOldFileName ||
+                              `Malpractice File ${index + 1}`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => {
+                              const updated =
+                                prev.malpracticeinsureance_files?.filter(
+                                  (_, i) => i !== index
+                                );
+                              return {
+                                ...prev,
+                                malpracticeinsureance_files: updated || [],
+                              };
+                            });
+
+                            const data = {
+                              id: file.refMPId,
+                              file_name: file.refMPFileName,
+                              old_file_name: file.refMPOldFileName,
+                              status: "delete" as const,
+                            };
+                            setTempMalpractice((prev) => [...prev, data]);
+                          }}
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1407,32 +1470,47 @@ const EditWGPerformingProvider: React.FC<EditRadiologistProps> = ({
                 </div>
               )}
 
-              {/* Show existing digital signature from backend */}
-              {!files.digital_signature &&
-                formData.refWGPPDigitalSignature &&
-                formData.digitalSignatureFile && (
-                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
-                    <img
-                      src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
-                      alt="Digital Signature"
-                      className="h-16 w-auto rounded border object-contain"
-                    />
+              {/* Existing digital signature from backend */}
+              {!files.digital_signature && formData.refWGPPDigitalSignature && (
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
+                  <img
+                    src={
+                      formData.digitalSignatureFile?.base64Data
+                        ? formData.digitalSignatureFile.base64Data.startsWith(
+                            "http"
+                          )
+                          ? formData.digitalSignatureFile.base64Data // already S3 URL
+                          : `data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`
+                        : formData.refWGPPDigitalSignature // fallback to S3 URL from backend
+                    }
+                    alt="Digital Signature"
+                    className="h-16 w-auto rounded border object-contain cursor-pointer"
+                    onClick={() => {
+                      const url =
+                        formData.digitalSignatureFile?.base64Data?.startsWith(
+                          "http"
+                        )
+                          ? formData.digitalSignatureFile.base64Data
+                          : formData.refWGPPDigitalSignature;
+                      window.open(url, "_blank");
+                    }}
+                  />
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          refWGPPDigitalSignature: "",
-                          digitalSignatureFile: null,
-                        }));
-                      }}
-                      className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        refWGPPDigitalSignature: "",
+                        digitalSignatureFile: null,
+                      }));
+                    }}
+                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

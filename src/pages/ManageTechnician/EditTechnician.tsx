@@ -63,6 +63,9 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     }
   }, [error]);
 
+  const isS3URL = (url?: string) =>
+    url?.startsWith("https://easeqt-health-archive.s3");
+
   const [formData, setFormData] = useState<ListSpecificTechnician>({
     drivingLicenseFile: {
       base64Data: "",
@@ -114,7 +117,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         scanCenterId,
         technicianId
       );
-      console.log(res);
+      console.log("res", res);
       setFormData(res.data[0]);
     } catch (error) {
       console.log(error);
@@ -133,9 +136,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
@@ -169,14 +170,16 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
+      console.log("\n\nresponse => ", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -201,11 +204,14 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempUpdateFiles = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -265,9 +271,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
         setFormData((prev) => ({
@@ -327,7 +331,7 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
         license_files: tempLicense,
         digital_signature: formData.refTDDigitalSignature,
       };
-      console.log(payload);
+      console.log("--------------->",payload);
       const res = await technicianService.updateTechnician(payload);
       console.log(res);
       if (res.status) {
@@ -394,11 +398,18 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
               src={
                 files.profile_img
                   ? URL.createObjectURL(files.profile_img)
-                  : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                  : formData.refUserProfileImg?.startsWith(
+                      "https://easeqt-health-archive.s3"
+                    )
+                  ? formData.refUserProfileImg
+                  : formData.profileImgFile?.base64Data
+                  ? `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}` // 🟢 Case 3: Base64 data
+                  : "/default-profile.png"
               }
               alt="Preview"
               className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
             />
+
             <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
               <Pencil className="w-5 h-5 text-background" />
               <input
@@ -645,28 +656,31 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                   {files.drivers_license.name}
                 </span>
               </div>
-            ) : (
-              formData.refTDDrivingLicense &&
-              formData.drivingLicenseFile && (
-                <div
-                  className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  onClick={() =>
+            ) : formData.refTDDrivingLicense ? (
+              <div
+                className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={() => {
+                  if (isS3URL(formData.refTDDrivingLicense)) {
+                    // 🟢 Open directly from S3
+                    window.open(formData.refTDDrivingLicense, "_blank");
+                  } else if (formData.drivingLicenseFile) {
+                    // 🟢 Fallback to base64 download
                     downloadFile(
                       formData.drivingLicenseFile.base64Data,
                       formData.drivingLicenseFile.contentType,
                       "drivers_license"
-                    )
+                    );
                   }
-                >
-                  <div className="bg-green-100 p-2 rounded-md">
-                    <FileText className="w-5 h-5 text-green-600" />
-                  </div>
-                  <span className="truncate text-sm font-medium text-green-800">
-                    Driving License Document
-                  </span>
+                }}
+              >
+                <div className="bg-green-100 p-2 rounded-md">
+                  <FileText className="w-5 h-5 text-green-600" />
                 </div>
-              )
-            )}
+                <span className="truncate text-sm font-medium text-green-800">
+                  Driving License Document
+                </span>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -730,19 +744,19 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        setFiles((prev) => ({
-                          ...prev,
-                          license_files:
-                            prev.license_files?.filter((_, i) => i !== index) ||
-                            [],
-                        }));
-                        setTempLicense((prev) =>
-                          prev.filter(
-                            (license_files) =>
-                              license_files.old_file_name !== file.name
-                          )
-                        );
-                      }}
+                          setFiles((prev) => ({
+                            ...prev,
+                            license_files:
+                              prev.license_files?.filter(
+                                (_, i) => i !== index
+                              ) || [],
+                          }));
+                          setTempLicense((prev) =>
+                            prev.filter(
+                              (license) => license.old_file_name !== file.name
+                            )
+                          );
+                        }}
                       className="text-red-500 hover:text-red-700 transition"
                       title="Remove file"
                     >
@@ -763,13 +777,17 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                   >
                     <div
                       className="flex items-center gap-3 w-4/5 truncate"
-                      onClick={() =>
-                        downloadFile(
-                          file.lFileData.base64Data,
-                          file.lFileData.contentType,
-                          file.refLOldFileName
-                        )
-                      }
+                      onClick={() => {
+                        if (isS3URL(file.refLFileName)) {
+                          window.open(file.refLFileName, "_blank");
+                        } else if (file.lFileData) {
+                          downloadFile(
+                            file.lFileData.base64Data,
+                            file.lFileData.contentType,
+                            file.refLOldFileName
+                          );
+                        }
+                      }}
                     >
                       <div className="bg-green-100 p-2 rounded-md">
                         <FileText className="w-5 h-5 text-green-600" />
@@ -782,6 +800,8 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
                           `Existing Education Certificate ${index + 1}`}
                       </span>
                     </div>
+
+                    {/* Delete Button */}
                     <button
                       type="button"
                       onClick={() => {
@@ -864,31 +884,47 @@ const EditTechnician: React.FC<EditTechnicianProps> = ({
             )}
 
             {/* Show existing digital signature from backend */}
-            {!files.digital_signature &&
-              formData.refTDDigitalSignature &&
-              formData.digitalSignatureFile && (
-                <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
-                  <img
-                    src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
-                    alt="Digital Signature"
-                    className="h-16 w-auto rounded border object-contain"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        refTDDigitalSignature: "",
-                        digitalSignatureFile: null,
-                      }));
-                    }}
-                    className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+            {files.digital_signature ? (
+              <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
+                <img
+                  src={URL.createObjectURL(files.digital_signature)}
+                  alt="Digital Signature"
+                  className="h-16 w-auto rounded border object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSingleFile("digital_signature")}
+                  className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : formData.refTDDigitalSignature ? (
+              <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
+                <img
+                  src={
+                    isS3URL(formData.refTDDigitalSignature)
+                      ? formData.refTDDigitalSignature // 🟢 Directly from S3
+                      : `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}`
+                  }
+                  alt="Digital Signature"
+                  className="h-16 w-auto rounded border object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      refTDDigitalSignature: "",
+                      digitalSignatureFile: null,
+                    }))
+                  }
+                  className="text-red-500 hover:text-red-700 cursor-pointer self-start sm:self-auto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

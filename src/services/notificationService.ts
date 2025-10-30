@@ -62,8 +62,8 @@ export const notificationService = {
       }
     );
     const decryptedData: {
-        status: boolean;
-        message: string;
+      status: boolean;
+      message: string;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     console.log(decryptedData);
@@ -72,6 +72,7 @@ export const notificationService = {
 
   getUnreadNotificationCount: async () => {
     const token = localStorage.getItem("token");
+    console.log('token', token)
 
     const res = await axios.get(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/notification/getUnreadCount`,
@@ -88,6 +89,7 @@ export const notificationService = {
         message: string;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
+
     return decryptedData;
-  }
+  },
 };

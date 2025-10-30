@@ -131,14 +131,15 @@ const AddManager: React.FC = () => {
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          profile_img: response.fileName,
+          profile_img: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -327,14 +328,15 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setTempFiles((prev) => ({
@@ -619,7 +621,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({
           <Input
             id="pannumber"
             type="text"
-            placeholder="Enter Pan"
+            placeholder="Enter PAN"
             className="bg-white" // Takes remaining space
             value={formData.pan}
             onChange={(e) => {
@@ -721,11 +723,14 @@ const ProfessionalDetailsForm: React.FC<ProfessionalDetailsFormProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: UploadFile = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
         };
         console.log(result);

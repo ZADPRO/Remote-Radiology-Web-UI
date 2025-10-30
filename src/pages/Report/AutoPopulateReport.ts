@@ -1,8 +1,9 @@
+import { ImpressionRecommendationData } from "@/services/reportService";
 import {
   additionalOptions,
-  impressionRecommendation,
+  // impressionRecommendation,
   NAadditionalOptions,
-  NAimpressionRecommendation,
+  // NAimpressionRecommendation,
 } from "./ImpressionRecommendation";
 import {
   breastDensityandImageRightQuestions,
@@ -440,6 +441,8 @@ export function AutoPopulateReport(
 }
 
 export function AutoPopulateReportImpressRecomm(
+  ReportPortalImpresRecom: ImpressionRecommendationData[],
+  NAImpresRecom: ImpressionRecommendationData[],
   mainImpressionRecommendation: any,
   setMainImpressionRecommendation: any,
   optionalImpressionRecommendation: any,
@@ -452,9 +455,9 @@ export function AutoPopulateReportImpressRecomm(
   const getReportAnswer = (id: number) =>
     reportFormData.find((q: any) => q.questionId === id)?.answer || "";
 
-  let MainOptions = impressionRecommendation;
+  let MainOptions = ReportPortalImpresRecom;
   if (assignData?.naSystemReportAccess && getReportAnswer(81) === "true") {
-    MainOptions = NAimpressionRecommendation;
+    MainOptions = NAImpresRecom;
   }
 
   if (mainImpressionRecommendation.selectedImpressionId) {

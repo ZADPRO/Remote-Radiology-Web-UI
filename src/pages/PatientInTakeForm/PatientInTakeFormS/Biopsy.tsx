@@ -56,11 +56,12 @@ const Biopsy: React.FC<Props> = ({
         const formDataObj = new FormData();
         formDataObj.append("file", file);
         try {
-          const response = await uploadService.uploadFile({
-            formFile: formDataObj,
-          });
+          const response = await uploadService.uploadFile(file);
           if (response.status) {
-            values.push(response.fileName);
+            const cleanUrl = response.viewURL.includes("?")
+              ? response.viewURL.split("?")[0]
+              : response.viewURL;
+            values.push(cleanUrl);
           }
         } catch (error) {
           console.error("File upload failed:", error);
@@ -136,10 +137,7 @@ const Biopsy: React.FC<Props> = ({
                     )
                   }
                   onDoubleClick={() =>
-                    handleInputChange(
-                      questionIds.previousBiopsy,
-                      ""
-                    )
+                    handleInputChange(questionIds.previousBiopsy, "")
                   }
                   required
                 />
@@ -198,10 +196,7 @@ const Biopsy: React.FC<Props> = ({
                     )
                   }
                   onDoubleClick={() =>
-                    handleInputChange(
-                      questionIds.previousBiopsy,
-                      ""
-                    )
+                    handleInputChange(questionIds.previousBiopsy, "")
                   }
                   required
                 />
@@ -393,36 +388,46 @@ const Biopsy: React.FC<Props> = ({
                         {getAnswer(questionIds.reportDetails) &&
                           (() => {
                             try {
-                              const fileNames: string[] = JSON.parse(
+                              const fileUrls: string[] = JSON.parse(
                                 getAnswer(questionIds.reportDetails)
                               );
 
-                              return fileNames.length > 0 ? (
+                              return fileUrls.length > 0 ? (
                                 <div className="w-full space-y-2">
-                                  {fileNames.map((fileName, index) => (
-                                    <div
-                                      key={index}
-                                      className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
-                                    >
-                                      {/* File name (downloadable) */}
-                                      <FileView fileName={fileName} />
+                                  {fileUrls.map((fileUrl, index) => {
+                                    // Extract just the file name for display
+                                    const displayName =
+                                      fileUrl.split("/").pop() ||
+                                      "unknown_file";
 
-                                      {/* Delete icon */}
+                                    return (
                                       <div
-                                        className="cursor-pointer"
-                                        onClick={() =>
-                                          handleDeleteFile(fileName)
-                                        }
+                                        key={index}
+                                        className="bg-[#f9f4ed] rounded-lg px-2 py-2 w-full flex justify-between items-center gap-3 text-sm font-medium pointer-events-auto"
                                       >
-                                        {readOnly ? null : (
-                                          <Trash
-                                            size={15}
-                                            className="text-red-500"
-                                          />
-                                        )}
+                                        {/* Display only the file name but pass full URL to FileView */}
+                                        <FileView
+                                          displayName={displayName}
+                                          fileUrl={fileUrl}
+                                        />
+
+                                        {/* Delete icon */}
+                                        <div
+                                          className="cursor-pointer"
+                                          onClick={() =>
+                                            handleDeleteFile(fileUrl)
+                                          } // send full URL
+                                        >
+                                          {readOnly ? null : (
+                                            <Trash
+                                              size={15}
+                                              className="text-red-500"
+                                            />
+                                          )}
+                                        </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </div>
                               ) : null;
                             } catch (err) {

@@ -27,10 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
-import {
-  FinalAddendumText,
-  reportService,
-} from "@/services/reportService";
+import { FinalAddendumText, reportService } from "@/services/reportService";
 import { LesionsVal } from "./Lisons/LesionsRightString";
 import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import {
@@ -331,44 +328,13 @@ const NotesReport: React.FC<Props> = ({
       : false;
 
   const FindAssessmentCategory = (val: string): string => {
-    const O1 = ["0"];
-    const N1 = ["1", "N1"];
-    const N2 = ["1a", "1b", "7", "N2"];
-    const A1 = [
-      "2",
-      "2a",
-      "3",
-      "3a",
-      "3b",
-      "3c",
-      "3d",
-      "3e",
-      "3f",
-      "3g",
-      "4",
-      "4a",
-      "4b",
-      "4c",
-      "4d",
-      "4e",
-      "4f",
-      "4g",
-      "4h",
-      "4i1",
-      "4i2",
-      "4j",
-      "4k",
-      "4l",
-      "4m",
-      "4n",
-      "8",
-      "8a",
-      "10",
-      "A1",
-    ];
-    const A2 = ["5", "6a", "A2"];
-    const A3 = ["5a", "7b", "7c", "A3"];
-    const A4 = ["6", "6b", "6c", "6d", "6e", "6f", "6h", "7e", "10a", "A4"];
+    const O1 = ["N0"];
+    const N1 = ["N1"];
+    const N2 = ["N2"];
+    const A1 = ["A1"];
+    const A2 = ["A2"];
+    const A3 = ["A3"];
+    const A4 = ["A4"];
 
     if (O1.includes(val))
       return "0 : Prior breast imaging is needed for interpretation";
@@ -383,7 +349,6 @@ const NotesReport: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    
     if (syncStatus.Notes) {
       let lesionsVal: LesionsVal = {} as LesionsVal;
 
@@ -426,13 +391,13 @@ const NotesReport: React.FC<Props> = ({
       setNotes(
         `
        <div>
-       <div style="text-align: left;">
-    ${
-      ScanCenterImg?.base64Data
-        ? `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-        : ""
-    }
-    </div>
+       ${
+         ScanCenterImg
+           ? ScanCenterImg.contentType === "url"
+             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+           : ""
+       }
       </div>
     <table width="100" border-collapse: collapse; font-size: 14px;">
       <tbody>
@@ -482,7 +447,7 @@ const NotesReport: React.FC<Props> = ({
       ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
       : ``
   }${
-            false// verifyingProviderName.length > 0
+            false // verifyingProviderName.length > 0
               ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
               : ``
           }
@@ -1039,7 +1004,7 @@ ${
       ? `
         <br/><p><strong>LEFT BREAST:</strong></p>
         ${
-          textEditor.ImpressionTextRight.value && getAnswer(81) === "true"
+          textEditor.ImpressionText.value && getAnswer(81) === "true"
             ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
                 textEditor.selectedImpressionId.value
               )}</p>`
@@ -1066,8 +1031,8 @@ ${
    textEditor.CommonImpresRecommTextVal.value === "Q" ||
    textEditor.CommonImpresRecommTextVal.value === "U" ||
    textEditor.CommonImpresRecommTextVal.value === "Y" ||
-   textEditor.CommonImpresRecommTextVal.value === "2NA" ||
-   textEditor.CommonImpresRecommTextVal.value === "3NA"
+   textEditor.CommonImpresRecommTextRightVal.value === "2NA" ||
+   textEditor.CommonImpresRecommTextRightVal.value === "3NA"
      ? `<p>${textEditor.CommonImpresRecommText.value}</p>`
      : ``
  }
@@ -1100,7 +1065,7 @@ ${
     `
       : ``
   }
-  <br/><strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. The images must be reviewed and interpreted by a licensed physician, such as a radiologist. </p></i></strong>
+  <br/><strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.</p></i></strong>
   <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
 ` +
           (signatureText.length > 0 ? "<br/>" + signatureText : "") +
@@ -1110,9 +1075,7 @@ ${
             : "")
       );
     } else {
-      if(
-        Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]
-      ) {
+      if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
         setNotes(
           Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
             (textEditor.addendumText.value.length > 0
@@ -1121,7 +1084,7 @@ ${
               : "")
         );
       }
-      
+
       // if(Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0]){
       //   setNotes(
       //     Notes.split("<p style='text-align: right;' class='ql-align-right'><strong>SIGNATURE:</strong></p>")[0] +
@@ -1288,9 +1251,10 @@ ${
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the Wellthgreen Report Portal Find Select? Any changes made
-              or templates uploaded will be lost, and the report will contain
-              only the Wellthgreen Report Portal Find Select.
+              Do you wish to enable the Wellthgreen Report Portal Find Select?
+              Any changes made or templates uploaded will be lost, and the
+              report will contain only the Wellthgreen Report Portal Find
+              Select.
             </p>
           </div>
           <DialogFooter>
@@ -1373,38 +1337,38 @@ ${
               Sync
             </Button>
           )} */}
-          {
-            (role?.id === 2 || role?.id === 3 || role?.id === 8) ? (<></>) : (
-              <div className="self-start mt-2">
-                <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
-                  <div>
-                    <Label className="font-semibold text-[#e06666] text-base">
-                      Wellthgreen Report Portal Find Select / Load Template
-                    </Label>
-                  </div>
-                  <Switch
-                    id="qtAccess"
-                    className="cursor-pointer"
-                    checked={syncStatus.Notes}
-                    onCheckedChange={(checked: boolean) => {
-                      if (!readOnly) {
-                        setChangedOne((prev) => ({
-                          ...prev,
-                          syncStatus: true,
-                          reportTextContent: true,
-                        }));
-                        if (!checked) {
-                          setsyncStatus({ ...syncStatus, Notes: checked });
-                        } else {
-                          setDialog(true);
+              {role?.id === 2 || role?.id === 3 || role?.id === 8 ? (
+                <></>
+              ) : (
+                <div className="self-start mt-2">
+                  <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
+                    <div>
+                      <Label className="font-semibold text-[#e06666] text-base">
+                        Wellthgreen Report Portal Find Select / Load Template
+                      </Label>
+                    </div>
+                    <Switch
+                      id="qtAccess"
+                      className="cursor-pointer"
+                      checked={syncStatus.Notes}
+                      onCheckedChange={(checked: boolean) => {
+                        if (!readOnly) {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            syncStatus: true,
+                            reportTextContent: true,
+                          }));
+                          if (!checked) {
+                            setsyncStatus({ ...syncStatus, Notes: checked });
+                          } else {
+                            setDialog(true);
+                          }
                         }
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            )
-          }
+              )}
             </div>
           </>
           <TextEditor

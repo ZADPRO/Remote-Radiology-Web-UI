@@ -223,7 +223,9 @@ const Analytics: React.FC = () => {
   const getCount = (array: any, groupName: string) => {
     if (array) {
       const item = array.find((i: any) => i.group_name === groupName);
+      console.log('Analytics.tsx -------------------------- >  227  ',groupName,item);
       return item ? parseInt(item.total_count) : 0;
+      
     } else {
       return 0;
     }
@@ -231,25 +233,17 @@ const Analytics: React.FC = () => {
 
   const fetchOverallScanCenter = async (scId: number) => {
     try {
-      console.log("Hiii I am FRom fetch Scan Center");
+      
       if (!dateRange.from || !dateRange.to) {
         console.error("Date range is incomplete.");
         return;
       }
-
-      console.log(
-        "Analytics.tsx -------------------------- >  240  ",
-        scId,
-        format(dateRange.from, "yyyy-MM-dd"),
-        format(dateRange.to, "yyyy-MM-dd")
-      );
 
       const res = await analyticsService.overallScanCenter(
         scId,
         format(dateRange.from, "yyyy-MM-dd"),
         format(dateRange.to, "yyyy-MM-dd")
       );
-      console.log("Analytics.tsx / res / 240 -------------------  ", res);
 
       if (res.status) {
         setScanCenterOverAllAnalaytics(res.OverAllAnalytics || []);
@@ -270,7 +264,7 @@ const Analytics: React.FC = () => {
           ),
           OncoConsult: getCount(res.LeftRecommendation, "Onco Consult"),
           Redo: getCount(res.LeftRecommendation, "Redo"),
-          USGSFU: getCount(res.LeftRecommendation, "USG/ SFU"), // note exact name in your array
+          USGSFU: getCount(res.LeftRecommendation, "USG/SFU"), // note exact name in your array
         });
 
         setRecodeRight({
@@ -289,7 +283,7 @@ const Analytics: React.FC = () => {
           ),
           OncoConsult: getCount(res.RightRecommendation, "Onco Consult"),
           Redo: getCount(res.RightRecommendation, "Redo"),
-          USGSFU: getCount(res.RightRecommendation, "USG/ SFU"), // note exact name in your array
+          USGSFU: getCount(res.RightRecommendation, "USG/SFU"), // note exact name in your array
         });
         // setTatStats([]);
         setTechArtifacts(res.TechArtificate || []);
@@ -319,11 +313,6 @@ const Analytics: React.FC = () => {
         format(dateRange?.to, "yyyy-MM-dd")
       );
       if (res.status) {
-        console.log("Hiii I am FRom fetch User");
-        console.log(
-          "---->",
-          res.DurationBucketModel ? res.DurationBucketModel : []
-        );
 
         setUserOverAllAnalaytics(
           res.OverAllAnalytics ? res.OverAllAnalytics : []
@@ -356,7 +345,7 @@ const Analytics: React.FC = () => {
           ),
           OncoConsult: getCount(res.LeftRecommendation, "Onco Consult"),
           Redo: getCount(res.LeftRecommendation, "Redo"),
-          USGSFU: getCount(res.LeftRecommendation, "USG/ SFU"), // note exact name in your array
+          USGSFU: getCount(res.LeftRecommendation, "USG/SFU"), // note exact name in your array
         });
 
         setRecodeRight({
@@ -375,7 +364,7 @@ const Analytics: React.FC = () => {
           ),
           OncoConsult: getCount(res.RightRecommendation, "Onco Consult"),
           Redo: getCount(res.RightRecommendation, "Redo"),
-          USGSFU: getCount(res.RightRecommendation, "USG/ SFU"), // note exact name in your array
+          USGSFU: getCount(res.RightRecommendation, "USG/SFU"), // note exact name in your array
         });
         setTotalCorrectEdits(res.TotalCorrectEdit ? res.TotalCorrectEdit : []);
         setTatStats(res.DurationBucketModel ? res.DurationBucketModel : []);

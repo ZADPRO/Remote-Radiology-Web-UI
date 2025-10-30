@@ -146,15 +146,16 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataImg.append("profileImage", file);
 
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
       console.log("Profile image upload response:", response);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          refUserProfileImg: response.fileName,
+          refUserProfileImg: cleanUrl,
         }));
 
         setFiles((prev) => ({
@@ -182,14 +183,15 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataObj.append("file", file);
 
     try {
-      const response = await uploadService.uploadFile({
-        formFile: formDataObj,
-      });
+      const response = await uploadService.uploadFile(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          [fieldName]: response.fileName, // just path to backend
+          [fieldName]: cleanUrl, // just path to backend
         }));
 
         setFiles((prev) => ({
@@ -230,28 +232,43 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     setSaveLoading(true);
     setError("");
 
+    const cleanS3Url = (url: any) => {
+      if (!url || typeof url !== "string") return url; // handle null/undefined/non-string
+      return url.includes("?") ? url.split("?")[0] : url;
+    };
+
     try {
       const payload = {
         id: formData.refUserId,
         firstname: formData.refUserFirstName,
         lastname: formData.refUserLastName,
-        profile_img: formData.refUserProfileImg,
+        profile_img: cleanS3Url(formData.refUserProfileImg),
         email: formData.refCODOEmail,
         dob: formData.refUserDOB,
         phone: formData.refCODOPhoneNo1,
         phoneCountryCode: formData.refCODOPhoneNo1CountryCode,
-        drivers_license_no: formData.drivers_license,
+        drivers_license_no: cleanS3Url(formData.drivers_license),
         social_security_no: formData.refCDSocialSecurityNo,
-        drivers_license: formData.drivers_license,
+        drivers_license: cleanS3Url(formData.drivers_license),
         Specialization: formData.Specialization,
         npi: formData.refCDNPI,
         status: formData.refUserStatus,
-        license_files: tempLicenses,
-        malpracticeinsureance_files: tempMalpractice,
-        digital_signature: formData.digital_signature,
+        // 🧠 Keep objects intact, only clean string values inside them if necessary
+        license_files: tempLicenses.map((file) => ({
+          ...file,
+          file_name: cleanS3Url(file.file_name),
+          old_file_name: cleanS3Url(file.old_file_name),
+        })),
+        malpracticeinsureance_files: tempMalpractice.map((file) => ({
+          ...file,
+          file_name: cleanS3Url(file.file_name),
+          old_file_name: cleanS3Url(file.old_file_name),
+        })),
+        digital_signature: cleanS3Url(formData.digital_signature),
         easeQTReportAccess: formData.refCDEaseQTReportAccess,
         naSystemreportAcess: formData.refCDNAsystemReportAccess,
       };
+
       console.log("payload", payload);
       const res = await doctorService.updateCoDoctor(payload);
       console.log(res);
@@ -310,11 +327,14 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await uploadFn({ formFile: formData });
+      const response = await uploadFn(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         const result: TempLicense = {
-          file_name: response.fileName,
+          file_name: cleanUrl,
           old_file_name: file.name,
           status: "new" as const,
         };
@@ -346,14 +366,15 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
     formDataImg.append("profileImage", file);
     setError("");
     try {
-      const response = await uploadService.uploadImage({
-        formImg: formDataImg,
-      });
+      const response = await uploadService.uploadImage(file);
 
       if (response.status) {
+        const cleanUrl = response.viewURL.includes("?")
+          ? response.viewURL.split("?")[0]
+          : response.viewURL;
         setFormData((prev) => ({
           ...prev,
-          digital_signature: response.fileName,
+          digital_signature: cleanUrl,
           digitalSignatureFile: null,
         }));
 
@@ -411,12 +432,15 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 id="profile-img"
                 src={
                   files.profile_img
-                    ? URL.createObjectURL(files.profile_img)
-                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}`
+                    ? URL.createObjectURL(files.profile_img) // local upload preview
+                    : formData.profileImgFile?.contentType === "url"
+                    ? formData.profileImgFile.base64Data // direct URL
+                    : `data:${formData.profileImgFile?.contentType};base64,${formData.profileImgFile?.base64Data}` // actual base64
                 }
                 alt="Preview"
                 className="w-full h-full rounded-full object-cover border-4 border-[#A3B1A1] shadow"
               />
+
               <label className="absolute bottom-1 right-1 bg-[#A3B1A1] rounded-full p-2 shadow cursor-pointer hover:bg-[#728270]">
                 <Pencil className="w-5 h-5 text-background" />
                 <input
@@ -714,13 +738,20 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 formData.driversLicenseFile && (
                   <div
                     className="mt-2 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                    onClick={() =>
-                      downloadFile(
-                        formData.driversLicenseFile.base64Data,
-                        formData.driversLicenseFile.contentType,
-                        "drivers_license"
-                      )
-                    }
+                    onClick={() => {
+                      if (formData.driversLicenseFile.contentType === "url") {
+                        window.open(
+                          formData.driversLicenseFile.base64Data,
+                          "_blank"
+                        );
+                      } else {
+                        downloadFile(
+                          formData.driversLicenseFile.base64Data,
+                          formData.driversLicenseFile.contentType,
+                          "drivers_license"
+                        );
+                      }
+                    }}
                   >
                     <div className="bg-green-100 p-2 rounded-md">
                       <FileText className="w-5 h-5 text-green-600" />
@@ -854,22 +885,37 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
               )}
 
               {/* Existing License Files */}
-              {formData.licenseFiles?.length > 0 && (
+              {formData.licenseFiles && formData.licenseFiles.length > 0 && (
                 <div className="mt-3 flex flex-col gap-3">
                   {formData.licenseFiles.map((file, index) => (
                     <div
                       key={`existing-license-${index}`}
                       className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                     >
+                      {/* Clickable file area */}
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.lFileData.base64Data,
-                            file.lFileData.contentType,
-                            file.refLOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          if (
+                            file.refLFileName &&
+                            file.refLFileName.startsWith("https://")
+                          ) {
+                            // If file already has a hosted URL
+                            window.open(file.refLFileName, "_blank");
+                          } else if (
+                            file.lFileData?.base64Data &&
+                            file.lFileData?.contentType
+                          ) {
+                            // Otherwise, trigger download from base64
+                            downloadFile(
+                              file.lFileData.base64Data,
+                              file.lFileData.contentType,
+                              file.refLOldFileName || `License-${index + 1}.pdf`
+                            );
+                          } else {
+                            console.warn("Invalid file data for:", file);
+                          }
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -887,20 +933,23 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                         onClick={() => {
                           setFormData((prev) => {
                             const updatedLicenseFiles =
-                              prev.licenseFiles?.filter((_, i) => i !== index);
+                              prev.licenseFiles?.filter(
+                                (_, i) => i !== index
+                              ) || [];
                             return {
                               ...prev,
-                              licenseFiles: updatedLicenseFiles || [],
+                              licenseFiles: updatedLicenseFiles,
                             };
                           });
 
-                          const data = {
+                          const deletedFileInfo = {
                             id: file.refLId,
                             file_name: file.refLFileName,
                             old_file_name: file.refLOldFileName,
-                            status: "delete" as const,
+                            status: "delete" as const, // keep consistent with your backend
                           };
-                          setTempLicenses((prev) => [...prev, data]);
+
+                          setTempLicenses((prev) => [...prev, deletedFileInfo]);
                         }}
                         className="text-red-500 hover:text-red-700 transition"
                         title="Remove file"
@@ -1005,13 +1054,19 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                     >
                       <div
                         className="flex items-center gap-3 w-4/5 truncate"
-                        onClick={() =>
-                          downloadFile(
-                            file.MPFileData.base64Data,
-                            file.MPFileData.contentType,
-                            file.refMPOldFileName
-                          )
-                        }
+                        onClick={() => {
+                          const fileUrl =
+                            file.MPFileData?.base64Data || file.refMPFileName;
+                          if (fileUrl?.startsWith("https://")) {
+                            window.open(fileUrl, "_blank");
+                          } else {
+                            downloadFile(
+                              file.MPFileData.base64Data,
+                              file.MPFileData.contentType,
+                              file.refMPOldFileName
+                            );
+                          }
+                        }}
                       >
                         <div className="bg-green-100 p-2 rounded-md">
                           <FileText className="w-5 h-5 text-green-600" />
@@ -1090,7 +1145,13 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
               {files.digital_signature && (
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-blue-100 text-sm text-gray-800 font-medium gap-2">
                   <img
-                    src={URL.createObjectURL(files.digital_signature)}
+                    src={
+                      files.digital_signature
+                        ? URL.createObjectURL(files.digital_signature) // local upload
+                        : formData.digitalSignatureFile?.contentType === "url"
+                        ? formData.digitalSignatureFile.base64Data // remote S3 URL
+                        : `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}` // actual base64
+                    }
                     alt="Digital Signature"
                     className="h-16 w-auto rounded border object-contain"
                   />
@@ -1111,7 +1172,11 @@ const EditCoReportingDoctor: React.FC<EditCoReportingDoctorProps> = ({
                 formData.digitalSignatureFile && (
                   <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-300 rounded-lg px-3 py-2 hover:shadow-sm transition bg-green-100 text-sm text-green-800 font-medium gap-2">
                     <img
-                      src={`data:${formData.digitalSignatureFile.contentType};base64,${formData.digitalSignatureFile.base64Data}`}
+                      src={
+                        formData.digitalSignatureFile?.contentType === "url"
+                          ? formData.digitalSignatureFile.base64Data // S3 URL
+                          : `data:${formData.digitalSignatureFile?.contentType};base64,${formData.digitalSignatureFile?.base64Data}` // base64
+                      }
                       alt="Digital Signature"
                       className="h-16 w-auto rounded border object-contain"
                     />
