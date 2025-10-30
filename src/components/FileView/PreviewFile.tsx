@@ -1,6 +1,7 @@
 import { reportService, ViewFileRes } from "@/services/reportService";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { ViewPDFHelper } from "./ViewPDFHelper";
 
 type Props = {
   fileName: string;
@@ -53,11 +54,12 @@ const PreviewFile: React.FC<Props> = (props) => {
                 />
               ) : fileData?.data.contentType === "application/pdf" ? (
                 // ✅ Base64 PDF
-                <iframe
-                  src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
-                  title="Report Preview"
-                  className="w-full h-[75vh] border rounded-md"
-                />
+                // <iframe
+                //   src={`data:${fileData?.data.contentType};base64,${fileData?.data.base64Data}`}
+                //   title="Report Preview"
+                //   className="w-full h-[75vh] border rounded-md"
+                // />
+                <ViewPDFHelper base64Data={fileData.data.base64Data} />
               ) : (
                 // ✅ Base64 Image
                 <div className="w-full h-[75vh] flex items-center justify-center overflow-auto">

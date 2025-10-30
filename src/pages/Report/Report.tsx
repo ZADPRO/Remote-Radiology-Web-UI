@@ -401,7 +401,7 @@ const Report: React.FC = () => {
         // reason += `<p><strong>Patient Form:</strong> Da. Diagnostic - Abnormal Symptom or Imaging (No Cancer Diagnosis Yet)</p>`;
       } else if (categoryId === 3) {
         // reason += DbFormReportGenerator(responsePatientInTake);
-        reason += `<div><strong>Indication:</strong> Diagnostic : For further evaluation of a biopsy diagnosis.<br/>
+        reason += `<div><strong>Indication:</strong> Diagnostic - Biopsy.<br/>
         <div><strong>History: </strong><br/>
           <div><strong>Reason for having this QT scan (Patient Stated): </strong>
           ${getPatientAnswer(11)}.</div>
