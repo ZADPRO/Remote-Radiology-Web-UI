@@ -3020,6 +3020,25 @@ const PatientQueue: React.FC = () => {
     },
   });
 
+  const pageCount = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex + 1;
+
+  const visiblePages = 10; // show only 10 pages
+  const half = Math.floor(visiblePages / 2);
+
+  let startPage = Math.max(currentPage - half, 1);
+  let endPage = startPage + visiblePages - 1;
+
+  if (endPage > pageCount) {
+    endPage = pageCount;
+    startPage = Math.max(endPage - visiblePages + 1, 1);
+  }
+
+  const pages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
   const clearAllFilters = () => {
     setGlobalFilter("");
     setColumnFilters([]);
@@ -3124,8 +3143,8 @@ const PatientQueue: React.FC = () => {
         <div
           className={`rounded-lg grid w-full ${
             role?.type === "patient" && SCconsultantStatus
-              ? "h-[68%]"
-              : "h-[76%]"
+              ? "h-[64%]"
+              : "h-[74%]"
           } border `}
           style={{
             background:
@@ -3270,8 +3289,9 @@ const PatientQueue: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6 lg:space-x-8 relative">
-              <Pagination>
+              <Pagination className="mt-4 flex justify-center">
                 <PaginationContent>
+                  {/* First Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
@@ -3280,15 +3300,14 @@ const PatientQueue: React.FC = () => {
                       disabled={!table.getCanPreviousPage()}
                       aria-label="Go to first page"
                     >
-                      <span className="sr-only">Go to first page</span>
                       <ChevronsLeft className="h-4 w-4" />
                     </Button>
                   </PaginationItem>
+
+                  {/* Previous Page */}
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        table.getCanPreviousPage() && table.previousPage()
-                      }
+                      onClick={() => table.previousPage()}
                       className={
                         !table.getCanPreviousPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -3297,14 +3316,26 @@ const PatientQueue: React.FC = () => {
                       aria-label="Go to previous page"
                     />
                   </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink isActive>
-                      {table.getState().pagination.pageIndex + 1}
-                    </PaginationLink>
-                  </PaginationItem>
+
+                  {/* Page Numbers */}
+                  {pages.map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => table.setPageIndex(page - 1)}
+                        isActive={page === currentPage}
+                        className={`cursor-pointer ${
+                          page === currentPage ? "bg-primary text-white" : ""
+                        }`}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  {/* Next Page */}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => table.getCanNextPage() && table.nextPage()}
+                      onClick={() => table.nextPage()}
                       className={
                         !table.getCanNextPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -3313,17 +3344,16 @@ const PatientQueue: React.FC = () => {
                       aria-label="Go to next page"
                     />
                   </PaginationItem>
+
+                  {/* Last Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
                       className="h-8 w-8 p-0"
-                      onClick={() =>
-                        table.setPageIndex(table.getPageCount() - 1)
-                      }
+                      onClick={() => table.setPageIndex(pageCount - 1)}
                       disabled={!table.getCanNextPage()}
                       aria-label="Go to last page"
                     >
-                      <span className="sr-only">Go to last page</span>
                       <ChevronsRight className="h-4 w-4" />
                     </Button>
                   </PaginationItem>
