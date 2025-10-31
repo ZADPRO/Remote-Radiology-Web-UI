@@ -57,6 +57,61 @@ function processSup(content: any): any {
   return content;
 }
 
+function normalizeTransparentCss(html: string): string {
+  return (
+    html
+      .replace(
+        /background-color\s*:\s*transparent\s*;?/gi,
+        "background-color:#ffffff;"
+      )
+      .replace(/background\s*:\s*transparent\s*;?/gi, "background:#ffffff;")
+      .replace(
+        /background-color\s*:\s*rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0(?:\.0+)?\s*\)\s*;?/gi,
+        "background-color:#ffffff;"
+      )
+      .replace(
+        /background\s*:\s*rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0(?:\.0+)?\s*\)\s*;?/gi,
+        "background:#ffffff;"
+      )
+      // Replace background-color: oklch(...);
+      .replace(
+        /background-color\s*:\s*(oklch|lab|lch|hwb)\([^)]*\)\s*;?/gi,
+        "background-color:#ffffff;"
+      )
+      // Replace color: oklch(...);
+      .replace(
+        /color\s*:\s*(oklch|lab|lch|hwb)\([^)]*\)\s*;?/gi,
+        "color:#000000;"
+      )
+      // Replace background: oklch(...);
+      .replace(
+        /background\s*:\s*(oklch|lab|lch|hwb)\([^)]*\)\s*;?/gi,
+        "background:#ffffff;"
+      )
+  );
+}
+
+function forceWhiteForTransparent(node: any): any {
+  if (Array.isArray(node)) return node.map(forceWhiteForTransparent);
+  if (!node || typeof node !== "object") return node;
+
+  const isTransparent = (val: any) =>
+    val === "transparent" ||
+    (typeof val === "string" &&
+      /rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0(\.0+)?\s*\)/i.test(val));
+
+  if (isTransparent(node.background)) node.background = "#FFFFFF"; // text background
+  if (isTransparent((node as any).fillColor))
+    (node as any).fillColor = "#FFFFFF"; // table cell bg
+
+  if (node.content) node.content = forceWhiteForTransparent(node.content);
+  if (node.stack) node.stack = forceWhiteForTransparent(node.stack);
+  if (node.columns) node.columns = forceWhiteForTransparent(node.columns);
+  if (node.table && node.table.body)
+    node.table.body = forceWhiteForTransparent(node.table.body);
+  return node;
+}
+
 function applyRightAlignment(content: any): any {
   if (Array.isArray(content)) return content.map(applyRightAlignment);
 
@@ -227,7 +282,9 @@ export function downloadReportsPdf(
     // const htmlWithSup = replaceSup(htmlString);
 
     // Step 1: Add controlled spacing styles (preserving br tags)
-    const styledHtml: string = addControlledSpacingStyles(htmlString);
+    const styledHtml = normalizeTransparentCss(
+      addControlledSpacingStyles(htmlString)
+    );
 
     // Step 2: Convert HTML to pdfMake format
     const converted: any = htmlToPdfmake(styledHtml, {
@@ -247,6 +304,7 @@ export function downloadReportsPdf(
 
     processedContent = applyRightAlignment(processedContent);
     processedContent = processSup(processedContent);
+    processedContent = forceWhiteForTransparent(processedContent);
 
     // Step 4: Create document definition with proper TypeScript types
     const documentDefinition: TDocumentDefinitions = {

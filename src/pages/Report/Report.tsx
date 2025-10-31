@@ -2256,13 +2256,13 @@ const Report: React.FC = () => {
         getReportAnswer(130) === "Present"
       );
       const FindAssessmentCategory = (val: string): string => {
-       const O1 = ["N0"];
-    const N1 = ["N1"];
-    const N2 = ["N2"];
-    const A1 = ["A1"];
-    const A2 = ["A2"];
-    const A3 = ["A3"];
-    const A4 = ["A4"];
+        const O1 = ["N0"];
+        const N1 = ["N1"];
+        const N2 = ["N2"];
+        const A1 = ["A1"];
+        const A2 = ["A2"];
+        const A3 = ["A3"];
+        const A4 = ["A4"];
 
         if (O1.includes(val))
           return "0 : Prior breast imaging is needed for interpretation";
@@ -3188,7 +3188,14 @@ const Report: React.FC = () => {
               .toString()
               .padStart(2, "0")}`;
 
-            const filename = `${patientDetails.refUserCustId && patientDetails.refUserCustId.length > 0 ? patientDetails.refUserCustId : patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            const filename = `${
+              patientDetails.refUserCustId &&
+              patientDetails.refUserCustId.length > 0
+                ? patientDetails.refUserCustId
+                : patientDetails.refUserFirstName
+            }_${
+              assignData?.appointmentStatus[0]?.refAppointmentDate
+            }_FinalReportPDF_${formattedTimestamp}.pdf`;
             console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
@@ -4132,6 +4139,20 @@ const Report: React.FC = () => {
   //   console.log("changedOne", changedOne);
   // }, [changedOne]);
 
+  useEffect(() => {
+    const handlePaste = () => {
+      // const pastedText = e.clipboardData.getData("text");
+      // console.log("Global paste detected:", pastedText);
+      ++requestVersionRef.current;
+    };
+
+    document.addEventListener("paste", handlePaste);
+
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, []);
+
   return (
     <div className="h-dvh bg-[#edd1ce]">
       {/* <VoiceRecognition /> */}
@@ -4325,15 +4346,15 @@ const Report: React.FC = () => {
                       <div
                         key={label}
                         onClick={() => accessible && setSubTab(value)}
-                        className={`flex-1 max-w-xl text-xs ${
+                        className={`flex-1 max-w-xl h-10 flex justify-center items-center text-xs ${
                           label !== "Final Report"
                             ? "text-[#e06666]"
                             : "text-[#3f3f3d]"
-                        }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                        }  text-center border-[1.5px] font-medium py-2 mx-1 rounded-md cursor-pointer transition-all duration-200 ${
                           accessible
                             ? subTab === value
-                              ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                              : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                              ? `bg-[#f8f4eb] ${value === 4 ? "border-[#3f3f3d]" :"border-[#267dbd]"} shadow-sm`
+                              : `${value === 4 ? "border-[#b4b4b4] hover:bg-[#d6d9d3]" :"border-[#267dbd]"}`
                             : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
                         }`}
                       >
@@ -4453,7 +4474,10 @@ const Report: React.FC = () => {
                     const yesNoItem = responsePatientInTake.find(
                       (item) => item.questionId === report.yesNocheckQId
                     );
-                    return yesNoItem?.answer === "Yes" || yesNoItem?.answer === "Unknown";
+                    return (
+                      yesNoItem?.answer === "Yes" ||
+                      yesNoItem?.answer === "Unknown"
+                    );
                   });
 
                   const availableReports = filteredReports.filter((report) => {
@@ -5070,6 +5094,7 @@ const Report: React.FC = () => {
                     if (label === "Sign Off") {
                       setShowMailDialog(true); // open dialog
                     } else if (status == "" && label == "Insert Signature") {
+                      ++requestVersionRef.current;
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
@@ -5108,6 +5133,8 @@ const Report: React.FC = () => {
                           stateData.appointmentId,
                           stateData.userId
                         );
+                        const notesData = Notes + signatureRow;
+                        setNotes(notesData);
                         if (response.status && response.data) {
                           setSignatureText(
                             response.data
