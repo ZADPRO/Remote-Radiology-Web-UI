@@ -4136,8 +4136,8 @@ const Report: React.FC = () => {
   // }, [syncStatus]);
 
   // useEffect(() => {
-  //   console.log("changedOne", changedOne);
-  // }, [changedOne]);
+  //   console.log("requestVersionRef", requestVersionRef);
+  // }, [requestVersionRef]);
 
   useEffect(() => {
     const handlePaste = () => {
@@ -5395,6 +5395,7 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
+                  requestVersionRef={requestVersionRef}
                     signatureText={signatureText}
                     performingProviderName={performingProviderName}
                     verifyingProviderName={verifyingProviderName}

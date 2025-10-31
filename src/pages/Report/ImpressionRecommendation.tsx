@@ -1307,6 +1307,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   }
                   onCheckedChange={(checked: boolean) => {
                     if (!readOnly) {
+                      ++requestVersionRef.current;
                       handleReportInputChange(81, checked ? "true" : "false");
                     }
                   }}
