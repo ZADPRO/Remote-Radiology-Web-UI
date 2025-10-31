@@ -1251,10 +1251,9 @@ ${
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the Wellthgreen Report Portal Find Select?
-              Any changes made or templates uploaded will be lost, and the
-              report will contain only the Wellthgreen Report Portal Find
-              Select.
+              Do you wish to enable the WGRP Find Select 10.10? Any changes made
+              or templates uploaded will be lost, and the report will contain
+              only the WGRP Find Select 10.10.
             </p>
           </div>
           <DialogFooter>
@@ -1343,8 +1342,11 @@ ${
                 <div className="self-start mt-2">
                   <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                     <div>
-                      <Label className="font-semibold text-[#e06666] text-base">
-                        Wellthgreen Report Portal Find Select / Load Template
+                      <Label className="font-semibold text-[#000000] text-base">
+                        <span className="text-[#267dbd]">
+                          WGRP Find Select 10.10
+                        </span>{" "}
+                        / <span className="text-[#38761d]">Load Template</span>
                       </Label>
                     </div>
                     <Switch
