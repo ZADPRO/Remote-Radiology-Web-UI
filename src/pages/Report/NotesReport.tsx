@@ -245,6 +245,7 @@ type Props = {
   reportAccess: boolean;
   reportStatus: string;
   AppointmentId: number;
+  requestVersionRef: React.MutableRefObject<number>;
 };
 
 const NotesReport: React.FC<Props> = ({
@@ -272,6 +273,7 @@ const NotesReport: React.FC<Props> = ({
   reportAccess,
   reportStatus,
   AppointmentId,
+  requestVersionRef,
 }) => {
   console.log(reportAccess);
 
@@ -1360,6 +1362,7 @@ ${
                             syncStatus: true,
                             reportTextContent: true,
                           }));
+                          ++requestVersionRef.current;
                           if (!checked) {
                             setsyncStatus({ ...syncStatus, Notes: checked });
                           } else {
@@ -1382,6 +1385,7 @@ ${
                 ...prev,
                 reportTextContent: true,
               }));
+              ++requestVersionRef.current;
             }}
             height="60vh"
           />
