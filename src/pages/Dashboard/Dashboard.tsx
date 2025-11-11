@@ -11,6 +11,7 @@ import {
   Stethoscope,
   ScrollText,
   TextCursorInput,
+  ListEnd,
 } from "lucide-react";
 import React, { JSX, useEffect, useState } from "react";
 import { useAuth, UserProfile } from "../Routes/AuthContext";
@@ -26,6 +27,7 @@ import ConsentForm from "./ConsentForm/ConsentForm";
 import TechGuidelineForm from "./TechGuidelines/TechGuidelineForm";
 import TechConsentForm from "./TechConsent/TechConsentForm";
 import ImpressionandRecommendationEdit from "./ImpressionRecommendationEdit/ImpressionandRecommendationEdit";
+import ReportFooter from "./ReportFooter/ReportFooter";
 
 const Dashboard: React.FC = () => {
   const [userData, setUserData] = useState<UserProfile>();
@@ -296,6 +298,12 @@ const Dashboard: React.FC = () => {
           label: "Impression and Recommendation",
           icon: <BookOpen className="w-6 h-6" />,
           dialogContent: <ImpressionandRecommendationEdit />,
+          allowesUser: ["admin"],
+        },
+        {
+          label: "Report Footer",
+          icon: <ListEnd className="w-6 h-6" />,
+          dialogContent: <ReportFooter />,
           allowesUser: ["admin"],
         },
       ],

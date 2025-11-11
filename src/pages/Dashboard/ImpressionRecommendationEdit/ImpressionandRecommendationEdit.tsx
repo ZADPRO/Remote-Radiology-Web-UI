@@ -97,7 +97,7 @@ const ImpressionandRecommendationEdit: React.FC<Props> = () => {
             >
               Wellthgreen Report Portal 10.10
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 setType("2");
               }}
@@ -108,7 +108,7 @@ const ImpressionandRecommendationEdit: React.FC<Props> = () => {
               }`}
             >
               NA system
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="w-[100%] h-[68vh] sm:h-[64vh] overflow-auto px-10">

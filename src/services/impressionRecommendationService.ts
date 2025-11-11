@@ -14,6 +14,12 @@ export interface GetImpressionRecommendationData {
   ImpressionRecommendation: ImpressionRecommendationValModel[];
 }
 
+export interface GetReportFooterResponse {
+  status: boolean;
+  message: string;
+  data: string;
+}
+
 export interface AddImpressionRecommendationResponse {
   status: boolean;
   message: string;
@@ -185,6 +191,55 @@ export const impressionrecommendationService = {
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/impressionrecommendation/updateorder`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: AddImpressionRecommendationResponse = decrypt(
+      res.data.data,
+      res.data.token
+    );
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  GetReportFooter: async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/impressionrecommendation/footerreport`,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const decryptedData: GetReportFooterResponse = decrypt(
+      res.data.data,
+      res.data.token
+    );
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  SaveReportFooter: async (data: any) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        reportText: data,
+      },
+      token
+    );
+    const res = await axios.post(
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/impressionrecommendation/savefooterreport`,
       { encryptedData: payload },
       {
         headers: {
