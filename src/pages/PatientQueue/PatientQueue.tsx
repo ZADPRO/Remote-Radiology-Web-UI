@@ -23,6 +23,7 @@ import {
   CircleCheckBig,
   Circle,
   UserRoundCog,
+  RefreshCcw,
 } from "lucide-react";
 
 import {
@@ -130,6 +131,10 @@ const PatientQueue: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<staffData[]>([]);
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
+  const selectedRowSet = React.useMemo(
+    () => new Set(selectedRowIds),
+    [selectedRowIds]
+  );
 
   const [progress, setProgress] = useState({
     downloadedMB: 0,
@@ -555,24 +560,27 @@ const PatientQueue: React.FC = () => {
       setLoading(true);
       const res = await reportService.getPatientReport(selectedRowIds);
 
-      if (res.status) {
-        res.data?.map((reportData) => {
+      if (res.status && res.data?.length > 0) {
+        for (let i = 0; i < res.data.length; i++) {
+          const reportData = res.data[i];
           const tempData = patientQueue.find(
             (item) => item.refAppointmentId == reportData.refAppointmentId
           );
 
-          downloadReportsPdf(
-            reportData.refRTCText,
-            `${
-              tempData?.refUserCustId && tempData?.refUserCustId.length > 0
-                ? tempData?.refUserCustId
-                : tempData?.refUserFirstName
-            }_${tempData?.refAppointmentDate}_FinalReport`
-          );
-        });
+          const fileName = `${
+            tempData?.refUserCustId && tempData?.refUserCustId.length > 0
+              ? tempData?.refUserCustId
+              : tempData?.refUserFirstName
+          }_${tempData?.refAppointmentDate}_FinalReport`;
+
+          // 🔹 Wait between downloads to prevent blocking
+          await new Promise((resolve) => setTimeout(resolve, 300));
+
+          downloadReportsPdf(reportData.refRTCText, fileName);
+        }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -610,79 +618,85 @@ const PatientQueue: React.FC = () => {
     null
   );
 
+  const CheckboxCell = React.memo(
+    ({ checked, onClick }: { checked: boolean; onClick: (e: any) => void }) => (
+      <Checkbox2 checked={checked} onClick={onClick} />
+    )
+  );
+
   const columns = useMemo<ColumnDef<TechnicianPatientQueue>[]>(
     () => [
       {
         accessorKey: "select",
         id: "select",
         enableHiding: true,
-        header: ({ table }) => {
-          return (
-            <div className="w-full flex justify-center items-center">
-              <Checkbox2
-                className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
-                checked={
-                  table.getRowModel().rows.length > 0 &&
-                  table
-                    .getRowModel()
-                    .rows.every((row) =>
-                      selectedRowIds.includes(row.original.refAppointmentId)
-                    )
+        header: ({ table }) => (
+          <div className="w-full flex justify-center items-center">
+            <Checkbox2
+              className="border-[#f1d4d4] bg-[#fff] data-[state=checked]:bg-[#f1d4d4] data-[state=checked]:text-[#b1b8aa] data-[state=checked]:border-[#a4b2a1]"
+              checked={
+                table.getRowModel().rows.length > 0 &&
+                table
+                  .getRowModel()
+                  .rows.every((row) =>
+                    selectedRowSet.has(row.original.refAppointmentId)
+                  )
+              }
+              onCheckedChange={(e) => {
+                if (e) {
+                  setSelectedRowIds(
+                    table
+                      .getRowModel()
+                      .rows.map((row) => row.original.refAppointmentId)
+                  );
+                } else {
+                  setSelectedRowIds([]);
                 }
-                onCheckedChange={(e) => {
-                  if (e) {
-                    setSelectedRowIds(
-                      table
-                        .getRowModel()
-                        .rows.map((row) => row.original.refAppointmentId)
-                    );
-                  } else {
-                    setSelectedRowIds([]);
-                  }
-                }}
-              />
-            </div>
-          );
-        },
+              }}
+            />
+          </div>
+        ),
         cell: ({ row, table }) => {
           const appointmentId = row.original.refAppointmentId;
 
           const handleRowSelect = (e: boolean, event: React.MouseEvent) => {
+            const visibleRows = table.getRowModel().rows; // ✅ Sorted + Filtered rows
+
             setSelectedRowIds((prev) => {
               let newSelected = [...prev];
 
-              // Normal click - toggle selection
+              const currentIndex = visibleRows.findIndex(
+                (r) => r.id === row.id
+              );
+
               if (!event.shiftKey) {
-                if (e === true) {
-                  if (!newSelected.includes(appointmentId)) {
+                // Normal click
+                if (e) {
+                  if (!newSelected.includes(appointmentId))
                     newSelected.push(appointmentId);
-                  }
                 } else {
                   newSelected = newSelected.filter(
                     (id) => id !== appointmentId
                   );
                 }
-                // Remember last clicked index
-                setLastSelectedIndex(row.index);
-              } else {
-                // SHIFT + click
-                if (lastSelectedIndex !== null) {
-                  const allRows = table.getRowModel().rows;
-                  const start = Math.min(lastSelectedIndex, row.index);
-                  const end = Math.max(lastSelectedIndex, row.index);
-                  const rangeIds = allRows
-                    .slice(start, end + 1)
-                    .map((r) => r.original.refAppointmentId);
+                setLastSelectedIndex(currentIndex);
+              } else if (lastSelectedIndex !== null) {
+                // Shift + click
+                const start = Math.min(lastSelectedIndex, currentIndex);
+                const end = Math.max(lastSelectedIndex, currentIndex);
 
-                  if (e === true) {
-                    newSelected = Array.from(
-                      new Set([...newSelected, ...rangeIds])
-                    );
-                  } else {
-                    newSelected = newSelected.filter(
-                      (id) => !rangeIds.includes(id)
-                    );
-                  }
+                const rangeIds = visibleRows
+                  .slice(start, end + 1)
+                  .map((r) => r.original.refAppointmentId);
+
+                if (e) {
+                  newSelected = Array.from(
+                    new Set([...newSelected, ...rangeIds])
+                  );
+                } else {
+                  newSelected = newSelected.filter(
+                    (id) => !rangeIds.includes(id)
+                  );
                 }
               }
 
@@ -691,11 +705,11 @@ const PatientQueue: React.FC = () => {
           };
 
           return (
-            <Checkbox2
-              checked={selectedRowIds.includes(appointmentId)}
+            <CheckboxCell
+              checked={selectedRowSet.has(appointmentId)}
               onClick={(e) => {
                 e.stopPropagation();
-                const checked = !selectedRowIds.includes(appointmentId); // toggle manually
+                const checked = !selectedRowSet.has(appointmentId);
                 handleRowSelect(checked, e);
               }}
             />
@@ -716,7 +730,21 @@ const PatientQueue: React.FC = () => {
             </span>
             <Button
               variant="ghost"
-              onClick={column.getToggleSortingHandler()}
+              onClick={() => {
+                // Trigger TanStack sorting logic
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Save sorting state in localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem(
+                  "appointmentDateSort",
+                  JSON.stringify({
+                    id: "dateOfAppointment",
+                    desc: sortOrder === "desc",
+                  })
+                );
+              }}
               className="!p-0 h-auto hover:bg-transparent hover:text-gray-200"
               aria-label={
                 column.getIsSorted() === "asc"
@@ -734,6 +762,7 @@ const PatientQueue: React.FC = () => {
                 <ArrowUp className="h-4 w-4 opacity-50" />
               )}
             </Button>
+
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -750,7 +779,22 @@ const PatientQueue: React.FC = () => {
                     selected={
                       column.getFilterValue() as { from: Date; to?: Date }
                     }
-                    onSelect={(range) => column.setFilterValue(range)}
+                    onSelect={(range) => {
+                      column.setFilterValue(range);
+
+                      // ✅ Store in localStorage
+                      if (range?.from) {
+                        localStorage.setItem(
+                          "appointmentDateRange",
+                          JSON.stringify({
+                            from: range.from.toISOString(),
+                            to: range.to ? range.to.toISOString() : null,
+                          })
+                        );
+                      } else {
+                        localStorage.removeItem("appointmentDateRange");
+                      }
+                    }}
                     numberOfMonths={2}
                   />
                 </PopoverContent>
@@ -799,9 +843,24 @@ const PatientQueue: React.FC = () => {
         id: "refSCCustId",
         header: ({ column, table }) => (
           <div className="flex items-center justify-center gap-1">
+            {/* ---- Sort Trigger ---- */}
             <span
               className="cursor-pointer text-grey font-semibold"
-              onClick={column.getToggleSortingHandler()}
+              onClick={() => {
+                // Toggle sorting normally
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Store sorting in localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem(
+                  "scanCenterSort",
+                  JSON.stringify({
+                    id: "refSCCustId",
+                    desc: sortOrder === "desc",
+                  })
+                );
+              }}
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
                 <div>Scan</div>
@@ -809,6 +868,7 @@ const PatientQueue: React.FC = () => {
               </div>
             </span>
 
+            {/* ---- Filter ---- */}
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -823,7 +883,7 @@ const PatientQueue: React.FC = () => {
                 <PopoverContent className="w-64 p-2">
                   <Command>
                     <CommandGroup className="max-h-60 overflow-auto">
-                      {/* ✅ dynamically get all unique Scan Centers from table data */}
+                      {/* ✅ Dynamically get unique Scan Centers */}
                       {Array.from(
                         new Set(
                           table
@@ -840,12 +900,28 @@ const PatientQueue: React.FC = () => {
                             key={scanCenter}
                             className="flex items-center gap-2 cursor-pointer"
                             onSelect={() => {
+                              const current =
+                                (column.getFilterValue() as string[]) ?? [];
+                              const isSelected = current.includes(scanCenter);
+
                               const updated = isSelected
                                 ? current.filter((id) => id !== scanCenter)
                                 : [...current, scanCenter];
+
+                              // ✅ Update filter
                               column.setFilterValue(
                                 updated.length ? updated : undefined
                               );
+
+                              // ✅ Save to localStorage
+                              if (updated.length) {
+                                localStorage.setItem(
+                                  "selectedScanCenters",
+                                  JSON.stringify(updated)
+                                );
+                              } else {
+                                localStorage.removeItem("selectedScanCenters");
+                              }
                             }}
                           >
                             <Checkbox2
@@ -861,7 +937,10 @@ const PatientQueue: React.FC = () => {
 
                   <Button
                     variant="ghost"
-                    onClick={() => column.setFilterValue(undefined)}
+                    onClick={() => {
+                      column.setFilterValue(undefined);
+                      localStorage.removeItem("selectedScanCenters");
+                    }}
                     className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
                     <XCircle className="h-4 w-4" />
@@ -877,7 +956,7 @@ const PatientQueue: React.FC = () => {
 
         enableColumnFilter: true,
 
-        // ✅ Custom filter logic for multiple selections
+        // ✅ Filter logic for multiple selections
         filterFn: (row, columnId, filterValue) => {
           if (!filterValue || !Array.isArray(filterValue)) return true;
           const value = row.getValue(columnId);
@@ -885,20 +964,36 @@ const PatientQueue: React.FC = () => {
         },
       },
       {
-        // Changed from refSCId to refUserCustId for PatientQueue
         accessorKey: "refUserCustId",
-        id: "refUserCustId", // Renamed ID to reflect content
+        id: "refUserCustId",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
+            {/* ---- Sort Trigger ---- */}
             <span
-              className="cursor-pointer font-semibold "
-              onClick={column.getToggleSortingHandler()}
+              className="cursor-pointer font-semibold"
+              onClick={() => {
+                // Toggle sorting
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Save sort order to localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem(
+                  "patientIdSort",
+                  JSON.stringify({
+                    id: "refUserCustId",
+                    desc: sortOrder === "desc",
+                  })
+                );
+              }}
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
                 <div>Patient</div>
                 <div>ID</div>
               </div>
             </span>
+
+            {/* ---- Filter ---- */}
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -906,21 +1001,33 @@ const PatientQueue: React.FC = () => {
                     variant="ghost"
                     className="hover:bg-transparent hover:text-gray-200 !p-0"
                   >
-                    <Filter className="" />
+                    <Filter />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Patient ID...`}
+                    placeholder="Filter Patient ID..."
                     value={(column.getFilterValue() ?? "") as string}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      column.setFilterValue(event.target.value)
-                    }
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = event.target.value;
+                      column.setFilterValue(value);
+
+                      // ✅ Save search value in localStorage
+                      if (value) {
+                        localStorage.setItem("patientIdFilter", value);
+                      } else {
+                        localStorage.removeItem("patientIdFilter");
+                      }
+                    }}
                     className="max-w-sm"
                   />
+
                   <Button
                     variant="ghost"
-                    onClick={() => column.setFilterValue(undefined)}
+                    onClick={() => {
+                      column.setFilterValue(undefined);
+                      localStorage.removeItem("patientIdFilter");
+                    }}
                     className="p-0 mt-2 text-red-500 hover:text-red-700"
                     title="Clear filter"
                   >
@@ -931,19 +1038,16 @@ const PatientQueue: React.FC = () => {
             )}
           </div>
         ),
+
         cell: ({ row }) => (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex w-full px-1 items-center justify-center">
-                  {/* <div className="flex w-full px-1 items-center justify-center">
-                  <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
-                  <Label className=" max-w-15 2xl:max-w-30 truncate">
+                  <Label className="max-w-15 2xl:max-w-30 truncate">
                     {row.original.refUserCustId}
                   </Label>
                 </div>
-                {/* </div>
-                </div> */}
               </TooltipTrigger>
               <TooltipContent className="max-w-xs" side="bottom">
                 {row.original.refUserCustId}
@@ -951,6 +1055,7 @@ const PatientQueue: React.FC = () => {
             </Tooltip>
           </TooltipProvider>
         ),
+
         enableColumnFilter: true,
       },
       {
@@ -958,15 +1063,31 @@ const PatientQueue: React.FC = () => {
         id: "refUserFirstName",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
+            {/* ---- Sort Trigger ---- */}
             <span
-              className="cursor-pointer font-semibold "
-              onClick={column.getToggleSortingHandler()}
+              className="cursor-pointer font-semibold"
+              onClick={() => {
+                // Toggle sorting
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Save sorting in localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem(
+                  "patientNameSort",
+                  JSON.stringify({
+                    id: "refUserFirstName",
+                    desc: sortOrder === "desc",
+                  })
+                );
+              }}
             >
               <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
-                {/* <div>Patient</div> */}
                 <div>Name</div>
               </div>
             </span>
+
+            {/* ---- Filter ---- */}
             {column.getCanFilter() && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -979,16 +1100,28 @@ const PatientQueue: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2">
                   <Input
-                    placeholder={`Filter Patient Name...`}
+                    placeholder="Filter Patient Name..."
                     value={(column.getFilterValue() ?? "") as string}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      column.setFilterValue(event.target.value)
-                    }
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = event.target.value;
+                      column.setFilterValue(value);
+
+                      // ✅ Save search value in localStorage
+                      if (value) {
+                        localStorage.setItem("patientNameFilter", value);
+                      } else {
+                        localStorage.removeItem("patientNameFilter");
+                      }
+                    }}
                     className="max-w-sm"
                   />
+
                   <Button
                     variant="ghost"
-                    onClick={() => column.setFilterValue(undefined)}
+                    onClick={() => {
+                      column.setFilterValue(undefined);
+                      localStorage.removeItem("patientNameFilter");
+                    }}
                     className="p-0 mt-2 text-red-500 hover:text-red-700"
                     title="Clear filter"
                   >
@@ -999,19 +1132,17 @@ const PatientQueue: React.FC = () => {
             )}
           </div>
         ),
+
+        /* ---- Cell UI ---- */
         cell: ({ row }) => (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex w-full px-1 items-center justify-center">
-                  {/* <div className="flex w-full px-1 items-center justify-center">
-                  <div className=" max-w-20 2xl:max-w-30 truncate cursor-help"> */}
-                  <Label className=" max-w-15 2xl:max-w-30 truncate">
+                  <Label className="max-w-15 2xl:max-w-30 truncate">
                     {row.original.refUserFirstName}
                   </Label>
                 </div>
-                {/* </div>
-                </div> */}
               </TooltipTrigger>
               <TooltipContent className="max-w-xs" side="bottom">
                 {row.original.refUserFirstName}
@@ -1019,6 +1150,7 @@ const PatientQueue: React.FC = () => {
             </Tooltip>
           </TooltipProvider>
         ),
+
         enableColumnFilter: true,
       },
       {
@@ -1086,74 +1218,96 @@ const PatientQueue: React.FC = () => {
       {
         accessorFn: (row) => getPatientFormName(row.refCategoryId),
         id: "patientFormAndStatus",
-        header: ({ column }) => {
-          return (
-            <div className="flex justify-center items-center gap-1 font-semibold">
-              <span
-                className="cursor-pointer"
-                onClick={column.getToggleSortingHandler()}
-              >
-                Form
-              </span>
+        header: ({ column }) => (
+          <div className="flex justify-center items-center gap-1 font-semibold">
+            {/* 🔹 Click header to sort */}
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                column.toggleSorting(column.getIsSorted() === "asc");
 
-              {column.getCanFilter() && (
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="!p-0 hover:bg-transparent hover:text-gray-200"
-                    >
-                      <Filter />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-2">
-                    <Command>
-                      <CommandGroup className="max-h-60 overflow-auto">
-                        {["S", "Da", "Db", "Dc", "Not Yet Started"].map(
-                          (formName) => {
-                            const current =
-                              (column.getFilterValue() as string[]) ?? [];
-                            const isSelected = current.includes(formName);
+                // ✅ Save sort order to localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem(
+                  "patientFormAndStatus_sortOrder",
+                  sortOrder
+                );
+              }}
+            >
+              Form
+            </span>
 
-                            return (
-                              <CommandItem
-                                key={formName}
-                                className="flex items-center gap-2 cursor-pointer"
-                                onSelect={() => {
-                                  const updated = isSelected
-                                    ? current.filter((f) => f !== formName)
-                                    : [...current, formName];
-                                  column.setFilterValue(
-                                    updated.length ? updated : undefined
-                                  );
-                                }}
-                              >
-                                <Checkbox2
-                                  checked={isSelected}
-                                  onCheckedChange={() => {}}
-                                />
-                                <span>{formName}</span>
-                              </CommandItem>
-                            );
-                          }
-                        )}
-                      </CommandGroup>
-                    </Command>
+            {/* 🔹 Filter Popover */}
+            {column.getCanFilter() && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="!p-0 hover:bg-transparent hover:text-gray-200"
+                  >
+                    <Filter />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2">
+                  <Command>
+                    <CommandGroup className="max-h-60 overflow-auto">
+                      {["S", "Da", "Db", "Dc", "Not Yet Started"].map(
+                        (formName) => {
+                          const current =
+                            (column.getFilterValue() as string[]) ?? [];
+                          const isSelected = current.includes(formName);
 
-                    <Button
-                      variant="ghost"
-                      onClick={() => column.setFilterValue(undefined)}
-                      className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                    >
-                      <XCircle className="h-4 w-4" />
-                      <span>Clear</span>
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </div>
-          );
-        },
+                          return (
+                            <CommandItem
+                              key={formName}
+                              className="flex items-center gap-2 cursor-pointer"
+                              onSelect={() => {
+                                const updated = isSelected
+                                  ? current.filter((f) => f !== formName)
+                                  : [...current, formName];
+
+                                const newValue = updated.length
+                                  ? updated
+                                  : undefined;
+                                column.setFilterValue(newValue);
+
+                                // ✅ Save filter to localStorage
+                                localStorage.setItem(
+                                  "patientFormAndStatus_filter",
+                                  JSON.stringify(newValue ?? [])
+                                );
+                              }}
+                            >
+                              <Checkbox2
+                                checked={isSelected}
+                                onCheckedChange={() => {}}
+                              />
+                              <span>{formName}</span>
+                            </CommandItem>
+                          );
+                        }
+                      )}
+                    </CommandGroup>
+                  </Command>
+
+                  {/* 🔹 Clear Filter Button */}
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      column.setFilterValue(undefined);
+                      localStorage.removeItem("patientFormAndStatus_filter");
+                    }}
+                    className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    <span>Clear Filter</span>
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        ),
         cell: ({ row }) => {
           const formName = getPatientFormName(row.original.refCategoryId);
           const appointmentComplete = row.original.refAppointmentComplete;
@@ -1361,13 +1515,23 @@ const PatientQueue: React.FC = () => {
         },
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
+            {/* 🔹 Sort header */}
             <div
-              onClick={column.getToggleSortingHandler()}
+              onClick={() => {
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Save sorting to localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem("technicianForm_sortOrder", sortOrder);
+              }}
               className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
             >
               <div>Tech</div>
               <div>Form</div>
             </div>
+
+            {/* 🔹 Filter dropdown */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1377,28 +1541,42 @@ const PatientQueue: React.FC = () => {
                   <Filter />
                 </Button>
               </PopoverTrigger>
+
               <PopoverContent className="w-40 p-2">
                 {["Filled", "Not Filled"].map((option) => {
                   const value = option === "Filled" ? "filled" : "notFilled";
+                  const current = column.getFilterValue();
+                  const isSelected = current === value;
+
                   return (
                     <div
                       key={value}
                       className="flex items-center gap-2 cursor-pointer py-1"
-                      onClick={() =>
-                        column.setFilterValue(
-                          column.getFilterValue() === value ? undefined : value
-                        )
-                      }
+                      onClick={() => {
+                        const newValue = isSelected ? undefined : value;
+                        column.setFilterValue(newValue);
+
+                        // ✅ Save filter to localStorage
+                        localStorage.setItem(
+                          "technicianForm_filter",
+                          JSON.stringify(newValue ?? "")
+                        );
+                      }}
                     >
-                      <Checkbox2 checked={column.getFilterValue() === value} />
+                      <Checkbox2 checked={isSelected} />
                       <span>{option}</span>
                     </div>
                   );
                 })}
+
+                {/* 🔹 Clear filter button */}
                 <Button
                   variant="ghost"
                   className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("technicianForm_filter");
+                  }}
                 >
                   <XCircle className="h-4 w-4" />
                   <span>Clear</span>
@@ -1775,6 +1953,20 @@ const PatientQueue: React.FC = () => {
                 });
 
                 if (response) {
+                  setPatientQueue((prevQueue) =>
+                    prevQueue.map((item) =>
+                      item.refAppointmentId === appointmentId
+                        ? {
+                            ...item,
+                            OldReportCount: String(
+                              (item.OldReportCount
+                                ? parseInt(item.OldReportCount)
+                                : 0) + 1
+                            ),
+                          }
+                        : item
+                    )
+                  );
                   console.log("response", response);
                   console.log("Uploaded:", response.viewURL);
                   // Update UI or form data here if needed
@@ -1917,14 +2109,31 @@ const PatientQueue: React.FC = () => {
 
                                       <div
                                         className="cursor-pointer"
-                                        onClick={() =>
+                                        onClick={() => {
                                           handleDeleteFile(
                                             file.refORId,
                                             row.original.refAppointmentId,
                                             row.original.refUserId,
                                             currentOpen
-                                          )
-                                        }
+                                          );
+                                          setPatientQueue((prevQueue) =>
+                                            prevQueue.map((item) =>
+                                              item.refAppointmentId ===
+                                              row.original.refAppointmentId
+                                                ? {
+                                                    ...item,
+                                                    OldReportCount: String(
+                                                      (item.OldReportCount
+                                                        ? parseInt(
+                                                            item.OldReportCount
+                                                          )
+                                                        : 0) - 1
+                                                    ),
+                                                  }
+                                                : item
+                                            )
+                                          );
+                                        }}
                                       >
                                         <Trash
                                           size={15}
@@ -1955,12 +2164,22 @@ const PatientQueue: React.FC = () => {
         accessorFn: (row) => row.reportStatus ?? "-",
         header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
+            {/* 🔹 Sort header */}
             <div
-              onClick={column.getToggleSortingHandler()}
+              onClick={() => {
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                // ✅ Save sorting to localStorage
+                const sortOrder =
+                  column.getIsSorted() === "asc" ? "desc" : "asc";
+                localStorage.setItem("reportStatus_sortOrder", sortOrder);
+              }}
               className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
             >
               <div>Report</div>
             </div>
+
+            {/* 🔹 Filter dropdown */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -1970,28 +2189,41 @@ const PatientQueue: React.FC = () => {
                   <Filter />
                 </Button>
               </PopoverTrigger>
+
               <PopoverContent className="w-40 p-2">
                 {["Filled", "Not Filled"].map((option) => {
                   const value = option === "Filled" ? "filled" : "notFilled";
+                  const isSelected = column.getFilterValue() === value;
+
                   return (
                     <div
                       key={value}
                       className="flex items-center gap-2 cursor-pointer py-1"
-                      onClick={() =>
-                        column.setFilterValue(
-                          column.getFilterValue() === value ? undefined : value
-                        )
-                      }
+                      onClick={() => {
+                        const newValue = isSelected ? undefined : value;
+                        column.setFilterValue(newValue);
+
+                        // ✅ Save filter to localStorage
+                        localStorage.setItem(
+                          "reportStatus_filter",
+                          JSON.stringify(newValue ?? "")
+                        );
+                      }}
                     >
-                      <Checkbox2 checked={column.getFilterValue() === value} />
+                      <Checkbox2 checked={isSelected} />
                       <span>{option}</span>
                     </div>
                   );
                 })}
+
+                {/* 🔹 Clear filter button */}
                 <Button
                   variant="ghost"
                   className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("reportStatus_filter");
+                  }}
                 >
                   <XCircle className="h-4 w-4" />
                   <span>Clear</span>
@@ -2230,12 +2462,42 @@ const PatientQueue: React.FC = () => {
       {
         id: "refAppointmentComplete",
         accessorFn: (row) => getStatus(row.refAppointmentComplete)?.text ?? "-",
-        header: ({ column }) => {
+        header: ({ column, table }) => {
+          const handleSort = () => {
+            // Toggle sorting and save state
+            column.toggleSorting(column.getIsSorted() === "asc");
+            const currentSort = column.getIsSorted() === "asc" ? "desc" : "asc";
+            localStorage.setItem("appointmentStatus_sortOrder", currentSort);
+          };
+
+          const handleFilterChange = (updated: any) => {
+            // Save filter to localStorage
+            if (updated?.length) {
+              column.setFilterValue(updated);
+              localStorage.setItem(
+                "appointmentStatus_filter",
+                JSON.stringify(updated)
+              );
+            } else {
+              column.setFilterValue(undefined);
+              localStorage.removeItem("appointmentStatus_filter");
+            }
+          };
+
+          const handleClear = () => {
+            column.setFilterValue(undefined);
+            localStorage.removeItem("appointmentStatus_filter");
+            localStorage.removeItem("appointmentStatus_sortOrder");
+            table.setSorting([]); // clear sorting
+          };
+
+          const current = (column.getFilterValue() as string[]) ?? [];
+
           return (
             <div className="flex items-center justify-center gap-1">
               <div
-                onClick={column.getToggleSortingHandler()}
-                className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer "
+                onClick={handleSort}
+                className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
               >
                 <div>Report</div>
                 <div>Status</div>
@@ -2254,10 +2516,7 @@ const PatientQueue: React.FC = () => {
                   <Command>
                     <CommandGroup className="max-h-60 overflow-auto">
                       {statusOptions.map((statusLabel) => {
-                        const current =
-                          (column.getFilterValue() as string[]) ?? [];
                         const isSelected = current.includes(statusLabel);
-
                         return (
                           <CommandItem
                             key={statusLabel}
@@ -2266,9 +2525,7 @@ const PatientQueue: React.FC = () => {
                               const updated = isSelected
                                 ? current.filter((s) => s !== statusLabel)
                                 : [...current, statusLabel];
-                              column.setFilterValue(
-                                updated.length ? updated : undefined
-                              );
+                              handleFilterChange(updated);
                             }}
                           >
                             <Checkbox2
@@ -2284,7 +2541,7 @@ const PatientQueue: React.FC = () => {
 
                   <Button
                     variant="ghost"
-                    onClick={() => column.setFilterValue(undefined)}
+                    onClick={handleClear}
                     className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
                     <XCircle className="h-4 w-4" />
@@ -2400,56 +2657,77 @@ const PatientQueue: React.FC = () => {
 
       {
         id: "patientReportMail",
-        header: ({ column }) => (
-          <div className="flex  items-center justify-center">
-            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
-              <div>Report</div>
-              <div>Delivery</div>
-            </div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="hover:bg-transparent hover:text-gray-200 !p-0"
-                >
-                  <Filter />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-2">
-                {["Send Mail", "Resend Mail", "Not Yet Available"].map(
-                  (option) => {
-                    return (
+        header: ({ column }) => {
+          // --- 🔹 Save & Restore Filter Helpers ---
+          const handleFilterChange = (option: any) => {
+            const current = column.getFilterValue();
+            const newValue = current === option ? undefined : option;
+
+            // Update filter in table
+            column.setFilterValue(newValue);
+
+            // Save or clear in localStorage
+            if (newValue) {
+              localStorage.setItem(
+                "patientReportMail_filter",
+                JSON.stringify(newValue)
+              );
+            } else {
+              localStorage.removeItem("patientReportMail_filter");
+            }
+          };
+
+          const handleClear = () => {
+            column.setFilterValue(undefined);
+            localStorage.removeItem("patientReportMail_filter");
+          };
+
+          return (
+            <div className="flex items-center justify-center">
+              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+                <div>Report</div>
+                <div>Delivery</div>
+              </div>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="hover:bg-transparent hover:text-gray-200 !p-0"
+                  >
+                    <Filter />
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-40 p-2">
+                  {["Send Mail", "Resend Mail", "Not Yet Available"].map(
+                    (option) => (
                       <div
                         key={option}
                         className="flex items-center gap-2 cursor-pointer py-1 text-sm"
-                        onClick={() =>
-                          column.setFilterValue(
-                            column.getFilterValue() === option
-                              ? undefined
-                              : option
-                          )
-                        }
+                        onClick={() => handleFilterChange(option)}
                       >
                         <Checkbox2
                           checked={column.getFilterValue() === option}
                         />
                         <span>{option}</span>
                       </div>
-                    );
-                  }
-                )}
-                <Button
-                  variant="ghost"
-                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
-                >
-                  <XCircle className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
-        ),
+                    )
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                    onClick={handleClear}
+                  >
+                    <XCircle className="h-4 w-4" />
+                    <span>Clear</span>
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            </div>
+          );
+        },
         cell: ({ row }) => {
           const [showMailDialog, setShowMailDialog] = useState(false);
 
@@ -2518,11 +2796,26 @@ const PatientQueue: React.FC = () => {
             ? ""
             : String(row.refAppointmentAssignedUserId),
         header: ({ column }) => (
-          <div
-            onClick={column.getToggleSortingHandler()}
-            className="text-center flex  justify-center items-center cursor-pointer"
-          >
-            Assign
+          <div className="flex items-center justify-center gap-1">
+            {/* ✅ Clickable label for sorting */}
+            <span
+              className="cursor-pointer font-semibold"
+              onClick={() => {
+                column.toggleSorting(column.getIsSorted() === "asc");
+
+                const sortOrder =
+                  column.getIsSorted() === "asc"
+                    ? "desc"
+                    : column.getIsSorted() === "desc"
+                    ? "asc"
+                    : "asc";
+
+                // ✅ Save sort state to localStorage
+                localStorage.setItem("assigned_sortOrder", sortOrder);
+              }}
+            >
+              Assign
+            </span>
           </div>
         ),
         cell: ({ row }) => {
@@ -2593,10 +2886,9 @@ const PatientQueue: React.FC = () => {
         },
         enableColumnFilter: true,
       },
-
       {
         id: "pendingRemarks",
-        header: ({ column }) => (
+        header: ({ column, table }) => (
           <div className="flex items-center justify-center gap-1">
             Pending Remarks
             <Popover>
@@ -2613,11 +2905,17 @@ const PatientQueue: React.FC = () => {
                   <div
                     key={option}
                     className="flex items-center gap-2 cursor-pointer py-1 text-sm"
-                    onClick={() =>
-                      column.setFilterValue(
-                        column.getFilterValue() === option ? undefined : option
-                      )
-                    }
+                    onClick={() => {
+                      const newValue =
+                        column.getFilterValue() === option ? undefined : option;
+
+                      column.setFilterValue(newValue);
+                      // ✅ Save filter value to localStorage
+                      localStorage.setItem(
+                        "pendingRemarks_filter",
+                        JSON.stringify(newValue)
+                      );
+                    }}
                   >
                     <Checkbox2 checked={column.getFilterValue() === option} />
                     <span>{option}</span>
@@ -2626,7 +2924,13 @@ const PatientQueue: React.FC = () => {
                 <Button
                   variant="ghost"
                   className="mt-1 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => column.setFilterValue(undefined)}
+                  onClick={() => {
+                    // ✅ Clear filter + sort + localStorage
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("pendingRemarks_filter");
+                    localStorage.removeItem("pendingRemarks_sortOrder");
+                    table.resetSorting();
+                  }}
                 >
                   <XCircle className="h-4 w-4" />
                   <span>Clear</span>
@@ -3020,6 +3324,236 @@ const PatientQueue: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    // ✅ Restore date range filter
+    const savedRange = localStorage.getItem("appointmentDateRange");
+    if (savedRange) {
+      try {
+        const { from, to } = JSON.parse(savedRange);
+        if (from) {
+          const range = {
+            from: new Date(from),
+            to: to ? new Date(to) : undefined,
+          };
+          table.getColumn("dateOfAppointment")?.setFilterValue(range);
+        }
+      } catch (err) {
+        console.error("Error restoring date filter:", err);
+      }
+    }
+
+    // ✅ Restore date sorting
+    const savedSort = localStorage.getItem("appointmentDateSort");
+    if (savedSort) {
+      try {
+        const parsed = JSON.parse(savedSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch (err) {
+        console.error("Error restoring sort order:", err);
+      }
+    }
+
+    const savedScanCenters = localStorage.getItem("selectedScanCenters");
+    if (savedScanCenters) {
+      try {
+        const parsedCenters = JSON.parse(savedScanCenters);
+        if (Array.isArray(parsedCenters) && parsedCenters.length > 0) {
+          table.getColumn("refSCCustId")?.setFilterValue(parsedCenters);
+        }
+      } catch (err) {
+        console.error("Error restoring Scan Center filter:", err);
+      }
+    }
+
+    const ScanCentersavedSort = localStorage.getItem("scanCenterSort");
+    if (ScanCentersavedSort) {
+      try {
+        const parsed = JSON.parse(ScanCentersavedSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch (err) {
+        console.error("Error restoring Scan Center sort:", err);
+      }
+    }
+
+    // ✅ Restore Patient ID filter
+    const savedPatientId = localStorage.getItem("patientIdFilter");
+    if (savedPatientId) {
+      try {
+        table.getColumn("refUserCustId")?.setFilterValue(savedPatientId);
+      } catch (err) {
+        console.error("Error restoring Patient ID filter:", err);
+      }
+    }
+
+    // ✅ Restore Patient ID sort
+    const savedPatientSort = localStorage.getItem("patientIdSort");
+    if (savedPatientSort) {
+      try {
+        const parsed = JSON.parse(savedPatientSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch (err) {
+        console.error("Error restoring Patient ID sort:", err);
+      }
+    }
+
+    // ✅ Restore Patient Name filter
+    const savedPatientName = localStorage.getItem("patientNameFilter");
+    if (savedPatientName) {
+      try {
+        table.getColumn("refUserFirstName")?.setFilterValue(savedPatientName);
+      } catch (err) {
+        console.error("Error restoring Patient Name filter:", err);
+      }
+    }
+
+    // ✅ Restore Patient Name sorting
+    const savedPatientNameSort = localStorage.getItem("patientNameSort");
+    if (savedPatientNameSort) {
+      try {
+        const parsed = JSON.parse(savedPatientNameSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch (err) {
+        console.error("Error restoring Patient Name sort:", err);
+      }
+    }
+
+    const savedFormFilter = localStorage.getItem("patientFormAndStatus_filter");
+    const savedFormSort = localStorage.getItem(
+      "patientFormAndStatus_sortOrder"
+    );
+
+    const columnForm = table.getColumn("patientFormAndStatus");
+
+    if (columnForm && savedFormFilter) {
+      columnForm.setFilterValue(JSON.parse(savedFormFilter));
+    }
+
+    if (savedFormSort) {
+      table.setSorting([
+        { id: "patientFormAndStatus", desc: savedFormSort === "desc" },
+      ]);
+    }
+
+    //Tech Form
+    const savedTechFilter = localStorage.getItem("technicianForm_filter");
+    const savedTechSort = localStorage.getItem("technicianForm_sortOrder");
+
+    const columnTech = table.getColumn("technicianForm");
+
+    if (columnTech && savedTechFilter) {
+      columnTech.setFilterValue(JSON.parse(savedTechFilter));
+    }
+
+    if (savedTechSort) {
+      table.setSorting([
+        { id: "technicianForm", desc: savedTechSort === "desc" },
+      ]);
+    }
+
+    //Report
+    const savedReportStatusFilter = localStorage.getItem("reportStatus_filter");
+    const savedReportStatusSort = localStorage.getItem(
+      "reportStatus_sortOrder"
+    );
+
+    const reportStatusColumn = table.getColumn("reportStatus");
+
+    if (reportStatusColumn && savedReportStatusFilter) {
+      reportStatusColumn.setFilterValue(JSON.parse(savedReportStatusFilter));
+    }
+
+    if (savedReportStatusSort) {
+      table.setSorting([
+        { id: "reportStatus", desc: savedReportStatusSort === "desc" },
+      ]);
+    }
+
+    //Appointment Status
+    const savedAppointmentStatusFilter = localStorage.getItem(
+      "appointmentStatus_filter"
+    );
+    const savedAppointmentStatusSort = localStorage.getItem(
+      "appointmentStatus_sortOrder"
+    );
+
+    const columnAppointmentStatus = table.getColumn("refAppointmentComplete");
+
+    // Restore filter
+    if (columnAppointmentStatus && savedAppointmentStatusFilter) {
+      columnAppointmentStatus.setFilterValue(
+        JSON.parse(savedAppointmentStatusFilter)
+      );
+    }
+
+    // Restore sorting
+    if (savedAppointmentStatusSort) {
+      table.setSorting([
+        {
+          id: "refAppointmentComplete",
+          desc: savedAppointmentStatusSort === "desc",
+        },
+      ]);
+    }
+
+    //Report Delivery
+    const savedReportDeveliveryFilter = localStorage.getItem(
+      "patientReportMail_filter"
+    );
+    const ReportDeveliverycolumn = table.getColumn("patientReportMail");
+
+    if (ReportDeveliverycolumn && savedReportDeveliveryFilter) {
+      ReportDeveliverycolumn.setFilterValue(
+        JSON.parse(savedReportDeveliveryFilter)
+      );
+    }
+
+    //Pending remarks
+    const savedPendingRemarksFilter = localStorage.getItem(
+      "pendingRemarks_filter"
+    );
+    const savedPendingRemakrsSort = localStorage.getItem(
+      "pendingRemarks_sortOrder"
+    );
+
+    const columnPendingRemarks = table.getColumn("pendingRemarks");
+
+    if (columnPendingRemarks && savedPendingRemarksFilter) {
+      columnPendingRemarks.setFilterValue(
+        JSON.parse(savedPendingRemarksFilter)
+      );
+    }
+
+    if (savedPendingRemakrsSort) {
+      table.setSorting([
+        { id: "pendingRemarks", desc: savedPendingRemakrsSort === "desc" },
+      ]);
+    }
+
+    //Assigned
+    const savedAssignedSort = localStorage.getItem("assigned_sortOrder");
+    const columnAssignedSort = table.getColumn("assigned");
+
+    if (columnAssignedSort && savedAssignedSort) {
+      table.setSorting([
+        { id: "assigned", desc: savedAssignedSort === "desc" },
+      ]);
+    }
+
+    //Global Search
+    const savedGlobalFilter = localStorage.getItem("globalFilter");
+    if (savedGlobalFilter) {
+      setGlobalFilter(savedGlobalFilter);
+    }
+  }, [table]);
+
   const pageCount = table.getPageCount();
   const currentPage = table.getState().pagination.pageIndex + 1;
 
@@ -3043,6 +3577,27 @@ const PatientQueue: React.FC = () => {
     setGlobalFilter("");
     setColumnFilters([]);
     setSorting([]);
+    localStorage.removeItem("appointmentDateRange");
+    localStorage.removeItem("appointmentDateSort");
+    localStorage.removeItem("selectedScanCenters");
+    localStorage.removeItem("scanCenterSort");
+    localStorage.removeItem("patientIdFilter"); // ✅ added
+    localStorage.removeItem("patientIdSort"); // ✅ added
+    localStorage.removeItem("patientNameFilter"); // ✅ new
+    localStorage.removeItem("patientNameSort"); // ✅ new
+    localStorage.removeItem("patientFormAndStatus_filter"); // ✅ new
+    localStorage.removeItem("patientFormAndStatus_sortOrder"); // ✅ new
+    localStorage.removeItem("technicianForm_filter"); // ✅ new
+    localStorage.removeItem("technicianForm_sortOrder"); // ✅ new
+    localStorage.removeItem("reportStatus_filter"); // ✅ new
+    localStorage.removeItem("reportStatus_sortOrder"); // ✅ new
+    localStorage.removeItem("appointmentStatus_filter"); // ✅ new
+    localStorage.removeItem("appointmentStatus_sortOrder"); // ✅ new
+    localStorage.removeItem("pendingRemarks_filter"); // ✅ new
+    localStorage.removeItem("pendingRemarks_sortOrder"); // ✅ new
+    localStorage.removeItem("assigned_sortOrder"); // ✅ new
+    localStorage.removeItem("globalFilter"); // ✅ new
+    setSelectedRowIds([]);
   };
 
   return (
@@ -3125,6 +3680,17 @@ const PatientQueue: React.FC = () => {
           </Button>
 
           <Button
+            onClick={async () => {
+              fetchPatientQueue();
+            }}
+            className="flex items-center bg-[#b1b8aa] gap-1 text-white hover:bg-[#b1b8aa] w-full lg:w-auto"
+            hidden={role?.type === "patient"}
+          >
+            <RefreshCcw className="h-4 w-4" />
+            Refresh Table
+          </Button>
+
+          <Button
             variant="outline"
             onClick={clearAllFilters}
             className="flex items-center gap-1 border border-red-300 text-red-500 hover:bg-red-100 hover:text-red-600 w-full lg:w-auto"
@@ -3134,7 +3700,10 @@ const PatientQueue: React.FC = () => {
           <Input
             placeholder="Search all columns..."
             value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
+            onChange={(event) => {
+              setGlobalFilter(event.target.value);
+              localStorage.setItem("globalFilter", event.target.value);
+            }}
             className="w-full"
           />
         </div>
@@ -3235,6 +3804,11 @@ const PatientQueue: React.FC = () => {
 
         {/* ShadCN Pagination Controls */}
         <div className="flex flex-col items-center py-1">
+          {role?.type !== "patient" && selectedRowIds.length !== 0 && (
+            <div className="text-xs w-full text-start -mb-1 -mt-3">
+              Selected Rows: {selectedRowIds.length}
+            </div>
+          )}
           <div className="flex md:hidden items-center justify-center w-full space-x-4 mb-2">
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>

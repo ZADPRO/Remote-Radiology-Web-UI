@@ -54,7 +54,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
         breastSymptoms.deformityLeft === "true")) ||
     breastSymptoms.deformityComments.length > 0
   ) {
-    const content = `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Deformity: ${
+    const content = `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Deformity / Asymmetry: ${
       breastSymptoms.deformityRight === "true"
         ? `right${
             breastSymptoms.deformityBig === "Right" ? `, bigger side` : ``
