@@ -16,7 +16,7 @@ import {
   ChangedOneState,
   ReportQuestion,
 } from "./Report";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import { ImpressionRecommendationData } from "@/services/reportService";
 
 interface ImpressionProps {
@@ -1284,7 +1284,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
           readOnly ? "pointer-events-none" : ""
         }`}
       >
-        {assignData?.naSystemReportAccess && assignData.easeQTReportAccess && (
+        {/* {assignData?.naSystemReportAccess && assignData.easeQTReportAccess && (
           <div
             className={`flex flex-col w-full items-start justify-between gap-4 ${
               readOnly ? "pointer-events-none" : ""
@@ -1294,7 +1294,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
               <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                 <div>
                   <Label className="font-semibold text-base">
-                    Wellthgreen Report Portal 10.10 / NA system
+                    <span className="text-[#267dbd]">WGRP 10.10</span> / <span className="text-[#e06666]">NA system</span>
                   </Label>
                 </div>
                 <Switch
@@ -1307,6 +1307,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                   }
                   onCheckedChange={(checked: boolean) => {
                     if (!readOnly) {
+                      ++requestVersionRef.current;
                       handleReportInputChange(81, checked ? "true" : "false");
                     }
                   }}
@@ -1314,7 +1315,7 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
               </div>
             </div>
           </div>
-        )}
+        )} */}
         <div className={`flex gap-4 items-center mb-4 -ml-2`}>
           <div>
             <Checkbox2
@@ -1368,9 +1369,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 <div
                   className={`${
                     assignData?.naSystemReportAccess && getAnswer(81) === "true"
-                      ? "h-[auto]"
-                      : "h-[65vh]"
-                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                      ? ""
+                      : ""
+                  } h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
                 >
                   {(() => {
                     let options = ReportPortalImpresRecom;
@@ -1644,9 +1645,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 <div
                   className={`${
                     assignData?.naSystemReportAccess && getAnswer(81) === "true"
-                      ? "h-[auto]"
-                      : "h-[65vh]"
-                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                      ? ""
+                      : ""
+                  } h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
                 >
                   {(() => {
                     let options = ReportPortalImpresRecom;
@@ -2011,9 +2012,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 <div
                   className={`${
                     assignData?.naSystemReportAccess && getAnswer(81) === "true"
-                      ? "h-[auto]"
-                      : "h-[65vh]"
-                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                      ? ""
+                      : ""
+                  } h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
                 >
                   {(() => {
                     let options = ReportPortalImpresRecom;
@@ -2283,9 +2284,9 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 <div
                   className={`${
                     assignData?.naSystemReportAccess && getAnswer(81) === "true"
-                      ? "h-[auto]"
-                      : "h-[65vh]"
-                  } overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
+                      ? ""
+                      : ""
+                  } h-[65vh] overflow-y-auto bg-radial-greeting-02 rounded-lg pointer-events-auto`}
                 >
                   {(() => {
                     let options = ReportPortalImpresRecom;

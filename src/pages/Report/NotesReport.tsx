@@ -214,6 +214,7 @@ interface ReportQuestion {
 }
 
 type Props = {
+  reportFooter: string;
   signatureText: string;
   performingProviderName: string;
   verifyingProviderName: string;
@@ -245,9 +246,11 @@ type Props = {
   reportAccess: boolean;
   reportStatus: string;
   AppointmentId: number;
+  requestVersionRef: React.MutableRefObject<number>;
 };
 
 const NotesReport: React.FC<Props> = ({
+  reportFooter,
   signatureText,
   performingProviderName,
   verifyingProviderName,
@@ -272,6 +275,7 @@ const NotesReport: React.FC<Props> = ({
   reportAccess,
   reportStatus,
   AppointmentId,
+  requestVersionRef,
 }) => {
   console.log(reportAccess);
 
@@ -327,29 +331,29 @@ const NotesReport: React.FC<Props> = ({
       ? true
       : false;
 
-  const FindAssessmentCategory = (val: string): string => {
-    const O1 = ["N0"];
-    const N1 = ["N1"];
-    const N2 = ["N2"];
-    const A1 = ["A1"];
-    const A2 = ["A2"];
-    const A3 = ["A3"];
-    const A4 = ["A4"];
+  // const FindAssessmentCategory = (val: string): string => {
+  //   const O1 = ["N0"];
+  //   const N1 = ["N1"];
+  //   const N2 = ["N2"];
+  //   const A1 = ["A1"];
+  //   const A2 = ["A2"];
+  //   const A3 = ["A3"];
+  //   const A4 = ["A4"];
 
-    if (O1.includes(val))
-      return "0 : Prior breast imaging is needed for interpretation";
-    if (N1.includes(val)) return "N1 (Nomral 1)";
-    if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
-    if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
-    if (A2.includes(val)) return "A2 (Abnormal 2: Possible malignancy)";
-    if (A3.includes(val)) return "A3 (Abnormal 3: Most likely malignant)";
-    if (A4.includes(val)) return "A4 (Abnormal 4: Known malignancy)";
+  //   if (O1.includes(val))
+  //     return "0 : Prior breast imaging is needed for interpretation";
+  //   if (N1.includes(val)) return "N1 (Nomral 1)";
+  //   if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
+  //   if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
+  //   if (A2.includes(val)) return "A2 (Abnormal 2: Possible malignancy)";
+  //   if (A3.includes(val)) return "A3 (Abnormal 3: Most likely malignant)";
+  //   if (A4.includes(val)) return "A4 (Abnormal 4: Known malignancy)";
 
-    return ""; // fallback if no match
-  };
+  //   return ""; // fallback if no match
+  // };
 
   useEffect(() => {
-    if (syncStatus.Notes) {
+    if (syncStatus.Notes && !readOnly) {
       let lesionsVal: LesionsVal = {} as LesionsVal;
 
       try {
@@ -936,11 +940,12 @@ const NotesReport: React.FC<Props> = ({
       ? `
   <p><strong>RIGHT BREAST:</strong></p>
   ${
-    textEditor.ImpressionTextRight.value && getAnswer(81) === "true"
-      ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
-          textEditor.selectedImpressionIdRight.value
-        )}</p>`
-      : ``
+    // textEditor.ImpressionTextRight.value && getAnswer(81) === "true"
+    //   ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+    //       textEditor.selectedImpressionIdRight.value
+    //     )}</p>`
+    //   : ``
+    ``
   }
   <strong>Impression:</strong>
   ${
@@ -1004,11 +1009,12 @@ ${
       ? `
         <br/><p><strong>LEFT BREAST:</strong></p>
         ${
-          textEditor.ImpressionText.value && getAnswer(81) === "true"
-            ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
-                textEditor.selectedImpressionId.value
-              )}</p>`
-            : ``
+          // textEditor.ImpressionText.value && getAnswer(81) === "true"
+          //   ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+          //       textEditor.selectedImpressionId.value
+          //     )}</p>`
+          //   : ``
+          ``
         }
   <strong>Impression:</strong>
   ${
@@ -1065,9 +1071,7 @@ ${
     `
       : ``
   }
-  <br/><strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.</p></i></strong>
-  <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
-` +
+  <br/>${reportFooter}` +
           (signatureText.length > 0 ? "<br/>" + signatureText : "") +
           (textEditor.addendumText.value.length > 0
             ? "<br/><p><strong>ADDENDUM:</strong></p>" +
@@ -1251,10 +1255,9 @@ ${
           </DialogHeader>
           <div className="py-6">
             <p className="text-sm text-center font-medium flex justify-center items-center gap-2">
-              Do you wish to enable the Wellthgreen Report Portal Find Select?
-              Any changes made or templates uploaded will be lost, and the
-              report will contain only the Wellthgreen Report Portal Find
-              Select.
+              Do you wish to enable the WGRP Find Select 10.10? Any changes made
+              or templates uploaded will be lost, and the report will contain
+              only the WGRP Find Select 10.10.
             </p>
           </div>
           <DialogFooter>
@@ -1343,8 +1346,11 @@ ${
                 <div className="self-start mt-2">
                   <div className="flex items-center justify-between gap-4 px-3 py-2 bg-muted shadow rounded-md">
                     <div>
-                      <Label className="font-semibold text-[#e06666] text-base">
-                        Wellthgreen Report Portal Find Select / Load Template
+                      <Label className="font-semibold text-[#000000] text-base">
+                        <span className="text-[#267dbd]">
+                          WGRP Find Select 10.10
+                        </span>{" "}
+                        / <span className="text-[#38761d]">Load Template</span>
                       </Label>
                     </div>
                     <Switch
@@ -1358,6 +1364,7 @@ ${
                             syncStatus: true,
                             reportTextContent: true,
                           }));
+                          ++requestVersionRef.current;
                           if (!checked) {
                             setsyncStatus({ ...syncStatus, Notes: checked });
                           } else {
@@ -1380,6 +1387,7 @@ ${
                 ...prev,
                 reportTextContent: true,
               }));
+              ++requestVersionRef.current;
             }}
             height="60vh"
           />

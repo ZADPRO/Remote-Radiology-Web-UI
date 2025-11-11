@@ -91,6 +91,7 @@ import PreviewFile from "@/components/FileView/PreviewFile";
 import { LesionsVal } from "./Lisons/LesionsRightString";
 import axios from "axios";
 import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
+import DraggableWindow from "@/components/DraggableWindow/DraggableWindow";
 
 export interface ReportQuestion {
   refRITFId?: number;
@@ -923,6 +924,8 @@ const Report: React.FC = () => {
     }
   };
 
+  const [reportFooter, setReportFooter] = useState("");
+
   const handleAssignUser = async () => {
     setLoading(true);
     try {
@@ -949,6 +952,7 @@ const Report: React.FC = () => {
         ListAllSignature: SignatureText[];
         NAImpRecom: ImpressionRecommendationModel[];
         ReportPortalImpRecom: ImpressionRecommendationModel[];
+        ReportFooter: string;
       } = await reportService.assignReport(
         stateData.appointmentId,
         stateData.userId,
@@ -958,6 +962,8 @@ const Report: React.FC = () => {
       console.log("---------->", response);
 
       if (response.status) {
+        setReportFooter(response.ReportFooter);
+
         const ReportPortalImpresRecomVal = [
           {
             impressionColor: "#a0a0a0",
@@ -974,7 +980,8 @@ const Report: React.FC = () => {
           },
         ];
         setReportPortalImpresRecom(ReportPortalImpresRecomVal);
-        setNAImpresRecom(NAImpresRecomVal);
+        setNAImpresRecom(ReportPortalImpresRecomVal);
+        // setNAImpresRecom(NAImpresRecomVal);
         setPerformingProviderName(response.PerformingProviderName);
         setVerifyingProviderName(response.VerifyingProviderName);
         setPatientpublicprivate(response.patientpublicprivate);
@@ -1875,9 +1882,8 @@ const Report: React.FC = () => {
 
   <p><strong>RECOMMENDATION:</strong></p><br />
 
-  <strong><i><p>The QT Breast Acoustic CT<sup>TM</sup> Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography. </p></i></strong>
-  <strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
-            `
+  ${reportFooter}
+  `
         );
         setChangedOne((prev) => ({
           ...prev,
@@ -2256,13 +2262,13 @@ const Report: React.FC = () => {
         getReportAnswer(130) === "Present"
       );
       const FindAssessmentCategory = (val: string): string => {
-       const O1 = ["N0"];
-    const N1 = ["N1"];
-    const N2 = ["N2"];
-    const A1 = ["A1"];
-    const A2 = ["A2"];
-    const A3 = ["A3"];
-    const A4 = ["A4"];
+        const O1 = ["N0"];
+        const N1 = ["N1"];
+        const N2 = ["N2"];
+        const A1 = ["A1"];
+        const A2 = ["A2"];
+        const A3 = ["A3"];
+        const A4 = ["A4"];
 
         if (O1.includes(val))
           return "0 : Prior breast imaging is needed for interpretation";
@@ -3067,9 +3073,7 @@ const Report: React.FC = () => {
         `
           : ``
       }
-      <br/><strong><i><p>The QT Breast Acoustic CTTM Scanner is an ultrasonic imaging system that provides reflection-mode and transmission-mode images of a patient’s breast and calculates breast fibroglandular volume and total breast volume. The device is not a replacement for screening mammography.</p></i></strong>
-      <br/><strong><i><p>Please note that the device may not detect some non-invasive, atypical, in situ carcinomas or low-grade malignant lesions. These could be represented by abnormalities such as masses, architectural distortion or calcifications. Every image from the device is evaluated by a doctor and should be considered in combination with pertinent clinical, imaging, and pathological findings for each patient. Other patient-specific findings that may be relevant include the presence of breast lumps, nipple discharge or nipple/skin inversion or retraction which should be shared with the medical center where you receive your scan and discussed with your doctor. Even if the doctor reading the QTscan determines that a scan is negative, the doctor may recommend follow-up with your primary care doctor/healthcare provider for clinical evaluation, additional imaging, and/or breast biopsy based on your medical history or other significant clinical findings. Discuss with your doctor/healthcare provider if you have any questions about your QTscan findings. Consultation with the doctor reading your QTscan is also available if requested.</p></i></strong>
-    ` +
+      <br/>${reportFooter}` +
         (signatureText.length > 0 ? "<br/>" + signatureText : "") +
         (addendumText.length > 0
           ? "<br/><p><strong>ADDENDUM:</strong></p>" + addendumText
@@ -3188,7 +3192,14 @@ const Report: React.FC = () => {
               .toString()
               .padStart(2, "0")}`;
 
-            const filename = `${patientDetails.refUserCustId && patientDetails.refUserCustId.length > 0 ? patientDetails.refUserCustId : patientDetails.refUserFirstName}_${assignData?.appointmentStatus[0]?.refAppointmentDate}_FinalReportPDF_${formattedTimestamp}.pdf`;
+            const filename = `${
+              patientDetails.refUserCustId &&
+              patientDetails.refUserCustId.length > 0
+                ? patientDetails.refUserCustId
+                : patientDetails.refUserFirstName
+            }_${
+              assignData?.appointmentStatus[0]?.refAppointmentDate
+            }_FinalReportPDF_${formattedTimestamp}.pdf`;
             console.log("patientDetails", patientDetails);
 
             // 1️⃣ Step 1: Request presigned PUT URL from backend
@@ -4045,7 +4056,7 @@ const Report: React.FC = () => {
   useEffect(() => {
     if (AutoReportAccess) {
       if (!loading) {
-        if (AutoChangeAccess) {
+        if (AutoChangeAccess && !stateData.readOnly) {
           fecthautosave();
         }
       }
@@ -4129,89 +4140,164 @@ const Report: React.FC = () => {
   // }, [syncStatus]);
 
   // useEffect(() => {
-  //   console.log("changedOne", changedOne);
-  // }, [changedOne]);
+  //   console.log("requestVersionRef", requestVersionRef);
+  // }, [requestVersionRef]);
+
+  useEffect(() => {
+    const handlePaste = () => {
+      // const pastedText = e.clipboardData.getData("text");
+      // console.log("Global paste detected:", pastedText);
+      ++requestVersionRef.current;
+    };
+
+    document.addEventListener("paste", handlePaste);
+
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, []);
 
   return (
     <div className="h-dvh bg-[#edd1ce]">
       {/* <VoiceRecognition /> */}
-      {true && (
-        <Dialog open={openReportPreview} onOpenChange={setOpenReportPreview}>
-          <DialogContent
-            style={{ background: "#fff" }}
-            className="w-[100vw] lg:w-[90vw] h-[90vh] overflow-y-auto p-0"
-          >
-            <div className="h-[8vh] flex w-[100%] items-center justify-around px-2 ">
-              <Button
-                variant="greenTheme"
-                onClick={() => {
-                  if (openReportPreviewCurrent > 1) {
-                    const newIndex = openReportPreviewCurrent - 1;
-                    setOpenReportPreviewCurrent(newIndex);
-                  }
-                }}
-              >
-                Back
-              </Button>
+      {openReportPreview && (
+        <>
+          <DraggableWindow onClose={() => setOpenReportPreview(false)}>
+            <div
+              style={{ background: "#fff" }}
+              className="w-auto h-auto overflow-y-auto p-0"
+            >
+              <div className="h-[8vh] flex w-[100%] items-center justify-around px-2 ">
+                <Button
+                  variant="greenTheme"
+                  onClick={() => {
+                    if (openReportPreviewCurrent > 1) {
+                      const newIndex = openReportPreviewCurrent - 1;
+                      setOpenReportPreviewCurrent(newIndex);
+                    }
+                  }}
+                >
+                  Back
+                </Button>
 
-              <div>
-                {openReportPreviewCurrent}/
-                {(() => {
-                  try {
-                    return JSON.parse(openReportPreviewData || "[]").length;
-                  } catch {
-                    return 0;
-                  }
-                })()}
+                <div>
+                  {openReportPreviewCurrent}/
+                  {(() => {
+                    try {
+                      return JSON.parse(openReportPreviewData || "[]").length;
+                    } catch {
+                      return 0;
+                    }
+                  })()}
+                </div>
+
+                <Button
+                  variant="greenTheme"
+                  onClick={() => {
+                    const total = JSON.parse(
+                      openReportPreviewData || "[]"
+                    ).length;
+                    if (openReportPreviewCurrent < total) {
+                      const newIndex = openReportPreviewCurrent + 1;
+                      setOpenReportPreviewCurrent(newIndex);
+                    }
+                  }}
+                >
+                  Next
+                </Button>
               </div>
-
-              <Button
-                variant="greenTheme"
-                onClick={() => {
-                  const total = JSON.parse(
-                    openReportPreviewData || "[]"
-                  ).length;
-                  if (openReportPreviewCurrent < total) {
-                    const newIndex = openReportPreviewCurrent + 1;
-                    setOpenReportPreviewCurrent(newIndex);
-                  }
-                }}
-              >
-                Next
-              </Button>
-            </div>
-            <div className="w-[100%] h-[75vh]">
-              <PreviewFile
-                fileName={(() => {
-                  try {
-                    return JSON.parse(openReportPreviewData)[
-                      openReportPreviewCurrent - 1
-                    ];
-                  } catch {
-                    return "";
-                  }
-                })()}
-              />
-            </div>
-            {/* {openReportPreviewData.contentType === "application/pdf" ? (
-              <div>
-                <iframe
-                  src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
-                  title="Report Preview"
-                  className="w-full mt-10 h-[80vh] border rounded-md"
+              <div className="w-[100%] h-[75vh]">
+                <PreviewFile
+                  fileName={(() => {
+                    try {
+                      return JSON.parse(openReportPreviewData)[
+                        openReportPreviewCurrent - 1
+                      ];
+                    } catch {
+                      return "";
+                    }
+                  })()}
                 />
               </div>
-            ) : (
-              <div className="w-full mt-10 h-[80vh]  flex items-center justify-center overflow-auto">
-                <img
-                  src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
-                  alt="Report Preview"
-                  className="w-full h-[80vh] object-contain border rounded-md"
-                />
-              </div>
-            )} */}
-          </DialogContent>
-        </Dialog>
+            </div>
+          </DraggableWindow>
+        </>
+        // <Dialog open={openReportPreview} onOpenChange={setOpenReportPreview}>
+        //   <DialogContent
+        //     style={{ background: "#fff" }}
+        //     className="w-[100vw] lg:w-[90vw] h-[90vh] overflow-y-auto p-0"
+        //   >
+        //     <div className="h-[8vh] flex w-[100%] items-center justify-around px-2 ">
+        //       <Button
+        //         variant="greenTheme"
+        //         onClick={() => {
+        //           if (openReportPreviewCurrent > 1) {
+        //             const newIndex = openReportPreviewCurrent - 1;
+        //             setOpenReportPreviewCurrent(newIndex);
+        //           }
+        //         }}
+        //       >
+        //         Back
+        //       </Button>
+
+        //       <div>
+        //         {openReportPreviewCurrent}/
+        //         {(() => {
+        //           try {
+        //             return JSON.parse(openReportPreviewData || "[]").length;
+        //           } catch {
+        //             return 0;
+        //           }
+        //         })()}
+        //       </div>
+
+        //       <Button
+        //         variant="greenTheme"
+        //         onClick={() => {
+        //           const total = JSON.parse(
+        //             openReportPreviewData || "[]"
+        //           ).length;
+        //           if (openReportPreviewCurrent < total) {
+        //             const newIndex = openReportPreviewCurrent + 1;
+        //             setOpenReportPreviewCurrent(newIndex);
+        //           }
+        //         }}
+        //       >
+        //         Next
+        //       </Button>
+        //     </div>
+        //     <div className="w-[100%] h-[75vh]">
+        //       <PreviewFile
+        //         fileName={(() => {
+        //           try {
+        //             return JSON.parse(openReportPreviewData)[
+        //               openReportPreviewCurrent - 1
+        //             ];
+        //           } catch {
+        //             return "";
+        //           }
+        //         })()}
+        //       />
+        //     </div>
+        //     {/* {openReportPreviewData.contentType === "application/pdf" ? (
+        //       <div>
+        //         <iframe
+        //           src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
+        //           title="Report Preview"
+        //           className="w-full mt-10 h-[80vh] border rounded-md"
+        //         />
+        //       </div>
+        //     ) : (
+        //       <div className="w-full mt-10 h-[80vh]  flex items-center justify-center overflow-auto">
+        //         <img
+        //           src={`data:${openReportPreviewData.contentType};base64,${openReportPreviewData.base64Data}`}
+        //           alt="Report Preview"
+        //           className="w-full h-[80vh] object-contain border rounded-md"
+        //         />
+        //       </div>
+        //     )} */}
+        //   </DialogContent>
+        // </Dialog>
       )}
       {loading && <LoadingOverlay />}
       <div className="w-full h-[10vh] bg-[#a3b1a0] flex shadow-sm">
@@ -4325,15 +4411,23 @@ const Report: React.FC = () => {
                       <div
                         key={label}
                         onClick={() => accessible && setSubTab(value)}
-                        className={`flex-1 max-w-xl text-xs ${
+                        className={`flex-1 max-w-xl h-10 flex justify-center items-center text-xs ${
                           label !== "Final Report"
                             ? "text-[#e06666]"
                             : "text-[#3f3f3d]"
-                        }  2xl:text-lg text-center font-medium py-2 mx-1 rounded-md border cursor-pointer transition-all duration-200 ${
+                        }  text-center border-[1.5px] font-medium py-2 mx-1 rounded-md cursor-pointer transition-all duration-200 ${
                           accessible
                             ? subTab === value
-                              ? "bg-[#f8f4eb] border-[#3f3f3d] shadow-sm"
-                              : "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                              ? `bg-[#f8f4eb] ${
+                                  value === 4
+                                    ? "border-[#3f3f3d]"
+                                    : "border-[#267dbd]"
+                                } shadow-sm`
+                              : `${
+                                  value === 4
+                                    ? "border-[#b4b4b4] hover:bg-[#d6d9d3]"
+                                    : "border-[#267dbd]"
+                                }`
                             : "border-[#e0e0e0] text-[#e06666] cursor-not-allowed bg-gray-100"
                         }`}
                       >
@@ -4453,7 +4547,10 @@ const Report: React.FC = () => {
                     const yesNoItem = responsePatientInTake.find(
                       (item) => item.questionId === report.yesNocheckQId
                     );
-                    return yesNoItem?.answer === "Yes" || yesNoItem?.answer === "Unknown";
+                    return (
+                      yesNoItem?.answer === "Yes" ||
+                      yesNoItem?.answer === "Unknown"
+                    );
                   });
 
                   const availableReports = filteredReports.filter((report) => {
@@ -5070,6 +5167,7 @@ const Report: React.FC = () => {
                     if (label === "Sign Off") {
                       setShowMailDialog(true); // open dialog
                     } else if (status == "" && label == "Insert Signature") {
+                      ++requestVersionRef.current;
                       setLoading(true);
                       if (!syncStatus.Notes) {
                         const date = new Date().toLocaleDateString();
@@ -5108,6 +5206,8 @@ const Report: React.FC = () => {
                           stateData.appointmentId,
                           stateData.userId
                         );
+                        const notesData = Notes + signatureRow;
+                        setNotes(notesData);
                         if (response.status && response.data) {
                           setSignatureText(
                             response.data
@@ -5368,6 +5468,8 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
+                  reportFooter={reportFooter}
+                    requestVersionRef={requestVersionRef}
                     signatureText={signatureText}
                     performingProviderName={performingProviderName}
                     verifyingProviderName={verifyingProviderName}
