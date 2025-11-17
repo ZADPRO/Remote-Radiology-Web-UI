@@ -496,6 +496,7 @@ const PatientQueue: React.FC = () => {
     AssignCustId: string
   ) => {
     try {
+      setLoading(true);
       const res = await technicianService.AssignUser(
         appointmentId,
         patientId,
@@ -1155,64 +1156,173 @@ const PatientQueue: React.FC = () => {
       },
       {
         accessorKey: "consentView",
+        accessorFn: (row) => {
+          const isNotStarted =
+            getPatientFormName(row.refCategoryId) === "Not Yet Started";
+
+          return isNotStarted ? "None" : "Signed";
+        },
+
         id: "consentView",
+
         header: ({ column }) => (
-          <div className="flex items-center justify-center px-1">
+          <div className="flex items-center justify-center gap-1">
+            {/* ---- Sort ---- */}
             <span
-              className="cursor-pointer font-semibold "
-              onClick={column.getToggleSortingHandler()}
+              className="cursor-pointer font-semibold"
+              onClick={() => {
+                const isAsc = column.getIsSorted() === "asc";
+
+                // Toggle sorting
+                column.toggleSorting(isAsc);
+
+                // Save new sort order
+                const newSort = isAsc ? "desc" : "asc";
+
+                localStorage.setItem(
+                  "consentSortOrder",
+                  JSON.stringify({
+                    id: "consentView",
+                    desc: newSort === "desc",
+                  })
+                );
+              }}
             >
               Consent
             </span>
+
+            {/* ---- Filter ---- */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="!p-0 hover:bg-transparent hover:text-gray-500"
+                >
+                  <Filter size={16} />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-48 p-2">
+                <Command>
+                  <CommandGroup className="max-h-60 overflow-auto">
+                    {["Signed", "None"].map((option) => {
+                      const current =
+                        (column.getFilterValue() as string[]) ?? [];
+                      const checked = current.includes(option);
+
+                      return (
+                        <CommandItem
+                          key={option}
+                          className="flex items-center gap-2 cursor-pointer"
+                          onSelect={() => {
+                            const updated = checked
+                              ? current.filter((v) => v !== option)
+                              : [...current, option];
+
+                            // Set filter
+                            column.setFilterValue(
+                              updated.length ? updated : undefined
+                            );
+
+                            // Save to localStorage
+                            if (updated.length) {
+                              localStorage.setItem(
+                                "consentFilter",
+                                JSON.stringify(updated)
+                              );
+                            } else {
+                              localStorage.removeItem("consentFilter");
+                            }
+                          }}
+                        >
+                          <Checkbox2 checked={checked} />
+                          <span>{option}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Command>
+
+                {/* Clear Filter */}
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("consentFilter");
+                    localStorage.removeItem("consentSortOrder");
+                  }}
+                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span>Clear</span>
+                </Button>
+              </PopoverContent>
+            </Popover>
           </div>
         ),
+
+        /* ---- CELL ---- */
         cell: ({ row }) => {
           const appointmentId = row.original.refAppointmentId;
+          // State for Consent Dialog (GLOBAL in component)
           const [consentDialogOpen, setConsentDialogOpen] = useState(false);
           const [selectedAppointmentIds, setSelectedAppointmentIds] = useState<
             number[]
           >([]);
 
-          if (row.original.refAppointmentComplete == "fillform") {
+          if (row.original.refAppointmentComplete === "fillform") {
             return <div>-</div>;
-          } else {
-            return (
-              <>
-                <div
-                  className="hover:underline cursor-pointer font-bold text-center"
-                  onClick={() => {
-                    setSelectedAppointmentIds([appointmentId]); // ✅ set appointmentId as array
-                    setConsentDialogOpen(true); // ✅ open dialog
-                  }}
-                >
-                  View
-                </div>
-
-                {consentDialogOpen && (
-                  <Dialog
-                    open={consentDialogOpen}
-                    onOpenChange={setConsentDialogOpen}
-                  >
-                    <PatientConsentDialog
-                      appointmentIds={selectedAppointmentIds}
-                      patientConsentDialog={consentDialogOpen}
-                      appointmentDate={row.original.refAppointmentDate}
-                      patientCustId={
-                        (row.original.refUserCustId &&
-                        row.original.refUserCustId.length > 0
-                          ? row.original.refUserCustId
-                          : row.original.refUserFirstName) ??
-                        (user?.refUserCustId && user?.refUserCustId.length > 0
-                          ? user?.refUserCustId
-                          : user?.refUserFirstName)
-                      }
-                    />
-                  </Dialog>
-                )}
-              </>
-            );
           }
+
+          return (
+            <>
+              <div
+                className={`hover:underline cursor-pointer font-bold text-center ${
+                  getPatientFormName(row.original.refCategoryId) ===
+                  "Not Yet Started"
+                    ? "text-[#999999]"
+                    : ""
+                }`}
+                onClick={() => {
+                  setSelectedAppointmentIds([appointmentId]);
+                  setConsentDialogOpen(true);
+                }}
+              >
+                View
+              </div>
+
+              {consentDialogOpen && (
+                <Dialog
+                  open={consentDialogOpen}
+                  onOpenChange={setConsentDialogOpen}
+                >
+                  <PatientConsentDialog
+                    appointmentIds={selectedAppointmentIds}
+                    patientConsentDialog={consentDialogOpen}
+                    appointmentDate={row.original.refAppointmentDate}
+                    patientCustId={
+                      (row.original.refUserCustId &&
+                      row.original.refUserCustId.length > 0
+                        ? row.original.refUserCustId
+                        : row.original.refUserFirstName) ??
+                      (user?.refUserCustId && user?.refUserCustId.length > 0
+                        ? user?.refUserCustId
+                        : user?.refUserFirstName)
+                    }
+                  />
+                </Dialog>
+              )}
+            </>
+          );
         },
+
+        /* ---- FILTER FUNCTION ---- */
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue || filterValue.length === 0) return true;
+          const value = row.getValue(columnId);
+          return filterValue.includes(value);
+        },
+
         enableColumnFilter: true,
       },
       {
@@ -1784,8 +1894,96 @@ const PatientQueue: React.FC = () => {
       },
       {
         id: "dicomFull",
-        header: () => (
-          <div className="flex flex-col items-center w-full">DICOM</div>
+        accessorFn: (row) => {
+          const dicomFiles = row.dicomFiles || [];
+
+          // Correct & stable: check count > 0
+          const hasDicom = dicomFiles.length > 0;
+
+          return hasDicom ? "1" : "0";
+        },
+        header: ({ column }) => (
+          <div className="flex items-center justify-center gap-2">
+            {/* ---- Sort ---- */}
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                const prev = column.getIsSorted();
+                column.toggleSorting(prev === "asc");
+
+                const next = prev === "asc" ? "desc" : "asc";
+
+                localStorage.setItem(
+                  "dicom_sort",
+                  JSON.stringify({ id: "dicomFull", desc: next === "desc" })
+                );
+              }}
+            >
+              DICOM
+            </span>
+
+            {/* ---- Filter ---- */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" className="!p-0 hover:bg-transparent">
+                  <Filter />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-56 p-2">
+                <Command>
+                  <CommandGroup>
+                    {[
+                      { label: "View DICOM", value: "1" },
+                      { label: "Upload DICOM", value: "0" },
+                    ].map((item) => {
+                      const current =
+                        (column.getFilterValue() as string[]) ?? [];
+
+                      const isSelected = current.includes(item.value);
+
+                      return (
+                        <CommandItem
+                          key={item.value}
+                          onSelect={() => {
+                            const updated = isSelected
+                              ? current.filter((v) => v !== item.value)
+                              : [...current, item.value];
+
+                            column.setFilterValue(
+                              updated.length ? updated : undefined
+                            );
+
+                            if (updated.length)
+                              localStorage.setItem(
+                                "dicom_filter",
+                                JSON.stringify(updated)
+                              );
+                            else localStorage.removeItem("dicom_filter");
+                          }}
+                          className="flex gap-2 items-center"
+                        >
+                          <Checkbox2 checked={isSelected} />
+                          <span>{item.label}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Command>
+
+                <Button
+                  variant="ghost"
+                  className="mt-2 text-red-500 flex gap-1"
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("dicom_filter");
+                  }}
+                >
+                  <XCircle className="h-4 w-4" /> Clear
+                </Button>
+              </PopoverContent>
+            </Popover>
+          </div>
         ),
         cell: ({ row }) => {
           const dicomFiles = row.original.dicomFiles as DicomFiles[];
@@ -1851,6 +2049,13 @@ const PatientQueue: React.FC = () => {
           // else {
           //   return <div className="text-center w-full">-</div>;
           // }
+        },
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue || filterValue.length === 0) return true;
+
+          const value = row.getValue(columnId); // always "1" or "0"
+
+          return filterValue.includes(value);
         },
       },
 
@@ -2473,7 +2678,7 @@ const PatientQueue: React.FC = () => {
           const handleFilterChange = (updated: any) => {
             // Save filter to localStorage
             if (updated?.length) {
-              column.setFilterValue(updated);
+              column.setFilterValue(updated.length ? updated : undefined);
               localStorage.setItem(
                 "appointmentStatus_filter",
                 JSON.stringify(updated)
@@ -2490,8 +2695,6 @@ const PatientQueue: React.FC = () => {
             localStorage.removeItem("appointmentStatus_sortOrder");
             table.setSorting([]); // clear sorting
           };
-
-          const current = (column.getFilterValue() as string[]) ?? [];
 
           return (
             <div className="flex items-center justify-center gap-1">
@@ -2516,6 +2719,9 @@ const PatientQueue: React.FC = () => {
                   <Command>
                     <CommandGroup className="max-h-60 overflow-auto">
                       {statusOptions.map((statusLabel) => {
+                        const current =
+                          (column.getFilterValue() as string[]) ?? [];
+
                         const isSelected = current.includes(statusLabel);
                         return (
                           <CommandItem
@@ -2647,10 +2853,26 @@ const PatientQueue: React.FC = () => {
           );
         },
         filterFn: (row, _columnId, filterValue) => {
-          const statusText = getStatus(
-            row.original.refAppointmentComplete
-          )?.text;
-          return (filterValue as string[])?.includes(statusText);
+          const statusText =
+            getStatus(row.original.refAppointmentComplete)?.text ?? "-";
+
+          if (
+            !filterValue ||
+            !Array.isArray(filterValue) ||
+            filterValue.length === 0
+          )
+            return true;
+
+          if (filterValue.includes("Yet to Report")) {
+            return (
+              filterValue.includes(statusText) ||
+              statusText === "-" ||
+              statusText === "" ||
+              statusText === null
+            );
+          }
+
+          return filterValue.includes(statusText);
         },
         enableColumnFilter: true,
       },
@@ -2791,44 +3013,144 @@ const PatientQueue: React.FC = () => {
       },
       {
         id: "assigned",
-        accessorFn: (row) =>
-          row.refAppointmentAssignedUserId === 0
-            ? ""
-            : String(row.refAppointmentAssignedUserId),
-        header: ({ column }) => (
+        accessorFn: (row) => String(row.refAppointmentAssignedUserId ?? 0),
+        header: ({ column, table }) => (
           <div className="flex items-center justify-center gap-1">
-            {/* ✅ Clickable label for sorting */}
+            {/* ---- Sort Trigger ---- */}
             <span
               className="cursor-pointer font-semibold"
               onClick={() => {
-                column.toggleSorting(column.getIsSorted() === "asc");
+                // Get previous sort BEFORE toggling
+                const prevSort = column.getIsSorted(); // "asc" | "desc" | false
 
-                const sortOrder =
-                  column.getIsSorted() === "asc"
-                    ? "desc"
-                    : column.getIsSorted() === "desc"
-                    ? "asc"
-                    : "asc";
+                // Now toggle normally
+                column.toggleSorting(prevSort === "asc");
 
-                // ✅ Save sort state to localStorage
-                localStorage.setItem("assigned_sortOrder", sortOrder);
+                // Determine next sort value
+                const nextSort = prevSort === "asc" ? "desc" : "asc";
+
+                // Save to localStorage
+                localStorage.setItem(
+                  "assigned_sortOrder",
+                  JSON.stringify({
+                    id: "assigned",
+                    desc: nextSort === "desc",
+                  })
+                );
               }}
             >
               Assign
             </span>
+
+            {/* ---- Filter ---- */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" className="!p-0 hover:bg-transparent">
+                  <Filter />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-64 p-2">
+                <Command>
+                  <CommandGroup className="max-h-60 overflow-auto">
+                    {/* Unique Assigned Values */}
+                    {Array.from(
+                      new Set(
+                        table
+                          .getCoreRowModel()
+                          .rows.map(
+                            (r) => r.original.refAppointmentAssignedUserId
+                          )
+                      )
+                    ).map((assignedId) => {
+                      // Find staff in staffData
+                      const staff = staffData.find(
+                        (s) => String(s.refUserId) === String(assignedId)
+                      );
+
+                      // ❌ Skip IDs not in staffData AND also not 0
+                      if (!staff && assignedId !== 0) return null;
+
+                      const current =
+                        (column.getFilterValue() as string[]) ?? [];
+                      const isSelected = current.includes(String(assignedId));
+
+                      const displayName =
+                        assignedId === 0
+                          ? "None"
+                          : staff && staff.refUserCustId;
+
+                      return (
+                        <CommandItem
+                          key={assignedId}
+                          className="flex items-center gap-2 cursor-pointer"
+                          onSelect={() => {
+                            const updated = isSelected
+                              ? current.filter(
+                                  (id) => id !== String(assignedId)
+                                )
+                              : [...current, String(assignedId)];
+
+                            column.setFilterValue(
+                              updated.length ? updated : undefined
+                            );
+
+                            if (updated.length > 0) {
+                              localStorage.setItem(
+                                "assigned_filter",
+                                JSON.stringify(updated)
+                              );
+                            } else {
+                              localStorage.removeItem("assigned_filter");
+                            }
+                          }}
+                        >
+                          <Checkbox2 checked={isSelected} />
+                          <span>{displayName}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Command>
+
+                {/* ---- Clear Filter ---- */}
+                <Button
+                  variant="ghost"
+                  className="mt-2 text-red-500 flex items-center gap-1"
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("assigned_filter");
+                  }}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Clear
+                </Button>
+              </PopoverContent>
+            </Popover>
           </div>
         ),
+
+        // Filter function
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue || !Array.isArray(filterValue)) return true;
+
+          const value = row.getValue(columnId);
+
+          // Convert both to string
+          return filterValue.includes(String(value || ""));
+        },
+
         cell: ({ row }) => {
           return (
             <div className="flex w-[100px] xl:w-full justify-center items-center px-1">
               <Select
                 value={
                   row.original.refAppointmentAssignedUserId === 0
-                    ? ""
+                    ? "none"
                     : String(row.original.refAppointmentAssignedUserId)
                 }
                 onValueChange={(value) => {
-                  if (value === "none" || value === "task-complete") {
+                  if (value === "none") {
                     AssignUser(
                       row.original.refAppointmentId,
                       row.original.refUserId,
@@ -2839,6 +3161,7 @@ const PatientQueue: React.FC = () => {
                     const selectedUser = staffData.find(
                       (tech) => String(tech.refUserId) === value
                     );
+
                     if (selectedUser) {
                       AssignUser(
                         row.original.refAppointmentId,
@@ -2855,35 +3178,27 @@ const PatientQueue: React.FC = () => {
                 </SelectTrigger>
 
                 <SelectContent>
-                  {/* Custom static options */}
                   <SelectItem value="none">None</SelectItem>
-                  {/* <SelectItem value="task-complete">Task Complete</SelectItem> */}
 
-                  {/* Dynamic staff list */}
-                  {staffData?.length > 0 ? (
-                    staffData.map(
-                      (tech) =>
-                        (tech.refSCId === 0 ||
-                          tech.refSCId.toString() ===
-                            row.original.refSCId.toString()) && (
-                          <SelectItem
-                            key={tech.refUserId}
-                            value={String(tech.refUserId)}
-                          >
-                            {tech.refUserCustId}
-                          </SelectItem>
-                        )
-                    )
-                  ) : (
-                    <div className="text-xs text-gray-400 px-4 py-2">
-                      No staff found
-                    </div>
+                  {staffData.map(
+                    (tech) =>
+                      (tech.refSCId === 0 ||
+                        tech.refSCId.toString() ===
+                          row.original.refSCId.toString()) && (
+                        <SelectItem
+                          key={tech.refUserId}
+                          value={String(tech.refUserId)}
+                        >
+                          {tech.refUserCustId}
+                        </SelectItem>
+                      )
                   )}
                 </SelectContent>
               </Select>
             </div>
           );
         },
+
         enableColumnFilter: true,
       },
       {
@@ -3537,20 +3852,70 @@ const PatientQueue: React.FC = () => {
       ]);
     }
 
-    //Assigned
-    const savedAssignedSort = localStorage.getItem("assigned_sortOrder");
-    const columnAssignedSort = table.getColumn("assigned");
-
-    if (columnAssignedSort && savedAssignedSort) {
-      table.setSorting([
-        { id: "assigned", desc: savedAssignedSort === "desc" },
-      ]);
-    }
-
     //Global Search
     const savedGlobalFilter = localStorage.getItem("globalFilter");
     if (savedGlobalFilter) {
       setGlobalFilter(savedGlobalFilter);
+    }
+
+    // Restore filter
+    const savedAssignedFilter = localStorage.getItem("assigned_filter");
+    if (savedAssignedFilter) {
+      try {
+        const parsed = JSON.parse(savedAssignedFilter);
+        table.getColumn("assigned")?.setFilterValue(parsed);
+      } catch (err) {
+        console.error("Error restoring assigned filter:", err);
+      }
+    }
+
+    // Restore sorting
+    const savedAssignedSort = localStorage.getItem("assigned_sortOrder");
+    if (savedAssignedSort) {
+      try {
+        const parsed = JSON.parse(savedAssignedSort);
+        table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+      } catch (err) {
+        console.error("Error restoring assigned sort:", err);
+      }
+    }
+
+    const savedFilter = localStorage.getItem("dicom_filter");
+    if (savedFilter) {
+      try {
+        const parsed = JSON.parse(savedFilter);
+        table.getColumn("dicomFull")?.setFilterValue(parsed);
+      } catch {}
+    }
+
+    const savedFilterSort = localStorage.getItem("dicom_sort");
+    if (savedFilterSort) {
+      try {
+        const parsed = JSON.parse(savedFilterSort);
+        table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+      } catch {}
+    }
+
+    // Restore Consent Filter
+    const savedConsentFilter = localStorage.getItem("consentFilter");
+    if (savedConsentFilter) {
+      try {
+        const parsed = JSON.parse(savedConsentFilter);
+        if (Array.isArray(parsed)) {
+          table.getColumn("consentView")?.setFilterValue(parsed);
+        }
+      } catch {}
+    }
+
+    // Restore Consent Sort
+    const savedConsentSort = localStorage.getItem("consentSortOrder");
+    if (savedConsentSort) {
+      try {
+        const parsed = JSON.parse(savedConsentSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch {}
     }
   }, [table]);
 
@@ -3597,6 +3962,12 @@ const PatientQueue: React.FC = () => {
     localStorage.removeItem("pendingRemarks_sortOrder"); // ✅ new
     localStorage.removeItem("assigned_sortOrder"); // ✅ new
     localStorage.removeItem("globalFilter"); // ✅ new
+    localStorage.removeItem("assigned_filter");
+    localStorage.removeItem("assigned_sortOrder");
+    localStorage.removeItem("dicom_filter");
+    localStorage.removeItem("dicom_sort");
+    localStorage.removeItem("consentFilter");
+    localStorage.removeItem("consentSortOrder");
     setSelectedRowIds([]);
   };
 

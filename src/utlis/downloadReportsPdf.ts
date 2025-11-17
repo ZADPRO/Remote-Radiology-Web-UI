@@ -12,51 +12,6 @@ pdfMake.vfs = pdfFonts.vfs;
  * @returns The styled HTML content string.
  */
 
-function processSup(content: any): any {
-  if (Array.isArray(content)) {
-    return content.map(processSup);
-  }
-
-  if (content && typeof content === "object") {
-    // If content is a text node that contains our placeholder
-    if (content.text && typeof content.text === "string") {
-      const supRegex = /<span data-sup="(.*?)"><\/span>/g;
-      if (supRegex.test(content.text)) {
-        const parts: any[] = [];
-        let lastIndex = 0;
-        content.text.replace(
-          supRegex,
-          (match: any, supText: any, offset: any) => {
-            // Text before sup
-            if (offset > lastIndex) {
-              parts.push({ text: content.text.substring(lastIndex, offset) });
-            }
-            // Superscript text
-            parts.push({
-              text: supText,
-              fontSize: (content.fontSize || 10) * 0.7,
-              baseline: 6, // lift it above normal text
-            });
-            lastIndex = offset + match.length;
-          }
-        );
-        // Remaining text
-        if (lastIndex < content.text.length) {
-          parts.push({ text: content.text.substring(lastIndex) });
-        }
-        content.text = parts;
-      }
-    }
-
-    if (content.content) content.content = processSup(content.content);
-    if (content.stack) content.stack = processSup(content.stack);
-    if (content.table && content.table.body)
-      content.table.body = processSup(content.table.body);
-  }
-
-  return content;
-}
-
 function normalizeTransparentCss(html: string): string {
   return (
     html
@@ -274,14 +229,87 @@ function processContentSpacing(content: any): any {
  * @param htmlString - The HTML content to convert.
  * @param baseFileName - The base name for the downloaded PDF file.
  */
+
+function applySuperscript(content: any): any {
+  if (Array.isArray(content)) {
+    return content.map((item: any) => applySuperscript(item));
+  }
+
+  if (typeof content === "object" && content !== null) {
+    // Handle nodes that have the 'sup' property or 'html-sup' style
+    if (content.sup || (content.style && Array.isArray(content.style) && content.style.includes('html-sup'))) {
+      // Recursively extract text from nested structures
+      const extractText = (obj: any): string => {
+        if (typeof obj === 'string') return obj;
+        if (Array.isArray(obj)) {
+          return obj.map(item => extractText(item)).join('');
+        }
+        if (obj && typeof obj === 'object' && obj.text) {
+          return extractText(obj.text);
+        }
+        return '';
+      };
+      
+      const textContent = extractText(content.text);
+      
+      return {
+        text: textContent,
+        fontSize: 6,
+        // Use a positive vertical offset for superscript (moves text UP)
+        characterSpacing: 0,
+        sup: {
+          offset: '30%',
+          fontSize: 6
+        }
+      };
+    }
+
+    // Handle subscripts similarly
+    if (content.sub || (content.style && Array.isArray(content.style) && content.style.includes('html-sub'))) {
+      const extractText = (obj: any): string => {
+        if (typeof obj === 'string') return obj;
+        if (Array.isArray(obj)) {
+          return obj.map(item => extractText(item)).join('');
+        }
+        if (obj && typeof obj === 'object' && obj.text) {
+          return extractText(obj.text);
+        }
+        return '';
+      };
+      
+      const textContent = extractText(content.text);
+      
+      return {
+        text: textContent,
+        fontSize: 6,
+        sub: {
+          offset: '30%',
+          fontSize: 6
+        }
+      };
+    }
+
+    // Handle text arrays (inline elements)
+    if (Array.isArray(content.text)) {
+      content.text = content.text.map((item: any) => applySuperscript(item));
+    }
+
+    // Recursively process children
+    if (content.content) content.content = applySuperscript(content.content);
+    if (content.stack) content.stack = applySuperscript(content.stack);
+    if (content.table && content.table.body)
+      content.table.body = applySuperscript(content.table.body);
+  }
+
+  return content;
+}
+
 export function downloadReportsPdf(
   htmlString: string,
   baseFileName = "Medical_Report"
 ): void {
   try {
-    // const htmlWithSup = replaceSup(htmlString);
 
-    // Step 1: Add controlled spacing styles (preserving br tags)
     const styledHtml = normalizeTransparentCss(
       addControlledSpacingStyles(htmlString)
     );
@@ -300,10 +328,11 @@ export function downloadReportsPdf(
     });
 
     // Step 3: Process content for proper spacing and force full-width tables
+    // let superscriptApplied = applySuperscript(converted);
     let processedContent: any = processContentSpacing(converted);
 
+    processedContent = applySuperscript(processedContent);
     processedContent = applyRightAlignment(processedContent);
-    processedContent = processSup(processedContent);
     processedContent = forceWhiteForTransparent(processedContent);
 
     // Step 4: Create document definition with proper TypeScript types
@@ -369,15 +398,20 @@ export async function generateReportsPdfBlob(
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     try {
-      const styledHtml = addControlledSpacingStyles(htmlString);
+      const styledHtml = normalizeTransparentCss(
+        addControlledSpacingStyles(htmlString)
+      );
       const converted = htmlToPdfmake(styledHtml, {
         tableAutoSize: true,
         listType: "ul",
       });
 
+      // let superscriptApplied = applySuperscript(converted);
       let processedContent: any = processContentSpacing(converted);
+
+      processedContent = applySuperscript(processedContent);
       processedContent = applyRightAlignment(processedContent);
-      processedContent = processSup(processedContent);
+      processedContent = forceWhiteForTransparent(processedContent);
 
       const documentDefinition: TDocumentDefinitions = {
         content: Array.isArray(processedContent)

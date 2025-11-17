@@ -69,11 +69,7 @@ import {
   LymphNodesRightQuestions,
   nippleAreolaSkinLeftQuestions,
   nippleAreolaSkinRightQuestions,
-  lesionsRightQuestions,
   symmetryQuestions,
-  ComparisonPriorLeftQuestion,
-  ComparisonPriorRightQuestion,
-  lesionsLeftQuestions,
 } from "./ReportQuestionsAssignment";
 import { generateNippleAreolaBreastEditor } from "./NippleAreolaSkin/NippleAreolaEditor";
 import { generateGrandularAndDuctalTissueReport } from "./GrandularAndDuctalTissue/GrandularAndDuctalTissueRightReport";
@@ -88,7 +84,6 @@ import { formatDateWithAge, formatReadableDate } from "@/utlis/calculateAge";
 import { PatientHistoryReportGenerator } from "./GenerateReport/PatientHistoryReportGenerator";
 import { useSpeechRecognition } from "react-speech-recognition";
 import PreviewFile from "@/components/FileView/PreviewFile";
-import { LesionsVal } from "./Lisons/LesionsRightString";
 import axios from "axios";
 import { generateReportsPdfBlob } from "@/utlis/downloadReportsPdf";
 import DraggableWindow from "@/components/DraggableWindow/DraggableWindow";
@@ -548,6 +543,13 @@ const Report: React.FC = () => {
 
   const handleReportInputChange = (questionId: number, value: string) => {
     !changesDone && setChangesDone(true);
+
+    // 🧠 Add this early-return check to stop duplicate updates
+    const existing = reportFormData.find((q) => q.questionId === questionId);
+    if (existing && existing.answer === value) {
+      // 🔥 Skip update if the value is the same — prevents re-renders + loops
+      return;
+    }
 
     console.log("^^^^", questionId, changedOne.reportQuestion);
     setChangedOne((prev) => ({
@@ -2233,865 +2235,863 @@ const Report: React.FC = () => {
 
   const [mailOption, setMailOption] = useState("");
 
-  function quillWrapContent(html: string): string {
-    if (!html) return "";
+  // function quillWrapContent(html: string): string {
+  //   if (!html) return "";
 
-    let wrapped = html;
+  //   let wrapped = html;
 
-    // Replace <div> with <p> and </div> with </p>
-    wrapped = wrapped.replace(/<div>/gi, "<p>").replace(/<\/div>/gi, "</p>");
+  //   // Replace <div> with <p> and </div> with </p>
+  //   wrapped = wrapped.replace(/<div>/gi, "<p>").replace(/<\/div>/gi, "</p>");
 
-    // // Optional: convert consecutive <br> to single <br> for cleaner Quill content
-    // wrapped = wrapped.replace(/(<br\s*\/?>\s*){2,}/gi, "<br>");
+  //   // // Optional: convert consecutive <br> to single <br> for cleaner Quill content
+  //   // wrapped = wrapped.replace(/(<br\s*\/?>\s*){2,}/gi, "<br>");
 
-    // Wrap content outside <p> with <p> (if any plain text exists)
-    wrapped = wrapped.replace(/(^|>)([^<]+)(?=<|$)/g, (_, p1, p2) => {
-      const text = p2.trim();
-      return text ? `${p1}<p>${text}</p>` : p1;
-    });
+  //   // Wrap content outside <p> with <p> (if any plain text exists)
+  //   wrapped = wrapped.replace(/(^|>)([^<]+)(?=<|$)/g, (_, p1, p2) => {
+  //     const text = p2.trim();
+  //     return text ? `${p1}<p>${text}</p>` : p1;
+  //   });
 
-    return wrapped;
-  }
+  //   return wrapped;
+  // }
 
-  const handleSyncNotesReport = () => {
-    let ReportNotes = "";
+  // const handleSyncNotesReport = () => {
+  //   let ReportNotes = "";
 
-    if (syncStatus.Notes) {
-      console.log(
-        "Report.tsx -------------------------- >  2234  ",
-        getReportAnswer(130) === "Present"
-      );
-      const FindAssessmentCategory = (val: string): string => {
-        const O1 = ["N0"];
-        const N1 = ["N1"];
-        const N2 = ["N2"];
-        const A1 = ["A1"];
-        const A2 = ["A2"];
-        const A3 = ["A3"];
-        const A4 = ["A4"];
+  //   if (syncStatus.Notes) {
+  //     console.log(
+  //       "Report.tsx -------------------------- >  2234  ",
+  //       getReportAnswer(130) === "Present"
+  //     );
+  //     const FindAssessmentCategory = (val: string): string => {
+  //       const O1 = ["N0"];
+  //       const N1 = ["N1"];
+  //       const N2 = ["N2"];
+  //       const A1 = ["A1"];
+  //       const A2 = ["A2"];
+  //       const A3 = ["A3"];
+  //       const A4 = ["A4"];
 
-        if (O1.includes(val))
-          return "0 : Prior breast imaging is needed for interpretation";
-        if (N1.includes(val)) return "N1 (Nomral 1)";
-        if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
-        if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
-        if (A2.includes(val)) return "A2 (Abnormal 2: Possible malignancy)";
-        if (A3.includes(val)) return "A3 (Abnormal 3: Most likely malignant)";
-        if (A4.includes(val)) return "A4 (Abnormal 4: Known malignancy)";
+  //       if (O1.includes(val))
+  //         return "0 : Prior breast imaging is needed for interpretation";
+  //       if (N1.includes(val)) return "N1 (Nomral 1)";
+  //       if (N2.includes(val)) return "N2 (Nomral 2: Benign)";
+  //       if (A1.includes(val)) return "A1 (Abnormal 1: Indeterminate)";
+  //       if (A2.includes(val)) return "A2 (Abnormal 2: Possible malignancy)";
+  //       if (A3.includes(val)) return "A3 (Abnormal 3: Most likely malignant)";
+  //       if (A4.includes(val)) return "A4 (Abnormal 4: Known malignancy)";
 
-        return ""; // fallback if no match
-      };
+  //       return ""; // fallback if no match
+  //     };
 
-      const breastDensityRight =
-        getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
-        "Present"
-          ? true
-          : false;
+  //     const breastDensityRight =
+  //       getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
+  //       "Present"
+  //         ? true
+  //         : false;
 
-      const nippleAreolaRight =
-        getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
-        "Present"
-          ? true
-          : false;
-      const glandularRight =
-        getReportAnswer(
-          grandularAndDuctalTissueRightQuestions.grandularSelect
-        ) == "Present"
-          ? true
-          : false;
-      const lessionsRight =
-        getReportAnswer(lesionsRightQuestions.lesionsr) == "Present"
-          ? true
-          : false;
-      const lymphRight =
-        getReportAnswer(LymphNodesRightQuestions.Intramammaryr) == "Present"
-          ? true
-          : false;
-      const comparisonRight =
-        getReportAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ==
-        "Present"
-          ? true
-          : false;
-      const breastDensityLeft =
-        getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
-        "Present"
-          ? true
-          : false;
-      const nippleAreolaLeft =
-        getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
-        "Present"
-          ? true
-          : false;
-      const glandularLeft =
-        getReportAnswer(
-          grandularAndDuctalTissueRightQuestions.grandularSelect
-        ) == "Present"
-          ? true
-          : false;
-      const lessionsLeft =
-        getReportAnswer(lesionsLeftQuestions.lesionsr) == "Present"
-          ? true
-          : false;
-      const lymphLeft =
-        getReportAnswer(LymphNodesLeftQuestions.Intramammaryr) == "Present"
-          ? true
-          : false;
-      const comparisonLeftVal =
-        getReportAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) ==
-        "Present"
-          ? true
-          : false;
+  //     const nippleAreolaRight =
+  //       getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
+  //       "Present"
+  //         ? true
+  //         : false;
+  //     const glandularRight =
+  //       getReportAnswer(
+  //         grandularAndDuctalTissueRightQuestions.grandularSelect
+  //       ) == "Present"
+  //         ? true
+  //         : false;
+  //     const lessionsRight =
+  //       getReportAnswer(lesionsRightQuestions.lesionsr) == "Present"
+  //         ? true
+  //         : false;
+  //     const lymphRight =
+  //       getReportAnswer(LymphNodesRightQuestions.Intramammaryr) == "Present"
+  //         ? true
+  //         : false;
+  //     const comparisonRight =
+  //       getReportAnswer(ComparisonPriorRightQuestion.ComparisonPriorRight) ==
+  //       "Present"
+  //         ? true
+  //         : false;
+  //     const breastDensityLeft =
+  //       getReportAnswer(breastDensityandImageRightQuestions.breastSelect) ==
+  //       "Present"
+  //         ? true
+  //         : false;
+  //     const nippleAreolaLeft =
+  //       getReportAnswer(nippleAreolaSkinRightQuestions.nippleSelect) ==
+  //       "Present"
+  //         ? true
+  //         : false;
+  //     const glandularLeft =
+  //       getReportAnswer(
+  //         grandularAndDuctalTissueRightQuestions.grandularSelect
+  //       ) == "Present"
+  //         ? true
+  //         : false;
+  //     const lessionsLeft =
+  //       getReportAnswer(lesionsLeftQuestions.lesionsr) == "Present"
+  //         ? true
+  //         : false;
+  //     const lymphLeft =
+  //       getReportAnswer(LymphNodesLeftQuestions.Intramammaryr) == "Present"
+  //         ? true
+  //         : false;
+  //     const comparisonLeftVal =
+  //       getReportAnswer(ComparisonPriorLeftQuestion.ComparisonPriorRight) ==
+  //       "Present"
+  //         ? true
+  //         : false;
 
-      let lesionsVal: LesionsVal = {} as LesionsVal;
+  //     let lesionsVal: LesionsVal = {} as LesionsVal;
 
-      try {
-        lesionsVal = JSON.parse(LesionsRight) as LesionsVal;
-      } catch (err) {
-        console.log(err);
-        lesionsVal = {} as LesionsVal;
-      }
+  //     try {
+  //       lesionsVal = JSON.parse(LesionsRight) as LesionsVal;
+  //     } catch (err) {
+  //       console.log(err);
+  //       lesionsVal = {} as LesionsVal;
+  //     }
 
-      let lesionsValLeft: LesionsVal = {} as LesionsVal;
+  //     let lesionsValLeft: LesionsVal = {} as LesionsVal;
 
-      try {
-        lesionsValLeft = JSON.parse(LesionsLeft) as LesionsVal;
-      } catch (err) {
-        console.log(err);
-        lesionsValLeft = {} as LesionsVal;
-      }
+  //     try {
+  //       lesionsValLeft = JSON.parse(LesionsLeft) as LesionsVal;
+  //     } catch (err) {
+  //       console.log(err);
+  //       lesionsValLeft = {} as LesionsVal;
+  //     }
 
-      let comparison: string[] = [];
+  //     let comparison: string[] = [];
 
-      try {
-        comparison = JSON.parse(ComparisonPrior) as string[];
-      } catch (err) {
-        console.log(err);
-        comparison = [] as string[];
-      }
+  //     try {
+  //       comparison = JSON.parse(ComparisonPrior) as string[];
+  //     } catch (err) {
+  //       console.log(err);
+  //       comparison = [] as string[];
+  //     }
 
-      let comparisonLeft: string[] = [];
+  //     let comparisonLeft: string[] = [];
 
-      try {
-        comparisonLeft = JSON.parse(ComparisonPriorLeft) as string[];
-      } catch (err) {
-        console.log(err);
-        comparisonLeft = [] as string[];
-      }
+  //     try {
+  //       comparisonLeft = JSON.parse(ComparisonPriorLeft) as string[];
+  //     } catch (err) {
+  //       console.log(err);
+  //       comparisonLeft = [] as string[];
+  //     }
 
-      ReportNotes =
-        `
-           <div>
-           <div style="text-align: left;">
-        ${
-          ScanCenterImg
-            ? ScanCenterImg.contentType === "url"
-              ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
-              : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
-            : ""
-        }
-        </div>
-          </div>
-        <table width="100" border-collapse: collapse; font-size: 14px;">
-          <tbody>
-            <tr>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${
-                patientDetails.refUserFirstName
-              }</td>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${
-                patientDetails.refUserDOB
-                  ? formatDateWithAge(patientDetails.refUserDOB)
-                  : ""
-              }</td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${
-                patientDetails.refUserGender
-                  ? patientDetails.refUserGender === "female"
-                    ? "F"
-                    : patientDetails.refUserGender.toUpperCase()
-                  : ``
-              }</td>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${
-                assignData?.appointmentStatus[0]?.refSCCustId || ""
-              }, ${ScanCenterAddress}</td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>USER ID</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${
-                patientDetails.refUserCustId
-              }</td>
-              <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
-              <td style="border: 1px solid #000; padding: 4px;">${formatReadableDate(
-                assignData?.appointmentStatus[0]?.refAppointmentDate
-                  ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
-                  : ""
-              )}</td>
-            </tr>
-          </tbody>
-        </table>
-    
-        ${
-          performingProviderName.length > 0 || verifyingProviderName.length > 0
-            ? `
-          <br/>
-      ${
-        performingProviderName.length > 0
-          ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
-          : ``
-      }${
-                false // verifyingProviderName.length > 0
-                  ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
-                  : ``
-              }
-          `
-            : ``
-        }
-    
-      <br/>
-      
-      <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
-      
-    
-      ${patientHistory}
-    
-      <br />
-    
-      <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound breast imaging was performed using the QT Scanner. Images were reviewed with the QTviewer in coronal, axial, and sagittal planes.</p>
-    
-      ${
-        getReportAnswer(1) === "Present"
-          ? `
-        <br />
-      <div><strong>BREAST IMPLANTS:</strong><br />${breastImplantRight}${
-              breastImplantImage ? breastImplantImage : ""
-            }</div>
-        `
-          : ``
-      }
-    
-      ${
-        symmetry
-          ? `
-        <br />
-      <div>${symmetry}${symmentryImage ? symmentryImage : ""}</div>
-        `
-          : ``
-      }
-      <br />
-    
-      ${
-        getReportAnswer(130) === "Present"
-          ? `
-        <p><strong>RIGHT BREAST FINDINGS:</strong></p>
-    
-      ${
-        breastDensityRight
-          ? `<span>${breastDensityandImageRight}</span>${
-              breastDensityandImageRightImage.length > 7
-                ? `<span>${breastDensityandImageRightImage}<br/></span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-      ${
-        nippleAreolaRight
-          ? `${nippleAreolaSkinRight}${
-              nippleAreolaSkinRightImage.length > 7
-                ? `<span>${nippleAreolaSkinRightImage}<br/></span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-      ${
-        glandularRight
-          ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueRight}${
-              grandularAndDuctalTissueRightImage.length > 7
-                ? `<span>${grandularAndDuctalTissueRightImage}<br/></span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-      ${
-        lessionsRight
-          ? `${
-              lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
-                ? lesionsVal["simple cyst"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.simplecrstDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     ReportNotes =
+  //       `
+  //          <div>
+  //          <div style="text-align: left;">
+  //       ${
+  //         ScanCenterImg
+  //           ? ScanCenterImg.contentType === "url"
+  //             ? `<img src="${ScanCenterImg.base64Data.trim()}" alt="Logo" width="200px"/><br/><br/>`
+  //             : `<img src="data:${ScanCenterImg.contentType};base64,${ScanCenterImg.base64Data}" alt="Logo" width="200px"/><br/><br/>`
+  //           : ""
+  //       }
+  //       </div>
+  //         </div>
+  //       <table width="100" border-collapse: collapse; font-size: 14px;">
+  //         <tbody>
+  //           <tr>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>NAME</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${
+  //               patientDetails.refUserFirstName
+  //             }</td>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>DOB</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${
+  //               patientDetails.refUserDOB
+  //                 ? formatDateWithAge(patientDetails.refUserDOB)
+  //                 : ""
+  //             }</td>
+  //           </tr>
+  //           <tr>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>GENDER</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${
+  //               patientDetails.refUserGender
+  //                 ? patientDetails.refUserGender === "female"
+  //                   ? "F"
+  //                   : patientDetails.refUserGender.toUpperCase()
+  //                 : ``
+  //             }</td>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>SCAN CENTER</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${
+  //               assignData?.appointmentStatus[0]?.refSCCustId || ""
+  //             }, ${ScanCenterAddress}</td>
+  //           </tr>
+  //           <tr>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>USER ID</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${
+  //               patientDetails.refUserCustId
+  //             }</td>
+  //             <td style="border: 1px solid #000; padding: 4px;"><strong>DATE OF VISIT</strong></td>
+  //             <td style="border: 1px solid #000; padding: 4px;">${formatReadableDate(
+  //               assignData?.appointmentStatus[0]?.refAppointmentDate
+  //                 ? assignData?.appointmentStatus[0]?.refAppointmentDate.toString()
+  //                 : ""
+  //             )}</td>
+  //           </tr>
+  //         </tbody>
+  //       </table>
 
-                      return (
-                        "" +
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["complex cystic structure"] &&
-              lesionsVal["complex cystic structure"].length > 0
-                ? lesionsVal["complex cystic structure"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.complexcrstDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //       ${
+  //         performingProviderName.length > 0 || verifyingProviderName.length > 0
+  //           ? `
+  //         <br/>
+  //     ${
+  //       performingProviderName.length > 0
+  //         ? `<p><strong>Performing Provider : ${performingProviderName}.</strong></p>`
+  //         : ``
+  //     }${
+  //               false // verifyingProviderName.length > 0
+  //                 ? `<p><strong>Verifying Provider : ${verifyingProviderName}.</strong></p>`
+  //                 : ``
+  //             }
+  //         `
+  //           : ``
+  //       }
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["heterogeneous tissue prominence"] &&
-              lesionsVal["heterogeneous tissue prominence"].length > 0
-                ? lesionsVal["heterogeneous tissue prominence"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.HeterogeneousDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     <br/>
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["hypertrophic tissue with microcysts"] &&
-              lesionsVal["hypertrophic tissue with microcysts"].length > 0
-                ? lesionsVal["hypertrophic tissue with microcysts"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.HypertrophicDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     <p><strong>QT ULTRASOUND BREAST IMAGING</strong></p>
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["fibronodular density"] &&
-              lesionsVal["fibronodular density"].length > 0
-                ? lesionsVal["fibronodular density"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.fibronodulardensityDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     ${patientHistory}
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["multiple simple cysts"] &&
-              lesionsVal["multiple simple cysts"].length > 0
-                ? lesionsVal["multiple simple cysts"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.multipleCystsDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     <br />
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["solid mass / nodule"] &&
-              lesionsVal["solid mass / nodule"].length > 0
-                ? lesionsVal["solid mass / nodule"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.solidmassDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     <p><strong>TECHNIQUE:</strong> Transmission and reflection multiplanar 3-dimensional ultrasound breast imaging was performed using the QT Scanner. Images were reviewed with the QTviewer in coronal, axial, and sagittal planes.</p>
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }${
-              lesionsVal["others"] && lesionsVal["others"].length > 0
-                ? lesionsVal["others"]
-                    .map((data, index) => {
-                      let dataArray: any[] = [];
-                      const raw = getReportAnswer(
-                        lesionsRightQuestions.OtherDatar
-                      );
-                      dataArray = raw ? JSON.parse(raw) : [];
+  //     ${
+  //       getReportAnswer(1) === "Present"
+  //         ? `
+  //       <br />
+  //     <div><strong>BREAST IMPLANTS:</strong><br />${breastImplantRight}${
+  //             breastImplantImage ? breastImplantImage : ""
+  //           }</div>
+  //       `
+  //         : ``
+  //     }
 
-                      return (
-                        data +
-                        (dataArray[index]?.ImageText
-                          ? dataArray[index].ImageText
-                          : "")
-                      );
-                    })
-                    .join("")
-                : ""
-            }`
-          : ``
-      }
-      ${
-        lymphRight
-          ? `<div><strong>Lymph Nodes: </strong>${LymphNodesRight}${
-              LymphNodesRightImage.length > 7
-                ? `<span>${LymphNodesRightImage}<br/></span>`
-                : "<p><br/></p>"
-            }<div>`
-          : ``
-      }
-      ${
-        comparisonRight
-          ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
-              .map((data, index) => {
-                let dataArray: any[] = [];
-                const raw = getReportAnswer(
-                  ComparisonPriorRightQuestion.LesionCompTable
-                );
-                dataArray = raw ? JSON.parse(raw) : [];
+  //     ${
+  //       symmetry
+  //         ? `
+  //       <br />
+  //     <div>${symmetry}${symmentryImage ? symmentryImage : ""}</div>
+  //       `
+  //         : ``
+  //     }
+  //     <br />
 
-                return (
-                  data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
-                );
-              })
-              .join("<br/>")}</p><br/>`
-          : ``
-      }
-        `
-          : ``
-      }
-      
-      ${
-        getReportAnswer(131) === "Present"
-          ? `
-        <p><strong>LEFT BREAST FINDINGS:</strong></p>
-    
-      ${
-        breastDensityLeft
-          ? `<span>${breastDensityandImageLeft}</span>${
-              breastDensityandImageLeftImage.length > 7
-                ? `<span>${breastDensityandImageLeftImage}<br/></span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-      ${
-        nippleAreolaLeft
-          ? `${nippleAreolaSkinLeft}${
-              nippleAreolaSkinLeftImage.length > 7
-                ? `<span>${nippleAreolaSkinLeftImage}<br/><span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-      ${
-        glandularLeft
-          ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueLeft}${
-              grandularAndDuctalTissueLeftImage.length > 7
-                ? `<span>${grandularAndDuctalTissueLeftImage}<br/></span>`
-                : "<p><br/></p>"
-            }`
-          : ``
-      }
-        ${
-          lessionsLeft
-            ? `${
-                lesionsValLeft["simple cyst"] &&
-                lesionsValLeft["simple cyst"].length > 0
-                  ? lesionsValLeft["simple cyst"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.simplecrstDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //     ${
+  //       getReportAnswer(130) === "Present"
+  //         ? `
+  //       <p><strong>RIGHT BREAST FINDINGS:</strong></p>
 
-                        return (
-                          "" +
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["complex cystic structure"] &&
-                lesionsValLeft["complex cystic structure"].length > 0
-                  ? lesionsValLeft["complex cystic structure"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.complexcrstDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //     ${
+  //       breastDensityRight
+  //         ? `<span>${breastDensityandImageRight}</span>${
+  //             breastDensityandImageRightImage.length > 7
+  //               ? `<span>${breastDensityandImageRightImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       nippleAreolaRight
+  //         ? `${nippleAreolaSkinRight}${
+  //             nippleAreolaSkinRightImage.length > 7
+  //               ? `<span>${nippleAreolaSkinRightImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       glandularRight
+  //         ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueRight}${
+  //             grandularAndDuctalTissueRightImage.length > 7
+  //               ? `<span>${grandularAndDuctalTissueRightImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       lessionsRight
+  //         ? `${
+  //             lesionsVal["simple cyst"] && lesionsVal["simple cyst"].length > 0
+  //               ? lesionsVal["simple cyst"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.simplecrstDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["heterogeneous tissue prominence"] &&
-                lesionsValLeft["heterogeneous tissue prominence"].length > 0
-                  ? lesionsValLeft["heterogeneous tissue prominence"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.HeterogeneousDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       "" +
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["complex cystic structure"] &&
+  //             lesionsVal["complex cystic structure"].length > 0
+  //               ? lesionsVal["complex cystic structure"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.complexcrstDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["hypertrophic tissue with microcysts"] &&
-                lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
-                  ? lesionsValLeft["hypertrophic tissue with microcysts"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.HypertrophicDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["heterogeneous tissue prominence"] &&
+  //             lesionsVal["heterogeneous tissue prominence"].length > 0
+  //               ? lesionsVal["heterogeneous tissue prominence"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.HeterogeneousDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["fibronodular density"] &&
-                lesionsValLeft["fibronodular density"].length > 0
-                  ? lesionsValLeft["fibronodular density"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.fibronodulardensityDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["hypertrophic tissue with microcysts"] &&
+  //             lesionsVal["hypertrophic tissue with microcysts"].length > 0
+  //               ? lesionsVal["hypertrophic tissue with microcysts"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.HypertrophicDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["multiple simple cysts"] &&
-                lesionsValLeft["multiple simple cysts"].length > 0
-                  ? lesionsValLeft["multiple simple cysts"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.multipleCystsDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["fibronodular density"] &&
+  //             lesionsVal["fibronodular density"].length > 0
+  //               ? lesionsVal["fibronodular density"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.fibronodulardensityDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["solid mass / nodule"] &&
-                lesionsValLeft["solid mass / nodule"].length > 0
-                  ? lesionsValLeft["solid mass / nodule"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.solidmassDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["multiple simple cysts"] &&
+  //             lesionsVal["multiple simple cysts"].length > 0
+  //               ? lesionsVal["multiple simple cysts"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.multipleCystsDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }${
-                lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
-                  ? lesionsValLeft["others"]
-                      .map((data, index) => {
-                        let dataArray: any[] = [];
-                        const raw = getReportAnswer(
-                          lesionsLeftQuestions.OtherDatar
-                        );
-                        dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["solid mass / nodule"] &&
+  //             lesionsVal["solid mass / nodule"].length > 0
+  //               ? lesionsVal["solid mass / nodule"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.solidmassDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                        return (
-                          data +
-                          (dataArray[index]?.ImageText
-                            ? dataArray[index].ImageText
-                            : "")
-                        );
-                      })
-                      .join("")
-                  : ""
-              }`
-            : ``
-        }
-      ${
-        lymphLeft
-          ? `<div><strong>Lymph Nodes: </strong>${LymphNodesLeft}${
-              LymphNodesLeftImage.length > 7
-                ? `<span>${LymphNodesLeftImage}<br/></span>`
-                : "<p><br/></p>"
-            }</div>`
-          : ``
-      }
-      ${
-        comparisonLeftVal
-          ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
-              .map((data, index) => {
-                let dataArray: any[] = [];
-                const raw = getReportAnswer(
-                  ComparisonPriorLeftQuestion.LesionCompTable
-                );
-                dataArray = raw ? JSON.parse(raw) : [];
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }${
+  //             lesionsVal["others"] && lesionsVal["others"].length > 0
+  //               ? lesionsVal["others"]
+  //                   .map((data, index) => {
+  //                     let dataArray: any[] = [];
+  //                     const raw = getReportAnswer(
+  //                       lesionsRightQuestions.OtherDatar
+  //                     );
+  //                     dataArray = raw ? JSON.parse(raw) : [];
 
-                return (
-                  data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
-                );
-              })
-              .join("<br/>")}</p>`
-          : ``
-      }
-        `
-          : ``
-      }
-    
-    
-      ${
-        getReportAnswer(132) === "Present"
-          ? `
-      <p><strong>RIGHT BREAST:</strong></p>
-      ${
-        mainImpressionRecommendation.impressionTextRight &&
-        getReportAnswer(81) === "true"
-          ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
-              mainImpressionRecommendation.selectedImpressionIdRight
-            )}</p>`
-          : ``
-      }
-      <strong>Impression:</strong>
-      ${
-        mainImpressionRecommendation.impressionTextRight
-          ? `<br/><p>${mainImpressionRecommendation.impressionTextRight}</p>`
-          : "<p></p>"
-      }
-      ${
-        optionalImpressionRecommendation.impressionTextRight.length > 7
-          ? ` <p> ${optionalImpressionRecommendation.impressionTextRight}</p>`
-          : ""
-      }
-    
-     ${
-       commonImpressRecomm.idRight === "A" ||
-       commonImpressRecomm.idRight === "E" ||
-       commonImpressRecomm.idRight === "I" ||
-       commonImpressRecomm.idRight === "L" ||
-       commonImpressRecomm.idRight === "M" ||
-       commonImpressRecomm.idRight === "Q" ||
-       commonImpressRecomm.idRight === "U" ||
-       commonImpressRecomm.idRight === "Y" ||
-       commonImpressRecomm.idRight === "2" ||
-       commonImpressRecomm.idRight === "3"
-         ? `<p>${commonImpressRecomm.textRight}</p>`
-         : ``
-     }
-    
-      <p><strong>Recommendation:</strong></p>
-    ${
-      mainImpressionRecommendation.recommendationTextRight
-        ? `<p>${mainImpressionRecommendation.recommendationTextRight}</p>`
-        : ""
-    }
-      ${
-        optionalImpressionRecommendation.recommendationTextRight.length > 7
-          ? `<p>${optionalImpressionRecommendation.recommendationTextRight}</p>`
-          : ""
-      }
-    
-       ${
-         commonImpressRecomm.idRight !== "A" &&
-         commonImpressRecomm.idRight !== "E" &&
-         commonImpressRecomm.idRight !== "I" &&
-         commonImpressRecomm.idRight !== "L" &&
-         commonImpressRecomm.idRight !== "M" &&
-         commonImpressRecomm.idRight !== "Q" &&
-         commonImpressRecomm.idRight !== "U" &&
-         commonImpressRecomm.idRight !== "Y" &&
-         commonImpressRecomm.idRight !== "2" &&
-         commonImpressRecomm.idRight !== "3"
-           ? `<p>${commonImpressRecomm.textRight}</p>`
-           : ``
-       }
-        `
-          : ``
-      }
-    
-      ${
-        getReportAnswer(133) === "Present"
-          ? `
-            <br/><p><strong>LEFT BREAST:</strong></p>
-            ${
-              mainImpressionRecommendation.impressionText &&
-              getReportAnswer(81) === "true"
-                ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
-                    mainImpressionRecommendation.selectedImpressionId
-                  )}</p>`
-                : ``
-            }
-      <strong>Impression:</strong>
-      ${
-        mainImpressionRecommendation.impressionText
-          ? `<br/><p>${mainImpressionRecommendation.impressionText}</p>`
-          : `<p></p>`
-      }
-      ${
-        optionalImpressionRecommendation.impressionText.length > 7
-          ? ` <p> ${optionalImpressionRecommendation.impressionText}</p>`
-          : ""
-      }
-    
-     ${
-       commonImpressRecomm.id === "A" ||
-       commonImpressRecomm.id === "E" ||
-       commonImpressRecomm.id === "I" ||
-       commonImpressRecomm.id === "L" ||
-       commonImpressRecomm.id === "M" ||
-       commonImpressRecomm.id === "Q" ||
-       commonImpressRecomm.id === "U" ||
-       commonImpressRecomm.id === "Y" ||
-       commonImpressRecomm.id === "2NA" ||
-       commonImpressRecomm.id === "3NA"
-         ? `<p>${commonImpressRecomm.text}</p>`
-         : ``
-     }
-      <p><strong>Recommendation:</strong></p>
-      ${
-        mainImpressionRecommendation.recommendationText
-          ? `<p>${mainImpressionRecommendation.recommendationText}</p>`
-          : ""
-      }
-     ${
-       optionalImpressionRecommendation.impressionText.length > 7
-         ? `<p>${optionalImpressionRecommendation.impressionText}</p>`
-         : ""
-     }
-      
-      ${
-        commonImpressRecomm.id !== "A" &&
-        commonImpressRecomm.id !== "E" &&
-        commonImpressRecomm.id !== "I" &&
-        commonImpressRecomm.id !== "L" &&
-        commonImpressRecomm.id !== "M" &&
-        commonImpressRecomm.id !== "Q" &&
-        commonImpressRecomm.id !== "U" &&
-        commonImpressRecomm.id !== "Y" &&
-        commonImpressRecomm.id !== "2NA" &&
-        commonImpressRecomm.id !== "3NA"
-          ? `<p>${commonImpressRecomm.text}</p>`
-          : ``
-      }
-        `
-          : ``
-      }
-      <br/>${reportFooter}` +
-        (signatureText.length > 0 ? "<br/>" + signatureText : "") +
-        (addendumText.length > 0
-          ? "<br/><p><strong>ADDENDUM:</strong></p>" + addendumText
-          : "");
+  //                     return (
+  //                       data +
+  //                       (dataArray[index]?.ImageText
+  //                         ? dataArray[index].ImageText
+  //                         : "")
+  //                     );
+  //                   })
+  //                   .join("")
+  //               : ""
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       lymphRight
+  //         ? `<div><strong>Lymph Nodes: </strong>${LymphNodesRight}${
+  //             LymphNodesRightImage.length > 7
+  //               ? `<span>${LymphNodesRightImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }<div>`
+  //         : ``
+  //     }
+  //     ${
+  //       comparisonRight
+  //         ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparison
+  //             .map((data, index) => {
+  //               let dataArray: any[] = [];
+  //               const raw = getReportAnswer(
+  //                 ComparisonPriorRightQuestion.LesionCompTable
+  //               );
+  //               dataArray = raw ? JSON.parse(raw) : [];
 
-      ReportNotes = quillWrapContent(ReportNotes);
-    } else {
-      if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
-        ReportNotes =
-          Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
-          (addendumText.length > 0
-            ? "<p><strong>ADDENDUM:</strong></p>" + addendumText
-            : "");
-      }
-    }
+  //               return (
+  //                 data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
+  //               );
+  //             })
+  //             .join("<br/>")}</p><br/>`
+  //         : ``
+  //     }
+  //       `
+  //         : ``
+  //     }
 
-    return ReportNotes;
-  };
+  //     ${
+  //       getReportAnswer(131) === "Present"
+  //         ? `
+  //       <p><strong>LEFT BREAST FINDINGS:</strong></p>
+
+  //     ${
+  //       breastDensityLeft
+  //         ? `<span>${breastDensityandImageLeft}</span>${
+  //             breastDensityandImageLeftImage.length > 7
+  //               ? `<span>${breastDensityandImageLeftImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       nippleAreolaLeft
+  //         ? `${nippleAreolaSkinLeft}${
+  //             nippleAreolaSkinLeftImage.length > 7
+  //               ? `<span>${nippleAreolaSkinLeftImage}<br/><span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //     ${
+  //       glandularLeft
+  //         ? `<p><strong>Glandular and ductal tissue: </strong></p>${grandularAndDuctalTissueLeft}${
+  //             grandularAndDuctalTissueLeftImage.length > 7
+  //               ? `<span>${grandularAndDuctalTissueLeftImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }`
+  //         : ``
+  //     }
+  //       ${
+  //         lessionsLeft
+  //           ? `${
+  //               lesionsValLeft["simple cyst"] &&
+  //               lesionsValLeft["simple cyst"].length > 0
+  //                 ? lesionsValLeft["simple cyst"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.simplecrstDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         "" +
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["complex cystic structure"] &&
+  //               lesionsValLeft["complex cystic structure"].length > 0
+  //                 ? lesionsValLeft["complex cystic structure"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.complexcrstDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["heterogeneous tissue prominence"] &&
+  //               lesionsValLeft["heterogeneous tissue prominence"].length > 0
+  //                 ? lesionsValLeft["heterogeneous tissue prominence"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.HeterogeneousDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["hypertrophic tissue with microcysts"] &&
+  //               lesionsValLeft["hypertrophic tissue with microcysts"].length > 0
+  //                 ? lesionsValLeft["hypertrophic tissue with microcysts"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.HypertrophicDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["fibronodular density"] &&
+  //               lesionsValLeft["fibronodular density"].length > 0
+  //                 ? lesionsValLeft["fibronodular density"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.fibronodulardensityDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["multiple simple cysts"] &&
+  //               lesionsValLeft["multiple simple cysts"].length > 0
+  //                 ? lesionsValLeft["multiple simple cysts"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.multipleCystsDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["solid mass / nodule"] &&
+  //               lesionsValLeft["solid mass / nodule"].length > 0
+  //                 ? lesionsValLeft["solid mass / nodule"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.solidmassDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }${
+  //               lesionsValLeft["others"] && lesionsValLeft["others"].length > 0
+  //                 ? lesionsValLeft["others"]
+  //                     .map((data, index) => {
+  //                       let dataArray: any[] = [];
+  //                       const raw = getReportAnswer(
+  //                         lesionsLeftQuestions.OtherDatar
+  //                       );
+  //                       dataArray = raw ? JSON.parse(raw) : [];
+
+  //                       return (
+  //                         data +
+  //                         (dataArray[index]?.ImageText
+  //                           ? dataArray[index].ImageText
+  //                           : "")
+  //                       );
+  //                     })
+  //                     .join("")
+  //                 : ""
+  //             }`
+  //           : ``
+  //       }
+  //     ${
+  //       lymphLeft
+  //         ? `<div><strong>Lymph Nodes: </strong>${LymphNodesLeft}${
+  //             LymphNodesLeftImage.length > 7
+  //               ? `<span>${LymphNodesLeftImage}<br/></span>`
+  //               : "<p><br/></p>"
+  //           }</div>`
+  //         : ``
+  //     }
+  //     ${
+  //       comparisonLeftVal
+  //         ? `<p><strong>Comparison to Prior Studies:</strong><br />${comparisonLeft
+  //             .map((data, index) => {
+  //               let dataArray: any[] = [];
+  //               const raw = getReportAnswer(
+  //                 ComparisonPriorLeftQuestion.LesionCompTable
+  //               );
+  //               dataArray = raw ? JSON.parse(raw) : [];
+
+  //               return (
+  //                 data + (dataArray[index]?.vol1 ? dataArray[index].vol1 : "")
+  //               );
+  //             })
+  //             .join("<br/>")}</p>`
+  //         : ``
+  //     }
+  //       `
+  //         : ``
+  //     }
+
+  //     ${
+  //       getReportAnswer(132) === "Present"
+  //         ? `
+  //     <p><strong>RIGHT BREAST:</strong></p>
+  //     ${
+  //       mainImpressionRecommendation.impressionTextRight &&
+  //       getReportAnswer(81) === "true"
+  //         ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+  //             mainImpressionRecommendation.selectedImpressionIdRight
+  //           )}</p>`
+  //         : ``
+  //     }
+  //     <strong>Impression:</strong>
+  //     ${
+  //       mainImpressionRecommendation.impressionTextRight
+  //         ? `<br/><p>${mainImpressionRecommendation.impressionTextRight}</p>`
+  //         : "<p></p>"
+  //     }
+  //     ${
+  //       optionalImpressionRecommendation.impressionTextRight.length > 7
+  //         ? ` <p> ${optionalImpressionRecommendation.impressionTextRight}</p>`
+  //         : ""
+  //     }
+
+  //    ${
+  //      commonImpressRecomm.idRight === "A" ||
+  //      commonImpressRecomm.idRight === "E" ||
+  //      commonImpressRecomm.idRight === "I" ||
+  //      commonImpressRecomm.idRight === "L" ||
+  //      commonImpressRecomm.idRight === "M" ||
+  //      commonImpressRecomm.idRight === "Q" ||
+  //      commonImpressRecomm.idRight === "U" ||
+  //      commonImpressRecomm.idRight === "Y" ||
+  //      commonImpressRecomm.idRight === "2" ||
+  //      commonImpressRecomm.idRight === "3"
+  //        ? `<p>${commonImpressRecomm.textRight}</p>`
+  //        : ``
+  //    }
+
+  //     <p><strong>Recommendation:</strong></p>
+  //   ${
+  //     mainImpressionRecommendation.recommendationTextRight
+  //       ? `<p>${mainImpressionRecommendation.recommendationTextRight}</p>`
+  //       : ""
+  //   }
+  //     ${
+  //       optionalImpressionRecommendation.recommendationTextRight.length > 7
+  //         ? `<p>${optionalImpressionRecommendation.recommendationTextRight}</p>`
+  //         : ""
+  //     }
+
+  //      ${
+  //        commonImpressRecomm.idRight !== "A" &&
+  //        commonImpressRecomm.idRight !== "E" &&
+  //        commonImpressRecomm.idRight !== "I" &&
+  //        commonImpressRecomm.idRight !== "L" &&
+  //        commonImpressRecomm.idRight !== "M" &&
+  //        commonImpressRecomm.idRight !== "Q" &&
+  //        commonImpressRecomm.idRight !== "U" &&
+  //        commonImpressRecomm.idRight !== "Y" &&
+  //        commonImpressRecomm.idRight !== "2" &&
+  //        commonImpressRecomm.idRight !== "3"
+  //          ? `<p>${commonImpressRecomm.textRight}</p>`
+  //          : ``
+  //      }
+  //       `
+  //         : ``
+  //     }
+
+  //     ${
+  //       getReportAnswer(133) === "Present"
+  //         ? `
+  //           <br/><p><strong>LEFT BREAST:</strong></p>
+  //           ${
+  //             mainImpressionRecommendation.impressionText &&
+  //             getReportAnswer(81) === "true"
+  //               ? `<p><strong>Assessment Category : </strong> ${FindAssessmentCategory(
+  //                   mainImpressionRecommendation.selectedImpressionId
+  //                 )}</p>`
+  //               : ``
+  //           }
+  //     <strong>Impression:</strong>
+  //     ${
+  //       mainImpressionRecommendation.impressionText
+  //         ? `<br/><p>${mainImpressionRecommendation.impressionText}</p>`
+  //         : `<p></p>`
+  //     }
+  //     ${
+  //       optionalImpressionRecommendation.impressionText.length > 7
+  //         ? ` <p> ${optionalImpressionRecommendation.impressionText}</p>`
+  //         : ""
+  //     }
+
+  //    ${
+  //      commonImpressRecomm.id === "A" ||
+  //      commonImpressRecomm.id === "E" ||
+  //      commonImpressRecomm.id === "I" ||
+  //      commonImpressRecomm.id === "L" ||
+  //      commonImpressRecomm.id === "M" ||
+  //      commonImpressRecomm.id === "Q" ||
+  //      commonImpressRecomm.id === "U" ||
+  //      commonImpressRecomm.id === "Y" ||
+  //      commonImpressRecomm.id === "2NA" ||
+  //      commonImpressRecomm.id === "3NA"
+  //        ? `<p>${commonImpressRecomm.text}</p>`
+  //        : ``
+  //    }
+  //     <p><strong>Recommendation:</strong></p>
+  //     ${
+  //       mainImpressionRecommendation.recommendationText
+  //         ? `<p>${mainImpressionRecommendation.recommendationText}</p>`
+  //         : ""
+  //     }
+  //    ${
+  //      optionalImpressionRecommendation.impressionText.length > 7
+  //        ? `<p>${optionalImpressionRecommendation.impressionText}</p>`
+  //        : ""
+  //    }
+
+  //     ${
+  //       commonImpressRecomm.id !== "A" &&
+  //       commonImpressRecomm.id !== "E" &&
+  //       commonImpressRecomm.id !== "I" &&
+  //       commonImpressRecomm.id !== "L" &&
+  //       commonImpressRecomm.id !== "M" &&
+  //       commonImpressRecomm.id !== "Q" &&
+  //       commonImpressRecomm.id !== "U" &&
+  //       commonImpressRecomm.id !== "Y" &&
+  //       commonImpressRecomm.id !== "2NA" &&
+  //       commonImpressRecomm.id !== "3NA"
+  //         ? `<p>${commonImpressRecomm.text}</p>`
+  //         : ``
+  //     }
+  //       `
+  //         : ``
+  //     }
+  //     <br/>${reportFooter}` +
+  //       (signatureText.length > 0 ? "<br/>" + signatureText : "") +
+  //       (addendumText.length > 0
+  //         ? "<br/><p><strong>ADDENDUM:</strong></p>" + addendumText
+  //         : "");
+
+  //     ReportNotes = quillWrapContent(ReportNotes);
+  //   } else {
+  //     if (Notes.split("<p><strong>ADDENDUM:</strong></p>")[0]) {
+  //       ReportNotes =
+  //         Notes.split("<p><strong>ADDENDUM:</strong></p>")[0] +
+  //         (addendumText.length > 0
+  //           ? "<p><strong>ADDENDUM:</strong></p>" + addendumText
+  //           : "");
+  //     }
+  //   }
+
+  //   return ReportNotes;
+  // };
 
   const handleReportSubmit = async (
     movedStatus: string,
@@ -3101,7 +3101,22 @@ const Report: React.FC = () => {
     setLoading(true);
     try {
       await fecthautosave();
-      let notesVal = handleSyncNotesReport();
+
+      let notesVal = Notes;
+
+      // if (syncStatus.Notes) {
+      //   setsyncStatus((prev) => ({
+      //     ...prev,
+      //     Notes: false,
+      //   }));
+
+      //   notesVal = Notes;
+
+      //   setsyncStatus((prev) => ({
+      //     ...prev,
+      //     Notes: true,
+      //   }));
+      // }
 
       const payload = {
         reportIntakeForm: reportFormData,
@@ -5468,7 +5483,7 @@ const Report: React.FC = () => {
               ) : subTab === 4 ? (
                 <>
                   <NotesReport
-                  reportFooter={reportFooter}
+                    reportFooter={reportFooter}
                     requestVersionRef={requestVersionRef}
                     signatureText={signatureText}
                     performingProviderName={performingProviderName}
