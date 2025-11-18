@@ -46,6 +46,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
     soreDuration: getAnswer(31),
     soreDurationRight: getAnswer(44),
     soreComments: getAnswer(55),
+    side: getAnswer(58),
   };
 
   if (
@@ -135,7 +136,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
     reportText.push(content);
   }
 
-   if (
+  if (
     breastSymptoms.sore === "true" &&
     (breastSymptoms.soreRight.length > 0 ||
       breastSymptoms.soreLeft.length > 0 ||
@@ -172,6 +173,18 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
         ? `${breastSymptoms.soreComments}`
         : ``
     }.</li></ol>`;
+    reportText.push(content);
+  }
+
+  if (breastSymptoms.side.length > 0) {
+    const content = `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Side: ${
+      breastSymptoms.side === "unilateralright"
+        ? `Unilateral Right`
+        : breastSymptoms.side === "unilateralleft"
+        ? `Unilateral Left`
+        : breastSymptoms.side === "bilateral" && `Bilateral`
+    }.</li></ol>`;
+
     reportText.push(content);
   }
 
