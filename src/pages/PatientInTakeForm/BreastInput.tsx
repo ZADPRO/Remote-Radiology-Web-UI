@@ -341,7 +341,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     type="text"
                     required={
                       getAnswerByQuestionId(Props.SDateRight) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) == "" &&
+                      // getAnswerByQuestionId(Props.OtherInputQId) == "" &&
                       getAnswerByQuestionId(Props.RQID) != ""
                     }
                     disabled={getAnswerByQuestionId(Props.RQID) == ""}
@@ -365,8 +365,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                           ]}
                           placeholder="Select Size"
                           required={
-                            getAnswerByQuestionId(Props.SizeRight) === "" &&
-                            getAnswerByQuestionId(Props.OtherInputQId) == ""
+                            getAnswerByQuestionId(Props.SizeRight) === ""
+                            // getAnswerByQuestionId(Props.OtherInputQId) == ""
                           }
                           disabled={getAnswerByQuestionId(Props.RQID) == ""}
                         />
@@ -399,8 +399,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                             required={
                               getAnswerByQuestionId(
                                 Props.skinChangesTypeRight
-                              ) === "" &&
-                              getAnswerByQuestionId(Props.OtherInputQId) == ""
+                              ) === ""
+                              // getAnswerByQuestionId(Props.OtherInputQId) == ""
                             }
                             disabled={getAnswerByQuestionId(Props.RQID) == ""}
                           />
@@ -467,7 +467,7 @@ const BreastInput: React.FC<Props> = (Props) => {
                     type="text"
                     required={
                       getAnswerByQuestionId(Props.SDate) === "" &&
-                      getAnswerByQuestionId(Props.OtherInputQId) == "" &&
+                      // getAnswerByQuestionId(Props.OtherInputQId) == "" &&
                       getAnswerByQuestionId(Props.LQID) != ""
                     }
                     disabled={getAnswerByQuestionId(Props.LQID) == ""}
@@ -491,8 +491,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                           ]}
                           placeholder="Select Size"
                           required={
-                            getAnswerByQuestionId(Props.Size) === "" &&
-                            getAnswerByQuestionId(Props.OtherInputQId) == ""
+                            getAnswerByQuestionId(Props.Size) === ""
+                            // getAnswerByQuestionId(Props.OtherInputQId) == ""
                           }
                           disabled={getAnswerByQuestionId(Props.LQID) == ""}
                         />
@@ -524,8 +524,8 @@ const BreastInput: React.FC<Props> = (Props) => {
                             placeholder="Select Skin Changes"
                             required={
                               getAnswerByQuestionId(Props.skinChangesType) ===
-                                "" &&
-                              getAnswerByQuestionId(Props.OtherInputQId) == ""
+                                ""
+                              // getAnswerByQuestionId(Props.OtherInputQId) == ""
                             }
                             disabled={getAnswerByQuestionId(Props.LQID) == ""}
                           />

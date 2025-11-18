@@ -1045,7 +1045,7 @@ const PatientQueue: React.FC = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex w-full px-1 items-center justify-center">
-                  <Label className="max-w-15 2xl:max-w-30 truncate">
+                  <Label className="max-w-23 2xl:max-w-30 truncate">
                     {row.original.refUserCustId}
                   </Label>
                 </div>
@@ -1063,7 +1063,7 @@ const PatientQueue: React.FC = () => {
         accessorKey: "refUserFirstName",
         id: "refUserFirstName",
         header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
+          <div className="flex items-center justify-center ">
             {/* ---- Sort Trigger ---- */}
             <span
               className="cursor-pointer font-semibold"
@@ -1083,7 +1083,7 @@ const PatientQueue: React.FC = () => {
                 );
               }}
             >
-              <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div className="flex gap-x-1 gap-y-0 p-1 justify-center items-center flex-wrap">
                 <div>Name</div>
               </div>
             </span>
@@ -1140,7 +1140,7 @@ const PatientQueue: React.FC = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex w-full px-1 items-center justify-center">
-                  <Label className="max-w-15 2xl:max-w-30 truncate">
+                  <Label className="max-w-10 2xl:max-w-30 truncate">
                     {row.original.refUserFirstName}
                   </Label>
                 </div>
@@ -1782,20 +1782,133 @@ const PatientQueue: React.FC = () => {
           return value === "filled" ? filled : !filled;
         },
       },
-
       {
+        accessorKey: "refAppointmentDicomSide",
         id: "dicom",
-        header: () => (
-          <div className="flex flex-col items-center w-full">
-            <div className="font-medium text-center border-b border-gray-500 w-full">
-              DICOM
+        filterFn: (row, columnId, filterValues) => {
+          if (!filterValues?.length) return true;
+
+          const value = row.getValue(columnId); // "unilateralright" / "unilateralleft" / "bilateral"
+          return filterValues.includes(value);
+        },
+        header: ({ column }) => {
+          const dicomSideOptions = [
+            { label: "Unilateral Right", value: "unilateralright" },
+            { label: "Unilateral Left", value: "unilateralleft" },
+            { label: "Bilateral", value: "bilateral" },
+          ];
+
+          return (
+            <div className="flex flex-col items-center w-full">
+              {/* ---- Sortable Header ---- */}
+              <div
+                className="font-medium text-center border-b border-gray-500 w-full cursor-pointer select-none flex items-center justify-center gap-1"
+                onClick={() => {
+                  const nextSort =
+                    column.getIsSorted() === "asc" ? "desc" : "asc";
+                  column.toggleSorting(column.getIsSorted() === "asc");
+
+                  // Save to localStorage
+                  localStorage.setItem(
+                    "dicomSort",
+                    JSON.stringify({
+                      id: "dicom",
+                      desc: nextSort === "desc",
+                    })
+                  );
+                }}
+              >
+                <span>DICOM</span>
+
+                {/* Filter Icon */}
+                {column.getCanFilter() && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="!p-0 hover:bg-transparent hover:text-gray-200"
+                        onClick={(e) => e.stopPropagation()} // ⛔ prevent sorting when clicking filter
+                      >
+                        <Filter width={10} height={10} />
+                      </Button>
+                    </PopoverTrigger>
+
+                    <PopoverContent className="w-64 p-2">
+                      <Command>
+                        <CommandGroup className="max-h-60 overflow-auto">
+                          {/* ✅ STATIC FILTER OPTIONS */}
+                          {dicomSideOptions.map((opt) => {
+                            const current =
+                              (column.getFilterValue() as string[]) ?? [];
+                            const isSelected = current.includes(opt.value);
+
+                            return (
+                              <CommandItem
+                                key={opt.value}
+                                className="flex items-center gap-2 cursor-pointer"
+                                onSelect={() => {
+                                  const current =
+                                    (column.getFilterValue() as string[]) ?? [];
+                                  const isSelected = current.includes(
+                                    opt.value
+                                  );
+
+                                  // update array
+                                  const updated = isSelected
+                                    ? current.filter((v) => v !== opt.value)
+                                    : [...current, opt.value];
+
+                                  // update table filter
+                                  column.setFilterValue(
+                                    updated.length ? updated : undefined
+                                  );
+
+                                  // update localStorage
+                                  if (updated.length) {
+                                    localStorage.setItem(
+                                      "selectedDicomSide",
+                                      JSON.stringify(updated)
+                                    );
+                                  } else {
+                                    localStorage.removeItem(
+                                      "selectedDicomSide"
+                                    );
+                                  }
+                                }}
+                              >
+                                <Checkbox2
+                                  checked={isSelected}
+                                  onCheckedChange={() => {}}
+                                />
+                                <span>{opt.label}</span>
+                              </CommandItem>
+                            );
+                          })}
+                        </CommandGroup>
+                      </Command>
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          column.setFilterValue(undefined);
+                          localStorage.removeItem("selectedDicomSide");
+                        }}
+                        className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        <span>Clear</span>
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+              <div className="flex items-center justify-center text-xs font-medium w-full">
+                <span className="px-4 border-r border-gray-500">R</span>
+                <span className="px-4">L</span>
+              </div>
             </div>
-            <div className="flex items-center justify-center text-xs font-medium w-full">
-              <span className="px-4 border-r border-gray-500">R</span>
-              <span className="px-4">L</span>
-            </div>
-          </div>
-        ),
+          );
+        },
         cell: ({ row }) => {
           const dicomFiles = row.original.dicomFiles as DicomFiles[];
           const appointmentId = row.original.refAppointmentId;
@@ -2367,76 +2480,127 @@ const PatientQueue: React.FC = () => {
       {
         id: "reportStatus",
         accessorFn: (row) => row.reportStatus ?? "-",
-        header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
-            {/* 🔹 Sort header */}
-            <div
-              onClick={() => {
-                column.toggleSorting(column.getIsSorted() === "asc");
+        header: ({ column }) => {
+          type FilterValue = "urgent" | "upload" | "ready";
 
-                // ✅ Save sorting to localStorage
-                const sortOrder =
-                  column.getIsSorted() === "asc" ? "desc" : "asc";
-                localStorage.setItem("reportStatus_sortOrder", sortOrder);
-              }}
-              className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer"
-            >
-              <div>Report</div>
+          const filterOptions: { label: string; value: FilterValue }[] = [
+            { label: "Urgent", value: "urgent" },
+            { label: "Upload Dicom", value: "upload" },
+            { label: "Dicom Ready", value: "ready" },
+          ];
+
+          const selectedValues =
+            (column.getFilterValue() as FilterValue[]) || [];
+
+          const toggleFilter = (value: FilterValue) => {
+            let updated: FilterValue[];
+
+            if (selectedValues.includes(value)) {
+              updated = selectedValues.filter((v) => v !== value);
+            } else {
+              updated = [...selectedValues, value];
+            }
+
+            column.setFilterValue(updated);
+
+            localStorage.setItem(
+              "reportStatus_filters",
+              JSON.stringify(updated)
+            );
+          };
+
+          return (
+            <div className="flex items-center justify-center gap-1">
+              {/* Sorting */}
+              <span
+                className="cursor-pointer p-1 font-medium"
+                onClick={() => {
+                  const next = column.getIsSorted() === "asc" ? "desc" : "asc";
+
+                  column.toggleSorting(column.getIsSorted() === "asc");
+                  localStorage.setItem("reportStatus_sortOrder", next);
+                }}
+              >
+                Report
+              </span>
+
+              {/* Filter Dropdown */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="!p-0">
+                    <Filter />
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-44 p-2">
+                  {filterOptions.map((opt) => {
+                    const selected = selectedValues.includes(opt.value);
+
+                    return (
+                      <div
+                        key={opt.value}
+                        className="flex items-center gap-2 cursor-pointer py-1"
+                        onClick={() => toggleFilter(opt.value)}
+                      >
+                        <Checkbox2 checked={selected} />
+                        <span>{opt.label}</span>
+                      </div>
+                    );
+                  })}
+
+                  <Button
+                    variant="ghost"
+                    className="mt-2 text-red-500 flex gap-1"
+                    onClick={() => {
+                      column.setFilterValue([]);
+                      localStorage.removeItem("reportStatus_filters");
+                    }}
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Clear All
+                  </Button>
+                </PopoverContent>
+              </Popover>
             </div>
+          );
+        },
+        filterFn: (
+          row,
+          _columnId,
+          filterValues: ("urgent" | "upload" | "ready")[]
+        ) => {
+          if (!filterValues?.length) return true;
 
-            {/* 🔹 Filter dropdown */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="hover:bg-transparent hover:text-gray-200 !p-0"
-                >
-                  <Filter />
-                </Button>
-              </PopoverTrigger>
+          const isUrgent = row.original.reportStatus === "Urgent";
+          const dicomCount = row.original.dicomFiles?.length ?? 0;
 
-              <PopoverContent className="w-40 p-2">
-                {["Filled", "Not Filled"].map((option) => {
-                  const value = option === "Filled" ? "filled" : "notFilled";
-                  const isSelected = column.getFilterValue() === value;
+          const matchMap: Record<string, boolean> = {
+            urgent: isUrgent,
+            upload: dicomCount === 0 && !isUrgent,
+            ready: dicomCount > 0 && !isUrgent,
+          };
 
-                  return (
-                    <div
-                      key={value}
-                      className="flex items-center gap-2 cursor-pointer py-1"
-                      onClick={() => {
-                        const newValue = isSelected ? undefined : value;
-                        column.setFilterValue(newValue);
+          return filterValues.some((v) => matchMap[v]);
+        },
 
-                        // ✅ Save filter to localStorage
-                        localStorage.setItem(
-                          "reportStatus_filter",
-                          JSON.stringify(newValue ?? "")
-                        );
-                      }}
-                    >
-                      <Checkbox2 checked={isSelected} />
-                      <span>{option}</span>
-                    </div>
-                  );
-                })}
+        enableColumnFilter: true,
+        enableSorting: true,
 
-                {/* 🔹 Clear filter button */}
-                <Button
-                  variant="ghost"
-                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
-                  onClick={() => {
-                    column.setFilterValue(undefined);
-                    localStorage.removeItem("reportStatus_filter");
-                  }}
-                >
-                  <XCircle className="h-4 w-4" />
-                  <span>Clear</span>
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
-        ),
+        /* -----------------------------------
+        📌 SORT FUNCTION (CUSTOM)
+  ------------------------------------*/
+        sortingFn: (rowA, rowB) => {
+          const getValue = (row: any) => {
+            const urgent = row.original.reportStatus === "Urgent";
+            const dicomCount = row.original.dicomFiles?.length ?? 0;
+
+            if (urgent) return 3; // highest priority
+            if (dicomCount === 0) return 1; // Upload Dicom
+            return 2; // Dicom Ready
+          };
+
+          return getValue(rowA) - getValue(rowB);
+        },
         cell: ({ row }) => {
           const [dialogOpen, setDialogOpen] = useState(false);
           const [selectedRow, setSelectedRow] = useState<any>(null);
@@ -2525,7 +2689,11 @@ const PatientQueue: React.FC = () => {
           return (
             <div
               className={`text-center ${
-                row.original.reportStatus === "Urgent" ? "text-[red]" : ""
+                row.original.reportStatus === "Urgent"
+                  ? "text-[red]"
+                  : row.original.dicomFiles.length === 0
+                  ? "text-[#999999]"
+                  : ""
               } w-full`}
             >
               {/* !row.original.dicomFiles ||
@@ -2656,12 +2824,6 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
-        filterFn: (row, _columnId, value) => {
-          const tempStatus = getFormStatus(row.original.refAppointmentComplete);
-          const filled = tempStatus?.technicianForm === true;
-          return value === "filled" ? filled : !filled;
-        },
-        enableColumnFilter: true,
       },
 
       {
@@ -3917,6 +4079,56 @@ const PatientQueue: React.FC = () => {
         }
       } catch {}
     }
+
+    // Restore Filter
+    const savedDicomFilter = localStorage.getItem("selectedDicomSide");
+    if (savedDicomFilter) {
+      try {
+        const parsed = JSON.parse(savedDicomFilter);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          table.getColumn("dicom")?.setFilterValue(parsed);
+        }
+      } catch (err) {
+        console.error("Error restoring DICOM filter:", err);
+      }
+    }
+
+    // Restore Sorting
+    const savedDicomSort = localStorage.getItem("dicomSort");
+    if (savedDicomSort) {
+      try {
+        const parsed = JSON.parse(savedDicomSort);
+        if (parsed?.id && typeof parsed.desc === "boolean") {
+          table.setSorting([{ id: parsed.id, desc: parsed.desc }]);
+        }
+      } catch (err) {
+        console.error("Error restoring DICOM sort:", err);
+      }
+    }
+
+    // Restore Filter
+    const savedReportStatusFilters = localStorage.getItem(
+      "reportStatus_filters"
+    );
+    const savedReportOnlyStatusSort = localStorage.getItem(
+      "reportStatus_sortOrder"
+    );
+
+    if (savedReportStatusFilters) {
+      try {
+        const parsed = JSON.parse(savedReportStatusFilters) as any[];
+        table.getColumn("reportStatus")?.setFilterValue(parsed);
+      } catch {
+        console.error("Invalid filter values in localStorage");
+      }
+    }
+
+    // Restore Sorting
+    if (savedReportOnlyStatusSort === "asc") {
+      table.getColumn("reportStatus")?.toggleSorting(false); // ASC
+    } else if (savedReportOnlyStatusSort === "desc") {
+      table.getColumn("reportStatus")?.toggleSorting(true); // DESC
+    }
   }, [table]);
 
   const pageCount = table.getPageCount();
@@ -3968,6 +4180,10 @@ const PatientQueue: React.FC = () => {
     localStorage.removeItem("dicom_sort");
     localStorage.removeItem("consentFilter");
     localStorage.removeItem("consentSortOrder");
+    localStorage.removeItem("selectedDicomSide");
+    localStorage.removeItem("dicomSort");
+    localStorage.removeItem("reportStatus_filters");
+    localStorage.removeItem("reportStatus_sortOrder");
     setSelectedRowIds([]);
   };
 
