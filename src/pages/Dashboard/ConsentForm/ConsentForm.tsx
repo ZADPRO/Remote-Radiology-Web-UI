@@ -111,82 +111,90 @@ const ConsentForm: React.FC<Props> = ({
         {/* Spacer to balance logo width */}
         <div className="hidden lg:inline h-12 w-24 sm:h-14 sm:w-28 flex-shrink-0" />
       </DialogHeader>
-
-      <div className="w-11/12 mx-auto">
-        {(role?.type === "manager" || role?.type == "admin") && !viewStatus ? (
-          <WGConsentForm
-            patientConsent={patientConsent}
-            setPatientConsent={setPatientConsent}
-            onSubmit={updateConsent}
-          />
-        ) : role?.type === "scadmin" && !viewStatus ? (
-          <SCConsentForm
-            defaultCheck={defaultCheck}
-            setDefaultCheck={setDefaultCheck}
-            patientConsent={patientConsent}
-            scPatientConsent={scPatientConsent}
-            setScPatientConsent={setScPatientConsent}
-            onSubmit={updateConsent}
-          />
-        ) : (
-          <div className="flex flex-col gap-2 w-full">
-            <div
-              className="ql-editor border-2 border-gray-300 rounded-2xl shadow-2xl p-10"
-              dangerouslySetInnerHTML={{
-                __html: defaultCheck
-                  ? isRoleChecked
-                    ? patientConsent + signatureRow
-                    : patientConsent
-                  : isRoleChecked
-                  ? scPatientConsent + signatureRow
-                  : scPatientConsent,
-              }}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit?.(
+            defaultCheck
+              ? isRoleChecked
+                ? patientConsent + signatureRow
+                : patientConsent
+              : isRoleChecked
+              ? scPatientConsent + signatureRow
+              : scPatientConsent
+          );
+        }}
+      >
+        <div className="w-11/12 mx-auto">
+          {(role?.type === "manager" || role?.type == "admin") &&
+          !viewStatus ? (
+            <WGConsentForm
+              patientConsent={patientConsent}
+              setPatientConsent={setPatientConsent}
+              onSubmit={updateConsent}
             />
-            {onSubmit && (
-              <>
-                {role?.id === 4 && (
-                  <div className="flex items-center space-x-2 mt-4">
-                    <Checkbox2
-                      className="bg-white"
-                      checked={isRoleChecked}
-                      id="role-consent"
-                      onCheckedChange={(val) => setRoleChecked(!!val)}
-                      required
-                    />
-                    <Label
-                      htmlFor="role-consent"
-                      className="text-sm cursor-pointer"
-                    >
-                      By checking this box, I acknowledge that I have read and
-                      agree to the consent for receiving my medical imaging
-                      results via this platform.
-                    </Label>
-                  </div>
-                )}
+          ) : role?.type === "scadmin" && !viewStatus ? (
+            <SCConsentForm
+              defaultCheck={defaultCheck}
+              setDefaultCheck={setDefaultCheck}
+              patientConsent={patientConsent}
+              scPatientConsent={scPatientConsent}
+              setScPatientConsent={setScPatientConsent}
+              onSubmit={updateConsent}
+            />
+          ) : (
+            <div className="flex flex-col gap-2 w-full">
+              <div
+                className="ql-editor border-2 border-gray-300 rounded-2xl shadow-2xl p-10"
+                dangerouslySetInnerHTML={{
+                  __html: defaultCheck
+                    ? isRoleChecked
+                      ? patientConsent + signatureRow
+                      : patientConsent
+                    : isRoleChecked
+                    ? scPatientConsent + signatureRow
+                    : scPatientConsent,
+                }}
+              />
+              {onSubmit && (
+                <>
+                  {role?.id === 4 && (
+                    <div className="flex items-center space-x-2 mt-4">
+                      <Checkbox2
+                        className="bg-white"
+                        checked={isRoleChecked}
+                        id="role-consent"
+                        onCheckedChange={(val) => setRoleChecked(!!val)}
+                        required
+                      />
+                      <Label
+                        htmlFor="role-consent"
+                        className="text-sm cursor-pointer"
+                      >
+                        By checking this box, I acknowledge that I have read and
+                        agree to the consent for receiving my medical imaging
+                        results via this platform.
+                      </Label>
+                    </div>
+                  )}
 
-                <Button
-                  variant="greenTheme"
-                  className="self-end"
-                  disabled={!viewStatus && !isRoleChecked}
-                  onClick={() =>
-                    onSubmit?.(
-                      defaultCheck
-                        ? isRoleChecked
-                          ? patientConsent + signatureRow
-                          : patientConsent
-                        : isRoleChecked
-                        ? scPatientConsent + signatureRow
-                        : scPatientConsent
-                    )
-                  }
-                >
-                  Submit
-                </Button>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+                  <Button
+                    variant="greenTheme"
+                    type="submit"
+                    className="self-end"
+                    disabled={!viewStatus && !isRoleChecked}
+                    // onClick={() =>
+
+                    // }
+                  >
+                    Submit
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </form>
     </DialogContent>
   );
 };
