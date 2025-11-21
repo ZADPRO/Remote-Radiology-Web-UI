@@ -37,7 +37,7 @@ const SendMailDialog: React.FC<Props> = ({
   handleRefreshData,
   patientPrivatePublicStatus,
 }) => {
-  const [mailOption, setMailOption] = useState(patientPrivatePublicStatus !== "private" ? "both" : "");
+  const [mailOption, setMailOption] = useState("");
 
   const { role } = useAuth();
 

@@ -1906,7 +1906,8 @@ const Report: React.FC = () => {
       responsePatientInTake.length > 0 && technicianForm.length > 0
     );
 
-    setMailOption(patientpublicprivate === "private" ? "none" : "both");
+    setMailOption("none");
+    // setMailOption(patientpublicprivate === "private" ? "none" : "both");
     if (responsePatientInTake.length > 0 && technicianForm.length > 0) {
       AutoPopulateReport(
         getPatientAnswer,

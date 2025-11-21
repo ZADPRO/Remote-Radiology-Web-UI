@@ -464,8 +464,8 @@ const ComparisonPriorRight: React.FC<Props> = ({
                                         e.target.value
                                       )
                                     }
-                                    className="w-20 h-8 text-sm text-center"
-                                    type="number"
+                                    className="w-30 h-8 text-sm text-center"
+                                    type={row.key === "size" ? "text" : "number"}
                                   />
                                 </td>
                                 <td className="px-4 py-2 border">
@@ -482,8 +482,8 @@ const ComparisonPriorRight: React.FC<Props> = ({
                                         e.target.value
                                       )
                                     }
-                                    className="w-20 h-8 text-sm text-center"
-                                    type="number"
+                                    className="w-30 h-8 text-sm text-center"
+                                    type={row.key === "size" ? "text" : "number"}
                                   />
                                 </td>
                               </>

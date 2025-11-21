@@ -1196,7 +1196,7 @@ const PatientQueue: React.FC = () => {
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="!p-0 hover:bg-transparent hover:text-gray-500"
+                  className="!p-0 hover:bg-transparent hover:text-gray-200"
                 >
                   <Filter size={16} />
                 </Button>
@@ -1213,7 +1213,7 @@ const PatientQueue: React.FC = () => {
                       return (
                         <CommandItem
                           key={option}
-                          className="flex items-center gap-2 cursor-pointer"
+                          className={`flex items-center gap-2 cursor-pointer`}
                           onSelect={() => {
                             const updated = checked
                               ? current.filter((v) => v !== option)
@@ -1236,7 +1236,13 @@ const PatientQueue: React.FC = () => {
                           }}
                         >
                           <Checkbox2 checked={checked} />
-                          <span>{option}</span>
+                          <span
+                            className={`font-bold text-[${
+                              option === "Signed" ? "#999999" : ""
+                            }]`}
+                          >
+                            {option}
+                          </span>
                         </CommandItem>
                       );
                     })}
@@ -1706,7 +1712,7 @@ const PatientQueue: React.FC = () => {
               <span>
                 <button
                   className={`hover:underline cursor-pointer font-bold ${
-                    row.original.patientPrivatePublicStatus !== "private"
+                    row.original.patientPrivatePublicStatus === "public"
                       ? `text-[#3c78d8]`
                       : ``
                   }`}
@@ -2038,7 +2044,10 @@ const PatientQueue: React.FC = () => {
             {/* ---- Filter ---- */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" className="!p-0 hover:bg-transparent">
+                <Button
+                  variant="ghost"
+                  className="!p-0 hover:bg-transparent hover:text-gray-200"
+                >
                   <Filter />
                 </Button>
               </PopoverTrigger>
@@ -2527,7 +2536,10 @@ const PatientQueue: React.FC = () => {
               {/* Filter Dropdown */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className="!p-0">
+                  <Button
+                    variant="ghost"
+                    className="!p-0 hover:bg-transparent hover:text-gray-200"
+                  >
                     <Filter />
                   </Button>
                 </PopoverTrigger>
@@ -2543,7 +2555,17 @@ const PatientQueue: React.FC = () => {
                         onClick={() => toggleFilter(opt.value)}
                       >
                         <Checkbox2 checked={selected} />
-                        <span>{opt.label}</span>
+                        <span
+                          className={`font-bold text-[${
+                            opt.value === "upload"
+                              ? "#999999"
+                              : opt.value === "urgent"
+                              ? "red"
+                              : ""
+                          }]`}
+                        >
+                          {opt.label}
+                        </span>
                       </div>
                     );
                   })}
@@ -2691,7 +2713,7 @@ const PatientQueue: React.FC = () => {
               className={`text-center ${
                 row.original.reportStatus === "Urgent"
                   ? "text-[red]"
-                  : row.original.dicomFiles.length === 0
+                  : row.original.dicomFiles && row.original.dicomFiles.length === 0
                   ? "text-[#999999]"
                   : ""
               } w-full`}
@@ -3207,7 +3229,10 @@ const PatientQueue: React.FC = () => {
             {/* ---- Filter ---- */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" className="!p-0 hover:bg-transparent">
+                <Button
+                  variant="ghost"
+                  className="!p-0 hover:bg-transparent hover:text-gray-200"
+                >
                   <Filter />
                 </Button>
               </PopoverTrigger>
@@ -3372,7 +3397,7 @@ const PatientQueue: React.FC = () => {
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="hover:bg-transparent text-muted-foreground !p-0"
+                  className="!p-0 hover:bg-transparent hover:text-gray-200"
                 >
                   <Filter className="h-4 w-4" />
                 </Button>
