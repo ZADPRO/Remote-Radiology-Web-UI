@@ -39,6 +39,7 @@ import { ChevronDown, User } from "lucide-react";
 import { ArtifactsPie } from "./ArtifactsPieChart";
 import OverAllAnalyticsTable from "./UsersOverAllAnalyticsTable";
 import ScanCenterOverAllAnalyticsTable from "./ScanCenterOverAllAnalaytics";
+import LoadingOverlay from "@/components/ui/CustomComponents/loadingOverlay";
 
 const Analytics: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -54,6 +55,8 @@ const Analytics: React.FC = () => {
       setDateRange(range);
     }
   };
+
+  const [loading, setLoding] = useState(false);
 
   const { user, role } = useAuth();
 
@@ -239,6 +242,8 @@ const Analytics: React.FC = () => {
         return;
       }
 
+      setLoding(true);
+
       const res = await analyticsService.overallScanCenter(
         scId,
         format(dateRange.from, "yyyy-MM-dd"),
@@ -289,6 +294,8 @@ const Analytics: React.FC = () => {
         setTechArtifacts(res.TechArtificate || []);
         setReportArtifacts(res.ReportArtificate || []);
       }
+
+      setLoding(false);
     } catch (error) {
       console.log(error);
     }
@@ -305,6 +312,7 @@ const Analytics: React.FC = () => {
       dateRange.to === undefined
     )
       return;
+      setLoding(true);
     try {
       const res = await analyticsService.analyticsPerUser(
         userId,
@@ -374,6 +382,7 @@ const Analytics: React.FC = () => {
     } catch (error) {
       console.log(error);
     }
+    setLoding(false);
   };
 
   useEffect(() => {
@@ -441,6 +450,7 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="w-11/12 mx-auto flex flex-col justify-center gap-4 my-5 mt-10 relative">
+      {loading && <LoadingOverlay/>}
       <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-between">
         <div className="flex flex-wrap gap-4 self-start relative">
           {/* Scan Center Select */}

@@ -207,7 +207,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftBiopsy",
+      accessorKey: "leftbiopsy",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Biopsy
@@ -216,7 +216,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftBreastradiologist",
+      accessorKey: "leftbreastradiologist",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Breast Radiologist
@@ -225,7 +225,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftClinicalCorrelation",
+      accessorKey: "leftclinicalcorrelation",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Clinical Correlation
@@ -234,7 +234,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftOncoConsult",
+      accessorKey: "leftoncoconsult",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Onco Consult
@@ -243,7 +243,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftRedo",
+      accessorKey: "leftredo",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Redo
@@ -270,7 +270,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightBiopsy",
+      accessorKey: "rightbiopsy",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Biopsy
@@ -279,7 +279,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightBreastradiologist",
+      accessorKey: "rightbreastradiologist",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Breast Radiologist
@@ -288,7 +288,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightClinicalCorrelation",
+      accessorKey: "rightclinicalcorrelation",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Clinical Correlation
@@ -297,7 +297,7 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightOncoConsult",
+      accessorKey: "rightoncoconsult",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Onco Consult
@@ -306,140 +306,14 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightRedo",
+      accessorKey: "rightredo",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Redo
         </div>
       ),
       cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftannualscreening",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Annual Screening
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftusgsfu",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left USG/SFU
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftBiopsy",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Biopsy
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftBreastradiologist",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Breast Radiologist
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftClinicalCorrelation",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Clinical Correlation
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftOncoConsult",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Onco Consult
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "leftRedo",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Left Redo
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightannualscreening",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Annual Screening
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightusgsfu",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right USG/SFU
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightBiopsy",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Biopsy
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightBreastradiologist",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Breast Radiologist
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightClinicalCorrelation",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Clinical Correlation
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightOncoConsult",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Onco Consult
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
-    {
-      accessorKey: "rightRedo",
-      header: () => (
-        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
-          Right Redo
-        </div>
-      ),
-      cell: (info) => Number(info.getValue()),
-    },
+    }
   ];
 
   const table = useReactTable({
@@ -473,18 +347,18 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       { header: "Tech Artifacts Right", key: "techartificatsright" },
       { header: "Left Annual Screening", key: "leftannualscreening" },
       { header: "Left USG/SFU", key: "leftusgsfu" },
-      { header: "Left Biopsy", key: "leftBiopsy" },
-      { header: "Left Breast Radiologist", key: "leftBreastradiologist" },
-      { header: "Left Clinical Correlation", key: "leftClinicalCorrelation" },
-      { header: "Left Onco Consult", key: "leftOncoConsult" },
-      { header: "Left Redo", key: "leftRedo" },
+      { header: "Left Biopsy", key: "leftbiopsy" },
+      { header: "Left Breast Radiologist", key: "leftbreastradiologist" },
+      { header: "Left Clinical Correlation", key: "leftclinicalcorrelation" },
+      { header: "Left Onco Consult", key: "leftoncoconsult" },
+      { header: "Left Redo", key: "leftredo" },
       { header: "Right Annual Screening", key: "rightannualscreening" },
       { header: "Right USG/SFU", key: "rightusgsfu" },
-      { header: "Right Biopsy", key: "rightBiopsy" },
-      { header: "Right Breast Radiologist", key: "rightBreastradiologist" },
-      { header: "Right Clinical Correlation", key: "rightClinicalCorrelation" },
-      { header: "Right Onco Consult", key: "rightOncoConsult" },
-      { header: "Right Redo", key: "rightRedo" },
+      { header: "Right Biopsy", key: "rightbiopsy" },
+      { header: "Right Breast Radiologist", key: "rightbreastradiologist" },
+      { header: "Right Clinical Correlation", key: "rightclinicalcorrelation" },
+      { header: "Right Onco Consult", key: "rightoncoconsult" },
+      { header: "Right Redo", key: "rightredo" },
     ];
 
     // Prepare rows from the currently visible (filtered/sorted/paginated) data
