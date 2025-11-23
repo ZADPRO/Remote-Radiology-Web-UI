@@ -117,18 +117,18 @@ export interface OverAllScanCenterAnalytics {
   totaldcform: number;
   leftannualscreening: number;
   leftusgsfu: number;
-  leftBiopsy: number;
-  leftBreastradiologist: number;
-  leftClinicalCorrelation: number;
-  leftOncoConsult: number;
-  leftRedo: number;
+  leftbiopsy: number;
+  leftbreastradiologist: number;
+  leftclinicalcorrelation: number;
+  leftoncoconsult: number;
+  leftredo: number;
   rightannualscreening: number;
   rightusgsfu: number;
-  rightBiopsy: number;
-  rightBreastradiologist: number;
-  rightClinicalCorrelation: number;
-  rightOncoConsult: number;
-  rightRedo: number;
+  rightbiopsy: number;
+  rightbreastradiologist: number;
+  rightclinicalcorrelation: number;
+  rightoncoconsult: number;
+  rightredo: number;
 }
 
 export interface RefAuditTransHistory {
