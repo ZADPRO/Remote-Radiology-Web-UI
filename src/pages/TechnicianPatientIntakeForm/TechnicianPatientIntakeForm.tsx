@@ -82,7 +82,7 @@ const TechnicianPatientIntakeForm: React.FC<
   const [selectedSection, setSelectedSection] = useState<string>(options[0]);
 
   const [technicianFormData, setTechnicianFormData] = useState<IntakeOption[]>(
-    Array.from({ length: 57 }, (_, index) => ({
+    Array.from({ length: 58 }, (_, index) => ({
       questionId: 1 + index,
       answer: "",
     }))
@@ -291,7 +291,7 @@ const TechnicianPatientIntakeForm: React.FC<
         //   }))
         // );
         setTechnicianFormData(
-          Array.from({ length: 57 }, (_, index) => {
+          Array.from({ length: 58 }, (_, index) => {
             const questionId = index + 1;
             return {
               questionId,
@@ -370,6 +370,7 @@ const TechnicianPatientIntakeForm: React.FC<
             getTechnicianFormAnswer(41) == "Both"
               ? true
               : false,
+          side: getTechnicianFormAnswer(58),
           saveStatus: saveStatus,
         };
         console.log("payload", payload);
@@ -517,6 +518,7 @@ const TechnicianPatientIntakeForm: React.FC<
               MedicationOthers: 16,
               MedicationOtherSpecify: 17,
               patientPrivatePublic: 57,
+              side: 58,
             }}
             readOnly={controlData.readOnly ? true : false}
           />

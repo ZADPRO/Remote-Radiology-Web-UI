@@ -1101,7 +1101,8 @@ ${
       // }
     }
 
-    setMailRecepient(patientpublicprivate !== "private" ? "both" : "none");
+    // setMailRecepient(patientpublicprivate !== "private" ? "both" : "none");
+    setMailRecepient("none");
   }, [
     reportFormData,
     syncStatus,

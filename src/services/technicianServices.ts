@@ -114,6 +114,7 @@ export interface TechnicianPatientQueue {
   refOverrideStatus: string;
   OldReportCount: string;
   patientPrivatePublicStatus: string;
+  refAppointmentDicomSide: string;
 }
 
 export interface ResponseTechnicianForm {
@@ -452,7 +453,7 @@ export const technicianService = {
       `${
         import.meta.env.VITE_API_URL_USERSERVICE
       }/technicianintakeform/dicomuploadurl`,
-      payload, 
+      payload,
       {
         headers: {
           Authorization: token,

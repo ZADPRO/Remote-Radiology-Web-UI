@@ -28,6 +28,7 @@ interface QuestionIds {
   MedicationOthers: number;
   MedicationOtherSpecify: number;
   patientPrivatePublic: number;
+  side: number;
 }
 
 interface Props {
@@ -170,6 +171,75 @@ const AllergiesMedications: React.FC<Props> = ({
                 htmlFor={`patientprivatepublic`}
               >
                 Public
+              </Label>
+            </div>
+          </div>
+        </div>
+
+        {/* Side */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <Label className="w-full sm:w-1/3 text-base font-semibold">
+            Side
+          </Label>
+          <div className="w-full flex gap-3 sm:w-2/3">
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`sidetechunilateralright`}
+                name={`sidetech`}
+                value="unilateralright"
+                checked={getAnswer(questionIds.side) === "unilateralright"}
+                onChange={(e) =>
+                  handleInputChange(questionIds.side, e.target.value)
+                }
+                className="custom-radio"
+                required
+              />
+              <Label
+                className={`text-lg font-semibold`}
+                htmlFor={`sidetechunilateralright`}
+              >
+                Unilateral Right
+              </Label>
+            </div>{" "}
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`sidetechunilateralleft`}
+                name={`sidetech`}
+                value="unilateralleft"
+                checked={getAnswer(questionIds.side) === "unilateralleft"}
+                onChange={(e) =>
+                  handleInputChange(questionIds.side, e.target.value)
+                }
+                className="custom-radio"
+                required
+              />
+              <Label
+                className={`text-lg font-semibold`}
+                htmlFor={`sidetechunilateralleft`}
+              >
+                Unilateral Left
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`sidetechbilateral`}
+                name={`sidetech`}
+                value="bilateral"
+                checked={getAnswer(questionIds.side) === "bilateral"}
+                onChange={(e) =>
+                  handleInputChange(questionIds.side, e.target.value)
+                }
+                className="custom-radio"
+                required
+              />
+              <Label
+                className={`text-lg font-semibold`}
+                htmlFor={`sidetechbilateral`}
+              >
+                Bilateral
               </Label>
             </div>
           </div>
