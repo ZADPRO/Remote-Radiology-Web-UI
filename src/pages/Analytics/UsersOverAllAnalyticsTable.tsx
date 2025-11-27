@@ -154,6 +154,30 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       ),
     },
     {
+      accessorKey: "unilateralleft",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Unilateral Left
+        </div>
+      ),
+    },
+    {
+      accessorKey: "unilateralright",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Unilateral Right
+        </div>
+      ),
+    },
+    {
+      accessorKey: "bilateral",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Bilateral
+        </div>
+      ),
+    },
+    {
       accessorKey: "totalreportcorrect",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
@@ -229,7 +253,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftBiopsy",
+      accessorKey: "leftbiopsy",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Biopsy
@@ -238,7 +262,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftBreastradiologist",
+      accessorKey: "leftbreastradiologist",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Breast Radiologist
@@ -247,7 +271,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftClinicalCorrelation",
+      accessorKey: "leftclinicalcorrelation",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Clinical Correlation
@@ -256,7 +280,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftOncoConsult",
+      accessorKey: "leftoncoconsult",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Onco Consult
@@ -265,7 +289,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "leftRedo",
+      accessorKey: "leftredo",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Left Redo
@@ -292,7 +316,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightBiopsy",
+      accessorKey: "rightbiopsy",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Biopsy
@@ -301,7 +325,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightBreastradiologist",
+      accessorKey: "rightbreastradiologist",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Breast Radiologist
@@ -310,7 +334,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightClinicalCorrelation",
+      accessorKey: "rightclinicalcorrelation",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Clinical Correlation
@@ -319,7 +343,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightOncoConsult",
+      accessorKey: "rightoncoconsult",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Onco Consult
@@ -328,7 +352,7 @@ const OverAllAnalyticsTable: React.FC<Props> = ({ analyticsData }) => {
       cell: (info) => Number(info.getValue()),
     },
     {
-      accessorKey: "rightRedo",
+      accessorKey: "rightredo",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
           Right Redo

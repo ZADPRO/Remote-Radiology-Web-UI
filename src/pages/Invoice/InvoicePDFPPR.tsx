@@ -170,112 +170,62 @@ const InvoicePDFPPR = ({ invoiceHistory }: Props) => (
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>1.</Text>
-          <Text style={styles.cell}>S Form Edit</Text>
+          <Text style={styles.cell}>S Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHSFormquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHSFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHSformEditquantity}
-          </Text>
-          <Text style={styles.cell}>{invoiceHistory.refIHSformEditamount}</Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHSformEditquantity || 0) *
-              (invoiceHistory.refIHSformEditamount || 0)}
+            {(invoiceHistory.refIHSFormquantity || 0) *
+              (invoiceHistory.refIHSFormamount || 0)}
           </Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>2.</Text>
-          <Text style={styles.cell}>S Form Correct</Text>
+          <Text style={styles.cell}>Da Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDaFormquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDaFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHSformCorrectquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHSformCorrectamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHSformCorrectquantity || 0) *
-              (invoiceHistory.refIHSformCorrectamount || 0)}
+            {(invoiceHistory.refIHDaFormquantity || 0) *
+              (invoiceHistory.refIHDaFormamount || 0)}
           </Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>3.</Text>
-          <Text style={styles.cell}>Da Form Edit</Text>
+          <Text style={styles.cell}>Db Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDbFormquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDbFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHDaformEditquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDaformEditamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDaformEditquantity || 0) *
-              (invoiceHistory.refIHDaformEditamount || 0)}
+            {(invoiceHistory.refIHDbFormquantity || 0) *
+              (invoiceHistory.refIHDbFormamount || 0)}
           </Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>4.</Text>
-          <Text style={styles.cell}>Da Form Correct</Text>
+          <Text style={styles.cell}>Dc Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDcFormquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHDcFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHDaformCorrectquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDaformCorrectamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDaformCorrectquantity || 0) *
-              (invoiceHistory.refIHDaformCorrectamount || 0)}
+            {(invoiceHistory.refIHDcFormquantity || 0) *
+              (invoiceHistory.refIHDcFormamount || 0)}
           </Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>5.</Text>
-          <Text style={styles.cell}>Db Form Edit</Text>
+          <Text style={styles.cell}>X Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHxFormquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHxFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHDbformEditquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDbformEditamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDbformEditquantity || 0) *
-              (invoiceHistory.refIHDbformEditamount || 0)}
+            {(invoiceHistory.refIHxFormquantity || 0) *
+              (invoiceHistory.refIHxFormamount || 0)}
           </Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}>6.</Text>
-          <Text style={styles.cell}>Db Form Correct</Text>
+          <Text style={styles.cell}>Edit Form</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHEditquantity}</Text>
+          <Text style={styles.cell}>{invoiceHistory.refIHEditFormamount}</Text>
           <Text style={styles.cell}>
-            {invoiceHistory.refIHDbformCorrectquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDbformCorrectamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDbformCorrectquantity || 0) *
-              (invoiceHistory.refIHDbformCorrectamount || 0)}
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={styles.cellSmall}>7.</Text>
-          <Text style={styles.cell}>Dc Form Edit</Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDcformEditquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDcformEditamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDcformEditquantity || 0) *
-              (invoiceHistory.refIHDcformEditamount || 0)}
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={styles.cellSmall}>8.</Text>
-          <Text style={styles.cell}>Dc Form Correct</Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDcformCorrectquantity}
-          </Text>
-          <Text style={styles.cell}>
-            {invoiceHistory.refIHDcformCorrectamount}
-          </Text>
-          <Text style={styles.cell}>
-            {(invoiceHistory.refIHDcformCorrectquantity || 0) *
-              (invoiceHistory.refIHDcformCorrectamount || 0)}
+            {(invoiceHistory.refIHEditquantity || 0) *
+              (invoiceHistory.refIHEditFormamount || 0)}
           </Text>
         </View>
         {invoiceHistory.otherExpenses &&
@@ -283,8 +233,15 @@ const InvoicePDFPPR = ({ invoiceHistory }: Props) => (
             <>
               {invoiceHistory.otherExpenses.map((data, index) => (
                 <View style={styles.tableRow}>
-                  <Text style={styles.cellSmall}>{index + 9}.</Text>
-                  <Text style={styles.cell}>{data.name}</Text>
+                  <Text style={styles.cellSmall}>{index + 6}.</Text>
+                  <View style={styles.cell}>
+                    <Text style={{ fontSize: "8px" }}>
+                      {data.type === "plus"
+                        ? "Addtional Amount"
+                        : data.type === "minus" && "Deductible Amount"}
+                    </Text>
+                    <Text>{data.name}</Text>
+                  </View>
                   <Text style={styles.cell}>-</Text>
                   <Text style={styles.cell}>{data.amount}</Text>
                   <Text style={styles.cell}>{data.amount}</Text>
@@ -292,50 +249,6 @@ const InvoicePDFPPR = ({ invoiceHistory }: Props) => (
               ))}
             </>
           )}
-        <View style={styles.tableRow}>
-          <Text style={styles.cellSmall}></Text>
-          <Text style={styles.cellbold}>Total Edit</Text>
-          <Text style={styles.cellbold}>
-            {(Number(invoiceHistory.refIHSformEditquantity) || 0) +
-              (Number(invoiceHistory.refIHDaformEditquantity) || 0) +
-              (Number(invoiceHistory.refIHDbformEditquantity) || 0) +
-              (Number(invoiceHistory.refIHDcformEditquantity) || 0)}
-          </Text>
-          <Text style={styles.cellbold}>-</Text>
-          <Text style={styles.cellbold}>
-            INR{" "}
-            {(Number(invoiceHistory.refIHSformEditquantity) || 0) *
-              (Number(invoiceHistory.refIHSformEditamount) || 0) +
-              (Number(invoiceHistory.refIHDaformEditquantity) || 0) *
-                (Number(invoiceHistory.refIHDaformEditamount) || 0) +
-              (Number(invoiceHistory.refIHDbformEditquantity) || 0) *
-                (Number(invoiceHistory.refIHDbformEditamount) || 0) +
-              (Number(invoiceHistory.refIHDcformEditquantity) || 0) *
-                (Number(invoiceHistory.refIHDcformEditamount) || 0)}
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={styles.cellSmall}></Text>
-          <Text style={styles.cellbold}>Total Correct</Text>
-          <Text style={styles.cellbold}>
-            {(Number(invoiceHistory.refIHSformCorrectquantity) || 0) +
-              (Number(invoiceHistory.refIHDaformCorrectquantity) || 0) +
-              (Number(invoiceHistory.refIHDbformCorrectquantity) || 0) +
-              (Number(invoiceHistory.refIHDcformCorrectquantity) || 0)}
-          </Text>
-          <Text style={styles.cellbold}>-</Text>
-          <Text style={styles.cellbold}>
-            INR{" "}
-            {(Number(invoiceHistory.refIHSformCorrectquantity) || 0) *
-              (Number(invoiceHistory.refIHSformCorrectamount) || 0) +
-              (Number(invoiceHistory.refIHDaformCorrectquantity) || 0) *
-                (Number(invoiceHistory.refIHDaformCorrectamount) || 0) +
-              (Number(invoiceHistory.refIHDbformCorrectquantity) || 0) *
-                (Number(invoiceHistory.refIHDbformCorrectamount) || 0) +
-              (Number(invoiceHistory.refIHDcformCorrectquantity) || 0) *
-                (Number(invoiceHistory.refIHDcformCorrectamount) || 0)}
-          </Text>
-        </View>
         <View style={styles.tableRow}>
           <Text style={styles.cellSmall}></Text>
           <Text style={styles.cellbold}>Total Amount</Text>

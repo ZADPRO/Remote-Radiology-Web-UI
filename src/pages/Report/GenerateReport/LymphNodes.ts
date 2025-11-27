@@ -52,7 +52,7 @@ export function LymphNodesGenerateString(
               ? `${
                   entry.position === "0"
                     ? " at the retroareolar region"
-                    : " at the " + entry.position + " O'clock"
+                    : " at the " + entry.position + " o'clock"
                 }`
               : ""
           }${
@@ -101,7 +101,7 @@ export function LymphNodesGenerateString(
               ? `${
                   clip.position === "0"
                     ? " retroareolar region"
-                    : " " + clip.position + " O'clock"
+                    : " " + clip.position + " o'clock"
                 }`
               : ``
           }${

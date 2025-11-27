@@ -177,7 +177,7 @@ export function TechNotes(reportFormData: ReportQuestion[]): string {
   }
 
   if (breastSymptoms.side.length > 0) {
-    const content = `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>Side: ${
+    const content = `<ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>${
       breastSymptoms.side === "unilateralright"
         ? `Unilateral Right`
         : breastSymptoms.side === "unilateralleft"

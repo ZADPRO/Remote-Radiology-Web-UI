@@ -92,7 +92,7 @@ const AuditLogs: React.FC = () => {
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="border border-gray-300 h-10 px-4 py-0 text-left"
+                      className="border border-gray-300 h-10 px-4 py-0 text-left text-xs"
                     >
                       {header.isPlaceholder
                         ? null
@@ -108,11 +108,11 @@ const AuditLogs: React.FC = () => {
 
             <TableBody className="divide-y divide-gray-100">
               {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-[#d4d5ca]">
+                <tr key={row.id} className="hover:bg-[#e4e4e2]">
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="border border-gray-300 px-4 py-2"
+                      className="border border-gray-300 px-4 py-2 text-xs"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

@@ -8,6 +8,7 @@ import {
   PersonStanding,
   Settings2,
   Shield,
+  TableProperties,
 } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
@@ -115,6 +116,11 @@ const MasterAdmin: React.FC = () => {
         label: "Audit Logs",
         path: "/admin/auditLogs",
         icon: <Shield className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
+      {
+        label: "Daily List",
+        path: "/admin/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     scadmin: [

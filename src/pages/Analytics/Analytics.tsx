@@ -164,7 +164,7 @@ const Analytics: React.FC = () => {
       "codoctor",
       "doctor",
     ],
-    scanIndications: ["admin", "manager", "scadmin", "technician", "wgdoctor"],
+    scanIndications: ["admin", "manager", "scadmin", "technician", "wgdoctor", "radiologist"],
     turnaroundTime: [
       "admin",
       "radiologist",
@@ -321,6 +321,7 @@ const Analytics: React.FC = () => {
         format(dateRange?.to, "yyyy-MM-dd")
       );
       if (res.status) {
+console.log('Analytics.tsx / res / 323 -------------------  ', res);
 
         setUserOverAllAnalaytics(
           res.OverAllAnalytics ? res.OverAllAnalytics : []
@@ -667,7 +668,7 @@ const Analytics: React.FC = () => {
             Total Case Count
           </span>
           <span className="w-1/3 font-bold text-3xl">
-            {intakeFormAnalytics[0]?.total_appointments}
+            {intakeFormAnalytics ? intakeFormAnalytics[0]?.total_appointments : 0}
           </span>
         </div>
 
