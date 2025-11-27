@@ -314,6 +314,11 @@ const Analytics: React.FC = () => {
       return;
       setLoding(true);
     try {
+      
+console.log('Analytics.tsx -------------------------- >  317  ',userId,
+        roleId,
+        format(dateRange?.from, "yyyy-MM-dd"),
+        format(dateRange?.to, "yyyy-MM-dd"));
       const res = await analyticsService.analyticsPerUser(
         userId,
         roleId,
@@ -445,6 +450,8 @@ console.log('Analytics.tsx / res / 323 -------------------  ', res);
     if (userSelectedValue) {
       fetchAnalyticsPeruser(Number(userSelectedValue), tempRole.id);
     } else if (userSelectedValue === 0) {
+      
+console.log('Analytics.tsx -------------------------- >  453  +++++++++++++++++++');
       fetchAnalyticsPeruser(0, tempRole.id);
     }
   }, [userSelectedValue]);

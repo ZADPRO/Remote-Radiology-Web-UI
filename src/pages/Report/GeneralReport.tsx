@@ -234,11 +234,11 @@ const GeneralReport: React.FC<RightReportProps> = ({
                 options={[
                   {
                     label: "Right Breast",
-                    value: "right breast bigger than left breast",
+                    value: "the right breast bigger than the left breast",
                   },
                   {
                     label: "Left Breast",
-                    value: "left breast bigger than right breast",
+                    value: "the left breast bigger than the right breast",
                   },
                 ]}
               />

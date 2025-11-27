@@ -122,27 +122,49 @@ const DailyList: React.FC = () => {
   };
 
   const downloadExcel = () => {
-    if (!dailyListData.length) return;
+    const visibleRows = table.getRowModel().rows;
 
-    const headers = columns.map((col) =>
-      typeof col.header === "string" ? col.header : ""
-    );
+    if (!visibleRows || visibleRows.length === 0) return;
 
-    const rows = dailyListData.map((item) =>
-      columns.map((col) => {
-        if ("accessorKey" in col && col.accessorKey) {
-          return item[col.accessorKey as keyof DailyListResponse] ?? "";
-        }
-        return "";
+    // Define headers (match your table order)
+    const headers = [
+      { header: "Signed Date", key: "AppointmentDate" },
+      { header: "Patient ID", key: "refUserCustId" },
+      { header: "Patient Name", key: "refUserFirstName" },
+      { header: "Form", key: "refCategoryId" },
+      { header: "Scan Side", key: "scanSide" },
+      { header: "Draft By", key: "handlerName" },
+      { header: "Impression Left", key: "refAppointmentImpression" },
+      { header: "Recommendation Left", key: "refAppointmentRecommendation" },
+      { header: "Impression Right", key: "refAppointmentImpressionRight" },
+      {
+        header: "Recommendation Right",
+        key: "refAppointmentRecommendationRight",
+      },
+    ];
+
+    // Get rows based on current table state
+    const rows = visibleRows.map((row) =>
+      headers.map((h) => {
+        const value = row.original[h.key as keyof DailyListResponse];
+
+        return value;
       })
     );
 
-    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    // Build worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      headers.map((h) => h.header),
+      ...rows,
+    ]);
+
+    // Auto column widths
+    worksheet["!cols"] = headers.map((h) => ({ wch: h.header.length + 5 }));
+
+    // Create and download file
     const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Daily List");
-
-    XLSX.writeFile(workbook, "daily-list.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Analytics");
+    XLSX.writeFile(workbook, "dailylist.xlsx");
   };
 
   const columns: ColumnDef<DailyListResponse>[] = [
