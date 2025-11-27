@@ -112,10 +112,10 @@ export function generateGrandularAndDuctalTissueReport(
   let ductalText = "";
 
   // 5. Ductal Prominence
-  ductalList.map((data) => {
+  ductalList.map((data,index) => {
     ductalText +=
       ductalProminence === "Present" && ductalList.length > 0
-        ? `There is ductal prominence ${data.type.toLowerCase()} ${
+        ? `${index === 0 ? '': " "}There is a ductal prominence ${data.type.toLowerCase()} ${
             data.clock
               ? ` noted at ${
                   data.clock === "0"
@@ -125,7 +125,7 @@ export function generateGrandularAndDuctalTissueReport(
               : ""
           }${
             data.position !== "Unknown" && data.position
-              ? ` in ${data.position.toLowerCase()}${
+              ? ` in the ${data.position.toLowerCase()}${
                   data.position
                     ? ` ${
                         data.position === "Coronal Level"

@@ -2242,9 +2242,14 @@ const PatientQueue: React.FC = () => {
 
       {
         id: "oldreport",
-        header: () => (
+        header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer">
+            <div
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+              className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer select-none"
+            >
               <div>Old</div>
               <div>Report</div>
             </div>
@@ -2543,6 +2548,13 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
+        accessorKey: "OldReportCount",
+        sortingFn: (rowA, rowB) => {
+          const a = Number(rowA.original.OldReportCount ?? 0);
+          const b = Number(rowB.original.OldReportCount ?? 0);
+          return a - b;
+        },
+        enableSorting: true
       },
 
       {
@@ -2654,7 +2666,8 @@ const PatientQueue: React.FC = () => {
           if (!filterValues?.length) return true;
           const getReportStatus = (row: any): FilterValue => {
             const isUrgent = row.original.reportStatus === "Urgent";
-            const noDicom = row.original.dicomFiles && row.original.dicomFiles.length === 0;
+            const noDicom =
+              row.original.dicomFiles && row.original.dicomFiles.length === 0;
             const isTechnologist =
               row.original.refAppointmentComplete === "fillform" ||
               row.original.refAppointmentComplete === "technologistformfill";
@@ -2684,7 +2697,8 @@ const PatientQueue: React.FC = () => {
         sortingFn: (rowA, rowB) => {
           const getReportStatus = (row: any): FilterValue => {
             const isUrgent = row.original.reportStatus === "Urgent";
-            const noDicom = row.original.dicomFiles && row.original.dicomFiles.length === 0;
+            const noDicom =
+              row.original.dicomFiles && row.original.dicomFiles.length === 0;
             const isTechnologist =
               row.original.refAppointmentComplete === "fillform" ||
               row.original.refAppointmentComplete === "technologistformfill";
@@ -2819,14 +2833,18 @@ const PatientQueue: React.FC = () => {
                   onClick={handleViewClick}
                   className="hover:underline cursor-pointer font-bold"
                 >
-                  {row.original.dicomFiles && row.original.dicomFiles.length === 0 ? `Pending` : `Start`}
+                  {row.original.dicomFiles &&
+                  row.original.dicomFiles.length === 0
+                    ? `Pending`
+                    : `Start`}
                 </span>
               ) : (
                 <span
                   onClick={handleViewClick}
                   className="hover:underline cursor-pointer font-bold"
                 >
-                  {row.original.dicomFiles && row.original.dicomFiles.length === 0
+                  {row.original.dicomFiles &&
+                  row.original.dicomFiles.length === 0
                     ? `Pending`
                     : row.original.refAppointmentComplete === "fillform" ||
                       row.original.refAppointmentComplete ===

@@ -61,7 +61,7 @@ export function generateBreastImplantDetailsHTML(
     const formatDirections = (dirs: string[]) => {
       if (dirs.length === 0) return "";
       if (dirs.length === 1) return dirs[0];
-      return dirs.slice(0, -1).join(", ") + " and " + dirs.slice(-1);
+      return dirs.slice(0, -1).join(", ") + ", and " + dirs.slice(-1);
     };
 
     const getSideDirections = (side: "Left" | "Right") => {
@@ -97,15 +97,15 @@ export function generateBreastImplantDetailsHTML(
       const leftDirs = getSideDirections("Left");
       const rightDirs = getSideDirections("Right");
 
-      return `There is displacement noted in the left side${
+      return `There is displacement noted on the left side${
         leftDirs.length ? ", " + formatDirections(leftDirs) : ""
-      }, and in the right side${
+      }, and on the right side${
         rightDirs.length ? ", " + formatDirections(rightDirs) : ""
       }. `;
     }
 
     const sideDirs = getSideDirections(displacement as "Left" | "Right");
-    return `There is displacement noted in the ${displacement.toLowerCase()} side${
+    return `There is displacement noted on the ${displacement.toLowerCase()} side${
       sideDirs.length ? ", " + formatDirections(sideDirs) : ""
     }. `;
   }
@@ -118,7 +118,7 @@ export function generateBreastImplantDetailsHTML(
     html += ` implant `;
   }
 
-  html += `which are ${position.toLowerCase()} in position, with speed of sound consistent with ${
+  html += `that is ${position.toLowerCase()} in position, with speed of sound consistent with ${
     config === "Bilateral Dissimilar" || config === "Bilateral Similar"
       ? ` ${getAnswer(questionIds.bilateraldissimilar)}`
       : `${material == "Other" ? `${materialOther}` : material.toLowerCase()}`
@@ -147,7 +147,7 @@ export function generateBreastImplantDetailsHTML(
   }
 
   if (rupture === "Present") {
-    html += `There is rupture in ${ruptureLocation.toLowerCase()} of ${ruptureType.toLowerCase()} type.`;
+    html += ` There is a rupture in the ${ruptureLocation.toLowerCase()} ${ruptureType.toLowerCase()} type.`;
   }
 
   html += `</span>`;
