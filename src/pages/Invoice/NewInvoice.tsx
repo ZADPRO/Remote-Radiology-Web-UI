@@ -151,17 +151,23 @@ const NewInvoice: React.FC<Props> = () => {
               toAddress: res.ScancenterData[0].refSCAddress,
               billingfrom: startDate,
               billingto: endDate,
-              refIHSFormquantity: res.UserCount[0].SForm,
+              refIHSFormquantity:
+                (res.UserCount && res.UserCount[0].SForm) || 0,
               refIHSFormamount: parseInt(res.refTASform || "0"),
-              refIHDaFormquantity: res.UserCount[0].DaForm,
+              refIHDaFormquantity:
+                (res.UserCount && res.UserCount[0].DaForm) || 0,
               refIHDaFormamount: parseInt(res.refTADaform || "0"),
-              refIHDbFormquantity: res.UserCount[0].DbForm,
+              refIHDbFormquantity:
+                (res.UserCount && res.UserCount[0].DbForm) || 0,
               refIHDbFormamount: parseInt(res.refTADbform || "0"),
-              refIHDcFormquantity: res.UserCount[0].DcForm,
+              refIHDcFormquantity:
+                (res.UserCount && res.UserCount[0].DcForm) || 0,
               refIHDcFormamount: parseInt(res.refTADcform || "0"),
-              refIHxFormquantity: res.UserCount[0].xForm,
+              refIHxFormquantity:
+                (res.UserCount && res.UserCount[0].xForm) || 0,
               refIHxFormamount: parseInt(res.refTAXform || "0"),
-              refIHEditquantity: res.UserCount[0].editForm,
+              refIHEditquantity:
+                (res.UserCount && res.UserCount[0].editForm) || 0,
               refIHEditFormamount: parseInt(res.refTAEditform || "0"),
               refTADScribeTotalcasequantity: 0,
               refTADScribeTotalcaseamount: parseInt(
@@ -185,17 +191,23 @@ const NewInvoice: React.FC<Props> = () => {
               fromAddress: "6240/304, Randi Avenue, Woodland hills, CA 91367.",
               billingfrom: startDate,
               billingto: endDate,
-              refIHSFormquantity: res.UserCount[0].SForm,
+              refIHSFormquantity:
+                (res.UserCount && res.UserCount[0].SForm) || 0,
               refIHSFormamount: parseInt(res.refTASform || "0"),
-              refIHDaFormquantity: res.UserCount[0].DaForm,
+              refIHDaFormquantity:
+                (res.UserCount && res.UserCount[0].DaForm) || 0,
               refIHDaFormamount: parseInt(res.refTADaform || "0"),
-              refIHDbFormquantity: res.UserCount[0].DbForm,
+              refIHDbFormquantity:
+                (res.UserCount && res.UserCount[0].DbForm) || 0,
               refIHDbFormamount: parseInt(res.refTADbform || "0"),
-              refIHDcFormquantity: res.UserCount[0].DcForm,
+              refIHDcFormquantity:
+                (res.UserCount && res.UserCount[0].DcForm) || 0,
               refIHDcFormamount: parseInt(res.refTADcform || "0"),
-              refIHxFormquantity: res.UserCount[0].xForm,
+              refIHxFormquantity:
+                (res.UserCount && res.UserCount[0].xForm) || 0,
               refIHxFormamount: parseInt(res.refTAXform || "0"),
-              refIHEditquantity: res.UserCount[0].editForm,
+              refIHEditquantity:
+                (res.UserCount && res.UserCount[0].editForm) || 0,
               refIHEditFormamount: parseInt(res.refTAEditform || "0"),
               refTADScribeTotalcasequantity:
                 res.UserCount[0].total_appointments || 0,
