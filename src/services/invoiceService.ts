@@ -31,18 +31,17 @@ export interface GetUserModel {
 export interface OtherExpensesModel {
   name: string;
   amount: number;
+  type?: string;
 }
 
 export interface AdminOverallScanIndicatesAnalyticsModel {
   total_appointments: number;
-  SFormEdit: number;
-  SFormCorrect: number;
-  DaFormEdit: number;
-  DaFormCorrect: number;
-  DbFormEdit: number;
-  DbFormCorrect: number;
-  DcFormEdit: number;
-  DcFormCorrect: number;
+  SForm: number;
+  DaForm: number;
+  DbForm: number;
+  DcForm: number;
+  xForm: number;
+  editForm: number;
 }
 
 export interface InvoiceHistory {
@@ -133,26 +132,20 @@ export interface InvoiceHistoryInvoice {
   refIHSignatureFile: FileData;
   refSCCustId?: string;
   refUserCustId?: string;
-  refIHSformEditquantity: number | null;
-  refIHSformEditamount: number | null;
-  refIHSformCorrectquantity: number | null;
-  refIHSformCorrectamount: number | null;
-  refIHDaformEditquantity: number | null;
-  refIHDaformEditamount: number | null;
-  refIHDaformCorrectquantity: number | null;
-  refIHDaformCorrectamount: number | null;
-  refIHDbformEditquantity: number | null;
-  refIHDbformEditamount: number | null;
-  refIHDbformCorrectquantity: number | null;
-  refIHDbformCorrectamount: number | null;
-  refIHDcformEditquantity: number | null;
-  refIHDcformEditamount: number | null;
-  refIHDcformCorrectquantity: number | null;
-  refIHDcformCorrectamount: number | null;
+  refIHSFormquantity: number | null;
+  refIHSFormamount: number | null;
+  refIHDaFormquantity: number | null;
+  refIHDaFormamount: number | null;
+  refIHDbFormquantity: number | null;
+  refIHDbFormamount: number | null;
+  refIHDcFormquantity: number | null;
+  refIHDcFormamount: number | null;
+  refIHxFormquantity: number | null;
+  refIHxFormamount: number | null;
+  refIHEditquantity: number | null;
+  refIHEditFormamount: number | null;
   refIHScribeTotalcasequantity: number | null;
   refIHScribeTotalcaseamount: number | null;
-  refIHOtherExpensiveName: string;
-  refIHOtherAmount: number | null;
   refIHScanCenterTotalCase: number | null;
   refIHScancentercaseAmount: number | null;
   total: number;
@@ -182,26 +175,20 @@ export interface InvoiceInput {
   bank: string;
   branch: string;
   ifsc: string;
-  refTASformEditquantity: number | null;
-  refTASformEditamount: number | null;
-  refTASformCorrectquantity: number | null;
-  refTASformCorrectamount: number | null;
-  refTADaformEditquantity: number | null;
-  refTADaformEditamount: number | null;
-  refTADaformCorrectquantity: number | null;
-  refTADaformCorrectamount: number | null;
-  refTADbformEditquantity: number | null;
-  refTADbformEditamount: number | null;
-  refTADbformCorrectquantity: number | null;
-  refTADbformCorrectamount: number | null;
-  refTADcformEditquantity: number | null;
-  refTADcformEditamount: number | null;
-  refTADcformCorrectquantity: number | null;
-  refTADcformCorrectamount: number | null;
+  refIHSFormquantity: number | null;
+  refIHSFormamount: number | null;
+  refIHDaFormquantity: number | null;
+  refIHDaFormamount: number | null;
+  refIHDbFormquantity: number | null;
+  refIHDbFormamount: number | null;
+  refIHDcFormquantity: number | null;
+  refIHDcFormamount: number | null;
+  refIHxFormquantity: number | null;
+  refIHxFormamount: number | null;
+  refIHEditquantity: number | null;
+  refIHEditFormamount: number | null;
   refTADScribeTotalcasequantity: number | null;
   refTADScribeTotalcaseamount: number | null;
-  otherExpensiveName: string;
-  otherAmount: number | null;
   refScanCenterTotalCase: number | null;
   refScancentercaseAmount: number | null;
   total: number;
@@ -213,14 +200,12 @@ export interface TakenDate {
 }
 
 export interface AmountModel {
-  refTASformEdit: string;
-  refTASformCorrect: string;
-  refTADaformEdit: string;
-  refTADaformCorrect: string;
-  refTADbformEdit: string;
-  refTADbformCorrect: string;
-  refTADcformEdit: string;
-  refTADcformCorrect: string;
+  refTASform: string;
+  refTADaform: string;
+  refTADbform: string;
+  refTADcform: string;
+  refTAXform: string;
+  refTAEditform: string;
   refTADScribeTotalcase: string;
 }
 
@@ -250,21 +235,15 @@ export const invoiceServie = {
     const token = localStorage.getItem("token");
     const payload = encrypt(
       {
-        refTASformEdit: AmountModel.refTASformEdit,
-        refTASformCorrect: AmountModel.refTASformCorrect,
-        refTADaformEdit: AmountModel.refTADaformEdit,
-        refTADaformCorrect: AmountModel.refTADaformCorrect,
-        refTADbformEdit: AmountModel.refTADbformEdit,
-        refTADbformCorrect: AmountModel.refTADbformCorrect,
-        refTADcformEdit: AmountModel.refTADcformEdit,
-        refTADcformCorrect: AmountModel.refTADcformCorrect,
+        refTASform: AmountModel.refTASform,
+        refTADaform: AmountModel.refTADaform,
+        refTADbform: AmountModel.refTADbform,
+        refTADcform: AmountModel.refTADcform,
+        refTAXform: AmountModel.refTAXform,
+        refTAEditform: AmountModel.refTAEditform,
         refTADScribeTotalcase: AmountModel.refTADScribeTotalcase,
       },
       token
-    );
-    console.log(
-      "invoiceService.ts / AmountModel / 110 -------------------  ",
-      AmountModel
     );
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/invoice/updateamount`,
@@ -303,19 +282,17 @@ export const invoiceServie = {
     );
     const decryptedData: {
       status: boolean;
+      refTASform: string;
+      refTADaform: string;
+      refTADbform: string;
+      refTADcform: string;
+      refTAXform: string;
+      refTAEditform: string;
+      refTADScribeTotalcase: string;
       ScancenterData: scancenterData[];
       ScanCenterCount: GetCountScanCenterMonthModel[];
       UserData: GetUserModel[];
       UserCount: AdminOverallScanIndicatesAnalyticsModel[];
-      refTADScribeTotalcase: string;
-      refTADaformCorrect: string;
-      refTADaformEdit: string;
-      refTADbformCorrect: string;
-      refTADbformEdit: string;
-      refTADcformCorrect: string;
-      refTADcformEdit: string;
-      refTASformCorrect: string;
-      refTASformEdit: string;
     } = decrypt(res.data.data, res.data.token);
     tokenService.setToken(res.data.token);
     return decryptedData;
@@ -323,12 +300,23 @@ export const invoiceServie = {
 
   generateInvoice: async (
     formData: any,
-    otherExpenses: OtherExpensesModel[]
+    otherExpenses: OtherExpensesModel[],
+    deductibleExpenses: OtherExpensesModel[]
   ) => {
+    const n = (x: number | null | undefined) => Number(x || 0);
     const token = localStorage.getItem("token");
     const combinedData = {
       ...formData,
-      otherExpenses: otherExpenses, // include the full array
+      otherExpenses: otherExpenses,
+      deductibleExpenses: deductibleExpenses,
+      otherExpensesAmount: otherExpenses.reduce(
+        (sum, exp) => sum + n(exp.amount),
+        0
+      ),
+      deductibleExpensesAmount: deductibleExpenses.reduce(
+        (sum, exp) => sum + n(exp.amount),
+        0
+      ),
     };
 
     // ✅ Encrypt the combined data

@@ -88,7 +88,7 @@ export function LesionsRightString(
             locationText =
               data.locationclockposition === "0"
                 ? "retroareolar region"
-                : `${data.locationclockposition} O'clock`;
+                : `${data.locationclockposition} o'clock`;
           }
 
           let locationTextto = "";
@@ -99,7 +99,7 @@ export function LesionsRightString(
             locationTextto =
               data.locationclockpositionto === "0"
                 ? "retroareolar region"
-                : `${data.locationclockpositionto} O'clock`;
+                : `${data.locationclockpositionto} o'clock`;
           }
 
           // Level
@@ -132,7 +132,7 @@ export function LesionsRightString(
               : ""
           } ${
             namePart === "solid mass / nodule"
-              ? `solid mass`
+              ? `a solid mass`
               : namePart ?? "lesion"
           }${
             namePart === "multiple simple cysts" && data.atleast
@@ -162,7 +162,7 @@ export function LesionsRightString(
             ) {
               sentence += `, spanning in the range of ${locationText} to ${locationTextto}`;
             } else {
-              sentence += `, present at ${locationText}`;
+              sentence += `, present in the ${locationText}`;
             }
           }
 
@@ -195,7 +195,7 @@ export function LesionsRightString(
           }
 
           if (data.sizew || data.sizel || data.sizeh) {
-            sentence += `. The lesion is measuring `;
+            sentence += `. The lesion measures `;
           }
 
           // width Size
@@ -257,7 +257,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -411,7 +411,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -451,7 +451,7 @@ export function LesionsRightString(
           //   locationText =
           //     data.locationclockposition === "0"
           //       ? "Nipple"
-          //       : `${data.locationclockposition} O'clock`;
+          //       : `${data.locationclockposition} o'clock`;
           // }
 
           // Level
@@ -575,7 +575,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";

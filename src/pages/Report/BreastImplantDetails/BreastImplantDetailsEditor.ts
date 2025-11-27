@@ -110,7 +110,7 @@ export function generateBreastImplantDetailsHTML(
     }. `;
   }
 
-  let html = `<span>The QT scan shows ${config.toLowerCase()}</span>`;
+  let html = `<span>The QT scan shows ${(config === "Unilateral Right" || config === "Unilateral Left") ? `a `:``}${config.toLowerCase()}</span>`;
 
   if (["Bilateral Similar", "Bilateral Dissimilar"].includes(config)) {
     html += ` implants `;

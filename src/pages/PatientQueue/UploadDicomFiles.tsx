@@ -297,6 +297,7 @@ console.log('UploadDicomFiles.tsx -------------------------- >  251  ', appointm
         patientId: appointmentDetails.userId,
         appointmentId: appointmentDetails.appointmentId,
         dicom_files: uploadedFiles,
+        techStartTime: localStorage.getItem("technicianIntakeStartTime"),
       };
 
       const res = await technicianService.saveDicomsToS3(payload);
@@ -312,6 +313,7 @@ console.log('UploadDicomFiles.tsx -------------------------- >  251  ', appointm
   };
 
   const handleListDicom = async () => {
+                     
     setLoading(true);
     try {
       const payload = {
@@ -326,6 +328,7 @@ console.log('UploadDicomFiles.tsx -------------------------- >  251  ', appointm
       if (res.status) {
         console.log("res", res);
         setDicomFiles(res.DicomData || []);
+         localStorage.setItem("technicianIntakeStartTime", res.currentTime);
       }
     } catch (error) {
       console.log(error);

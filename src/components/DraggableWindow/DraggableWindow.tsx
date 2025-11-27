@@ -12,11 +12,11 @@ interface Props {
 
 export default function DraggableWindow({
   children,
-  width = 500,
-  height = 620,
+  width = 400,
+  height = 550,
   onClose,
-  defaultX = 20,
-  defaultY = 20,
+  defaultX = 10,
+  defaultY = 10,
 }: Props) {
   const [position, setPosition] = useState({ x: defaultX, y: defaultY });
   const [size, setSize] = useState({ width, height });
@@ -38,15 +38,29 @@ export default function DraggableWindow({
   useEffect(() => {
     const move = (e: MouseEvent) => {
       if (dragging) {
+        const newX = e.clientX - offset.x;
+        const newY = e.clientY - offset.y;
+
+        // ✅ Keep inside screen
+        const maxX = window.innerWidth - size.width;
+        const maxY = window.innerHeight - size.height;
+
         setPosition({
-          x: e.clientX - offset.x,
-          y: e.clientY - offset.y,
+          x: Math.min(Math.max(0, newX), maxX),
+          y: Math.min(Math.max(0, newY), maxY),
         });
       }
       if (resizing) {
+        const newWidth = Math.max(200, e.clientX - position.x);
+        const newHeight = Math.max(200, e.clientY - position.y);
+
+        // ✅ Also prevent resizing outside screen
+        const maxWidth = window.innerWidth - position.x;
+        const maxHeight = window.innerHeight - position.y;
+
         setSize({
-          width: Math.max(200, e.clientX - position.x),
-          height: Math.max(200, e.clientY - position.y),
+          width: Math.min(newWidth, maxWidth),
+          height: Math.min(newHeight, maxHeight),
         });
       }
     };
