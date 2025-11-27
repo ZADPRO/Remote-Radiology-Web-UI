@@ -398,10 +398,10 @@ console.log('Analytics.tsx / res / 323 -------------------  ', res);
       role?.id === null ||
       role?.id === undefined
     )
-      return;
+    return;
     // setTempRole({ id: 0, type: "" });
     // setTatStats([]);
-
+    
     if (["admin", "scadmin"].includes(role.type)) {
       if (userSelectedValue) {
         setCenterSelectedValue(null);
@@ -412,6 +412,7 @@ console.log('Analytics.tsx / res / 323 -------------------  ', res);
       } else {
         if (userSelectedValue === 0) {
           setUserSelectedValue(0);
+          
           fetchAnalyticsPeruser(0, tempRole.id ? tempRole.id : role?.id);
         } else {
           setUserSelectedValue(null);
@@ -427,12 +428,14 @@ console.log('Analytics.tsx / res / 323 -------------------  ', res);
       setUserSelectedValue(0);
       fetchAnalyticsPeruser(0, role?.id);
     } else {
+    console.log('Analytics.tsx -------------------------- >  453  **********');
+
       setCenterSelectedValue(null);
       setUserSelectedValue(
-        userSelectedValue ? userSelectedValue : user.refUserId
+        userSelectedValue ? Number(userSelectedValue) : user.refUserId
       );
       fetchAnalyticsPeruser(
-        userSelectedValue ? userSelectedValue : user.refUserId,
+        userSelectedValue ? Number(userSelectedValue) : user.refUserId,
         role?.id
       );
     }
@@ -446,15 +449,30 @@ console.log('Analytics.tsx / res / 323 -------------------  ', res);
     }
   }, [centerSelectedValue]);
 
-  useEffect(() => {
-    if (userSelectedValue) {
-      fetchAnalyticsPeruser(Number(userSelectedValue), tempRole.id);
-    } else if (userSelectedValue === 0) {
-      
-console.log('Analytics.tsx -------------------------- >  453  +++++++++++++++++++');
-      fetchAnalyticsPeruser(0, tempRole.id);
-    }
-  }, [userSelectedValue]);
+useEffect(() => {
+  if (userSelectedValue === null) return;
+
+  // CASE 1: Over All selected
+  if (userSelectedValue === 0) {
+    fetchAnalyticsPeruser(0, role?.id || 0); 
+    return;
+  }
+
+  // CASE 2: Individual user selected
+  const selectedUser = allUsers?.find(
+    (item) => item.refUserId === userSelectedValue
+  );
+
+  // Always use actual role of selected user from DB 
+  const resolvedRoleId = selectedUser?.refRTId ?? (role?.id || 0);
+
+  fetchAnalyticsPeruser(
+    Number(userSelectedValue),
+    resolvedRoleId
+  );
+
+}, [userSelectedValue, allUsers]);
+
 
   return (
     <div className="w-11/12 mx-auto flex flex-col justify-center gap-4 my-5 mt-10 relative">
