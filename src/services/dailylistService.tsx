@@ -4,6 +4,7 @@ import axios from "axios";
 
 export interface DailyListResponse {
   AppointmentDate: string;
+  refSCCustId: string;
   refUserCustId: string;
   refUserFirstName: string;
   refCategoryId: string;
@@ -16,11 +17,12 @@ export interface DailyListResponse {
 }
 
 export const dailyListService = {
-  GetDailyList: async (fromDate: string, toDate: string) => {
-    
-console.log('dailylistService.tsx -------------------------- >  20  ', fromDate, toDate);
+  GetDailyList: async (fromDate: string, toDate: string, refSCId: number) => {
     const token = localStorage.getItem("token");
-    const payload = encrypt({ fromDate: fromDate, toDate: toDate }, token);
+    const payload = encrypt(
+      { fromDate: fromDate, toDate: toDate, refSCId: refSCId },
+      token
+    );
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL_USERSERVICE}/dailyList/`,
       { encryptedData: payload },

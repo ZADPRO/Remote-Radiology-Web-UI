@@ -107,6 +107,7 @@ const MainRoutes: React.FC = () => {
     { path: "managePatient", element: <ManagePatient /> },
     { path: "manageTechnician", element: <ManageTechnician /> },
     { path: "addPatient", element: <AddPatient /> },
+    { path: "dailylist", element: <DailyList /> },
     { path: "managePerformingProvider", element: <ManagePerformingProvider /> },
     { path: "manageCoReportingDoctor", element: <ManageCoReportingDoctor /> },
     { path: "addTechnician", element: <AddTechnician /> },
@@ -161,6 +162,7 @@ const MainRoutes: React.FC = () => {
   const managerRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="administration" replace /> },
     { path: "dashboard", element: <Dashboard /> },
+    { path: "dailylist", element: <DailyList /> },
     { path: "administration", element: <Administration /> },
     { path: "manageRadiologist", element: <ManageRadiologist /> },
     { path: "addRadiologist", element: <AddRadiologist /> },
