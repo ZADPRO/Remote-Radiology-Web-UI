@@ -329,6 +329,7 @@ const NewInvoice: React.FC<Props> = () => {
   const [trimmedDataURL, setTrimmedDataURL] = useState<string | null>(null);
 
   const signUpload = async (file: File) => {
+    setLoading(true);
     const formDataObj = new FormData();
     formDataObj.append("file", file);
     try {
@@ -348,6 +349,7 @@ const NewInvoice: React.FC<Props> = () => {
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
 
   const previewSignature = () => {
@@ -365,8 +367,7 @@ const NewInvoice: React.FC<Props> = () => {
     // });
   };
 
-  const saveSignature = () => {
-    setLoading(true);
+  const saveSignature = async () => {
     if (!sigCanvas.current) return;
 
     // Convert canvas to Blob and upload
@@ -377,8 +378,6 @@ const NewInvoice: React.FC<Props> = () => {
       signUpload(fileObj);
       setDialogOpen(false);
     });
-
-    setLoading(false);
   };
 
   const clear = () => {

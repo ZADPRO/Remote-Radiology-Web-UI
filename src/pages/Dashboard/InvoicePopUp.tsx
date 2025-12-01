@@ -42,7 +42,9 @@ const InvoicePopUp: React.FC<Props> = () => {
     null
   );
 
-  const [invoiceHistory, setInvoiceHistory] = useState<InvoiceHistoryInvoice[]>([]);
+  const [invoiceHistory, setInvoiceHistory] = useState<InvoiceHistoryInvoice[]>(
+    []
+  );
 
   const [strickedDates, setStrickedDates] = useState<Date[]>([]);
 
@@ -57,7 +59,7 @@ const InvoicePopUp: React.FC<Props> = () => {
     refTADcform: "",
     refTAXform: "",
     refTAEditform: "",
-    refTADScribeTotalcase: ""
+    refTADScribeTotalcase: "",
   });
 
   const [scancenterList, setScanCenterList] = useState<scancenterData[]>([]);
@@ -169,7 +171,7 @@ const InvoicePopUp: React.FC<Props> = () => {
     invoiceServie
       .getInvoiceHistory(type, id)
       .then((res) => {
-console.log('InvoicePopUp.tsx / res / 171 -------------------  ', res);
+        console.log("InvoicePopUp.tsx / res / 171 -------------------  ", res);
         if (res.status) {
           if (res.invoiceHistoryTakenDate !== null) {
             setStrickedDates(
@@ -532,6 +534,15 @@ console.log('InvoicePopUp.tsx / res / 171 -------------------  ', res);
                             <InvoiceDownloadButton
                               type={type}
                               invoiceHistory={item}
+                              CustId={
+                                type === "1"
+                                  ? scancenterList.find(
+                                      (sc) => sc.refSCId === item.refSCId
+                                    )?.refSCCustId || ""
+                                  : UserList.find(
+                                      (user) => user.refUserId === item.refUserId
+                                    )?.refUserCustId || ""
+                              }
                             />
                           </div>
                         </div>

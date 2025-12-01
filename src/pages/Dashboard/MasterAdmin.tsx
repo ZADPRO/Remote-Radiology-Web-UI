@@ -144,6 +144,11 @@ const MasterAdmin: React.FC = () => {
         path: "/scadmin/analytics",
         icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
+      {
+        label: "Daily List",
+        path: "/scadmin/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
     ],
     technician: [
       {
@@ -233,6 +238,11 @@ const MasterAdmin: React.FC = () => {
         label: "Analytics",
         path: "/manager/analytics",
         icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
+      {
+        label: "Daily List",
+        path: "/manager/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     doctor: [

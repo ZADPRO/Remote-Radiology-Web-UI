@@ -42,6 +42,7 @@ import {
   DailyListResponse,
   dailyListService,
 } from "@/services/dailylistService";
+import { useAuth } from "../Routes/AuthContext";
 
 const DailyList: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -93,10 +94,13 @@ const DailyList: React.FC = () => {
           : format(startOfMonth(new Date()), "yyyy-MM-dd"),
         range.to
           ? format(range.to, "yyyy-MM-dd")
-          : format(endOfMonth(new Date()), "yyyy-MM-dd")
+          : format(endOfMonth(new Date()), "yyyy-MM-dd"),
+        role?.id === 1 ? 0 : user?.refSCId || 0
       );
     }
   };
+
+  const { user, role } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [dailyListData, setDailyListData] = useState<DailyListResponse[]>([]);
@@ -104,13 +108,22 @@ const DailyList: React.FC = () => {
   useEffect(() => {
     getDailyList(
       format(startOfMonth(new Date()), "yyyy-MM-dd"),
-      format(endOfMonth(new Date()), "yyyy-MM-dd")
+      format(endOfMonth(new Date()), "yyyy-MM-dd"),
+      role?.id === 1 ? 0 : user?.refSCId || 0
     );
   }, []);
 
-  const getDailyList = async (fromDate: string, toDate: string) => {
+  const getDailyList = async (
+    fromDate: string,
+    toDate: string,
+    refSCId: number
+  ) => {
     setLoading(true);
-    const response = await dailyListService.GetDailyList(fromDate, toDate);
+    const response = await dailyListService.GetDailyList(
+      fromDate,
+      toDate,
+      refSCId
+    );
     if (response.status) {
       if (response.data && response.data.length > 0) {
         setDailyListData(response.data);
@@ -122,15 +135,15 @@ const DailyList: React.FC = () => {
   };
 
   const downloadExcel = () => {
-    const visibleRows = table.getRowModel().rows;
+    const filteredRows = table.getFilteredRowModel().rows;
 
-    if (!visibleRows || visibleRows.length === 0) return;
+    if (!filteredRows || filteredRows.length === 0) return;
 
-    // Define headers (match your table order)
     const headers = [
       { header: "Signed Date", key: "AppointmentDate" },
       { header: "Patient ID", key: "refUserCustId" },
       { header: "Patient Name", key: "refUserFirstName" },
+      { header: "Scan Center", key: "refSCCustId" },
       { header: "Form", key: "refCategoryId" },
       { header: "Scan Side", key: "scanSide" },
       { header: "Draft By", key: "handlerName" },
@@ -143,28 +156,45 @@ const DailyList: React.FC = () => {
       },
     ];
 
-    // Get rows based on current table state
-    const rows = visibleRows.map((row) =>
-      headers.map((h) => {
-        const value = row.original[h.key as keyof DailyListResponse];
-
-        return value;
-      })
+    const rows = filteredRows.map((row) =>
+      headers.map((h) => row.original[h.key as keyof DailyListResponse] ?? "")
     );
 
-    // Build worksheet
     const worksheet = XLSX.utils.aoa_to_sheet([
       headers.map((h) => h.header),
       ...rows,
     ]);
 
-    // Auto column widths
     worksheet["!cols"] = headers.map((h) => ({ wch: h.header.length + 5 }));
 
-    // Create and download file
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Analytics");
-    XLSX.writeFile(workbook, "dailylist.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "DailyList");
+
+    // ===========================================
+    // ✅ DISTINCT refSCCustId for filename
+    // ===========================================
+    const distinctScanCenters = Array.from(
+      new Set(filteredRows.map((r) => r.original.refSCCustId))
+    );
+
+    const scanCenterPart =
+      distinctScanCenters.length > 0 ? distinctScanCenters.join(",") : "";
+
+    // ===========================================
+    // Date Formatting
+    // ===========================================
+    const fromDate = dateRange?.from
+      ? format(dateRange.from, "yyyy-MM-dd")
+      : "NA";
+
+    const toDate = dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : "NA";
+
+    // ===========================================
+    // Final File Name
+    // ===========================================
+    const fileName = `Daily List ${fromDate} to ${toDate} ${scanCenterPart}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
   };
 
   const columns: ColumnDef<DailyListResponse>[] = [
@@ -303,6 +333,130 @@ const DailyList: React.FC = () => {
       enableSorting: true,
       enableColumnFilter: true,
       filterFn: "includesString",
+    },
+    {
+      accessorKey: "refSCCustId",
+      id: "refSCCustId",
+      header: ({ column, table }) => (
+        <div className="flex items-center justify-center gap-1">
+          {/* ---- Sort Trigger ---- */}
+          <span
+            className="cursor-pointer text-grey font-semibold"
+            onClick={() => {
+              // Toggle sorting normally
+              column.toggleSorting(column.getIsSorted() === "asc");
+
+              // ✅ Store sorting in localStorage
+              const sortOrder = column.getIsSorted() === "asc" ? "desc" : "asc";
+              localStorage.setItem(
+                "scanCenterSort",
+                JSON.stringify({
+                  id: "refSCCustId",
+                  desc: sortOrder === "desc",
+                })
+              );
+            }}
+          >
+            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap">
+              <div>Scan</div>
+              <div>Center</div>
+            </div>
+          </span>
+
+          {/* ---- Filter ---- */}
+          {column.getCanFilter() && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="!p-0 hover:bg-transparent hover:text-gray-200"
+                >
+                  <Filter />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-64 p-2">
+                <Command>
+                  <CommandGroup className="max-h-60 overflow-auto">
+                    {/* ✅ Dynamically get unique Scan Centers */}
+                    {Array.from(
+                      new Set(
+                        table
+                          .getCoreRowModel()
+                          .rows.map((r) => r.original.refSCCustId)
+                      )
+                    ).map((scanCenter) => {
+                      const current =
+                        (column.getFilterValue() as string[]) ?? [];
+                      const isSelected = current.includes(scanCenter);
+
+                      return (
+                        <CommandItem
+                          key={scanCenter}
+                          className="flex items-center gap-2 cursor-pointer"
+                          onSelect={() => {
+                            const current =
+                              (column.getFilterValue() as string[]) ?? [];
+                            const isSelected = current.includes(scanCenter);
+
+                            const updated = isSelected
+                              ? current.filter((id) => id !== scanCenter)
+                              : [...current, scanCenter];
+
+                            // ✅ Update filter
+                            column.setFilterValue(
+                              updated.length ? updated : undefined
+                            );
+
+                            // ✅ Save to localStorage
+                            if (updated.length) {
+                              localStorage.setItem(
+                                "selectedScanCenters",
+                                JSON.stringify(updated)
+                              );
+                            } else {
+                              localStorage.removeItem("selectedScanCenters");
+                            }
+                          }}
+                        >
+                          <Checkbox2
+                            checked={isSelected}
+                            onCheckedChange={() => {}}
+                          />
+                          <span>{scanCenter}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </Command>
+
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    column.setFilterValue(undefined);
+                    localStorage.removeItem("selectedScanCenters");
+                  }}
+                  className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1"
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span>Clear</span>
+                </Button>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+      ),
+
+      cell: ({ row }) => <span>{row.original.refSCCustId}</span>,
+
+      enableColumnFilter: true,
+
+      // ✅ Filter logic for multiple selections
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue || !Array.isArray(filterValue)) return true;
+        const value = row.getValue(columnId);
+        return filterValue.includes(value);
+      },
     },
     {
       accessorKey: "refCategoryId",
@@ -980,6 +1134,25 @@ const DailyList: React.FC = () => {
     },
   });
 
+  const pageCount = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex + 1;
+
+  const visiblePages = 10; // show only 10 pages
+  const half = Math.floor(visiblePages / 2);
+
+  let startPage = Math.max(currentPage - half, 1);
+  let endPage = startPage + visiblePages - 1;
+
+  if (endPage > pageCount) {
+    endPage = pageCount;
+    startPage = Math.max(endPage - visiblePages + 1, 1);
+  }
+
+  const pages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
   return (
     <div className="grid w-[96%] h-[85vh] p-5 bg-[#f7efe8] overflow-x-auto rounded-lg mx-5 mb-5">
       {loading && <LoadingOverlay />}
@@ -1078,6 +1251,11 @@ const DailyList: React.FC = () => {
 
         {/* Pagination Controls */}
         <div className="flex flex-col items-center py-1">
+          <div className="w-full flex text-start items-start justify-start">
+            <div className="text-sm font-semibold mb-3">
+              Total Records: {table.getFilteredRowModel().rows.length}
+            </div>
+          </div>
           <div className="flex md:hidden items-center justify-center w-full space-x-4 mb-2">
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>
@@ -1132,8 +1310,9 @@ const DailyList: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6 lg:space-x-8 relative">
-              <Pagination>
+              <Pagination className="mt-4 flex justify-center">
                 <PaginationContent>
+                  {/* First Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
@@ -1142,15 +1321,14 @@ const DailyList: React.FC = () => {
                       disabled={!table.getCanPreviousPage()}
                       aria-label="Go to first page"
                     >
-                      <span className="sr-only">Go to first page</span>
                       <ChevronsLeft className="h-4 w-4" />
                     </Button>
                   </PaginationItem>
+
+                  {/* Previous Page */}
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        table.getCanPreviousPage() && table.previousPage()
-                      }
+                      onClick={() => table.previousPage()}
                       className={
                         !table.getCanPreviousPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -1159,14 +1337,26 @@ const DailyList: React.FC = () => {
                       aria-label="Go to previous page"
                     />
                   </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink isActive>
-                      {table.getState().pagination.pageIndex + 1}
-                    </PaginationLink>
-                  </PaginationItem>
+
+                  {/* Page Numbers */}
+                  {pages.map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => table.setPageIndex(page - 1)}
+                        isActive={page === currentPage}
+                        className={`cursor-pointer ${
+                          page === currentPage ? "bg-primary text-white" : ""
+                        }`}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  {/* Next Page */}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => table.getCanNextPage() && table.nextPage()}
+                      onClick={() => table.nextPage()}
                       className={
                         !table.getCanNextPage()
                           ? "opacity-50 cursor-not-allowed"
@@ -1175,17 +1365,16 @@ const DailyList: React.FC = () => {
                       aria-label="Go to next page"
                     />
                   </PaginationItem>
+
+                  {/* Last Page */}
                   <PaginationItem>
                     <Button
                       variant="outline"
                       className="h-8 w-8 p-0"
-                      onClick={() =>
-                        table.setPageIndex(table.getPageCount() - 1)
-                      }
+                      onClick={() => table.setPageIndex(pageCount - 1)}
                       disabled={!table.getCanNextPage()}
                       aria-label="Go to last page"
                     >
-                      <span className="sr-only">Go to last page</span>
                       <ChevronsRight className="h-4 w-4" />
                     </Button>
                   </PaginationItem>
