@@ -119,7 +119,7 @@ export function generateGrandularAndDuctalTissueReport(
             data.clock
               ? ` noted at ${
                   data.clock === "0"
-                    ? `retroareolar region`
+                    ? `the retroareolar region`
                     : `${data.clock} o'clock`
                 }`
               : ""
@@ -213,7 +213,7 @@ function generateCalcificationText(
           ? ` in a ${distribution.toLowerCase()} distribution`
           : "";
       let location = clock
-        ? ` at ${clock === "0" ? "retroareolar region" : clock + ` o'clock`}`
+        ? ` at ${clock === "0" ? "the retroareolar region" : clock + ` o'clock`}`
         : "";
       location += level
         ? ` ${

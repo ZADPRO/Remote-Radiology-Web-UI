@@ -2670,7 +2670,8 @@ const PatientQueue: React.FC = () => {
               row.original.dicomFiles && row.original.dicomFiles.length === 0;
             const isTechnologist =
               row.original.refAppointmentComplete === "fillform" ||
-              row.original.refAppointmentComplete === "technologistformfill";
+              row.original.refAppointmentComplete === "technologistformfill" ||
+              row.original.refAppointmentComplete === "reportformfill";
 
             if (isUrgent) {
               if (noDicom) return "uploaddicomurgent";
@@ -2701,7 +2702,8 @@ const PatientQueue: React.FC = () => {
               row.original.dicomFiles && row.original.dicomFiles.length === 0;
             const isTechnologist =
               row.original.refAppointmentComplete === "fillform" ||
-              row.original.refAppointmentComplete === "technologistformfill";
+              row.original.refAppointmentComplete === "technologistformfill" ||
+              row.original.refAppointmentComplete === "reportformfill";
 
             if (isUrgent) {
               if (noDicom) return "uploaddicomurgent";

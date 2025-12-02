@@ -191,7 +191,7 @@ export function LesionsRightString(
               }`;
             }
           } else if (levelText && data.locationLevel !== "unknown") {
-            sentence += `, located at ${data.locationLevel.toLowerCase()} ${levelText}`;
+            sentence += `, located at the ${data.locationLevel.toLowerCase()} ${levelText}`;
           }
 
           if (data.sizew || data.sizel || data.sizeh) {
