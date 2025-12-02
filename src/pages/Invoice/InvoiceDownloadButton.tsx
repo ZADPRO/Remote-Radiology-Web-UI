@@ -8,9 +8,10 @@ import InvoicePDFPPR from "./InvoicePDFPPR";
 type Props = {
   type: string;
   invoiceHistory: InvoiceHistoryInvoice;
+  CustId: string;
 };
 
-const InvoiceDownloadButton = ({ type, invoiceHistory }: Props) => {
+const InvoiceDownloadButton = ({ type, invoiceHistory, CustId }: Props) => {
   console.log(invoiceHistory);
 
   return (
@@ -27,7 +28,9 @@ const InvoiceDownloadButton = ({ type, invoiceHistory }: Props) => {
         <>
           <PDFDownloadLink
             document={<InvoicePDF invoiceHistory={invoiceHistory} />}
-            fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+            fileName={`Invoice # ${
+              invoiceHistory.refIHId + 1000
+            } ${invoiceHistory.refIHFromDate.slice(0, 7)} ${CustId}.pdf`}
           >
             {({ loading }) =>
               loading ? (
@@ -43,7 +46,9 @@ const InvoiceDownloadButton = ({ type, invoiceHistory }: Props) => {
           {" "}
           <PDFDownloadLink
             document={<InvoicePDFScribe invoiceHistory={invoiceHistory} />}
-            fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+            fileName={`Invoice # ${
+              invoiceHistory.refIHId + 1000
+            } ${invoiceHistory.refIHFromDate.slice(0, 7)} ${CustId}.pdf`}
           >
             {({ loading }) =>
               loading ? (
@@ -59,7 +64,9 @@ const InvoiceDownloadButton = ({ type, invoiceHistory }: Props) => {
           <>
             <PDFDownloadLink
               document={<InvoicePDFPPR invoiceHistory={invoiceHistory} />}
-              fileName={`Invoice # ${invoiceHistory.refIHId + 1000}.pdf`}
+              fileName={`Invoice # ${
+                invoiceHistory.refIHId + 1000
+              } ${invoiceHistory.refIHFromDate.slice(0, 7)} ${CustId}.pdf`}
             >
               {({ loading }) =>
                 loading ? (

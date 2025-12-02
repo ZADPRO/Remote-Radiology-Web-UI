@@ -103,6 +103,7 @@ import { Label } from "@/components/ui/label";
 import { formatReadableDate } from "@/utlis/calculateAge";
 import FileView from "@/components/FileView/FileView";
 import DownloadingOverlay from "@/components/ui/CustomComponents/DownloadingOverlay";
+import { FilterValue } from "@/services/patientService";
 
 interface staffData {
   refUserCustId: string;
@@ -1139,8 +1140,8 @@ const PatientQueue: React.FC = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex w-full px-1 items-center justify-center">
-                  <Label className="max-w-10 2xl:max-w-30 truncate">
+                <div className="flex w-full px-1 items-center justify-start">
+                  <Label className="max-w-12 2xl:max-w-30 text-start leading-tight whitespace-normal break-words overflow-hidden">
                     {row.original.refUserFirstName}
                   </Label>
                 </div>
@@ -1709,7 +1710,15 @@ const PatientQueue: React.FC = () => {
           if (formStatus) {
             // Form is already filled — show 'View' for all
             return (
-              <span>
+              <div className="flex flex-wrap justify-center w-full p-[5px]">
+                {row.original.refAppointmentDicomSide &&
+                row.original.refAppointmentDicomSide === "bilateral" ? (
+                  <div>B - </div>
+                ) : (
+                  (row.original.refAppointmentDicomSide === "unilateralright" ||
+                    row.original.refAppointmentDicomSide ===
+                      "unilateralleft") && <div>U - </div>
+                )}
                 <button
                   className={`hover:underline cursor-pointer font-bold ${
                     row.original.patientPrivatePublicStatus === "public"
@@ -1732,9 +1741,9 @@ const PatientQueue: React.FC = () => {
                     })
                   }
                 >
-                  View
+                  <span>View</span>
                 </button>
-              </span>
+              </div>
             );
           } else if (
             // (currentUserRole === "technician" || currentUserRole === "admin") &&
@@ -1791,11 +1800,61 @@ const PatientQueue: React.FC = () => {
       {
         accessorKey: "refAppointmentDicomSide",
         id: "dicom",
-        filterFn: (row, columnId, filterValues) => {
+        filterFn: (row, _, filterValues) => {
           if (!filterValues?.length) return true;
 
-          const value = row.getValue(columnId); // "unilateralright" / "unilateralleft" / "bilateral"
-          return filterValues.includes(value);
+          const dicomFiles = row.original.dicomFiles ?? [];
+
+          let leftCount = 0;
+          let rightCount = 0;
+
+          for (const file of dicomFiles) {
+            if (file.refDFSide === "Left") leftCount++;
+            if (file.refDFSide === "Right") rightCount++;
+          }
+
+          const hasLeft = leftCount > 0;
+          const hasRight = rightCount > 0;
+
+          // ✅ MATCHING LOGIC
+          return filterValues.some((filter: any) => {
+            if (filter === "unilateralleft") return hasLeft && !hasRight;
+            if (filter === "unilateralright") return hasRight && !hasLeft;
+            if (filter === "bilateral") return hasLeft && hasRight;
+            return false;
+          });
+        },
+        sortingFn: (rowA, rowB) => {
+          const getSideInfo = (row: any) => {
+            const dicomFiles = row.original.dicomFiles ?? [];
+
+            let leftCount = 0;
+            let rightCount = 0;
+
+            for (const file of dicomFiles) {
+              if (file.refDFSide === "Left") leftCount++;
+              if (file.refDFSide === "Right") rightCount++;
+            }
+
+            return {
+              leftCount,
+              rightCount,
+              hasLeft: leftCount > 0,
+              hasRight: rightCount > 0,
+            };
+          };
+
+          const a = getSideInfo(rowA);
+          const b = getSideInfo(rowB);
+
+          const rank = (info: any) => {
+            if (!info.hasLeft && !info.hasRight) return 0; // none
+            if (info.hasLeft && !info.hasRight) return 1; // unilateral LEFT
+            if (!info.hasLeft && info.hasRight) return 2; // unilateral RIGHT
+            return 3; // bilateral
+          };
+
+          return rank(a) - rank(b);
         },
         header: ({ column }) => {
           const dicomSideOptions = [
@@ -2183,9 +2242,14 @@ const PatientQueue: React.FC = () => {
 
       {
         id: "oldreport",
-        header: () => (
+        header: ({ column }) => (
           <div className="flex items-center justify-center gap-1">
-            <div className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer">
+            <div
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+              className="flex gap-x-2 gap-y-0 p-1 justify-center items-center flex-wrap cursor-pointer select-none"
+            >
               <div>Old</div>
               <div>Report</div>
             </div>
@@ -2484,18 +2548,34 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
+        accessorKey: "OldReportCount",
+        sortingFn: (rowA, rowB) => {
+          const a = Number(rowA.original.OldReportCount ?? 0);
+          const b = Number(rowB.original.OldReportCount ?? 0);
+          return a - b;
+        },
+        enableSorting: true
       },
 
       {
         id: "reportStatus",
         accessorFn: (row) => row.reportStatus ?? "-",
         header: ({ column }) => {
-          type FilterValue = "urgent" | "upload" | "ready";
+          type FilterValue =
+            | "dicomready"
+            | "uploaddicom"
+            | "reportready"
+            | "dicomreadyurgent"
+            | "uploaddicomurgent"
+            | "reportreadyurgent";
 
           const filterOptions: { label: string; value: FilterValue }[] = [
-            { label: "Urgent", value: "urgent" },
-            { label: "Upload Dicom", value: "upload" },
-            { label: "Dicom Ready", value: "ready" },
+            { label: "Dicom Ready - Start", value: "dicomready" },
+            { label: "Upload Dicom - Pending", value: "uploaddicom" },
+            { label: "Report Ready - View", value: "reportready" },
+            { label: "Dicom Ready - Start", value: "dicomreadyurgent" },
+            { label: "Upload Dicom - Pending", value: "uploaddicomurgent" },
+            { label: "Report Ready - View", value: "reportreadyurgent" },
           ];
 
           const selectedValues =
@@ -2551,21 +2631,17 @@ const PatientQueue: React.FC = () => {
                     return (
                       <div
                         key={opt.value}
-                        className="flex items-center gap-2 cursor-pointer py-1"
+                        className={`flex text-xs text-normal ${
+                          opt.value === "dicomreadyurgent" ||
+                          opt.value === "uploaddicomurgent" ||
+                          opt.value === "reportreadyurgent"
+                            ? `text-[red]`
+                            : `text-[#454545]`
+                        } items-center gap-2 cursor-pointer py-1`}
                         onClick={() => toggleFilter(opt.value)}
                       >
                         <Checkbox2 checked={selected} />
-                        <span
-                          className={`font-bold text-[${
-                            opt.value === "upload"
-                              ? "#999999"
-                              : opt.value === "urgent"
-                              ? "red"
-                              : ""
-                          }]`}
-                        >
-                          {opt.label}
-                        </span>
+                        <span className={`font-bold`}>{opt.label}</span>
                       </div>
                     );
                   })}
@@ -2586,23 +2662,31 @@ const PatientQueue: React.FC = () => {
             </div>
           );
         },
-        filterFn: (
-          row,
-          _columnId,
-          filterValues: ("urgent" | "upload" | "ready")[]
-        ) => {
+        filterFn: (row, _columnId, filterValues) => {
           if (!filterValues?.length) return true;
+          const getReportStatus = (row: any): FilterValue => {
+            const isUrgent = row.original.reportStatus === "Urgent";
+            const noDicom =
+              row.original.dicomFiles && row.original.dicomFiles.length === 0;
+            const isTechnologist =
+              row.original.refAppointmentComplete === "fillform" ||
+              row.original.refAppointmentComplete === "technologistformfill" ||
+              row.original.refAppointmentComplete === "reportformfill";
 
-          const isUrgent = row.original.reportStatus === "Urgent";
-          const dicomCount = row.original.dicomFiles?.length ?? 0;
+            if (isUrgent) {
+              if (noDicom) return "uploaddicomurgent";
+              if (isTechnologist) return "dicomreadyurgent";
+              return "reportreadyurgent";
+            }
 
-          const matchMap: Record<string, boolean> = {
-            urgent: isUrgent,
-            upload: dicomCount === 0 && !isUrgent,
-            ready: dicomCount > 0 && !isUrgent,
+            if (noDicom) return "uploaddicom";
+            if (isTechnologist) return "dicomready";
+            return "reportready";
           };
 
-          return filterValues.some((v) => matchMap[v]);
+          const rowStatus = getReportStatus(row);
+
+          return filterValues.includes(rowStatus);
         },
 
         enableColumnFilter: true,
@@ -2612,16 +2696,39 @@ const PatientQueue: React.FC = () => {
         📌 SORT FUNCTION (CUSTOM)
   ------------------------------------*/
         sortingFn: (rowA, rowB) => {
-          const getValue = (row: any) => {
-            const urgent = row.original.reportStatus === "Urgent";
-            const dicomCount = row.original.dicomFiles?.length ?? 0;
+          const getReportStatus = (row: any): FilterValue => {
+            const isUrgent = row.original.reportStatus === "Urgent";
+            const noDicom =
+              row.original.dicomFiles && row.original.dicomFiles.length === 0;
+            const isTechnologist =
+              row.original.refAppointmentComplete === "fillform" ||
+              row.original.refAppointmentComplete === "technologistformfill" ||
+              row.original.refAppointmentComplete === "reportformfill";
 
-            if (urgent) return 3; // highest priority
-            if (dicomCount === 0) return 1; // Upload Dicom
-            return 2; // Dicom Ready
+            if (isUrgent) {
+              if (noDicom) return "uploaddicomurgent";
+              if (isTechnologist) return "dicomreadyurgent";
+              return "reportreadyurgent";
+            }
+
+            if (noDicom) return "uploaddicom";
+            if (isTechnologist) return "dicomready";
+            return "reportready";
           };
 
-          return getValue(rowA) - getValue(rowB);
+          const a = getReportStatus(rowA);
+          const b = getReportStatus(rowB);
+
+          const rank: Record<FilterValue, number> = {
+            uploaddicom: 0,
+            dicomready: 1,
+            reportready: 2,
+            uploaddicomurgent: 3,
+            dicomreadyurgent: 4,
+            reportreadyurgent: 5,
+          };
+
+          return rank[a] - rank[b];
         },
         cell: ({ row }) => {
           const [dialogOpen, setDialogOpen] = useState(false);
@@ -2713,7 +2820,8 @@ const PatientQueue: React.FC = () => {
               className={`text-center ${
                 row.original.reportStatus === "Urgent"
                   ? "text-[red]"
-                  : row.original.dicomFiles && row.original.dicomFiles.length === 0
+                  : row.original.dicomFiles &&
+                    row.original.dicomFiles.length === 0
                   ? "text-[#999999]"
                   : ""
               } w-full`}
@@ -2727,14 +2835,24 @@ const PatientQueue: React.FC = () => {
                   onClick={handleViewClick}
                   className="hover:underline cursor-pointer font-bold"
                 >
-                  Start
+                  {row.original.dicomFiles &&
+                  row.original.dicomFiles.length === 0
+                    ? `Pending`
+                    : `Start`}
                 </span>
               ) : (
                 <span
                   onClick={handleViewClick}
                   className="hover:underline cursor-pointer font-bold"
                 >
-                  View
+                  {row.original.dicomFiles &&
+                  row.original.dicomFiles.length === 0
+                    ? `Pending`
+                    : row.original.refAppointmentComplete === "fillform" ||
+                      row.original.refAppointmentComplete ===
+                        "technologistformfill"
+                    ? `Start`
+                    : `View`}
                 </span>
               )}
 
@@ -3449,7 +3567,7 @@ const PatientQueue: React.FC = () => {
                 <TooltipTrigger asChild disabled={!latestRemark}>
                   <Input
                     tabIndex={-1}
-                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-30 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
+                    className={`text-xs 2xl:text-sm text-start bg-white border mx-2 w-29 2xl:w-30 truncate caret-transparent focus-visible:border-none focus-visible:ring-0 ${
                       !latestRemark ? "italic text-gray-500 text-[5px]" : ""
                     }`}
                     readOnly

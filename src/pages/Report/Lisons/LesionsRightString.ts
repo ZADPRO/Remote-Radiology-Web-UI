@@ -87,8 +87,8 @@ export function LesionsRightString(
           ) {
             locationText =
               data.locationclockposition === "0"
-                ? "retroareolar region"
-                : `${data.locationclockposition} O'clock`;
+                ? "the retroareolar region"
+                : `${data.locationclockposition} o'clock`;
           }
 
           let locationTextto = "";
@@ -98,8 +98,8 @@ export function LesionsRightString(
           ) {
             locationTextto =
               data.locationclockpositionto === "0"
-                ? "retroareolar region"
-                : `${data.locationclockpositionto} O'clock`;
+                ? "the retroareolar region"
+                : `${data.locationclockpositionto} o'clock`;
           }
 
           // Level
@@ -132,7 +132,7 @@ export function LesionsRightString(
               : ""
           } ${
             namePart === "solid mass / nodule"
-              ? `solid mass`
+              ? `a solid mass`
               : namePart ?? "lesion"
           }${
             namePart === "multiple simple cysts" && data.atleast
@@ -184,18 +184,18 @@ export function LesionsRightString(
             } else {
               sentence += `${
                 data.locationLevel !== "Unknown"
-                  ? `, located at ${data.locationLevel.toLowerCase()} ${levelText}${
+                  ? `, located at the ${data.locationLevel.toLowerCase()} ${levelText}${
                       data.locationLevelPercentage
                     }`
                   : ""
               }`;
             }
           } else if (levelText && data.locationLevel !== "unknown") {
-            sentence += `, located at ${data.locationLevel.toLowerCase()} ${levelText}`;
+            sentence += `, located at the ${data.locationLevel.toLowerCase()} ${levelText}`;
           }
 
           if (data.sizew || data.sizel || data.sizeh) {
-            sentence += `. The lesion is measuring `;
+            sentence += `. The lesion measures `;
           }
 
           // width Size
@@ -233,12 +233,12 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += `, with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, ${data.Margins.toLowerCase()} margins`;
           }
 
           // Density/Echotexture
           if (data.density && data.density !== "unknown") {
-            sentence += ` and ${data.density.toLowerCase()} echotexture`;
+            sentence += `, and ${data.density.toLowerCase()} echotexture`;
           }
 
           // Transmission speed
@@ -257,7 +257,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -316,21 +316,21 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "retroareolar region"
-                    : data.locationclockposition + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockposition + " o'clock"
                 }`
               : ``
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "retroareolar region"
-                    : data.locationclockpositionto + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockpositionto + " o'clock"
                 }`
               : ``
           }${
             data.locationLevel && data.locationLevel !== "Unknown"
-              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+              ? ` in the ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${
                   data.locationLevelPercentage.length > 0 &&
@@ -397,7 +397,7 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, and ${data.Margins.toLowerCase()} margins`;
           }
 
           // Internal debris
@@ -411,7 +411,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";
@@ -451,7 +451,7 @@ export function LesionsRightString(
           //   locationText =
           //     data.locationclockposition === "0"
           //       ? "Nipple"
-          //       : `${data.locationclockposition} O'clock`;
+          //       : `${data.locationclockposition} o'clock`;
           // }
 
           // Level
@@ -482,21 +482,21 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "retroareolar region"
-                    : data.locationclockposition + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockposition + " o'clock"
                 }`
               : ``
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "retroareolar region"
-                    : data.locationclockpositionto + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockpositionto + " o'clock"
                 }`
               : ``
           }${
             data.locationLevel && data.locationLevel !== "Unknown"
-              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+              ? ` in the ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${
                   data.locationLevelPercentage.length > 0 &&
@@ -561,7 +561,7 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, and ${data.Margins.toLowerCase()} margins`;
           }
 
           // Internal debris
@@ -575,7 +575,7 @@ export function LesionsRightString(
           }
 
           if (data.distancenipple) {
-            sentence += `. It is approximately ${data.distancenipple} mm from nipple`;
+            sentence += `. It is approximately ${data.distancenipple} mm from the nipple`;
           }
 
           sentence += ".</span><br /><br />";

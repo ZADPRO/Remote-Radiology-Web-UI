@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Checkbox2 } from "@/components/ui/CustomComponents/checkbox2";
 import {
@@ -1441,74 +1441,112 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
-                  <Select
-                    value={
-                      mainImpressionRecommendation.selectedImpressionIdRight
-                    }
-                    onValueChange={(val) => {
-                      setChangedOne((prev) => ({
-                        ...prev,
-                        impressionRight: true,
-                        recommendationRight: true,
-                      }));
-                      let options = ReportPortalImpresRecom;
-                      if (
-                        assignData?.naSystemReportAccess &&
-                        getAnswer(81) === "true"
-                      ) {
-                        options = NAImpresRecom;
+                  <div className="flex gap-2 justify-center items-center w-[100%]">
+                    <Select
+                      value={
+                        mainImpressionRecommendation.selectedImpressionIdRight
                       }
-                      const matched = options
-                        .flatMap((cat) => cat.data)
-                        .find((item) => item.id === val);
+                      onValueChange={(val) => {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          impressionRight: true,
+                          recommendationRight: true,
+                        }));
+                        let options = ReportPortalImpresRecom;
+                        if (
+                          assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true"
+                        ) {
+                          options = NAImpresRecom;
+                        }
+                        const matched = options
+                          .flatMap((cat) => cat.data)
+                          .find((item) => item.id === val);
 
-                      setMainImpressionRecommendation((prev) => ({
-                        ...prev,
-                        selectedImpressionIdRight: val,
-                        selectedRecommendationIdRight: val,
-                        impressionTextRight: matched?.impressionText || "",
-                        recommendationTextRight:
-                          matched?.recommendationText || "",
-                      }));
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          selectedImpressionIdRight: val,
+                          selectedRecommendationIdRight: val,
+                          impressionTextRight: matched?.impressionText || "",
+                          recommendationTextRight:
+                            matched?.recommendationText || "",
+                        }));
 
-                      ++requestVersionRef.current;
-                    }}
-                  >
-                    <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full relative">
-                      <SelectValue placeholder="Select Impression" />
-                    </SelectTrigger>
+                        ++requestVersionRef.current;
+                      }}
+                    >
+                      <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-[95%]">
+                        <SelectValue placeholder="Select Impression" />
+                      </SelectTrigger>
 
-                    <SelectContent>
-                      {assignData?.naSystemReportAccess &&
-                      getAnswer(81) === "true" ? (
-                        <>
-                          {NAImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impressionright-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {ReportPortalImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impressionright-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                      <SelectContent>
+                        {assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true" ? (
+                          <>
+                            {NAImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impressionright-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.impression}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {ReportPortalImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impressionright-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.impression}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {mainImpressionRecommendation.selectedImpressionIdRight
+                      .length > 0 && (
+                      <X
+                        onClick={() => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            impressionRight: true,
+                            recommendationRight: true,
+                          }));
+                          let options = ReportPortalImpresRecom;
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAImpresRecom;
+                          }
+                          const matched = options
+                            .flatMap((cat) => cat.data)
+                            .find((item) => item.id === "");
+
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            selectedImpressionIdRight: "",
+                            selectedRecommendationIdRight: "",
+                            impressionTextRight: matched?.impressionText || "",
+                            recommendationTextRight:
+                              matched?.recommendationText || "",
+                          }));
+
+                          ++requestVersionRef.current;
+                        }}
+                        className="cursor-pointer w-[5%]"
+                        color={"red"}
+                        size={15}
+                      />
+                    )}
+                  </div>
 
                   <div className="w-full">
                     {selectedImpressionRight?.impressionText}
@@ -1699,71 +1737,104 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
-                  <Select
-                    value={
-                      mainImpressionRecommendation.selectedRecommendationIdRight
-                    }
-                    onValueChange={(val) => {
-                      setChangedOne((prev) => ({
-                        ...prev,
-                        recommendationRight: true,
-                      }));
-                      let options = ReportPortalImpresRecom;
-                      if (
-                        assignData?.naSystemReportAccess &&
-                        getAnswer(81) === "true"
-                      ) {
-                        options = NAImpresRecom;
+                  <div className="flex gap-2 justify-center items-center w-[100%]">
+                    <Select
+                      value={
+                        mainImpressionRecommendation.selectedRecommendationIdRight
                       }
-                      const matched = options
-                        .flatMap((cat) => cat.data)
-                        .find((item) => item.id === val);
+                      onValueChange={(val) => {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          recommendationRight: true,
+                        }));
+                        let options = ReportPortalImpresRecom;
+                        if (
+                          assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true"
+                        ) {
+                          options = NAImpresRecom;
+                        }
+                        const matched = options
+                          .flatMap((cat) => cat.data)
+                          .find((item) => item.id === val);
 
-                      setMainImpressionRecommendation((prev) => ({
-                        ...prev,
-                        selectedRecommendationIdRight: val,
-                        recommendationTextRight:
-                          matched?.recommendationText || "",
-                      }));
-                      ++requestVersionRef.current;
-                    }}
-                  >
-                    <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
-                      <SelectValue placeholder="Select Recommendation" />
-                    </SelectTrigger>
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          selectedRecommendationIdRight: val,
+                          recommendationTextRight:
+                            matched?.recommendationText || "",
+                        }));
+                        ++requestVersionRef.current;
+                      }}
+                    >
+                      <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-[95%]">
+                        <SelectValue placeholder="Select Recommendation" />
+                      </SelectTrigger>
 
-                    <SelectContent>
-                      {assignData?.naSystemReportAccess &&
-                      getAnswer(81) === "true" ? (
-                        <>
-                          {NAImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impressionright-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.recommendation}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {ReportPortalImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impressionright-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.recommendation}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                      <SelectContent>
+                        {assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true" ? (
+                          <>
+                            {NAImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impressionright-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.recommendation}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {ReportPortalImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impressionright-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.recommendation}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {mainImpressionRecommendation.selectedRecommendationIdRight
+                      .length > 0 && (
+                      <X
+                        onClick={() => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            recommendationRight: true,
+                          }));
+                          let options = ReportPortalImpresRecom;
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAImpresRecom;
+                          }
+                          const matched = options
+                            .flatMap((cat) => cat.data)
+                            .find((item) => item.id === "");
 
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            selectedRecommendationIdRight: "",
+                            recommendationTextRight:
+                              matched?.recommendationText || "",
+                          }));
+                          ++requestVersionRef.current;
+                        }}
+                        className="cursor-pointer w-[5%]"
+                        color={"red"}
+                        size={15}
+                      />
+                    )}
+                  </div>
                   <div className="w-full">
                     {selectedImpressionRight?.recommendationText}
                   </div>
@@ -1893,60 +1964,80 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">Macro Sentence</Label>
-              <Select
-                value={commonImpressRecomm.idRight}
-                onValueChange={(value) => {
-                  setChangedOne((prev) => ({
-                    ...prev,
-                    commonImpressionRecommendationRight: true,
-                  }));
-                  let options = additionalOptions;
-                  if (
-                    assignData?.naSystemReportAccess &&
-                    getAnswer(81) === "true"
-                  ) {
-                    options = NAadditionalOptions;
-                  }
-                  const selected = options.find((opt) => opt.id === value);
-                  if (selected) {
-                    setCommonImpressRecomm({
-                      ...commonImpressRecomm,
-                      idRight: selected.id,
-                      textRight: selected.text,
-                    });
-                  }
-                  ++requestVersionRef.current;
-                }}
-              >
-                <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  {assignData?.naSystemReportAccess &&
-                  getAnswer(81) === "true" ? (
-                    <>
-                      {NAadditionalOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.id} -{" "}
-                          {option.text.split(" ").slice(0, 10).join(" ")}
-                          ...
-                        </SelectItem>
-                      ))}
-                    </>
-                  ) : (
-                    <>
-                      {additionalOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.id} -{" "}
-                          {option.text.split(" ").slice(0, 10).join(" ")}
-                          ...
-                        </SelectItem>
-                      ))}
-                    </>
-                  )}
-                </SelectContent>
-              </Select>
-
+              <div className="flex gap-1 items-center">
+                <Select
+                  value={commonImpressRecomm.idRight}
+                  onValueChange={(value) => {
+                    setChangedOne((prev) => ({
+                      ...prev,
+                      commonImpressionRecommendationRight: true,
+                    }));
+                    let options = additionalOptions;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAadditionalOptions;
+                    }
+                    const selected = options.find((opt) => opt.id === value);
+                    if (selected) {
+                      setCommonImpressRecomm({
+                        ...commonImpressRecomm,
+                        idRight: selected.id,
+                        textRight: selected.text,
+                      });
+                    }
+                    ++requestVersionRef.current;
+                  }}
+                >
+                  <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assignData?.naSystemReportAccess &&
+                    getAnswer(81) === "true" ? (
+                      <>
+                        {NAadditionalOptions.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.id} -{" "}
+                            {option.text.split(" ").slice(0, 10).join(" ")}
+                            ...
+                          </SelectItem>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        {additionalOptions.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.id} -{" "}
+                            {option.text.split(" ").slice(0, 10).join(" ")}
+                            ...
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+                {commonImpressRecomm.idRight.length > 0 && (
+                  <X
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        commonImpressionRecommendationRight: true,
+                      }));
+                      setCommonImpressRecomm({
+                        ...commonImpressRecomm,
+                        idRight: "",
+                        textRight: "",
+                      });
+                      ++requestVersionRef.current;
+                    }}
+                    className="cursor-pointer"
+                    color={"red"}
+                    size={15}
+                  />
+                )}
+              </div>
               {selectedMacroRight && (
                 <div className="text-sm mt-2 p-2 rounded border whitespace-pre-wrap">
                   {selectedMacroRight}
@@ -2082,71 +2173,107 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
-                  <Select
-                    value={mainImpressionRecommendation.selectedImpressionId}
-                    onValueChange={(val) => {
-                      setChangedOne((prev) => ({
-                        ...prev,
-                        impression: true,
-                        recommendation: true,
-                      }));
-                      let options = ReportPortalImpresRecom;
-                      if (
-                        assignData?.naSystemReportAccess &&
-                        getAnswer(81) === "true"
-                      ) {
-                        options = NAImpresRecom;
-                      }
-                      const matched = options
-                        .flatMap((cat) => cat.data)
-                        .find((item) => item.id === val);
+                  <div className="flex gap-2 justify-center items-center w-[100%]">
+                    <Select
+                      value={mainImpressionRecommendation.selectedImpressionId}
+                      onValueChange={(val) => {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          impression: true,
+                          recommendation: true,
+                        }));
+                        let options = ReportPortalImpresRecom;
+                        if (
+                          assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true"
+                        ) {
+                          options = NAImpresRecom;
+                        }
+                        const matched = options
+                          .flatMap((cat) => cat.data)
+                          .find((item) => item.id === val);
 
-                      setMainImpressionRecommendation((prev) => ({
-                        ...prev,
-                        selectedImpressionId: val,
-                        selectedRecommendationId: val,
-                        impressionText: matched?.impressionText || "",
-                        recommendationText: matched?.recommendationText || "",
-                      }));
-                      ++requestVersionRef.current;
-                    }}
-                  >
-                    <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full relative">
-                      <SelectValue placeholder="Select Impression" />
-                    </SelectTrigger>
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          selectedImpressionId: val,
+                          selectedRecommendationId: val,
+                          impressionText: matched?.impressionText || "",
+                          recommendationText: matched?.recommendationText || "",
+                        }));
+                        ++requestVersionRef.current;
+                      }}
+                    >
+                      <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-[95%]">
+                        <SelectValue placeholder="Select Impression" />
+                      </SelectTrigger>
 
-                    <SelectContent>
-                      {assignData?.naSystemReportAccess &&
-                      getAnswer(81) === "true" ? (
-                        <>
-                          {NAImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {ReportPortalImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.impression}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                      <SelectContent>
+                        {assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true" ? (
+                          <>
+                            {NAImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impression-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.impression}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {ReportPortalImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impression-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.impression}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {mainImpressionRecommendation.selectedImpressionId.length >
+                      0 && (
+                      <X
+                        onClick={() => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            impression: true,
+                            recommendation: true,
+                          }));
+                          let options = ReportPortalImpresRecom;
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAImpresRecom;
+                          }
+                          const matched = options
+                            .flatMap((cat) => cat.data)
+                            .find((item) => item.id === "");
 
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            selectedImpressionId: "",
+                            selectedRecommendationId: "",
+                            impressionText: matched?.impressionText || "",
+                            recommendationText:
+                              matched?.recommendationText || "",
+                          }));
+                          ++requestVersionRef.current;
+                        }}
+                        className="cursor-pointer w-[5%]"
+                        color={"red"}
+                        size={15}
+                      />
+                    )}
+                  </div>
                   <div className="w-full">
                     {selectedImpression?.impressionText}
                   </div>
@@ -2338,72 +2465,107 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 border p-2 rounded-md">
-                  <Select
-                    value={
-                      mainImpressionRecommendation.selectedRecommendationId
-                    }
-                    onValueChange={(val) => {
-                      setChangedOne((prev) => ({
-                        ...prev,
-                        recommendation: true,
-                      }));
-
-                      let options = ReportPortalImpresRecom;
-                      if (
-                        assignData?.naSystemReportAccess &&
-                        getAnswer(81) === "true"
-                      ) {
-                        options = NAImpresRecom;
+                  <div className="flex gap-2 justify-center items-center w-[100%]">
+                    <Select
+                      value={
+                        mainImpressionRecommendation.selectedRecommendationId
                       }
-                      const matched = options
-                        .flatMap((cat) => cat.data)
-                        .find((item) => item.id === val);
+                      onValueChange={(val) => {
+                        setChangedOne((prev) => ({
+                          ...prev,
+                          recommendation: true,
+                        }));
 
-                      setMainImpressionRecommendation((prev) => ({
-                        ...prev,
-                        selectedRecommendationId: val,
-                        recommendationText: matched?.recommendationText || "",
-                      }));
+                        let options = ReportPortalImpresRecom;
+                        if (
+                          assignData?.naSystemReportAccess &&
+                          getAnswer(81) === "true"
+                        ) {
+                          options = NAImpresRecom;
+                        }
+                        const matched = options
+                          .flatMap((cat) => cat.data)
+                          .find((item) => item.id === val);
 
-                      ++requestVersionRef.current;
-                    }}
-                  >
-                    <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-full">
-                      <SelectValue placeholder="Select Recommendation" />
-                    </SelectTrigger>
+                        setMainImpressionRecommendation((prev) => ({
+                          ...prev,
+                          selectedRecommendationId: val,
+                          recommendationText: matched?.recommendationText || "",
+                        }));
 
-                    <SelectContent>
-                      {assignData?.naSystemReportAccess &&
-                      getAnswer(81) === "true" ? (
-                        <>
-                          {NAImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.recommendation}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {ReportPortalImpresRecom.map((contentCategory) =>
-                            contentCategory.data.map((content, idx) => (
-                              <SelectItem
-                                key={`impression-${content.id}-${idx}`}
-                                value={content.id}
-                              >
-                                {content.id + " - " + content.recommendation}
-                              </SelectItem>
-                            ))
-                          )}
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                        ++requestVersionRef.current;
+                      }}
+                    >
+                      <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-[95%]">
+                        <SelectValue placeholder="Select Recommendation" />
+                      </SelectTrigger>
 
+                      <SelectContent>
+                        {assignData?.naSystemReportAccess &&
+                        getAnswer(81) === "true" ? (
+                          <>
+                            {NAImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impression-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.recommendation}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {ReportPortalImpresRecom.map((contentCategory) =>
+                              contentCategory.data.map((content, idx) => (
+                                <SelectItem
+                                  key={`impression-${content.id}-${idx}`}
+                                  value={content.id}
+                                >
+                                  {content.id + " - " + content.recommendation}
+                                </SelectItem>
+                              ))
+                            )}
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {mainImpressionRecommendation.selectedRecommendationId
+                      .length > 0 && (
+                      <X
+                        onClick={() => {
+                          setChangedOne((prev) => ({
+                            ...prev,
+                            recommendation: true,
+                          }));
+
+                          let options = ReportPortalImpresRecom;
+                          if (
+                            assignData?.naSystemReportAccess &&
+                            getAnswer(81) === "true"
+                          ) {
+                            options = NAImpresRecom;
+                          }
+                          const matched = options
+                            .flatMap((cat) => cat.data)
+                            .find((item) => item.id === "");
+
+                          setMainImpressionRecommendation((prev) => ({
+                            ...prev,
+                            selectedRecommendationId: "",
+                            recommendationText:
+                              matched?.recommendationText || "",
+                          }));
+
+                          ++requestVersionRef.current;
+                        }}
+                        className="cursor-pointer w-[5%]"
+                        color={"red"}
+                        size={15}
+                      />
+                    )}
+                  </div>
                   <div className="w-full">
                     {selectedImpression?.recommendationText}
                   </div>
@@ -2535,60 +2697,80 @@ const ImpressionRecommendation: React.FC<ImpressionProps> = ({
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">Macro Sentence</Label>
-              <Select
-                value={commonImpressRecomm.id}
-                onValueChange={(value) => {
-                  setChangedOne((prev) => ({
-                    ...prev,
-                    commonImpressionRecommendation: true,
-                  }));
-                  let options = additionalOptions;
-                  if (
-                    assignData?.naSystemReportAccess &&
-                    getAnswer(81) === "true"
-                  ) {
-                    options = NAadditionalOptions;
-                  }
-                  const selected = options.find((opt) => opt.id === value);
-                  if (selected) {
-                    setCommonImpressRecomm({
-                      ...commonImpressRecomm,
-                      id: selected.id,
-                      text: selected.text,
-                    });
-                  }
-                  ++requestVersionRef.current;
-                }}
-              >
-                <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  {assignData?.naSystemReportAccess &&
-                  getAnswer(81) === "true" ? (
-                    <>
-                      {NAadditionalOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.id} -{" "}
-                          {option.text.split(" ").slice(0, 10).join(" ")}
-                          ...
-                        </SelectItem>
-                      ))}
-                    </>
-                  ) : (
-                    <>
-                      {additionalOptions.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.id} -{" "}
-                          {option.text.split(" ").slice(0, 10).join(" ")}
-                          ...
-                        </SelectItem>
-                      ))}
-                    </>
-                  )}
-                </SelectContent>
-              </Select>
-
+              <div className="flex gap-1 items-center">
+                <Select
+                  value={commonImpressRecomm.id}
+                  onValueChange={(value) => {
+                    setChangedOne((prev) => ({
+                      ...prev,
+                      commonImpressionRecommendation: true,
+                    }));
+                    let options = additionalOptions;
+                    if (
+                      assignData?.naSystemReportAccess &&
+                      getAnswer(81) === "true"
+                    ) {
+                      options = NAadditionalOptions;
+                    }
+                    const selected = options.find((opt) => opt.id === value);
+                    if (selected) {
+                      setCommonImpressRecomm({
+                        ...commonImpressRecomm,
+                        id: selected.id,
+                        text: selected.text,
+                      });
+                    }
+                    ++requestVersionRef.current;
+                  }}
+                >
+                  <SelectTrigger className="bg-[#a3b1a0] m-0 text-xs w-1/2">
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assignData?.naSystemReportAccess &&
+                    getAnswer(81) === "true" ? (
+                      <>
+                        {NAadditionalOptions.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.id} -{" "}
+                            {option.text.split(" ").slice(0, 10).join(" ")}
+                            ...
+                          </SelectItem>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        {additionalOptions.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.id} -{" "}
+                            {option.text.split(" ").slice(0, 10).join(" ")}
+                            ...
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+                {commonImpressRecomm.id.length > 0 && (
+                  <X
+                    onClick={() => {
+                      setChangedOne((prev) => ({
+                        ...prev,
+                        commonImpressionRecommendation: true,
+                      }));
+                      setCommonImpressRecomm({
+                        ...commonImpressRecomm,
+                        id: "",
+                        text: "",
+                      });
+                      ++requestVersionRef.current;
+                    }}
+                    className="cursor-pointer"
+                    color={"red"}
+                    size={15}
+                  />
+                )}
+              </div>
               {selectedMacro && (
                 <div className="text-sm mt-2 p-2 rounded border whitespace-pre-wrap">
                   {selectedMacro}

@@ -112,20 +112,20 @@ export function generateGrandularAndDuctalTissueReport(
   let ductalText = "";
 
   // 5. Ductal Prominence
-  ductalList.map((data) => {
+  ductalList.map((data,index) => {
     ductalText +=
       ductalProminence === "Present" && ductalList.length > 0
-        ? `There is ductal prominence ${data.type.toLowerCase()} ${
+        ? `${index === 0 ? '': " "}There is a ductal prominence ${data.type.toLowerCase()} ${
             data.clock
               ? ` noted at ${
                   data.clock === "0"
-                    ? `retroareolar region`
-                    : `${data.clock} O'clock`
+                    ? `the retroareolar region`
+                    : `${data.clock} o'clock`
                 }`
               : ""
           }${
             data.position !== "Unknown" && data.position
-              ? ` in ${data.position.toLowerCase()}${
+              ? ` in the ${data.position.toLowerCase()}${
                   data.position
                     ? ` ${
                         data.position === "Coronal Level"
@@ -210,15 +210,15 @@ function generateCalcificationText(
       } ${label} noted`;
       const distText =
         showDistribution && distribution
-          ? ` with ${distribution.toLowerCase()} distribution`
+          ? ` in a ${distribution.toLowerCase()} distribution`
           : "";
       let location = clock
-        ? ` at ${clock === "0" ? "retroareolar region" : clock + ` O'clock`}`
+        ? ` at ${clock === "0" ? "the retroareolar region" : clock + ` o'clock`}`
         : "";
       location += level
         ? ` ${
             item.position !== "Unknown" && item.position
-              ? ` in ${item.position.toLowerCase()}${
+              ? ` in the ${item.position.toLowerCase()}${
                   item.position
                     ? ` ${
                         item.position === "Coronal Level"

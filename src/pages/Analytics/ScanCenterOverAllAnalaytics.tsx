@@ -157,6 +157,30 @@ const ScanCenterOverAllAnalyticsTable: React.FC<Props> = ({
       ),
     },
     {
+      accessorKey: "unilateralleft",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Unilateral Left
+        </div>
+      ),
+    },
+    {
+      accessorKey: "unilateralright",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Unilateral Right
+        </div>
+      ),
+    },
+    {
+      accessorKey: "bilateral",
+      header: () => (
+        <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">
+          Bilateral
+        </div>
+      ),
+    },
+    {
       accessorKey: "reportartificatsleft",
       header: () => (
         <div className="flex justify-center items-center text-center text-xs px-1 font-semibold">

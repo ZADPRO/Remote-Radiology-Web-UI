@@ -42,7 +42,7 @@ export function generateNippleAreolaBreastEditor(
       ? skinChangesOther
       : skinChanges.toLocaleLowerCase();
   result += `The QT scan shows ${skinText}${
-    skinText === "normal" ? "" : " in"
+    skinText === "normal" ? "" : " in the"
   } skin with ${nippleRetraction.toLowerCase()} and ${nippleDeformity.toLowerCase()}.`;
   // }
 
@@ -51,7 +51,7 @@ export function generateNippleAreolaBreastEditor(
   if (architecture === "Architectural Distortion") {
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>The architectural distortion observed is attributed to post-operative changes.`;
   } else if (architecture === "Normal") {
-    result += `<br/><br/><strong>Vascular and connective tissues: </strong>Penetrating arteries, superficial veins and Cooper’s ligaments and breast fat distribution show normal architecture.`;
+    result += `<br/><br/><strong>Vascular and connective tissues: </strong>Penetrating arteries, superficial veins, Cooper’s ligaments, and breast fat distribution show normal architecture.`;
   } else if (architecture === "S/P Mastectomy") {
     result += `<br/><br/><strong>Vascular and connective tissues: </strong>Absent (post mastectomy status).`;
   } else if (architecture.length === 0) {

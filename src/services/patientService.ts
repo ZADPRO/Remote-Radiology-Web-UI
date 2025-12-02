@@ -3,6 +3,15 @@ import { tokenService } from "@/lib/tokenService";
 import axios from "axios";
 import { FileData } from "./commonServices";
 
+export type FilterValue =
+  | "dicomready"
+  | "uploaddicom"
+  | "reportready"
+  | "dicomreadyurgent"
+  | "uploaddicomurgent"
+  | "reportreadyurgent";
+
+
 export interface ListAllPatient {
   refCODOEmail: string;
   refCODOPhoneNo1: string;

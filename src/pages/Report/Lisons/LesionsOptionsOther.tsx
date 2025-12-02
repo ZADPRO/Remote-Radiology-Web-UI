@@ -366,7 +366,7 @@ const LesionsOptionsOther: React.FC<Props> = ({
                                                                 [
                                                                     { label: "Round", value: "Round" },
                                                                     { label: "Oval", value: "Oval" },
-                                                                    { label: "Irregular", value: "Irregular" }
+                                                                    { label: "Irregularly", value: "Irregularly" }
                                                                 ].map((item, indexVal) => (
                                                                     <>
                                                                         <div

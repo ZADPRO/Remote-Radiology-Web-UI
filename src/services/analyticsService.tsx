@@ -90,18 +90,21 @@ export interface OverAllAnalytics {
   totaltiming: number;
   leftannualscreening: number;
   leftusgsfu: number;
-  leftBiopsy: number;
-  leftBreastradiologist: number;
-  leftClinicalCorrelation: number;
-  leftOncoConsult: number;
-  leftRedo: number;
+  leftbiopsy: number;
+  leftbreastradiologist: number;
+  leftclinicalcorrelation: number;
+  leftoncoconsult: number;
+  leftredo: number;
   rightannualscreening: number;
   rightusgsfu: number;
-  rightBiopsy: number;
-  rightBreastradiologist: number;
-  rightClinicalCorrelation: number;
-  rightOncoConsult: number;
-  rightRedo: number;
+  rightbiopsy: number;
+  rightbreastradiologist: number;
+  rightclinicalcorrelation: number;
+  rightoncoconsult: number;
+  rightredo: number;
+  unilateralleft: number;
+  unilateralright: number;
+  bilateral: number;
 }
 
 export interface OverAllScanCenterAnalytics {
@@ -129,6 +132,9 @@ export interface OverAllScanCenterAnalytics {
   rightclinicalcorrelation: number;
   rightoncoconsult: number;
   rightredo: number;
+  unilateralleft: number;
+  unilateralright: number;
+  bilateral: number;
 }
 
 export interface RefAuditTransHistory {
@@ -140,7 +146,6 @@ export interface RefAuditTransHistory {
   refTHActionBy: number;
   refUserCustId: number;
 }
-
 
 export const analyticsService = {
   overallScanCenter: async (
@@ -154,7 +159,8 @@ export const analyticsService = {
       token
     );
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL_USERSERVICE
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
       }/analaytics/admin/overallonescancenter`,
       { encryptedData: payload },
       {
@@ -224,12 +230,13 @@ export const analyticsService = {
     return decryptedData;
   },
 
-  getAuditLog: async (
-  ) => {
+  getAuditLog: async () => {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      `${import.meta.env.VITE_API_URL_USERSERVICE}/manageappointment/listauditlog`,
+      `${
+        import.meta.env.VITE_API_URL_USERSERVICE
+      }/manageappointment/listauditlog`,
       {
         headers: {
           Authorization: token,

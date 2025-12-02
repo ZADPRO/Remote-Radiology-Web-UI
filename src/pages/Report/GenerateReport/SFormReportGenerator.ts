@@ -1084,12 +1084,8 @@ export function SFormGeneration(
         biopsy.biopsyResults === "Yes" || biopsy.biopsyResults === "Unknown"
           ? `${
               biopsy.biopsyResults === "Yes"
-                ? ` ${
-                    biopsy.biopsyResultsDetails.length > 0
-                      ? ` Result: ${biopsy.biopsyResultsDetails}`
-                      : ``
-                  }`
-                : `Result: ${biopsy.biopsyResults.toLowerCase()}`
+                ? ` Result: abnormal.`
+                : ` Result: ${biopsy.biopsyResults.toLowerCase()}.`
             }`
           : ""
       }${

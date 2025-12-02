@@ -164,7 +164,7 @@ const Analytics: React.FC = () => {
       "codoctor",
       "doctor",
     ],
-    scanIndications: ["admin", "manager", "scadmin", "technician", "wgdoctor"],
+    scanIndications: ["admin", "manager", "scadmin", "technician", "wgdoctor", "radiologist"],
     turnaroundTime: [
       "admin",
       "radiologist",
@@ -314,6 +314,11 @@ const Analytics: React.FC = () => {
       return;
       setLoding(true);
     try {
+      
+console.log('Analytics.tsx -------------------------- >  317  ',userId,
+        roleId,
+        format(dateRange?.from, "yyyy-MM-dd"),
+        format(dateRange?.to, "yyyy-MM-dd"));
       const res = await analyticsService.analyticsPerUser(
         userId,
         roleId,
@@ -321,6 +326,7 @@ const Analytics: React.FC = () => {
         format(dateRange?.to, "yyyy-MM-dd")
       );
       if (res.status) {
+console.log('Analytics.tsx / res / 323 -------------------  ', res);
 
         setUserOverAllAnalaytics(
           res.OverAllAnalytics ? res.OverAllAnalytics : []
@@ -392,10 +398,10 @@ const Analytics: React.FC = () => {
       role?.id === null ||
       role?.id === undefined
     )
-      return;
+    return;
     // setTempRole({ id: 0, type: "" });
     // setTatStats([]);
-
+    
     if (["admin", "scadmin"].includes(role.type)) {
       if (userSelectedValue) {
         setCenterSelectedValue(null);
@@ -406,6 +412,7 @@ const Analytics: React.FC = () => {
       } else {
         if (userSelectedValue === 0) {
           setUserSelectedValue(0);
+          
           fetchAnalyticsPeruser(0, tempRole.id ? tempRole.id : role?.id);
         } else {
           setUserSelectedValue(null);
@@ -421,12 +428,14 @@ const Analytics: React.FC = () => {
       setUserSelectedValue(0);
       fetchAnalyticsPeruser(0, role?.id);
     } else {
+    console.log('Analytics.tsx -------------------------- >  453  **********');
+
       setCenterSelectedValue(null);
       setUserSelectedValue(
-        userSelectedValue ? userSelectedValue : user.refUserId
+        userSelectedValue ? Number(userSelectedValue) : user.refUserId
       );
       fetchAnalyticsPeruser(
-        userSelectedValue ? userSelectedValue : user.refUserId,
+        userSelectedValue ? Number(userSelectedValue) : user.refUserId,
         role?.id
       );
     }
@@ -440,13 +449,30 @@ const Analytics: React.FC = () => {
     }
   }, [centerSelectedValue]);
 
-  useEffect(() => {
-    if (userSelectedValue) {
-      fetchAnalyticsPeruser(Number(userSelectedValue), tempRole.id);
-    } else if (userSelectedValue === 0) {
-      fetchAnalyticsPeruser(0, tempRole.id);
-    }
-  }, [userSelectedValue]);
+useEffect(() => {
+  if (userSelectedValue === null) return;
+
+  // CASE 1: Over All selected
+  if (userSelectedValue === 0) {
+    fetchAnalyticsPeruser(0, role?.id || 0); 
+    return;
+  }
+
+  // CASE 2: Individual user selected
+  const selectedUser = allUsers?.find(
+    (item) => item.refUserId === userSelectedValue
+  );
+
+  // Always use actual role of selected user from DB 
+  const resolvedRoleId = selectedUser?.refRTId ?? (role?.id || 0);
+
+  fetchAnalyticsPeruser(
+    Number(userSelectedValue),
+    resolvedRoleId
+  );
+
+}, [userSelectedValue, allUsers]);
+
 
   return (
     <div className="w-11/12 mx-auto flex flex-col justify-center gap-4 my-5 mt-10 relative">
@@ -667,7 +693,7 @@ const Analytics: React.FC = () => {
             Total Case Count
           </span>
           <span className="w-1/3 font-bold text-3xl">
-            {intakeFormAnalytics[0]?.total_appointments}
+            {intakeFormAnalytics ? intakeFormAnalytics[0]?.total_appointments : 0}
           </span>
         </div>
 

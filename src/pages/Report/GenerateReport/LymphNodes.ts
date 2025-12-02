@@ -52,26 +52,32 @@ export function LymphNodesGenerateString(
               ? `${
                   entry.position === "0"
                     ? " at the retroareolar region"
-                    : " at the " + entry.position + " O'clock"
+                    : " at the " + entry.position + " o'clock"
                 }`
               : ""
           }${
             entry.level && entry.level !== "unknown"
               ? ` on the ${entry.level.toLowerCase()}, ${levelState(
                   entry.level
-                ).toUpperCase()}${entry.levelpercentage} is`
+                ).toUpperCase()}${entry.levelpercentage}${entry.levelpercentage ? `,` : ``} is`
               : ``
-          } likely to represent at intramammary lymph node${
-            entry.locationLevel ? " with features of "+entry.locationLevel+"." : "."
+          } likely to represent an intramammary lymph node${
+            entry.locationLevel
+              ? " with features " +
+                (entry.locationLevel === "not visualized"
+                  ? ""
+                  : " of ")+
+                entry.locationLevel +
+                "."
+              : "."
           }`
       );
 
-      if(intramammaryList.length > 0){
+      if (intramammaryList.length > 0) {
         result += sentences.join(" ") + "<br/>";
-      }else{
-        result=""
+      } else {
+        result = "";
       }
-
     } catch (e) {
       console.error("Invalid JSON for IntramammaryDatar", e);
     }
@@ -80,7 +86,14 @@ export function LymphNodesGenerateString(
   // --- Axillary Nodes
   result +=
     axillarynodes != "" && axillarynodes != "unknown"
-      ? `The ${directionText.toLowerCase()} axillary nodes are ${axillarynodes} within the limited area of the region imaged.<br/>`
+      ? `The ${directionText.toLowerCase()} axillary nodes ${
+          axillarynodes === "benign morphology" ||
+          axillarynodes === "suspicious morphology"
+            ? "have a"
+            : axillarynodes === "loss of fatty hilum"
+            ? "show a"
+            : "are"
+        } ${axillarynodes} within the limited area of the region imaged.<br/>`
       : "";
 
   // --- Clips
@@ -100,13 +113,13 @@ export function LymphNodesGenerateString(
             clip.position
               ? `${
                   clip.position === "0"
-                    ? " retroareolar region"
-                    : " " + clip.position + " O'clock"
+                    ? " at the retroareolar region"
+                    : " at " + clip.position + " o'clock"
                 }`
               : ``
           }${
             clip.level && clip.level !== "unknown"
-              ? ` located at ${clip.level.toLocaleLowerCase()} ${levelState(
+              ? ` at the ${clip.level.toLocaleLowerCase()} ${levelState(
                   clip.level
                 ).toUpperCase()}${clip.levelpercentage}`
               : ``

@@ -188,7 +188,14 @@ const InvoicePDFScribe = ({ invoiceHistory }: Props) => (
               {invoiceHistory.otherExpenses.map((data, index) => (
                 <View style={styles.tableRow}>
                   <Text style={styles.cellSmall}>{index + 2}.</Text>
-                  <Text style={styles.cell}>{data.name}</Text>
+                  <View style={styles.cell}>
+                    <Text style={{ fontSize: "8px" }}>
+                      {data.type === "plus"
+                        ? "Addtional Amount"
+                        : data.type === "minus" && "Deductible Amount"}
+                    </Text>
+                    <Text>{data.name}</Text>
+                  </View>
                   <Text style={styles.cell}>-</Text>
                   <Text style={styles.cell}>{data.amount}</Text>
                   <Text style={styles.cell}>{data.amount}</Text>

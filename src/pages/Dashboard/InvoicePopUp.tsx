@@ -42,7 +42,9 @@ const InvoicePopUp: React.FC<Props> = () => {
     null
   );
 
-  const [invoiceHistory, setInvoiceHistory] = useState<InvoiceHistoryInvoice[]>([]);
+  const [invoiceHistory, setInvoiceHistory] = useState<InvoiceHistoryInvoice[]>(
+    []
+  );
 
   const [strickedDates, setStrickedDates] = useState<Date[]>([]);
 
@@ -51,14 +53,12 @@ const InvoicePopUp: React.FC<Props> = () => {
   const [date, setDate] = React.useState<Date | null>(null);
 
   const [amount, setAmount] = useState<AmountModel>({
-    refTASformEdit: "",
-    refTASformCorrect: "",
-    refTADaformEdit: "",
-    refTADaformCorrect: "",
-    refTADbformEdit: "",
-    refTADbformCorrect: "",
-    refTADcformEdit: "",
-    refTADcformCorrect: "",
+    refTASform: "",
+    refTADaform: "",
+    refTADbform: "",
+    refTADcform: "",
+    refTAXform: "",
+    refTAEditform: "",
     refTADScribeTotalcase: "",
   });
 
@@ -121,17 +121,14 @@ const InvoicePopUp: React.FC<Props> = () => {
       invoiceServie
         .getAmount()
         .then((res) => {
-          console.log(res);
           if (res.status) {
             setAmount({
-              refTASformEdit: res.AmountModel[0].refTASformEdit,
-              refTASformCorrect: res.AmountModel[0].refTASformCorrect,
-              refTADaformEdit: res.AmountModel[0].refTADaformEdit,
-              refTADaformCorrect: res.AmountModel[0].refTADaformCorrect,
-              refTADbformEdit: res.AmountModel[0].refTADbformEdit,
-              refTADbformCorrect: res.AmountModel[0].refTADbformCorrect,
-              refTADcformEdit: res.AmountModel[0].refTADcformEdit,
-              refTADcformCorrect: res.AmountModel[0].refTADcformCorrect,
+              refTASform: res.AmountModel[0].refTASform,
+              refTADaform: res.AmountModel[0].refTADaform,
+              refTADbform: res.AmountModel[0].refTADbform,
+              refTADcform: res.AmountModel[0].refTADcform,
+              refTAXform: res.AmountModel[0].refTAXform,
+              refTAEditform: res.AmountModel[0].refTAEditform,
               refTADScribeTotalcase: res.AmountModel[0].refTADScribeTotalcase,
             });
             setScanCenterList(res.scancenterData);
@@ -174,7 +171,7 @@ const InvoicePopUp: React.FC<Props> = () => {
     invoiceServie
       .getInvoiceHistory(type, id)
       .then((res) => {
-        console.log(res);
+        console.log("InvoicePopUp.tsx / res / 171 -------------------  ", res);
         if (res.status) {
           if (res.invoiceHistoryTakenDate !== null) {
             setStrickedDates(
@@ -537,6 +534,15 @@ const InvoicePopUp: React.FC<Props> = () => {
                             <InvoiceDownloadButton
                               type={type}
                               invoiceHistory={item}
+                              CustId={
+                                type === "1"
+                                  ? scancenterList.find(
+                                      (sc) => sc.refSCId === item.refSCId
+                                    )?.refSCCustId || ""
+                                  : UserList.find(
+                                      (user) => user.refUserId === item.refUserId
+                                    )?.refUserCustId || ""
+                              }
                             />
                           </div>
                         </div>
@@ -565,15 +571,15 @@ const InvoicePopUp: React.FC<Props> = () => {
             <div className="flex flex-wrap gap-5 mt-4">
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  S Form Edit Amount (INR)
+                  S Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTASformEdit}
+                  value={amount.refTASform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTASformEdit: e.target.value,
+                      refTASform: e.target.value,
                     }))
                   }
                   required
@@ -583,15 +589,15 @@ const InvoicePopUp: React.FC<Props> = () => {
               </div>
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  S Form Correct Amount (INR)
+                  Da Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTASformCorrect}
+                  value={amount.refTADaform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTASformCorrect: e.target.value,
+                      refTADaform: e.target.value,
                     }))
                   }
                   required
@@ -601,15 +607,15 @@ const InvoicePopUp: React.FC<Props> = () => {
               </div>
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  Da Form Edit Amount (INR)
+                  Db Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTADaformEdit}
+                  value={amount.refTADbform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTADaformEdit: e.target.value,
+                      refTADbform: e.target.value,
                     }))
                   }
                   required
@@ -619,15 +625,15 @@ const InvoicePopUp: React.FC<Props> = () => {
               </div>
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  Da Form Correct Amount (INR)
+                  Dc Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTADaformCorrect}
+                  value={amount.refTADcform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTADaformCorrect: e.target.value,
+                      refTADcform: e.target.value,
                     }))
                   }
                   required
@@ -637,15 +643,15 @@ const InvoicePopUp: React.FC<Props> = () => {
               </div>
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  Db Form Edit Amount (INR)
+                  X Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTADbformEdit}
+                  value={amount.refTAXform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTADbformEdit: e.target.value,
+                      refTAXform: e.target.value,
                     }))
                   }
                   required
@@ -655,51 +661,15 @@ const InvoicePopUp: React.FC<Props> = () => {
               </div>
               <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
                 <p className="font-bold text-sm sm:text-base">
-                  Db Form Correct Amount (INR)
+                  Edit Form Amount (INR)
                 </p>
                 <Input
                   type="number"
-                  value={amount.refTADbformCorrect}
+                  value={amount.refTAEditform}
                   onChange={(e) =>
                     setAmount((prev) => ({
                       ...prev,
-                      refTADbformCorrect: e.target.value,
-                    }))
-                  }
-                  required
-                  placeholder="Amount"
-                  className="w-full sm:w-[200px] lg:w-[250px] text-xs sm:text-sm h-9 sm:h-10"
-                />
-              </div>
-              <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
-                <p className="font-bold text-sm sm:text-base">
-                  Dc Form Edit Amount (INR)
-                </p>
-                <Input
-                  type="number"
-                  value={amount.refTADcformEdit}
-                  onChange={(e) =>
-                    setAmount((prev) => ({
-                      ...prev,
-                      refTADcformEdit: e.target.value,
-                    }))
-                  }
-                  required
-                  placeholder="Amount"
-                  className="w-full sm:w-[200px] lg:w-[250px] text-xs sm:text-sm h-9 sm:h-10"
-                />
-              </div>
-              <div className="flex flex-col items-start gap-2 sm:gap-3 w-full sm:w-auto">
-                <p className="font-bold text-sm sm:text-base">
-                  Dc Form Correct Amount (INR)
-                </p>
-                <Input
-                  type="number"
-                  value={amount.refTADcformCorrect}
-                  onChange={(e) =>
-                    setAmount((prev) => ({
-                      ...prev,
-                      refTADcformCorrect: e.target.value,
+                      refTAEditform: e.target.value,
                     }))
                   }
                   required

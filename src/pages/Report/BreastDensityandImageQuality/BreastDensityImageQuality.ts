@@ -38,7 +38,7 @@ export function generateRightBreastReportText(
     breastDensity === "S/P Mastectomy"
       ? `has no fibroglandular parenchyma (post mastectomy status)`
       : `is ${
-          breastDensity.toLowerCase() ? `${breastDensity.toLowerCase()} ` : ``
+          breastDensity.toLowerCase() ? `${breastDensity.toLowerCase()}` : ``
         }${
           fibroglandularVolume.toLowerCase()
             ? ` with a fibroglandular ratio of  ${fibroglandularVolume.toLowerCase()}%`

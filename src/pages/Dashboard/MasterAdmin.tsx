@@ -8,6 +8,7 @@ import {
   PersonStanding,
   Settings2,
   Shield,
+  TableProperties,
 } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoNew.png";
@@ -116,6 +117,11 @@ const MasterAdmin: React.FC = () => {
         path: "/admin/auditLogs",
         icon: <Shield className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
+      {
+        label: "Daily List",
+        path: "/admin/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
     ],
     scadmin: [
       {
@@ -137,6 +143,11 @@ const MasterAdmin: React.FC = () => {
         label: "Analytics",
         path: "/scadmin/analytics",
         icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
+      {
+        label: "Daily List",
+        path: "/scadmin/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     technician: [
@@ -227,6 +238,11 @@ const MasterAdmin: React.FC = () => {
         label: "Analytics",
         path: "/manager/analytics",
         icon: <ChartPie className="w-4 h-4 2xl:w-6 2xl:h-6" />,
+      },
+      {
+        label: "Daily List",
+        path: "/manager/dailylist",
+        icon: <TableProperties className="w-4 h-4 2xl:w-6 2xl:h-6" />,
       },
     ],
     doctor: [

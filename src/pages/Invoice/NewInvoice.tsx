@@ -17,7 +17,7 @@ import {
   invoiceServie,
   OtherExpensesModel,
 } from "@/services/invoiceService";
-import { ArrowLeft, Loader, Trash } from "lucide-react";
+import { ArrowLeft, Loader, Minus, Plus, Trash } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -61,26 +61,20 @@ const NewInvoice: React.FC<Props> = () => {
     bank: "",
     branch: "",
     ifsc: "",
-    refTASformEditquantity: null,
-    refTASformEditamount: null,
-    refTASformCorrectquantity: null,
-    refTASformCorrectamount: null,
-    refTADaformEditquantity: null,
-    refTADaformEditamount: null,
-    refTADaformCorrectquantity: null,
-    refTADaformCorrectamount: null,
-    refTADbformEditquantity: null,
-    refTADbformEditamount: null,
-    refTADbformCorrectquantity: null,
-    refTADbformCorrectamount: null,
-    refTADcformEditquantity: null,
-    refTADcformEditamount: null,
-    refTADcformCorrectquantity: null,
-    refTADcformCorrectamount: null,
+    refIHSFormquantity: null,
+    refIHSFormamount: null,
+    refIHDaFormquantity: null,
+    refIHDaFormamount: null,
+    refIHDbFormquantity: null,
+    refIHDbFormamount: null,
+    refIHDcFormquantity: null,
+    refIHDcFormamount: null,
+    refIHxFormquantity: null,
+    refIHxFormamount: null,
+    refIHEditquantity: null,
+    refIHEditFormamount: null,
     refTADScribeTotalcasequantity: null,
     refTADScribeTotalcaseamount: null,
-    otherExpensiveName: "",
-    otherAmount: null,
     refScanCenterTotalCase: null,
     refScancentercaseAmount: null,
     total: 0,
@@ -88,6 +82,9 @@ const NewInvoice: React.FC<Props> = () => {
   });
 
   const [otherExpenses, setOtherExpenses] = useState<OtherExpensesModel[]>([]);
+  const [deductibleExpenses, setDeductibleExpenses] = useState<
+    OtherExpensesModel[]
+  >([]);
 
   useEffect(() => {
     setLoading(true);
@@ -154,14 +151,24 @@ const NewInvoice: React.FC<Props> = () => {
               toAddress: res.ScancenterData[0].refSCAddress,
               billingfrom: startDate,
               billingto: endDate,
-              refTASformEditamount: parseInt(res.refTASformEdit || "0"),
-              refTASformCorrectamount: parseInt(res.refTASformCorrect || "0"),
-              refTADaformEditamount: parseInt(res.refTADaformEdit || "0"),
-              refTADaformCorrectamount: parseInt(res.refTADaformCorrect || "0"),
-              refTADbformEditamount: parseInt(res.refTADbformEdit || "0"),
-              refTADbformCorrectamount: parseInt(res.refTADbformCorrect || "0"),
-              refTADcformEditamount: parseInt(res.refTADcformEdit || "0"),
-              refTADcformCorrectamount: parseInt(res.refTADcformCorrect || "0"),
+              refIHSFormquantity:
+                (res.UserCount && res.UserCount[0].SForm) || 0,
+              refIHSFormamount: parseInt(res.refTASform || "0"),
+              refIHDaFormquantity:
+                (res.UserCount && res.UserCount[0].DaForm) || 0,
+              refIHDaFormamount: parseInt(res.refTADaform || "0"),
+              refIHDbFormquantity:
+                (res.UserCount && res.UserCount[0].DbForm) || 0,
+              refIHDbFormamount: parseInt(res.refTADbform || "0"),
+              refIHDcFormquantity:
+                (res.UserCount && res.UserCount[0].DcForm) || 0,
+              refIHDcFormamount: parseInt(res.refTADcform || "0"),
+              refIHxFormquantity:
+                (res.UserCount && res.UserCount[0].xForm) || 0,
+              refIHxFormamount: parseInt(res.refTAXform || "0"),
+              refIHEditquantity:
+                (res.UserCount && res.UserCount[0].editForm) || 0,
+              refIHEditFormamount: parseInt(res.refTAEditform || "0"),
               refTADScribeTotalcasequantity: 0,
               refTADScribeTotalcaseamount: parseInt(
                 res.refTADScribeTotalcase || "0"
@@ -184,22 +191,24 @@ const NewInvoice: React.FC<Props> = () => {
               fromAddress: "6240/304, Randi Avenue, Woodland hills, CA 91367.",
               billingfrom: startDate,
               billingto: endDate,
-              refTASformEditquantity: res.UserCount[0].SFormEdit,
-              refTASformEditamount: parseInt(res.refTASformEdit || "0"),
-              refTASformCorrectquantity: res.UserCount[0].SFormCorrect,
-              refTASformCorrectamount: parseInt(res.refTASformCorrect || "0"),
-              refTADaformEditquantity: res.UserCount[0].DaFormEdit,
-              refTADaformEditamount: parseInt(res.refTADaformEdit || "0"),
-              refTADaformCorrectquantity: res.UserCount[0].DaFormCorrect,
-              refTADaformCorrectamount: parseInt(res.refTADaformCorrect || "0"),
-              refTADbformEditquantity: res.UserCount[0].DbFormEdit,
-              refTADbformEditamount: parseInt(res.refTADbformEdit || "0"),
-              refTADbformCorrectquantity: res.UserCount[0].DbFormCorrect,
-              refTADbformCorrectamount: parseInt(res.refTADbformCorrect || "0"),
-              refTADcformEditquantity: res.UserCount[0].DcFormEdit,
-              refTADcformEditamount: parseInt(res.refTADcformEdit || "0"),
-              refTADcformCorrectquantity: res.UserCount[0].DcFormCorrect,
-              refTADcformCorrectamount: parseInt(res.refTADcformCorrect || "0"),
+              refIHSFormquantity:
+                (res.UserCount && res.UserCount[0].SForm) || 0,
+              refIHSFormamount: parseInt(res.refTASform || "0"),
+              refIHDaFormquantity:
+                (res.UserCount && res.UserCount[0].DaForm) || 0,
+              refIHDaFormamount: parseInt(res.refTADaform || "0"),
+              refIHDbFormquantity:
+                (res.UserCount && res.UserCount[0].DbForm) || 0,
+              refIHDbFormamount: parseInt(res.refTADbform || "0"),
+              refIHDcFormquantity:
+                (res.UserCount && res.UserCount[0].DcForm) || 0,
+              refIHDcFormamount: parseInt(res.refTADcform || "0"),
+              refIHxFormquantity:
+                (res.UserCount && res.UserCount[0].xForm) || 0,
+              refIHxFormamount: parseInt(res.refTAXform || "0"),
+              refIHEditquantity:
+                (res.UserCount && res.UserCount[0].editForm) || 0,
+              refIHEditFormamount: parseInt(res.refTAEditform || "0"),
               refTADScribeTotalcasequantity:
                 res.UserCount[0].total_appointments || 0,
               refTADScribeTotalcaseamount: parseInt(
@@ -222,21 +231,12 @@ const NewInvoice: React.FC<Props> = () => {
     let total = 0;
 
     if (userAccess === 1) {
-      total += n(input.refTASformEditquantity) * n(input.refTASformEditamount);
-      total +=
-        n(input.refTASformCorrectquantity) * n(input.refTASformCorrectamount);
-      total +=
-        n(input.refTADaformEditquantity) * n(input.refTADaformEditamount);
-      total +=
-        n(input.refTADaformCorrectquantity) * n(input.refTADaformCorrectamount);
-      total +=
-        n(input.refTADbformEditquantity) * n(input.refTADbformEditamount);
-      total +=
-        n(input.refTADbformCorrectquantity) * n(input.refTADbformCorrectamount);
-      total +=
-        n(input.refTADcformEditquantity) * n(input.refTADcformEditamount);
-      total +=
-        n(input.refTADcformCorrectquantity) * n(input.refTADcformCorrectamount);
+      total += n(input.refIHSFormquantity) * n(input.refIHSFormamount);
+      total += n(input.refIHDaFormquantity) * n(input.refIHDaFormamount);
+      total += n(input.refIHDbFormquantity) * n(input.refIHDbFormamount);
+      total += n(input.refIHDcFormquantity) * n(input.refIHDcFormamount);
+      total += n(input.refIHxFormquantity) * n(input.refIHxFormamount);
+      total -= n(input.refIHEditquantity) * n(input.refIHEditFormamount);
     } else if (userAccess === 2) {
       total +=
         n(input.refTADScribeTotalcasequantity) *
@@ -251,31 +251,32 @@ const NewInvoice: React.FC<Props> = () => {
       0
     );
     total += otherTotal;
+    const deductableTotal = deductibleExpenses.reduce(
+      (sum, exp) => sum + n(exp.amount),
+      0
+    );
+    total -= deductableTotal;
     setInput((prev) => ({ ...prev, total }));
   }, [
     userAccess,
-    input.refTASformEditquantity,
-    input.refTASformEditamount,
-    input.refTASformCorrectquantity,
-    input.refTASformCorrectamount,
-    input.refTADaformEditquantity,
-    input.refTADaformEditamount,
-    input.refTADaformCorrectquantity,
-    input.refTADaformCorrectamount,
-    input.refTADbformEditquantity,
-    input.refTADbformEditamount,
-    input.refTADbformCorrectquantity,
-    input.refTADbformCorrectamount,
-    input.refTADcformEditquantity,
-    input.refTADcformEditamount,
-    input.refTADcformCorrectquantity,
-    input.refTADcformCorrectamount,
+    input.refIHSFormamount,
+    input.refIHSFormquantity,
+    input.refIHDaFormamount,
+    input.refIHDaFormquantity,
+    input.refIHDbFormamount,
+    input.refIHDbFormquantity,
+    input.refIHDcFormamount,
+    input.refIHDcFormquantity,
+    input.refIHxFormamount,
+    input.refIHxFormquantity,
+    input.refIHEditFormamount,
+    input.refIHEditquantity,
     input.refTADScribeTotalcasequantity,
     input.refTADScribeTotalcaseamount,
     input.refScanCenterTotalCase,
     input.refScancentercaseAmount,
-    input.otherAmount,
     otherExpenses,
+    deductibleExpenses,
   ]);
 
   const handleInputChanges = (
@@ -289,14 +290,21 @@ const NewInvoice: React.FC<Props> = () => {
   };
 
   const handleSubmitInvoice = () => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     if (input.signature.length === 0) {
       toast.error("Required Signature");
       setLoading(false);
       return;
     }
+
+    console.log(
+      "NewInvoice.tsx -------------------------- >  290 Helooooooooooooooooooo "
+    );
     invoiceServie
-      .generateInvoice(input, otherExpenses)
+      .generateInvoice(input, otherExpenses, deductibleExpenses)
       .then((res) => {
         console.log(res);
         if (res.status) {
@@ -307,12 +315,12 @@ const NewInvoice: React.FC<Props> = () => {
         } else {
           toast.error(res.message);
         }
+
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
-
-    setLoading(false);
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -321,6 +329,7 @@ const NewInvoice: React.FC<Props> = () => {
   const [trimmedDataURL, setTrimmedDataURL] = useState<string | null>(null);
 
   const signUpload = async (file: File) => {
+    setLoading(true);
     const formDataObj = new FormData();
     formDataObj.append("file", file);
     try {
@@ -340,6 +349,7 @@ const NewInvoice: React.FC<Props> = () => {
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
 
   const previewSignature = () => {
@@ -357,7 +367,7 @@ const NewInvoice: React.FC<Props> = () => {
     // });
   };
 
-  const saveSignature = () => {
+  const saveSignature = async () => {
     if (!sigCanvas.current) return;
 
     // Convert canvas to Blob and upload
@@ -386,6 +396,18 @@ const NewInvoice: React.FC<Props> = () => {
     setOtherExpenses(updated);
   };
 
+  // ✅ Add new expense
+  const handleAddExpenseDeductable = () => {
+    setDeductibleExpenses([...deductibleExpenses, { name: "", amount: 0 }]);
+  };
+
+  // ✅ Delete expense by index
+  const handleDeleteExpenseDeductable = (index: number) => {
+    const updated = [...deductibleExpenses];
+    updated.splice(index, 1);
+    setDeductibleExpenses(updated);
+  };
+
   // ✅ Handle change for both fields
   const handleChange = (
     index: number,
@@ -397,8 +419,19 @@ const NewInvoice: React.FC<Props> = () => {
     setOtherExpenses(updated);
   };
 
+  const handleChangeDeductable = (
+    index: number,
+    field: keyof OtherExpensesModel,
+    value: string | number
+  ) => {
+    const updated = [...deductibleExpenses];
+    updated[index][field] = value as never;
+    setDeductibleExpenses(updated);
+  };
+
   return (
     <div className="flex w-full flex-col bg-[#edd1ce] min-h-screen">
+      {loading && <LoadingOverlay />}
       {dialogOpen && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="p-4 max-w-xl">
@@ -426,7 +459,6 @@ const NewInvoice: React.FC<Props> = () => {
         }}
         className="w-full flex flex-col items-center"
       >
-        {loading && <LoadingOverlay />}
         {/* Header */}
         <div
           className="p-2 w-full flex gap-3 sm:gap-5 items-center bg-[#A3B1A1] lg:bg-[length:70%_100%] lg:bg-no-repeat lg:bg-right-top"
@@ -747,19 +779,15 @@ const NewInvoice: React.FC<Props> = () => {
                     <>
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            S Form Edit
-                          </p>
+                          <p className="text-xs sm:text-sm font-bold">S Form</p>
                           <Input
                             type="number"
-                            value={input.refTASformEditquantity || "0"}
+                            value={input.refIHSFormquantity || "0"}
                             name="sformeditquantity"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTASformEditquantity: parseInt(
-                                  e.target.value
-                                ),
+                                refIHSFormquantity: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -772,12 +800,12 @@ const NewInvoice: React.FC<Props> = () => {
                           <p className="text-xs sm:text-sm font-bold">Amount</p>
                           <Input
                             type="number"
-                            value={input.refTASformEditamount || "0"}
+                            value={input.refIHSFormamount || "0"}
                             name="sformeditamount"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTASformEditamount: parseInt(e.target.value),
+                                refIHSFormamount: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -793,8 +821,8 @@ const NewInvoice: React.FC<Props> = () => {
                           <Input
                             type="number"
                             value={
-                              (input.refTASformEditquantity || 0) *
-                              (input.refTASformEditamount || 0)
+                              (input.refIHSFormquantity || 0) *
+                              (input.refIHSFormamount || 0)
                             }
                             name="sformedittotal"
                             required
@@ -807,18 +835,16 @@ const NewInvoice: React.FC<Props> = () => {
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <div className="w-full flex flex-col gap-1 sm:gap-2">
                           <p className="text-xs sm:text-sm font-bold">
-                            S Form Correct
+                            Da Form
                           </p>
                           <Input
                             type="number"
-                            value={input.refTASformCorrectquantity || "0"}
+                            value={input.refIHDaFormquantity || "0"}
                             name="sformeditquantity"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTASformCorrectquantity: parseInt(
-                                  e.target.value
-                                ),
+                                refIHDaFormquantity: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -831,14 +857,12 @@ const NewInvoice: React.FC<Props> = () => {
                           <p className="text-xs sm:text-sm font-bold">Amount</p>
                           <Input
                             type="number"
-                            value={input.refTASformCorrectamount || "0"}
+                            value={input.refIHDaFormamount || "0"}
                             name="sformeditamount"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTASformCorrectamount: parseInt(
-                                  e.target.value
-                                ),
+                                refIHDaFormamount: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -854,8 +878,8 @@ const NewInvoice: React.FC<Props> = () => {
                           <Input
                             type="number"
                             value={
-                              (input.refTASformCorrectquantity || 0) *
-                              (input.refTASformCorrectamount || 0)
+                              (input.refIHDaFormquantity || 0) *
+                              (input.refIHDaFormamount || 0)
                             }
                             name="sformedittotal"
                             required
@@ -868,18 +892,16 @@ const NewInvoice: React.FC<Props> = () => {
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <div className="w-full flex flex-col gap-1 sm:gap-2">
                           <p className="text-xs sm:text-sm font-bold">
-                            Da Form Edit
+                            Db Form
                           </p>
                           <Input
                             type="number"
-                            value={input.refTADaformEditquantity || "0"}
+                            value={input.refIHDbFormquantity || "0"}
                             name="sformeditquantity"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADaformEditquantity: parseInt(
-                                  e.target.value
-                                ),
+                                refIHDbFormquantity: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -892,12 +914,12 @@ const NewInvoice: React.FC<Props> = () => {
                           <p className="text-xs sm:text-sm font-bold">Amount</p>
                           <Input
                             type="number"
-                            value={input.refTADaformEditamount || "0"}
+                            value={input.refIHDbFormamount || "0"}
                             name="sformeditamount"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADaformEditamount: parseInt(e.target.value),
+                                refIHDbFormamount: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -913,8 +935,8 @@ const NewInvoice: React.FC<Props> = () => {
                           <Input
                             type="number"
                             value={
-                              (input.refTADaformEditquantity || 0) *
-                              (input.refTADaformEditamount || 0)
+                              (input.refIHDbFormquantity || 0) *
+                              (input.refIHDbFormamount || 0)
                             }
                             name="sformedittotal"
                             required
@@ -927,18 +949,16 @@ const NewInvoice: React.FC<Props> = () => {
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <div className="w-full flex flex-col gap-1 sm:gap-2">
                           <p className="text-xs sm:text-sm font-bold">
-                            Da Form Correct
+                            Dc Form
                           </p>
                           <Input
                             type="number"
-                            value={input.refTADaformCorrectquantity || "0"}
+                            value={input.refIHDcFormquantity || "0"}
                             name="sformeditquantity"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADaformCorrectquantity: parseInt(
-                                  e.target.value
-                                ),
+                                refIHDcFormquantity: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -951,14 +971,12 @@ const NewInvoice: React.FC<Props> = () => {
                           <p className="text-xs sm:text-sm font-bold">Amount</p>
                           <Input
                             type="number"
-                            value={input.refTADaformCorrectamount || "0"}
+                            value={input.refIHDcFormamount || "0"}
                             name="sformeditamount"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADaformCorrectamount: parseInt(
-                                  e.target.value
-                                ),
+                                refIHDcFormamount: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -974,8 +992,63 @@ const NewInvoice: React.FC<Props> = () => {
                           <Input
                             type="number"
                             value={
-                              (input.refTADaformCorrectquantity || 0) *
-                              (input.refTADaformCorrectamount || 0)
+                              (input.refIHDcFormquantity || 0) *
+                              (input.refIHDcFormamount || 0)
+                            }
+                            name="sformedittotal"
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">X Form</p>
+                          <Input
+                            type="number"
+                            value={input.refIHxFormquantity || "0"}
+                            name="sformeditquantity"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refIHxFormquantity: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Quantity"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Amount</p>
+                          <Input
+                            type="number"
+                            value={input.refIHxFormamount || "0"}
+                            name="sformeditamount"
+                            onChange={(e) => {
+                              setInput({
+                                ...input,
+                                refIHxFormamount: parseInt(e.target.value),
+                              });
+                            }}
+                            required
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            // readOnly={!(role?.type == "admin")}
+                          />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={
+                              (input.refIHxFormquantity || 0) *
+                              (input.refIHxFormamount || 0)
                             }
                             name="sformedittotal"
                             required
@@ -988,18 +1061,16 @@ const NewInvoice: React.FC<Props> = () => {
                       <div className="flex flex-col gap-2 sm:flex-row">
                         <div className="w-full flex flex-col gap-1 sm:gap-2">
                           <p className="text-xs sm:text-sm font-bold">
-                            Db Form Edit
+                            Edit Form
                           </p>
                           <Input
                             type="number"
-                            value={input.refTADbformEditquantity || "0"}
+                            value={input.refIHEditquantity || "0"}
                             name="sformeditquantity"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADbformEditquantity: parseInt(
-                                  e.target.value
-                                ),
+                                refIHEditquantity: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -1012,12 +1083,12 @@ const NewInvoice: React.FC<Props> = () => {
                           <p className="text-xs sm:text-sm font-bold">Amount</p>
                           <Input
                             type="number"
-                            value={input.refTADbformEditamount || "0"}
+                            value={input.refIHEditFormamount || "0"}
                             name="sformeditamount"
                             onChange={(e) => {
                               setInput({
                                 ...input,
-                                refTADbformEditamount: parseInt(e.target.value),
+                                refIHEditFormamount: parseInt(e.target.value),
                               });
                             }}
                             required
@@ -1033,189 +1104,8 @@ const NewInvoice: React.FC<Props> = () => {
                           <Input
                             type="number"
                             value={
-                              (input.refTADbformEditquantity || 0) *
-                              (input.refTADbformEditamount || 0)
-                            }
-                            name="sformedittotal"
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Db Form Correct
-                          </p>
-                          <Input
-                            type="number"
-                            value={input.refTADbformCorrectquantity || "0"}
-                            name="sformeditquantity"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADbformCorrectquantity: parseInt(
-                                  e.target.value
-                                ),
-                              });
-                            }}
-                            required
-                            placeholder="Quantity"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">Amount</p>
-                          <Input
-                            type="number"
-                            value={input.refTADbformCorrectamount || "0"}
-                            name="sformeditamount"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADbformCorrectamount: parseInt(
-                                  e.target.value
-                                ),
-                              });
-                            }}
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Total Amount
-                          </p>
-                          <Input
-                            type="number"
-                            value={
-                              (input.refTADbformCorrectquantity || 0) *
-                              (input.refTADbformCorrectamount || 0)
-                            }
-                            name="sformedittotal"
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Dc Form Edit
-                          </p>
-                          <Input
-                            type="number"
-                            value={input.refTADcformEditquantity || "0"}
-                            name="sformeditquantity"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADcformEditquantity: parseInt(
-                                  e.target.value
-                                ),
-                              });
-                            }}
-                            required
-                            placeholder="Quantity"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">Amount</p>
-                          <Input
-                            type="number"
-                            value={input.refTADcformEditamount || "0"}
-                            name="sformeditamount"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADcformEditamount: parseInt(e.target.value),
-                              });
-                            }}
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Total Amount
-                          </p>
-                          <Input
-                            type="number"
-                            value={
-                              (input.refTADcformEditquantity || 0) *
-                              (input.refTADcformEditamount || 0)
-                            }
-                            name="sformedittotal"
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Dc Form Correct
-                          </p>
-                          <Input
-                            type="number"
-                            value={input.refTADcformCorrectquantity || "0"}
-                            name="sformeditquantity"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADcformCorrectquantity: parseInt(
-                                  e.target.value
-                                ),
-                              });
-                            }}
-                            required
-                            placeholder="Quantity"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">Amount</p>
-                          <Input
-                            type="number"
-                            value={input.refTADcformCorrectamount || "0"}
-                            name="sformeditamount"
-                            onChange={(e) => {
-                              setInput({
-                                ...input,
-                                refTADcformCorrectamount: parseInt(
-                                  e.target.value
-                                ),
-                              });
-                            }}
-                            required
-                            placeholder="Amount"
-                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
-                            // readOnly={!(role?.type == "admin")}
-                          />
-                        </div>
-                        <div className="w-full flex flex-col gap-1 sm:gap-2">
-                          <p className="text-xs sm:text-sm font-bold">
-                            Total Amount
-                          </p>
-                          <Input
-                            type="number"
-                            value={
-                              (input.refTADcformCorrectquantity || 0) *
-                              (input.refTADcformCorrectamount || 0)
+                              (input.refIHEditquantity || 0) *
+                              (input.refIHEditFormamount || 0)
                             }
                             name="sformedittotal"
                             required
@@ -1357,6 +1247,7 @@ const NewInvoice: React.FC<Props> = () => {
                       </div>
                     </>
                   )}
+                  <hr />
                   <div className="flex flex-col gap-4">
                     {otherExpenses.map((expense, index) => (
                       <div
@@ -1413,7 +1304,71 @@ const NewInvoice: React.FC<Props> = () => {
                       onClick={handleAddExpense}
                       className="w-fit text-xs sm:text-sm"
                     >
-                      + Add
+                      <Plus /> Additional amount
+                    </Button>
+                  </div>
+                  <hr />
+                  <div className="flex flex-col gap-4">
+                    {deductibleExpenses.map((expense, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col gap-2 sm:flex-row items-start"
+                      >
+                        <div className="w-full sm:w-[65%] flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">Other</p>
+                          <Textarea
+                            value={expense.name}
+                            onChange={(e) =>
+                              handleChangeDeductable(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Other"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                            required
+                          />
+                        </div>
+
+                        <div className="w-full sm:w-[30%] flex flex-col gap-1 sm:gap-2">
+                          <p className="text-xs sm:text-sm font-bold">
+                            Total Amount
+                          </p>
+                          <Input
+                            type="number"
+                            value={expense.amount}
+                            onChange={(e) =>
+                              handleChangeDeductable(
+                                index,
+                                "amount",
+                                parseFloat(e.target.value) || 0
+                              )
+                            }
+                            placeholder="Amount"
+                            className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                          />
+                        </div>
+
+                        {/* Delete button (only show if more than one expense) */}
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => handleDeleteExpenseDeductable(index)}
+                          className="text-xs sm:text-sm mt-7"
+                        >
+                          <Trash />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {/* Add new expense */}
+                    <Button
+                      type="button"
+                      onClick={handleAddExpenseDeductable}
+                      className="w-fit text-xs sm:text-sm"
+                    >
+                      <Minus /> Deductible amount
                     </Button>
                   </div>
                 </div>
@@ -1454,6 +1409,7 @@ const NewInvoice: React.FC<Props> = () => {
                   <Button
                     type="submit"
                     variant="greenTheme"
+                    disabled={input.total <= 0}
                     className="text-sm sm:text-base h-9 sm:h-10 px-6 sm:px-8 w-full sm:w-auto max-w-[200px] min-w-[200px]"
                   >
                     <span className="hidden sm:inline">Generate Invoice</span>
