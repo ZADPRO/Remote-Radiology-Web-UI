@@ -179,7 +179,7 @@ const LesionsOptions: React.FC<Props> = ({
                         LabelVal === "Simple Cyst" ||
                         LabelVal === "Multiple Simple Cysts" ||
                         LabelVal === "Fibronodular Density"
-                          ? "homogenous"
+                          ? "homogeneous"
                           : LabelVal === "Complex Cystic Structure" ||
                             LabelVal === "Heterogeneous Tissue Prominence" ||
                             LabelVal === "Hypertrophic Tissue with Microcysts"
@@ -644,7 +644,7 @@ const LesionsOptions: React.FC<Props> = ({
                                   label: "Heterogeneous",
                                   value: "heterogeneous",
                                 },
-                                { label: "Homogenous", value: "homogenous" },
+                                { label: "Homogeneous", value: "homogeneous" },
                                 { label: "Unknown", value: "unknown" },
                               ].map((item, i) => (
                                 <div
