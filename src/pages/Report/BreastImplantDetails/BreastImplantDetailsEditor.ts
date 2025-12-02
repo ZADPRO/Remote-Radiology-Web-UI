@@ -118,7 +118,7 @@ export function generateBreastImplantDetailsHTML(
     html += ` implant `;
   }
 
-  html += `that is ${position.toLowerCase()} in position, with speed of sound consistent with ${
+  html += `that ${(config === "Unilateral Right" || config === "Unilateral Left") ? `is`:`are`} ${position.toLowerCase()} in position, with speed of sound consistent with ${
     config === "Bilateral Dissimilar" || config === "Bilateral Similar"
       ? ` ${getAnswer(questionIds.bilateraldissimilar)}`
       : `${material == "Other" ? `${materialOther}` : material.toLowerCase()}`

@@ -87,7 +87,7 @@ export function LesionsRightString(
           ) {
             locationText =
               data.locationclockposition === "0"
-                ? "retroareolar region"
+                ? "the retroareolar region"
                 : `${data.locationclockposition} o'clock`;
           }
 
@@ -98,7 +98,7 @@ export function LesionsRightString(
           ) {
             locationTextto =
               data.locationclockpositionto === "0"
-                ? "retroareolar region"
+                ? "the retroareolar region"
                 : `${data.locationclockpositionto} o'clock`;
           }
 
@@ -162,7 +162,7 @@ export function LesionsRightString(
             ) {
               sentence += `, spanning in the range of ${locationText} to ${locationTextto}`;
             } else {
-              sentence += `, present in the ${locationText}`;
+              sentence += `, present at ${locationText}`;
             }
           }
 
@@ -184,7 +184,7 @@ export function LesionsRightString(
             } else {
               sentence += `${
                 data.locationLevel !== "Unknown"
-                  ? `, located at ${data.locationLevel.toLowerCase()} ${levelText}${
+                  ? `, located at the ${data.locationLevel.toLowerCase()} ${levelText}${
                       data.locationLevelPercentage
                     }`
                   : ""
@@ -233,12 +233,12 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += `, with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, ${data.Margins.toLowerCase()} margins`;
           }
 
           // Density/Echotexture
           if (data.density && data.density !== "unknown") {
-            sentence += ` and ${data.density.toLowerCase()} echotexture`;
+            sentence += `, and ${data.density.toLowerCase()} echotexture`;
           }
 
           // Transmission speed
@@ -316,21 +316,21 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "retroareolar region"
-                    : data.locationclockposition + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockposition + " o'clock"
                 }`
               : ``
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "retroareolar region"
-                    : data.locationclockpositionto + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockpositionto + " o'clock"
                 }`
               : ``
           }${
             data.locationLevel && data.locationLevel !== "Unknown"
-              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+              ? ` in the ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${
                   data.locationLevelPercentage.length > 0 &&
@@ -397,7 +397,7 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, and ${data.Margins.toLowerCase()} margins`;
           }
 
           // Internal debris
@@ -482,21 +482,21 @@ export function LesionsRightString(
                     : `at`
                 } ${
                   data.locationclockposition === "0"
-                    ? "retroareolar region"
-                    : data.locationclockposition + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockposition + " o'clock"
                 }`
               : ``
           }${
             data.locationclockpositionto.length > 0
               ? `${data.locationclockposition.length > 0 ? " to " : ` `}${
                   data.locationclockpositionto === "0"
-                    ? "retroareolar region"
-                    : data.locationclockpositionto + "'o clock"
+                    ? "the retroareolar region"
+                    : data.locationclockpositionto + " o'clock"
                 }`
               : ``
           }${
             data.locationLevel && data.locationLevel !== "Unknown"
-              ? ` in ${data.locationLevel.toLowerCase()} ${levelText}${
+              ? ` in the ${data.locationLevel.toLowerCase()} ${levelText}${
                   data.locationLevelPercentage
                 }${
                   data.locationLevelPercentage.length > 0 &&
@@ -561,7 +561,7 @@ export function LesionsRightString(
 
           // Margins
           if (data.Margins && data.Margins !== "unknown") {
-            sentence += ` and with ${data.Margins.toLowerCase()} margins`;
+            sentence += `, and ${data.Margins.toLowerCase()} margins`;
           }
 
           // Internal debris
