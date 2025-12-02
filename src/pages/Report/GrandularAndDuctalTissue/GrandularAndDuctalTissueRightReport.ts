@@ -218,7 +218,7 @@ function generateCalcificationText(
       location += level
         ? ` ${
             item.position !== "Unknown" && item.position
-              ? ` in ${item.position.toLowerCase()}${
+              ? ` in the ${item.position.toLowerCase()}${
                   item.position
                     ? ` ${
                         item.position === "Coronal Level"

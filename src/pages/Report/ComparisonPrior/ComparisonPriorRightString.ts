@@ -57,7 +57,7 @@ export function ComparisonPriorRightString(
       return `
         ${
           data.previous
-            ? `<p>Previous scan showed ${data.previous}${
+            ? `<p>The Previous scan showed ${data.previous}${
                 data.lesionspresent && data.previous === "lesions present"
                   ? ` ( ${data.lesionspresent} ).</p>`
                   : ""

@@ -183,7 +183,7 @@ const LesionsOptions: React.FC<Props> = ({
                           : LabelVal === "Complex Cystic Structure" ||
                             LabelVal === "Heterogeneous Tissue Prominence" ||
                             LabelVal === "Hypertrophic Tissue with Microcysts"
-                          ? "heterogenous"
+                          ? "heterogeneous"
                           : "",
                       Margins:
                         LabelVal === "Simple Cyst" ||
@@ -586,7 +586,7 @@ const LesionsOptions: React.FC<Props> = ({
                               Shape
                             </Label>
                             <div className="flex flex-wrap gap-3">
-                              {["Round", "Oval", "Irregular", "Unknown"].map(
+                              {["Round", "Oval", "Irregularly", "Unknown"].map(
                                 (shape, i) => (
                                   <div
                                     key={shape}
@@ -641,8 +641,8 @@ const LesionsOptions: React.FC<Props> = ({
                             <div className="flex flex-wrap gap-3">
                               {[
                                 {
-                                  label: "Heterogenous",
-                                  value: "heterogenous",
+                                  label: "Heterogeneous",
+                                  value: "heterogeneous",
                                 },
                                 { label: "Homogenous", value: "homogenous" },
                                 { label: "Unknown", value: "unknown" },
@@ -701,7 +701,7 @@ const LesionsOptions: React.FC<Props> = ({
                                 "Obscured",
                                 "Spiculated",
                                 "Angular",
-                                "Irregular",
+                                "Irregularly",
                                 "Unknown",
                               ].map((m, i) => (
                                 <div
